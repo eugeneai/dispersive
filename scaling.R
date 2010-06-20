@@ -100,9 +100,11 @@ find_pike = function (start_x0, spectrum, step=STEP, channels=10*FWHM/sc, eps=1.
        }
     }
     if (plot && f$found) {
+        s = X - 96
+        s = s * SC
         g = gauss(X, f$x0, A=f$A, zc=0., sc=SC, fwhm=f$fwhm)+f$b
-        plot(X, g, type='l')
-        lines(X, spectrum, type='l', col='red')
+        plot(s, g, type='l')
+        lines(s, spectrum, type='l', col='red')
     }
     f
 }
