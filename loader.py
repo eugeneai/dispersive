@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from lxml import etree
-import subprocess as sp
+import subprocess as spp
 
 
 TMP_DIR='/tmp'
@@ -10,49 +10,50 @@ class Spectrums(object):
         self.source = source
         if source.lstrip().startswith('<?'):
             raise RuntimeError('Not implemented')
-        self.xml=self.channels=None
+        self.xml=self.spectra=None
         self.load(open(self.source))
         
     def load(self, source):
         self.xml= etree.parse(source)
 
-    def get_channels(self):
+    def get_spectra(self):
         def _c(x):
             return int(x)
         
-        channels = self.xml.xpath('//Channels/text()')
-        channels = [map(_c, ch.split(',')) for ch in channels]
-        self.channels = channels
-        if self.channels:
-            self.ch_len = len(self.channels[0])
+        spectra = self.xml.xpath('//Channels/text()')
+        spectra = [map(_c, sp.split(',')) for sp in spectra]
+        self.spectra = spectra
+        if self.spectra:
+            self.ch_len = len(self.spectra[0])
         else:
             self.ch_len = None
 
-    def r_vect(self, channel, name):
-        return '%s = c(%s)\n' % (name, ','.join(map(str, channel)))
+    def r_vect(self, spectrum, name):
+        return '%s = c(%s)\n' % (name, ','.join(map(str, spectrum)))
         
     
-    def r_plot(self, func = '',type_='l', channel=None):
-        if self.channels is None:
-            self.get_channels()
+    def r_plot(self, func = '',type_='l', spectrum=None):
+        if self.spectra is None:
+            self.get_spectra()
         tmp_file = self._get_tmp('R')
         o=open(tmp_file,'w')
         o.write('# Automatically generated, do not edit\n\n')
         o.write(PLOT_PREAMBLE)
-        if channel is not None:
-            channels=[self.channels[channel]]
+        if spectrum is not None:
+            spectra=[self.spectra[spectrum]]
         else:
-            channels=self.channels
-        o.write('cols=topo.colors(%i)\n' % (len(channels)+1))
+            spectra=self.spectra
+        o.write('cols=topo.colors(%i)\n' % (len(spectra)+1))
         i = 0
         names = []
-        for ch in channels:
+        for sp in spectra:
             i+=1
-            name = 'chan%i' % i
-            o.write(self.r_vect(ch, name))
+            name = 'spec%i' % i
+            ssp = self.r_vect(sp, name)
+            o.write(ssp)
             names.append(name)
 
-        o.write('chan_plot=function() {\n')
+        o.write('plot.spectra=function() {\n')
         first = True
         ci = 2
         for name in names:
@@ -63,10 +64,10 @@ class Spectrums(object):
             else:
                 o.write("lines(x=X, y=%s, col=cols[%i], type='%s')\n" % (Y, ci, type_))
             ci+=1
-        o.write('} # chan_plot\n\n')
+        o.write('} # plot.spectra\n\n')
         o.write(PLOT_POSTAMBLE)
         o.close()
-        p=sp.Popen(['R', '--no-save'], stdin=sp.PIPE, stdout=sp.PIPE, stderr=None)
+        p=spp.Popen(['R', '--no-save'], stdin=spp.PIPE, stdout=spp.PIPE, stderr=None)
         out,err = p.communicate(PLOT_CMD % tmp_file)
         print out,err
         
@@ -87,17 +88,17 @@ cols=colors()
 PLOT_POSTAMBLE="""
 G = gauss(X, l5_9, 2000000, sc=sc)
 postscript(file='plot.eps')
-chan_plot()
+plot.spectra()
 lines(X,G, type='l')
 dev.off()
 """
         
 
-def test0(filename, channel=None):
+def test0(filename, spectrum=None):
     ss = Spectrums(filename)
-    ss.r_plot(func='', channel=channel)
-    print 'Channel length:', len(ss.channels[0])
-    print 'Channel count:', len(ss.channels)
+    ss.r_plot(func='', spectrum=spectrum)
+    print 'Spectra length:', len(ss.spectra[0])
+    print 'Spectra count:', len(ss.spectra)
 
 if __name__=='__main__':
     import sys
@@ -106,5 +107,5 @@ if __name__=='__main__':
         print 'Test run'
         test0('test.rtx')
     else:
-        test0(sys.argv[1], channel=0)
+        test0(sys.argv[1], spectrum=0)
     
