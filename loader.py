@@ -32,17 +32,21 @@ class Spectrums(object):
         return '%s = c(%s)\n' % (name, ','.join(map(str, channel)))
         
     
-    def r_plot(self, func = '',type_='l'):
+    def r_plot(self, func = '',type_='l', channel=None):
         if self.channels is None:
             self.get_channels()
         tmp_file = self._get_tmp('R')
         o=open(tmp_file,'w')
         o.write('# Automatically generated, do not edit\n\n')
         o.write(PLOT_PREAMBLE)
-        o.write(self.r_vect(range(self.ch_len), 'X'))
+        if channel is not None:
+            channels=[self.channels[channel]]
+        else:
+            channels=self.channels
+        o.write('cols=topo.colors(%i)\n' % (len(channels)+1))
         i = 0
         names = []
-        for ch in self.channels:
+        for ch in channels:
             i+=1
             name = 'chan%i' % i
             o.write(self.r_vect(ch, name))
@@ -89,9 +93,9 @@ dev.off()
 """
         
 
-def test0(filename):
+def test0(filename, channel=None):
     ss = Spectrums(filename)
-    ss.r_plot(func='')
+    ss.r_plot(func='', channel=channel)
     print 'Channel length:', len(ss.channels[0])
     print 'Channel count:', len(ss.channels)
 
@@ -102,5 +106,5 @@ if __name__=='__main__':
         print 'Test run'
         test0('test.rtx')
     else:
-        test0(sys.argv[1])
+        test0(sys.argv[1], channel=0)
     
