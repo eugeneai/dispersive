@@ -1,9 +1,16 @@
 #!/usr/bin/python
 from lxml import etree
 import subprocess as spp
+import os
 
+DEBUG = True
 
-TMP_DIR='/tmp'
+if DEBUG:
+    TMP_DIR=os.getcwd()
+else:
+    TMP_DIR='/tmp'
+    
+print TMP_DIR
 
 class Spectrums(object):
     def __init__(self, source):
