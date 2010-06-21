@@ -88,7 +88,6 @@ quit(save='no')
 '''
 
 PLOT_PREAMBLE='''source('global.R')
-
 cols=colors()
 '''
 
