@@ -1,0 +1,6 @@
+*.rtx
+*.spx
+*.eps
+*.ps
+*.pdf
+temp.R
