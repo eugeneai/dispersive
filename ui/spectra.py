@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'spectra_uii.ui'
+# Form implementation generated from reading ui file 'spectra.ui'
 #
-# Created: Sun Jun 20 19:34:42 2010
+# Created: Wed Jun 23 22:25:11 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
