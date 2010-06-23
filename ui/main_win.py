@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_win.ui'
 #
-# Created: Wed Jun 23 22:23:39 2010
+# Created: Thu Jun 24 01:10:37 2010
 #      by: PyQt4 UI code generator 4.7.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,11 +17,12 @@ class Ui_AppWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.frame = QtGui.QFrame(self.centralwidget)
-        self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtGui.QFrame.Raised)
-        self.frame.setObjectName("frame")
-        self.verticalLayout.addWidget(self.frame)
+        self.main_frame = QtGui.QFrame(self.centralwidget)
+        self.main_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.main_frame.setFrameShadow(QtGui.QFrame.Plain)
+        self.main_frame.setLineWidth(0)
+        self.main_frame.setObjectName("main_frame")
+        self.verticalLayout.addWidget(self.main_frame)
         AppWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(AppWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 605, 27))
