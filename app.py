@@ -20,7 +20,7 @@ class AppWindow(QtGui.QMainWindow):
         self.ui.main_frame_layout=QtGui.QVBoxLayout(self.ui.main_frame)
         self.ui.main_frame_layout.setMargin(0)
         self.ui.verticalLayout.setMargin(0)
-        #self.ui.active_frame=None
+        self.ui.active_frame=None
         self.init_browser()
 
     def init_browser(self):
@@ -28,13 +28,19 @@ class AppWindow(QtGui.QMainWindow):
 
     def start_spectra(self, parent):
         return SpectraFrame(parent)
+        return SpectraFrame(parent)
+        return SpectraFrame(parent)
 
     def change_active(self, frame_name):
-        """
         if self.ui.active_frame:
-            self.ui.active_frame.hide()
-            self.ui.active_frame.destroy()
-        """
+            active_frame = self.ui.active_frame
+            self.ui.active_frame=None
+            active_frame.hide()
+            self.ui.main_frame.removeChild(active_frame)
+            active_frame.reparent(None)
+            active_frame.deleteLater()
+            del active_frame
+
         method = getattr(self, frame_name)
         frame = method(self.ui.main_frame)
         self.ui.main_frame_layout.addWidget(frame)
