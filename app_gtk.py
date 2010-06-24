@@ -1,10 +1,13 @@
 import pygtk
 pygtk.require('2.0')
 import gtk, sys
+import models.component as mdl
+import os
 
-
-import sys
-import gtk
+FILE_PATTERNS = {
+    "*.rtx": "Spectra file, many spectra",
+    "*.spx": "Single spectra file",
+    }
   
 class BuilderExample:
 
@@ -38,8 +41,11 @@ class BuilderExample:
         print "Created"
 
     def on_file_open(self, widget, data=None):
-        print "Opened:", self.get_open_filename()
-
+        filename = self.get_open_filename()
+        if filename:
+            self.spectra=mdl.Spectra(filename)
+            self.default_action()
+            
     def get_open_filename(self):
         
         filename = None
@@ -49,7 +55,10 @@ class BuilderExample:
                                          gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
         ffilter = gtk.FileFilter()
-        ffilter.add_pattern("*.")
+        for pattern, name in FILE_PATTERNS.iteritems():
+            ffilter.add_pattern(pattern)
+
+        chooser.set_filter(ffilter)
         #print gtk.FileChooserDialog.__doc__
         
         response = chooser.run()
@@ -70,6 +79,10 @@ class BuilderExample:
         
         dialog.run()
         dialog.destroy()
+
+    def default_action(self):
+        self.spectra.r_plot()
+        os.system("evince plot.eps &")
 
 
 def main():

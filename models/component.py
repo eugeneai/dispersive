@@ -12,7 +12,7 @@ else:
     
 print TMP_DIR
 
-class Spectrums(object):
+class Spectra(object):
     def __init__(self, source):
         self.source = source
         if source.lstrip().startswith('<?'):
