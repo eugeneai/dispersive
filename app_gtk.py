@@ -3,6 +3,13 @@ pygtk.require('2.0')
 import gtk, sys
 import models.component as mdl
 import os
+import subprocess as spp
+
+if os.name!='nt':
+    EPS_CMD="evince plot.eps &" # YYY Needs to be corrected
+else:
+    EPS_CMD="C:\\Program Files\\Ghostgum\\gsview\\gsview32.exe"
+
 
 FILE_PATTERNS = {
     "*.rtx": "Spectra file, many spectra",
@@ -82,7 +89,9 @@ class BuilderExample:
 
     def default_action(self):
         self.spectra.r_plot()
-        os.system("evince plot.eps &")
+        print "AAA:", EPS_CMD
+        sp=spp.Popen([EPS_CMD, 'plot.eps'])
+        sp.communicate()
 
 
 def main():
