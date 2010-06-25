@@ -70,9 +70,16 @@ class BuilderExample:
         if DEBUG>2:
             self.on_file_open(self, LOAD_FILE)
         self.active_widget=None
+        self.spectra = None
+        self.default_view()
+
+    def default_view(self):
+        self.insert_plotting_area()
 
     def on_file_new(self, widget, data=None):
         print "Created"
+        # check wether data has been saved. YYY
+        self.spectra = None
         self.insert_plotting_area()
 
     def on_file_open(self, widget, filename=None):
@@ -118,10 +125,12 @@ class BuilderExample:
         dialog.destroy()
 
     def default_action(self):
-        self.spectra.r_plot()
+        self.spectra.get_spectra()
+        self.default_view()
+        #self.spectra.r_plot()
         #print "AAA:", EPS_CMD
-        sp=spp.Popen([EPS_CMD, 'plot.eps'])
-        sp.communicate()
+        #sp=spp.Popen([EPS_CMD, 'plot.eps'])
+        #sp.communicate()
 
     def remove_active_widget(self):
         if self.active_widget is None:
@@ -136,13 +145,18 @@ class BuilderExample:
         win = gtk.Frame()
         vbox = gtk.VBox()
         win.add(vbox)
-
+        
         fig = Figure(figsize=(5,4), dpi=100)
         ax = fig.add_subplot(111)
-        t = arange(0.0,3.0,0.01)
-        s = sin(2*pi*t)
 
-        ax.plot(t,s)
+        if not self.spectra or not self.spectra.spectra:
+            t = arange(0.0,3.0,0.01)
+            s = sin(2*pi*t)
+            ax.plot(t,s)
+        else:
+            X=arange(len(self.spectra.spectra[0]))
+            for spectrum in self.spectra.spectra:
+                ax.plot(X,spectrum)
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         canvas.set_size_request(600, 400)
