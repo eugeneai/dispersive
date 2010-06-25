@@ -1,16 +1,24 @@
 #!/usr/bin/python
 from lxml import etree
 import subprocess as spp
-import os
+import os, os.path
 
 DEBUG = True
+
+if os.name=='nt':
+    R_CMD="C:\\Program Files\\R\\R-2.10.1\\bin\\R.exe"
+else:
+    R_CMD="R"
 
 if DEBUG:
     TMP_DIR=os.getcwd()
 else:
-    TMP_DIR='/tmp'
+    if os.name=='nt':
+        TMP_DIR="C:\\WINDOWS\\TEMP"
+    else:
+        TMP_DIR="/tmp"
     
-print TMP_DIR
+#print TMP_DIR
 
 class Spectra(object):
     def __init__(self, source):
@@ -66,21 +74,21 @@ class Spectra(object):
         for name in names:
             Y = '%s(%s)' % (func, name)
             if first:
-                o.write("plot(x=X, y=%s, type='%s', col=cols[%i])\n" % (Y, type_, ci))
+                o.write("plot(x=scale_X(X), y=%s, type='%s', col=cols[%i])\n" % (Y, type_, ci))
                 first = False
             else:
-                o.write("lines(x=X, y=%s, col=cols[%i], type='%s')\n" % (Y, ci, type_))
+                o.write("lines(x=scale_X(X), y=%s, col=cols[%i], type='%s')\n" % (Y, ci, type_))
             ci+=1
         o.write('} # plot.spectra\n\n')
         o.write(PLOT_POSTAMBLE)
         o.close()
-        p=spp.Popen(['R', '--no-save'], stdin=spp.PIPE, stdout=spp.PIPE, stderr=None)
+        p=spp.Popen([R_CMD, '--no-save'], stdin=spp.PIPE, stdout=spp.PIPE, stderr=None)
         out,err = p.communicate(PLOT_CMD % tmp_file)
         print out,err
         
 
     def _get_tmp(self, ext):
-        return TMP_DIR+'/temp.'+ext
+        return os.path.join(TMP_DIR,'temp.'+ext)
 
 PLOT_CMD='''
 source('%s')
@@ -92,10 +100,10 @@ cols=colors()
 '''
 
 PLOT_POSTAMBLE="""
-G = gauss(X, l5_9, 2000000, sc=sc)
+G = gauss(X, l5_9, 2000000)
 postscript(file='plot.eps')
 plot.spectra()
-lines(X,G, type='l')
+lines(scale_X(X),G, type='l')
 dev.off()
 """
         

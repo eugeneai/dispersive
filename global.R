@@ -1,9 +1,9 @@
 # some definitions
-ZC=88
+ZC=96
 FWHM=0.138
 sig_lim = 10
-SC = 20/(4096-zero_c)
-l5_9=5.92/sc
+SC = 20/(4096-ZC)
+l5_9=5.92/SC
 
 cols=colors()
 X = c(0:4095)
@@ -23,4 +23,8 @@ mask = function(chan, level=0.01) {
     r
 }
 
-GT=gauss(X, l5_9, 2000000, sc=sc)
+GT=gauss(X, l5_9, 2000000, sc=SC)
+
+scale_X = function(X, sc=SC, zc=ZC) {
+    (X-zc) * sc
+}
