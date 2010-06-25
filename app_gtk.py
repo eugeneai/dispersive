@@ -6,8 +6,27 @@ import models.component as mdl
 import os
 import subprocess as spp
 
+from matplotlib.figure import Figure
+from numpy import arange, sin, pi
+
+# uncomment to select /GTK/GTKAgg/GTKCairo
+#from matplotlib.backends.backend_gtk import FigureCanvasGTK as FigureCanvas
+from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
+#from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
+
+# or NavigationToolbar for classic
+#from matplotlib.backends.backend_gtk import NavigationToolbar2GTK as NavigationToolbar
+from matplotlib.backends.backend_gtkagg import NavigationToolbar2GTKAgg as NavigationToolbar
+
+
+
+DEBUG = 2
+if DEBUG>2:
+    LOAD_FILE="/home/eugeneai/Development/codes/dispersive/test.rtx"
+
 if os.name!='nt':
-    EPS_CMD="evince" # YYY Needs to be corrected
+    #EPS_CMD="evince" 
+    EPS_CMD="xdg-open" # YYY Needs to be corrected
 else:
     #EPS_CMD="C:\\Program Files\\Ghostgum\\gsview\\gsview32.exe"
     EPS_CMD="start"
@@ -39,18 +58,25 @@ class BuilderExample:
         
         # Get objects (widgets) from the Builder
         self.window = builder.get_object("main_window")
+        #self.exp_area = builder.get_object("exp_area")
+        self.main_vbox = builder.get_object("main_vbox")
+        self.statusbar = builder.get_object("statusbar")
         #self.entry1 = builder.get_object("entry1");
         #self.label1 = builder.get_object("label1");
         # Connect all singals to methods in this class
         builder.connect_signals(self)
         # Show the window and all its children
         self.window.show_all()
+        if DEBUG>2:
+            self.on_file_open(self, LOAD_FILE)
 
     def on_file_new(self, widget, data=None):
         print "Created"
+        self.insert_plotting_area()
 
-    def on_file_open(self, widget, data=None):
-        filename = self.get_open_filename()
+    def on_file_open(self, widget, filename=None):
+        if filename is None:
+            filename = self.get_open_filename()
         if filename:
             self.spectra=mdl.Spectra(filename)
             self.default_action()
@@ -74,6 +100,7 @@ class BuilderExample:
         if response == gtk.RESPONSE_OK:
             filename = chooser.get_filename()
         chooser.destroy()
+        print "File:", filename
         return filename
     
     def error_message(self, message):
@@ -94,6 +121,34 @@ class BuilderExample:
         print "AAA:", EPS_CMD
         sp=spp.Popen([EPS_CMD, 'plot.eps'])
         sp.communicate()
+
+    def insert_plotting_area(self):
+
+        #win = gtk.Frame()
+        vbox = gtk.VBox()
+        #win.add(vbox)
+
+        fig = Figure(figsize=(5,4), dpi=100)
+        ax = fig.add_subplot(111)
+        t = arange(0.0,3.0,0.01)
+        s = sin(2*pi*t)
+
+        ax.plot(t,s)
+
+
+        canvas = FigureCanvas(fig)  # a gtk.DrawingArea
+        canvas.set_size_request(600, 400)
+        vbox.pack_start(canvas)
+        toolbar = NavigationToolbar(canvas, self.window)
+        #toolbar = NavigationToolbar(canvas, win)
+        vbox.pack_start(toolbar, False, False)
+        self.main_vbox.pack_start(vbox, True, True)
+        #self.main_vbox.pack_start(win, True, True)
+        self.main_vbox.reorder_child(self.statusbar,-1)
+
+        canvas.show_all()
+        toolbar.show_all()
+        
 
 
 def main():
