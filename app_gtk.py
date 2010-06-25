@@ -8,7 +8,8 @@ import subprocess as spp
 if os.name!='nt':
     EPS_CMD="evince plot.eps &" # YYY Needs to be corrected
 else:
-    EPS_CMD="C:\\Program Files\\Ghostgum\\gsview\\gsview32.exe"
+    #EPS_CMD="C:\\Program Files\\Ghostgum\\gsview\\gsview32.exe"
+    EPS_CMD="start"
 
 
 FILE_PATTERNS = {
