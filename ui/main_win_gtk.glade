@@ -7,7 +7,7 @@
     <property name="icon_name">utilities-system-monitor</property>
     <signal name="delete_event" handler="main_window_delete_event_cb"/>
     <child>
-      <object class="GtkVBox" id="vbox1">
+      <object class="GtkVBox" id="main_window_vbox">
         <property name="visible">True</property>
         <child>
           <object class="GtkMenuBar" id="menubar">
@@ -208,18 +208,39 @@
           </packing>
         </child>
         <child>
-          <object class="GtkImage" id="image1">
+          <object class="GtkScrolledWindow" id="scrolledwindow1">
             <property name="width_request">600</property>
             <property name="height_request">400</property>
             <property name="visible">True</property>
-            <property name="icon_name">applications-development</property>
+            <property name="can_focus">True</property>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
+            <child>
+              <object class="GtkViewport" id="viewport1">
+                <property name="visible">True</property>
+                <property name="resize_mode">queue</property>
+                <child>
+                  <object class="GtkAlignment" id="main">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkVBox" id="main_vbox">
+                        <property name="visible">True</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="position">2</property>
           </packing>
         </child>
         <child>
-          <object class="GtkStatusbar" id="statusbar1">
+          <object class="GtkStatusbar" id="statusbar">
             <property name="visible">True</property>
             <property name="spacing">2</property>
           </object>

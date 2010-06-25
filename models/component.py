@@ -1,4 +1,6 @@
 #!/usr/bin/python
+"""Module for modelling Energy Dispersive XRF Analysis.
+"""
 from lxml import etree
 import subprocess as spp
 import os, os.path
@@ -20,9 +22,43 @@ else:
     
 #print TMP_DIR
 
+class ScaleCalibration(object):
+    """This holds calibration constants for X axis (Energies):
+    zerov  - channel number of the middle of "zero" pike,
+    scalev - keV/channel multiplier.
+    """
+    def __init__(self, zero=0, scale=1):
+        """Constructs the Scale Calibration
+        """
+        self._scale = scale
+        self._zero  = zero
+        
+    def to_keV(self, x_array):
+        """Given array of channels, e.g., numpy.array([0,...,1024]),
+        convert in to enargies.
+        """
+        return (x_array-self._zero) * self._scale
+
+    to_kev=to_keV
+    
+    def to_channel(self, kev_array):
+        """Given array of keV values, return their channel
+        numbers.
+        """
+        return (kev_array/self.scale)+self._zero
+
+scale_none=ScaleCalibration()
+
 class Spectra(object):
-    def __init__(self, source):
+    """Set of spectra with the same Energy axis scale (x-axis)
+    """
+    def __init__(self, source, scale=None):
         self.source = source
+        if scale is None:
+            self.set_scale(scale_none)
+        else:
+            self.set_scale(scale)
+            
         if source.lstrip().startswith('<?'):
             raise RuntimeError('Not implemented')
         self.xml=self.spectra=None
@@ -30,6 +66,9 @@ class Spectra(object):
         
     def load(self, source):
         self.xml= etree.parse(source)
+
+    def set_scale(self, scale):
+        self.scale=scale
 
     def get_spectra(self):
         def _c(x):
