@@ -59,7 +59,7 @@ class BuilderExample:
         # Get objects (widgets) from the Builder
         self.window = builder.get_object("main_window")
         #self.exp_area = builder.get_object("exp_area")
-        self.main_vbox = builder.get_object("main_vbox")
+        self.vbox = builder.get_object("vbox")
         self.statusbar = builder.get_object("statusbar")
         #self.entry1 = builder.get_object("entry1");
         #self.label1 = builder.get_object("label1");
@@ -69,6 +69,7 @@ class BuilderExample:
         self.window.show_all()
         if DEBUG>2:
             self.on_file_open(self, LOAD_FILE)
+        self.active_widget=None
 
     def on_file_new(self, widget, data=None):
         print "Created"
@@ -118,15 +119,23 @@ class BuilderExample:
 
     def default_action(self):
         self.spectra.r_plot()
-        print "AAA:", EPS_CMD
+        #print "AAA:", EPS_CMD
         sp=spp.Popen([EPS_CMD, 'plot.eps'])
         sp.communicate()
 
-    def insert_plotting_area(self):
+    def remove_active_widget(self):
+        if self.active_widget is None:
+            return
+        self.vbox.remove(self.active_widget)
+        self.active_widget.destroy()
+        self.active_widget=None
 
-        #win = gtk.Frame()
+    def insert_plotting_area(self):
+        self.remove_active_widget()
+
+        win = gtk.Frame()
         vbox = gtk.VBox()
-        #win.add(vbox)
+        win.add(vbox)
 
         fig = Figure(figsize=(5,4), dpi=100)
         ax = fig.add_subplot(111)
@@ -135,19 +144,14 @@ class BuilderExample:
 
         ax.plot(t,s)
 
-
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         canvas.set_size_request(600, 400)
-        vbox.pack_start(canvas)
-        toolbar = NavigationToolbar(canvas, self.window)
-        #toolbar = NavigationToolbar(canvas, win)
+        vbox.pack_start(canvas, True, True)
+        toolbar = NavigationToolbar(canvas, win)
         vbox.pack_start(toolbar, False, False)
-        self.main_vbox.pack_start(vbox, True, True)
-        #self.main_vbox.pack_start(win, True, True)
-        self.main_vbox.reorder_child(self.statusbar,-1)
-
-        canvas.show_all()
-        toolbar.show_all()
+        self.vbox.pack_start(win,True, True)
+        win.show_all()
+        self.active_widget=win
         
 
 
