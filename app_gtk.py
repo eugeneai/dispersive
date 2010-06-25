@@ -59,7 +59,7 @@ class BuilderExample:
         # Get objects (widgets) from the Builder
         self.window = builder.get_object("main_window")
         #self.exp_area = builder.get_object("exp_area")
-        self.vbox = builder.get_object("vbox")
+        self.main_vbox = builder.get_object("main_vbox")
         self.statusbar = builder.get_object("statusbar")
         #self.entry1 = builder.get_object("entry1");
         #self.label1 = builder.get_object("label1");
@@ -126,6 +126,7 @@ class BuilderExample:
 
     def default_action(self):
         self.spectra.get_spectra()
+        self.spectra.set_scale(mdl.ScaleCalibration(zero=96, scale=20./4096))
         self.default_view()
         #self.spectra.r_plot()
         #print "AAA:", EPS_CMD
@@ -135,14 +136,16 @@ class BuilderExample:
     def remove_active_widget(self):
         if self.active_widget is None:
             return
-        self.vbox.remove(self.active_widget)
+        self.main_vbox.remove(self.active_widget)
         self.active_widget.destroy()
         self.active_widget=None
 
     def insert_plotting_area(self):
         self.remove_active_widget()
 
-        win = gtk.Frame()
+        win = gtk.Frame(label='Graphics')
+        win.set_shadow_type(gtk.SHADOW_NONE)
+        
         vbox = gtk.VBox()
         win.add(vbox)
         
@@ -155,15 +158,16 @@ class BuilderExample:
             ax.plot(t,s)
         else:
             X=arange(len(self.spectra.spectra[0]))
+            kevs = self.spectra.scale.to_keV(X)
             for spectrum in self.spectra.spectra:
-                ax.plot(X,spectrum)
+                ax.plot(kevs,spectrum)
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         canvas.set_size_request(600, 400)
         vbox.pack_start(canvas, True, True)
         toolbar = NavigationToolbar(canvas, win)
         vbox.pack_start(toolbar, False, False)
-        self.vbox.pack_start(win,True, True)
+        self.main_vbox.pack_start(win,True, True)
         win.show_all()
         self.active_widget=win
         
