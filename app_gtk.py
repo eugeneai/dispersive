@@ -6,8 +6,10 @@ import models.component as mdl
 import os
 import subprocess as spp
 
+from matplotlib.widgets import Cursor
 from matplotlib.figure import Figure
 from numpy import arange, sin, pi
+
 
 # uncomment to select /GTK/GTKAgg/GTKCairo
 #from matplotlib.backends.backend_gtk import FigureCanvasGTK as FigureCanvas
@@ -166,6 +168,8 @@ class BuilderExample:
             kevs = self.spectra.scale.to_keV(X)
             for spectrum in self.spectra.spectra:
                 ax.plot(kevs,spectrum)
+
+        cursor = Cursor(ax, useblit=True, color='red', linewidth=1 )
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         canvas.set_size_request(600, 400)
