@@ -22,8 +22,8 @@ else:
     
 #print TMP_DIR
 
-class ScaleCalibration(object):
-    """This holds calibration constants for X axis (Energies):
+class Scale(object):
+    """This holds scale calibration constants for X axis (Energies):
     zerov  - channel number of the middle of "zero" pike,
     scalev - keV/channel multiplier.
     """
@@ -47,7 +47,7 @@ class ScaleCalibration(object):
         """
         return (kev_array/self.scale)+self._zero
 
-scale_none=ScaleCalibration()
+scale_none=Scale()
 
 class Spectra(object):
     """Set of spectra with the same Energy axis scale (x-axis)

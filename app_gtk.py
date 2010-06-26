@@ -18,9 +18,12 @@ from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanva
 #from matplotlib.backends.backend_gtk import NavigationToolbar2GTK as NavigationToolbar
 from matplotlib.backends.backend_gtkagg import NavigationToolbar2GTKAgg as NavigationToolbar
 
+CHANNEL_NO=4096
+CALIBR_ZERO=90
+CALIBR_KEV=20./(CHANNEL_NO-CALIBR_ZERO)
 
 
-DEBUG = 2
+DEBUG = 5
 if DEBUG>2:
     LOAD_FILE="/home/eugeneai/Development/codes/dispersive/test.rtx"
 
@@ -67,11 +70,13 @@ class BuilderExample:
         builder.connect_signals(self)
         # Show the window and all its children
         self.window.show_all()
-        if DEBUG>2:
-            self.on_file_open(self, LOAD_FILE)
         self.active_widget=None
         self.spectra = None
         self.default_view()
+
+        # Shoul be the last one, it seems
+        if DEBUG>2:
+            self.on_file_open(self, LOAD_FILE)
 
     def default_view(self):
         self.insert_plotting_area()
@@ -126,7 +131,7 @@ class BuilderExample:
 
     def default_action(self):
         self.spectra.get_spectra()
-        self.spectra.set_scale(mdl.ScaleCalibration(zero=96, scale=20./4096))
+        self.spectra.set_scale(mdl.Scale(zero=CALIBR_ZERO, scale=CALIBR_KEV))
         self.default_view()
         #self.spectra.r_plot()
         #print "AAA:", EPS_CMD
