@@ -41,8 +41,11 @@ FILE_PATTERNS = {
     "*.rtx": "Spectra file, many spectra",
     "*.spx": "Single spectra file",
     }
+
+class Ui:
+    pass
   
-class BuilderExample:
+class TXRFApplication(object):
 
     # Signal connection is linked in the glade XML file
     def main_window_delete_event_cb(self, widget, data=None):
@@ -62,17 +65,18 @@ class BuilderExample:
         #builder.add_from_file("builder.ui")
         
         # Get objects (widgets) from the Builder
-        self.window = builder.get_object("main_window")
+        self.ui=Ui()
+        self.ui.window = builder.get_object("main_window")
         #self.exp_area = builder.get_object("exp_area")
-        self.main_vbox = builder.get_object("main_vbox")
-        self.statusbar = builder.get_object("statusbar")
+        self.ui.main_vbox = builder.get_object("main_vbox")
+        self.ui.statusbar = builder.get_object("statusbar")
         #self.entry1 = builder.get_object("entry1");
         #self.label1 = builder.get_object("label1");
         # Connect all singals to methods in this class
         builder.connect_signals(self)
         # Show the window and all its children
-        self.window.show_all()
-        self.active_widget=None
+        self.ui.window.show_all()
+        self.ui.active_widget=None
         self.spectra = None
         self.default_view()
 
@@ -81,13 +85,13 @@ class BuilderExample:
             self.on_file_open(self, LOAD_FILE)
 
     def default_view(self):
-        self.insert_plotting_area()
+        self.insert_plotting_area(self.ui)
 
     def on_file_new(self, widget, data=None):
         print "Created"
         # check wether data has been saved. YYY
         self.spectra = None
-        self.insert_plotting_area()
+        self.insert_plotting_area(self.ui)
 
     def on_file_open(self, widget, filename=None):
         if filename is None:
@@ -141,13 +145,14 @@ class BuilderExample:
         #sp.communicate()
 
     def remove_active_widget(self):
-        if self.active_widget is None:
+        if self.ui.active_widget is None:
             return
-        self.main_vbox.remove(self.active_widget)
-        self.active_widget.destroy()
-        self.active_widget=None
+        self.ui.main_vbox.remove(self.ui.active_widget)
+        self.ui.active_widget.destroy()
+        self.ui.active_widget=None
 
-    def insert_plotting_area(self):
+    def insert_plotting_area(self, ui):
+        local=Ui()
         self.remove_active_widget()
 
         win = gtk.Frame(label='Graphics')
@@ -158,6 +163,7 @@ class BuilderExample:
         
         fig = Figure(figsize=(5,4), dpi=100)
         ax = fig.add_subplot(111)
+        #print ax.grid
 
         if not self.spectra or not self.spectra.spectra:
             t = arange(0.0,3.0,0.01)
@@ -169,18 +175,38 @@ class BuilderExample:
             for spectrum in self.spectra.spectra:
                 ax.plot(kevs,spectrum)
 
-        axes = fig.add_axes([0.075, 0.25, 0.9, 0.725], axisbg='#FFFFCC')
+        #axes = fig.add_axes([0.075, 0.25, 0.9, 0.725], axisbg='#FFFFCC')
 
-        cursor = Cursor(axes, useblit=True, color='red', linewidth=1 )
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         canvas.set_size_request(600, 400)
         vbox.pack_start(canvas, True, True)
         toolbar = NavigationToolbar(canvas, win)
         vbox.pack_start(toolbar, False, False)
-        self.main_vbox.pack_start(win,True, True)
+        ui.main_vbox.pack_start(win,True, True)
         win.show_all()
-        self.active_widget=win
+
+        sb=ui.statusbar
+        local.msg_id=None
+        local.ctx_id=sb.get_context_id("plotting")
+
+        def onclick(event): # I like closures. It is cool!
+            if local.msg_id is not None:
+                sb.remove(local.ctx_id, local.msg_id)
+            if event.xdata and event.ydata:
+                s='button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
+                    event.button, event.x, event.y, event.xdata, event.ydata)
+            else:
+                s=' '.join([str(x) for x in [event.button, event.x, event.y, event.xdata, event.ydata]])
+                
+            print s
+            local.msg_id=sb.push(local.ctx_id, s)
+
+        cid = canvas.mpl_connect('button_press_event', onclick)
+        cursor = Cursor(ax, useblit=True, color='red', linewidth=1 )
+
+        
+        ui.active_widget=win
         
 
 
@@ -189,5 +215,5 @@ def main():
     return
     
 if __name__ == "__main__":
-    BuilderExample()
+    TXRFApplication()
     gtk.main()
