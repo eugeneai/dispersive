@@ -169,7 +169,9 @@ class BuilderExample:
             for spectrum in self.spectra.spectra:
                 ax.plot(kevs,spectrum)
 
-        cursor = Cursor(ax, useblit=True, color='red', linewidth=1 )
+        axes = fig.add_axes([0.075, 0.25, 0.9, 0.725], axisbg='#FFFFCC')
+
+        cursor = Cursor(axes, useblit=True, color='red', linewidth=1 )
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         canvas.set_size_request(600, 400)
