@@ -103,7 +103,7 @@ class TXRFApplication(object):
     def get_open_filename(self):
         
         filename = None
-        chooser = gtk.FileChooserDialog("Open Project...", self.window,
+        chooser = gtk.FileChooserDialog("Open Project...", self.ui.window,
                                         gtk.FILE_CHOOSER_ACTION_OPEN,
                                         (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, 
                                          gtk.STOCK_OPEN, gtk.RESPONSE_OK))
@@ -155,7 +155,7 @@ class TXRFApplication(object):
         local=Ui()
         self.remove_active_widget()
 
-        win = gtk.Frame(label='Graphics')
+        win = gtk.Frame()
         win.set_shadow_type(gtk.SHADOW_NONE)
         
         vbox = gtk.VBox()
@@ -203,7 +203,7 @@ class TXRFApplication(object):
             local.msg_id=sb.push(local.ctx_id, s)
 
         cid = canvas.mpl_connect('button_press_event', onclick)
-        cursor = Cursor(ax, useblit=True, color='red', linewidth=1 )
+        cursor = Cursor(ax, useblit=False, color='red', linewidth=1 )
 
         
         ui.active_widget=win

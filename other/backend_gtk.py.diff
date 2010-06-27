@@ -1,0 +1,48 @@
+--- backend_gtk.py	2009-08-23 06:06:12.000000000 +0900
++++ /usr/local/lib/python2.6/dist-packages/matplotlib-0.99.3-py2.6-linux-i686.egg/matplotlib/backends/backend_gtk.py	2010-06-27 18:18:27.252299383 +0900
+@@ -579,7 +579,8 @@
+             return
+ 
+         gc = drawable.new_gc()
+-
++        gc.function = gtk.gdk.INVERT
++        gc.foreground = gtk.gdk.color_parse("#FFFFFFFFFFFF")
+         height = self.canvas.figure.bbox.height
+         y1 = height - y1
+         y0 = height - y0
+@@ -588,28 +589,14 @@
+         h = abs(y1 - y0)
+ 
+         rect = [int(val)for val in min(x0,x1), min(y0, y1), w, h]
+-        try: lastrect, imageBack = self._imageBack
++        drawable.draw_rectangle(gc, False, *rect)
++        try:
++            rect_p = self._imageBack
++            drawable.draw_rectangle(gc, False, *rect_p)
+         except AttributeError:
+-            #snap image back
+-            if event.inaxes is None:
+-                return
+-
+-            ax = event.inaxes
+-            l,b,w,h = [int(val) for val in ax.bbox.bounds]
+-            b = int(height)-(b+h)
+-            axrect = l,b,w,h
+-            self._imageBack = axrect, drawable.get_image(*axrect)
+-            drawable.draw_rectangle(gc, False, *rect)
+-            self._idle_draw_id = 0
+-        else:
+-            def idle_draw(*args):
+-                drawable.draw_image(gc, imageBack, 0, 0, *lastrect)
+-                drawable.draw_rectangle(gc, False, *rect)
+-                self._idle_draw_id = 0
+-                return False
+-            if self._idle_draw_id == 0:
+-                self._idle_draw_id = gobject.idle_add(idle_draw)
+-
++            pass
++        self._imageBack = rect
++        return 
+ 
+     def _init_toolbar(self):
+         self.set_style(gtk.TOOLBAR_ICONS)
