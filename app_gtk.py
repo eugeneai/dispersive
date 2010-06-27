@@ -42,6 +42,33 @@ FILE_PATTERNS = {
     "*.spx": "Single spectra file",
     }
 
+class TXRFNavigationToolbar(NavigationToolbar):
+    def draw_rubberband(self, event, x0, y0, x1, y1):
+        'adapted from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/189744'
+        drawable = self.canvas.window
+        if drawable is None:
+            return
+
+        gc = drawable.new_gc()
+        gc.function = gtk.gdk.INVERT
+        gc.foreground = gtk.gdk.color_parse("#FFFFFFFFFFFF")
+        height = self.canvas.figure.bbox.height
+        y1 = height - y1
+        y0 = height - y0
+
+        w = abs(x1 - x0)
+        h = abs(y1 - y0)
+
+        rect = [int(val)for val in min(x0,x1), min(y0, y1), w, h]
+        drawable.draw_rectangle(gc, False, *rect)
+        try:
+            rect_p = self._imageBack
+            drawable.draw_rectangle(gc, False, *rect_p)
+        except AttributeError:
+            pass
+        self._imageBack = rect
+        return 
+ 
 class Ui:
     pass
   
@@ -181,7 +208,7 @@ class TXRFApplication(object):
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         canvas.set_size_request(600, 400)
         vbox.pack_start(canvas, True, True)
-        toolbar = NavigationToolbar(canvas, win)
+        toolbar = TXRFNavigationToolbar(canvas, win)
         vbox.pack_start(toolbar, False, False)
         ui.main_vbox.pack_start(win,True, True)
         win.show_all()
@@ -203,7 +230,7 @@ class TXRFApplication(object):
             local.msg_id=sb.push(local.ctx_id, s)
 
         cid = canvas.mpl_connect('button_press_event', onclick)
-        cursor = Cursor(ax, useblit=False, color='red', linewidth=1 )
+        #cursor = Cursor(ax, useblit=False, color='red', linewidth=1 )
 
         
         ui.active_widget=win
