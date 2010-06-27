@@ -4,6 +4,8 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkWindow" id="main_window">
     <property name="title" translatable="yes">XRAY TXRF Tool</property>
+    <property name="default_width">800</property>
+    <property name="default_height">600</property>
     <property name="icon_name">utilities-system-monitor</property>
     <signal name="delete_event" handler="main_window_delete_event_cb"/>
     <child>

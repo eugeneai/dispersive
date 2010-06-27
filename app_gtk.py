@@ -18,7 +18,10 @@ from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanva
 
 # or NavigationToolbar for classic
 #from matplotlib.backends.backend_gtk import NavigationToolbar2GTK as NavigationToolbar
-from matplotlib.backends.backend_gtkagg import NavigationToolbar2GTKAgg as NavigationToolbar
+from matplotlib.backend_bases import NavigationToolbar2
+from matplotlib.backends.backend_gtkagg import NavigationToolbar2GTK, NavigationToolbar2GTKAgg
+from matplotlib.backends.backend_gtk import FileChooserDialog
+import matplotlib
 
 CHANNEL_NO=4096
 CALIBR_ZERO=90
@@ -42,7 +45,84 @@ FILE_PATTERNS = {
     "*.spx": "Single spectra file",
     }
 
-class TXRFNavigationToolbar(NavigationToolbar):
+class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
+    toolitems = (
+        ('Home', 'Reset original view', 'home.png', 'home', 'gtk-zoom-fit'),
+        ('Back', 'Back to  previous view','back.png', 'back', 'gtk-go-back'),
+        ('Forward', 'Forward to next view','forward.png', 'forward', 'gtk-go-forward'),
+        ('Pan', 'Pan axes with left mouse, zoom with right', 'move.png', 'pan', 'gtk-index'),
+        ('Zoom', 'Zoom to rectangle','zoom_to_rect.png', 'zoom', 'gtk-zoom-in'),
+        # (None, None, None, None, None),
+        ('Subplots', 'Configure subplots','subplots.png', 'configure_subplots', 'gtk-preferences'),
+        ('Save', 'Save the figure','filesave.png', 'save_figure', 'gtk-convert'),
+        )
+    
+    def __init__(self, canvas, window, main_ui, subplots=False):
+        self.win = window
+        self.main_ui = main_ui
+        self.toolbar = main_ui.toolbar
+        self.statusbar = main_ui.statusbar
+        self.subplots = subplots
+        #gtk.Toolbar.__init__(self)
+        NavigationToolbar2.__init__(self, canvas)
+        self._idle_draw_id = 0
+        window.connect('destroy', self.on_destroy)
+
+    def on_destroy(self, widget, data=None):
+        for w in self._widgets:
+            self.toolbar.remove(w)
+        return True
+
+    def _init_toolbar(self):
+        self.set_style(gtk.TOOLBAR_ICONS)
+        self._init_toolbar2_4()
+
+    def insert(self, widget, pos=-1):
+        try:
+            self._widgets
+        except AttributeError:
+            self._widgets = []
+        self.toolbar.insert(widget, pos)
+        self._widgets.append(widget)
+
+    def _init_toolbar2_4(self):
+        basedir = os.path.join(matplotlib.rcParams['datapath'],'images')
+        self.tooltips = gtk.Tooltips()
+
+        
+        toolitem = gtk.SeparatorToolItem()
+        self.insert(toolitem, -1)
+        for text, tooltip_text, image_file, callback, stock in self.toolitems:
+            if text is None:
+                self.insert( gtk.SeparatorToolItem(), -1 )
+                continue
+            if text=='Subplots' and not self.subplots:
+                continue
+            if stock is None:
+                fname = os.path.join(basedir, image_file)
+                image = gtk.Image()
+                image.set_from_file(fname)
+                tbutton = gtk.ToolButton(image, text)
+            else:
+                tbutton = gtk.ToolButton(stock)
+            self.insert(tbutton, -1)
+            tbutton.connect('clicked', getattr(self, callback))
+            tbutton.set_tooltip(self.tooltips, tooltip_text, 'Private')
+
+        #toolitem = gtk.SeparatorToolItem()
+        #self.insert(toolitem, -1)
+        # set_draw() not making separator invisible,
+        # bug #143692 fixed Jun 06 2004, will be in GTK+ 2.6
+        #toolitem.set_draw(False)
+        #toolitem.set_expand(True)
+
+        #toolitem = gtk.ToolItem()
+        #self.insert(toolitem, -1)
+        #self.message = gtk.Label()
+        #toolitem.add(self.message)
+
+        self.toolbar.show_all()
+
     def draw_rubberband(self, event, x0, y0, x1, y1):
         'adapted from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/189744'
         drawable = self.canvas.window
@@ -67,8 +147,17 @@ class TXRFNavigationToolbar(NavigationToolbar):
         except AttributeError:
             pass
         self._imageBack = rect
-        return 
- 
+        return
+
+    def set_message(self, s):
+        pass 
+
+    def get_filechooser(self):
+        return FileChooserDialog(
+            title='Save the figure',
+            parent=self.main_ui.window,
+            filetypes=self.canvas.get_supported_filetypes(),
+            default_filetype=self.canvas.get_default_filetype())
 class Ui:
     pass
   
@@ -97,6 +186,7 @@ class TXRFApplication(object):
         #self.exp_area = builder.get_object("exp_area")
         self.ui.main_vbox = builder.get_object("main_vbox")
         self.ui.statusbar = builder.get_object("statusbar")
+        self.ui.toolbar = builder.get_object("toolbar")
         #self.entry1 = builder.get_object("entry1");
         #self.label1 = builder.get_object("label1");
         # Connect all singals to methods in this class
@@ -197,19 +287,26 @@ class TXRFApplication(object):
             s = sin(2*pi*t)
             ax.plot(t,s)
         else:
-            X=arange(len(self.spectra.spectra[0]))
+            sp_len = len(self.spectra.spectra[0])
+            X = arange(sp_len)
             kevs = self.spectra.scale.to_keV(X)
-            for spectrum in self.spectra.spectra:
-                ax.plot(kevs,spectrum)
-
-        #axes = fig.add_axes([0.075, 0.25, 0.9, 0.725], axisbg='#FFFFCC')
-
+            for i,spectrum in enumerate(self.spectra.spectra):
+                ax.plot(kevs,spectrum, label='plot_%i' % (i+1))
+            ax.set_ylabel('Counts')
+            ax.set_xlabel('k$e$V')
+            ax.set_title('Spectra plot')
+            ax.set_xlim(kevs[0],kevs[-1])
+            # ax.set_yscale('log')
+            ax.ticklabel_format(style='sci', scilimits=(3,0), axis='y')
+            ax.grid(b=True, aa=False, alpha=0.3)
+            # ax.legend(loc=0) # best location.
+            ax.minorticks_on()
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         canvas.set_size_request(600, 400)
         vbox.pack_start(canvas, True, True)
-        toolbar = TXRFNavigationToolbar(canvas, win)
-        vbox.pack_start(toolbar, False, False)
+        toolbar_ = TXRFNavigationToolbar(canvas, win, self.ui)
+        # vbox.pack_start(toolbar, False, False)
         ui.main_vbox.pack_start(win,True, True)
         win.show_all()
 
