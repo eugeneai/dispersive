@@ -28,9 +28,9 @@ CALIBR_ZERO=90
 CALIBR_KEV=20./(CHANNEL_NO-CALIBR_ZERO)
 
 
-DEBUG = 5
+DEBUG = 2
 if DEBUG>2:
-    LOAD_FILE="/home/eugeneai/Development/codes/dispersive/test.rtx"
+    LOAD_FILE="test.rtx"
 
 if os.name!='nt':
     #EPS_CMD="evince" 
