@@ -329,6 +329,7 @@ class TXRFPlottingFrame(gtk.Frame):
         local.ctx_id=self.ui.sb.get_context_id("plotting")
 
         self.ui.cid = canvas.mpl_connect('button_press_event', self.on_click)
+        # self.ui.check_buttons = widgets.CheckButtons(ax, ['1']*20, [True]*20)
 
     def on_click(self, event, data=None): 
         local = self.local
