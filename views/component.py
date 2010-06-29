@@ -49,6 +49,9 @@ FILE_PATTERNS = {
     "*.spx": "Single spectra file",
     }
 
+class Ui:
+    pass
+  
 class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
     toolitems = (
         ('Home', 'Reset original view', 'home.png', 'home', 'gtk-zoom-fit'),
@@ -73,9 +76,10 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         window.connect('destroy', self.on_destroy)
 
     def on_destroy(self, widget, data=None):
+        # print self._widgets
         for w in self._widgets:
-            self.toolbar.remove(w)
-        return True
+            if w:
+                self.toolbar.remove(w)
 
     def _init_toolbar(self):
         self.set_style(gtk.TOOLBAR_ICONS)
@@ -162,9 +166,75 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
             parent=self.main_ui.window,
             filetypes=self.canvas.get_supported_filetypes(),
             default_filetype=self.canvas.get_default_filetype())
-class Ui:
-    pass
-  
+
+class TXRFPlottingFrame(gtk.Frame):
+    def __init__(self, label=None, parent_ui=None, model=None):
+        gtk.Frame.__init__(self, label=label)
+        self.ui=Ui()
+        self.spectra = model
+        ui = parent_ui
+
+        local=Ui()
+        self.local=local
+
+        win = self
+        self.ui.win=win
+        win.set_shadow_type(gtk.SHADOW_NONE)
+        
+        vbox = gtk.VBox()
+        win.add(vbox)
+        
+        fig = Figure(figsize=(5,4), dpi=100)
+        self.ui.fig = fig
+        ax = fig.add_subplot(111)
+        self.ui.ax = ax
+
+        if not self.spectra or not self.spectra.spectra:
+            t = arange(0.0,3.0,0.01)
+            s = sin(2*pi*t)
+            ax.plot(t,s)
+        else:
+            sp_len = len(self.spectra.spectra[0])
+            X = arange(sp_len)
+            kevs = self.spectra.scale.to_keV(X)
+            for i,spectrum in enumerate(self.spectra.spectra):
+                ax.plot(kevs,spectrum, label='plot_%i' % (i+1))
+            ax.set_ylabel('Counts')
+            ax.set_xlabel('k$e$V')
+            ax.set_title('Spectra plot')
+            ax.set_xlim(kevs[0],kevs[-1])
+            # ax.set_yscale('log')
+            ax.ticklabel_format(style='sci', scilimits=(3,0), axis='y')
+            ax.grid(b=True, aa=False, alpha=0.3)
+            # ax.legend(loc=0) # best location.
+            ax.minorticks_on()
+
+        canvas = FigureCanvas(fig)  # a gtk.DrawingArea
+        self.ui.canvas = canvas
+        canvas.set_size_request(600, 400)
+        vbox.pack_start(canvas, True, True)
+        toolbar_ = TXRFNavigationToolbar(canvas, win, parent_ui)
+        # vbox.pack_start(toolbar, False, False)
+
+        self.ui.sb=ui.statusbar
+        local.msg_id=None
+        local.ctx_id=self.ui.sb.get_context_id("plotting")
+
+        self.ui.cid = canvas.mpl_connect('button_press_event', self.on_click)
+        #cursor = Cursor(ax, useblit=False, color='red', linewidth=1 )
+
+    def on_click(self, event, data=None): 
+        local = self.local
+        if local.msg_id is not None:
+            self.ui.sb.remove_message(local.ctx_id, local.msg_id)
+        if event.xdata and event.ydata:
+            s='button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
+                event.button, event.x, event.y, event.xdata, event.ydata)
+        else:
+            s=' '.join([str(x) for x in [event.button, event.x, event.y, event.xdata, event.ydata]])
+
+        local.msg_id=self.ui.sb.push(local.ctx_id, s)
+
 class TXRFApplication(object):
 
     # Signal connection is linked in the glade XML file
@@ -209,7 +279,7 @@ class TXRFApplication(object):
         self.insert_plotting_area(self.ui)
 
     def on_file_new(self, widget, data=None):
-        print "Created"
+        # print "Created"
         # check wether data has been saved. YYY
         self.spectra = None
         self.insert_plotting_area(self.ui)
@@ -273,69 +343,10 @@ class TXRFApplication(object):
         self.ui.active_widget=None
 
     def insert_plotting_area(self, ui):
-        local=Ui()
         self.remove_active_widget()
-
-        win = gtk.Frame()
-        win.set_shadow_type(gtk.SHADOW_NONE)
-        
-        vbox = gtk.VBox()
-        win.add(vbox)
-        
-        fig = Figure(figsize=(5,4), dpi=100)
-        ax = fig.add_subplot(111)
-        #print ax.grid
-
-        if not self.spectra or not self.spectra.spectra:
-            t = arange(0.0,3.0,0.01)
-            s = sin(2*pi*t)
-            ax.plot(t,s)
-        else:
-            sp_len = len(self.spectra.spectra[0])
-            X = arange(sp_len)
-            kevs = self.spectra.scale.to_keV(X)
-            for i,spectrum in enumerate(self.spectra.spectra):
-                ax.plot(kevs,spectrum, label='plot_%i' % (i+1))
-            ax.set_ylabel('Counts')
-            ax.set_xlabel('k$e$V')
-            ax.set_title('Spectra plot')
-            ax.set_xlim(kevs[0],kevs[-1])
-            # ax.set_yscale('log')
-            ax.ticklabel_format(style='sci', scilimits=(3,0), axis='y')
-            ax.grid(b=True, aa=False, alpha=0.3)
-            # ax.legend(loc=0) # best location.
-            ax.minorticks_on()
-
-        canvas = FigureCanvas(fig)  # a gtk.DrawingArea
-        canvas.set_size_request(600, 400)
-        vbox.pack_start(canvas, True, True)
-        toolbar_ = TXRFNavigationToolbar(canvas, win, self.ui)
-        # vbox.pack_start(toolbar, False, False)
-        ui.main_vbox.pack_start(win,True, True)
-        win.show_all()
-
-        sb=ui.statusbar
-        local.msg_id=None
-        local.ctx_id=sb.get_context_id("plotting")
-
-        def onclick(event): # I like closures. It is cool!
-            if local.msg_id is not None:
-                sb.remove(local.ctx_id, local.msg_id)
-            if event.xdata and event.ydata:
-                s='button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
-                    event.button, event.x, event.y, event.xdata, event.ydata)
-            else:
-                s=' '.join([str(x) for x in [event.button, event.x, event.y, event.xdata, event.ydata]])
-                
-            print s
-            local.msg_id=sb.push(local.ctx_id, s)
-
-        cid = canvas.mpl_connect('button_press_event', onclick)
-        #cursor = Cursor(ax, useblit=False, color='red', linewidth=1 )
-
-        
-        ui.active_widget=win
-        
+        self.ui.active_widget=TXRFPlottingFrame(parent_ui=ui, model=self.spectra)
+        ui.main_vbox.pack_start(self.ui.active_widget,True, True)
+        self.ui.active_widget.show_all()
 
 
 def main():
