@@ -2,6 +2,10 @@
 import pygtk
 pygtk.require('2.0')
 import gtk, sys
+
+if __name__=="__main__":
+    sys.path.append("..")
+    
 import models.component as mdl
 import os
 import subprocess as spp
@@ -195,10 +199,10 @@ class TXRFApplication(object):
         self.ui.window.show_all()
         self.ui.active_widget=None
         self.spectra = None
-        self.default_view()
 
         # Shoul be the last one, it seems
         if DEBUG>2:
+            self.default_view()
             self.on_file_open(self, LOAD_FILE)
 
     def default_view(self):
@@ -335,9 +339,8 @@ class TXRFApplication(object):
 
 
 def main():
-    gtk.main()
-    return
+    TXRFApplication()
+    return gtk.main()
     
 if __name__ == "__main__":
-    TXRFApplication()
-    gtk.main()
+    sys.exit(main())
