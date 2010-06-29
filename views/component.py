@@ -10,10 +10,9 @@ import models.component as mdl
 import os
 import subprocess as spp
 
-from matplotlib.widgets import Cursor
+import matplotlib.widgets as widgets
 from matplotlib.figure import Figure
 from numpy import arange, sin, pi
-
 
 # uncomment to select /GTK/GTKAgg/GTKCairo
 #from matplotlib.backends.backend_gtk import FigureCanvasGTK as FigureCanvas
@@ -54,14 +53,15 @@ class Ui:
   
 class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
     toolitems = (
-        ('Home', 'Reset original view', 'home.png', 'home', 'gtk-zoom-fit'),
-        ('Back', 'Back to  previous view','back.png', 'back', 'gtk-go-back'),
-        ('Forward', 'Forward to next view','forward.png', 'forward', 'gtk-go-forward'),
-        ('Pan', 'Pan axes with left mouse, zoom with right', 'move.png', 'pan', 'gtk-index'),
-        ('Zoom', 'Zoom to rectangle','zoom_to_rect.png', 'zoom', 'gtk-zoom-in'),
-        # (None, None, None, None, None),
-        ('Subplots', 'Configure subplots','subplots.png', 'configure_subplots', 'gtk-preferences'),
-        ('Save', 'Save the figure','filesave.png', 'save_figure', 'gtk-convert'),
+        (False, 'Home', 'Reset original view', 'home.png', 'home', 'gtk-zoom-fit'),
+        (False, 'Back', 'Back to  previous view','back.png', 'back', 'gtk-go-back'),
+        (False, 'Forward', 'Forward to next view','forward.png', 'forward', 'gtk-go-forward'),
+        (True,  'Pan', 'Pan axes with left mouse, zoom with right', 'move.png', 'pan', 'gtk-index'),
+        (True,  'Zoom', 'Zoom to rectangle','zoom_to_rect.png', 'zoom', 'gtk-zoom-in'),
+        # (None, None, None, None, None, None),
+        (False, 'Subplots', 'Configure subplots','subplots.png', 'configure_subplots', 'gtk-preferences'),
+        (False, 'Save', 'Save the figure','filesave.png', 'save_figure', 'gtk-convert'),
+        (True,  'Channels', 'Explore channel counts','filesave.png', 'explore_channels', 'gtk-color-picker'),
         )
     
     def __init__(self, canvas, window, main_ui, subplots=False):
@@ -74,12 +74,14 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         NavigationToolbar2.__init__(self, canvas)
         self._idle_draw_id = 0
         window.connect('destroy', self.on_destroy)
+        self.win=window
 
     def on_destroy(self, widget, data=None):
         # print self._widgets
         for w in self._widgets:
             if w:
                 self.toolbar.remove(w)
+        self.win=None
 
     def _init_toolbar(self):
         self.set_style(gtk.TOOLBAR_ICONS)
@@ -100,7 +102,7 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         
         toolitem = gtk.SeparatorToolItem()
         self.insert(toolitem, -1)
-        for text, tooltip_text, image_file, callback, stock in self.toolitems:
+        for toggled, text, tooltip_text, image_file, callback, stock in self.toolitems:
             if text is None:
                 self.insert( gtk.SeparatorToolItem(), -1 )
                 continue
@@ -110,11 +112,21 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
                 fname = os.path.join(basedir, image_file)
                 image = gtk.Image()
                 image.set_from_file(fname)
-                tbutton = gtk.ToolButton(image, text)
+                if toggled:
+                    tbutton = gtk.ToggleToolButton(image, text)
+                else:
+                    tbutton = gtk.ToolButton(image, text)
             else:
-                tbutton = gtk.ToolButton(stock)
+                if toggled:
+                    tbutton = gtk.ToggleToolButton(stock)
+                else:
+                    tbutton = gtk.ToolButton(stock)
             self.insert(tbutton, -1)
-            tbutton.connect('clicked', getattr(self, callback))
+            if toggled:
+                tbutton.connect('toggled', getattr(self, callback))
+            else:
+                tbutton.connect('clicked', getattr(self, callback))
+            setattr(self, callback+'_button', tbutton)
             tbutton.set_tooltip(self.tooltips, tooltip_text, 'Private')
 
         #toolitem = gtk.SeparatorToolItem()
@@ -166,6 +178,102 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
             parent=self.main_ui.window,
             filetypes=self.canvas.get_supported_filetypes(),
             default_filetype=self.canvas.get_default_filetype())
+
+    def explore_channels(self, widget, data=None):
+        self.zoom_button.set_active(False)
+        try:
+            cur = self.win.ui.cursor
+        except AttributeError:
+            self.win.ui.cursor = Cursor(self.win.ui.ax, useblit=True, hline=False, color='red', linewidth=1, aa=False )
+            cur = self.win.ui.cursor
+        cur.toggle_active()
+        self.zoom_button.set_sensitive(not cur.active)
+
+class Cursor(widgets.Cursor):
+    """
+    A horizontal and vertical line span the axes that and move with
+    the pointer.  You can turn off the hline or vline spectively with
+    the attributes
+
+      horizOn =True|False: controls visibility of the horizontal line
+      vertOn =True|False: controls visibility of the horizontal line
+
+    And the visibility of the cursor itself with visible attribute
+    """
+    def __init__(self, ax, useblit=False, hline=True, **lineprops):
+        """
+        Add a cursor to ax.  If useblit=True, use the backend
+        dependent blitting features for faster updates (GTKAgg only
+        now).  lineprops is a dictionary of line properties.  See
+        examples/widgets/cursor.py.
+        """
+        self.ax = ax
+        self.canvas = ax.figure.canvas
+        
+        self.visible = True
+        self.horizOn = hline
+        self.vertOn = True
+        self.useblit = useblit
+
+        self.lineh = ax.axhline(ax.get_ybound()[0], visible=False, **lineprops)
+        self.linev = ax.axvline(ax.get_xbound()[0], visible=False, **lineprops)
+
+        self.active = False
+
+    def toggle_active(self):
+        if self.active:
+            self.canvas.mpl_disconnect(self.cid_d)
+            self.canvas.mpl_disconnect(self.cid_m)
+        else:
+            self.cid_m = self.canvas.mpl_connect('motion_notify_event', self.onmove)
+            self.cid_d = self.canvas.mpl_connect('draw_event', self.clear)
+        self.active = not self.active
+        self.linev.set_visible(False)
+        self.lineh.set_visible(False)
+        self.needclear = True
+        self.background = None
+
+    def clear(self, event):
+        'clear the cursor'
+        if self.useblit:
+            self.background = self.canvas.copy_from_bbox(self.ax.bbox)
+        self.linev.set_visible(False)
+        self.lineh.set_visible(False)
+
+    def onmove(self, event):
+        'on mouse motion draw the cursor if visible'
+        if event.inaxes != self.ax:
+            self.linev.set_visible(False)
+            self.lineh.set_visible(False)
+
+            if self.needclear:
+                self.canvas.draw()
+                self.needclear = False
+            return
+        self.needclear = True
+        if not self.visible: return
+        self.linev.set_xdata((event.xdata, event.xdata))
+
+        self.lineh.set_ydata((event.ydata, event.ydata))
+        self.linev.set_visible(self.visible and self.vertOn)
+        self.lineh.set_visible(self.visible and self.horizOn)
+
+        self._update()
+
+
+    def _update(self):
+
+        if self.useblit:
+            if self.background is not None:
+                self.canvas.restore_region(self.background)
+            self.ax.draw_artist(self.linev)
+            self.ax.draw_artist(self.lineh)
+            self.canvas.blit(self.ax.bbox)
+        else:
+
+            self.canvas.draw_idle()
+
+        return False
 
 class TXRFPlottingFrame(gtk.Frame):
     def __init__(self, label=None, parent_ui=None, model=None):
@@ -221,7 +329,6 @@ class TXRFPlottingFrame(gtk.Frame):
         local.ctx_id=self.ui.sb.get_context_id("plotting")
 
         self.ui.cid = canvas.mpl_connect('button_press_event', self.on_click)
-        #cursor = Cursor(ax, useblit=False, color='red', linewidth=1 )
 
     def on_click(self, event, data=None): 
         local = self.local
