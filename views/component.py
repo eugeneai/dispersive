@@ -1,10 +1,14 @@
 #!/usr/bin/python
+
 import pygtk
 pygtk.require('2.0')
 import gtk, sys
 
 if __name__=="__main__":
     sys.path.append("..")
+
+from interface import *
+from zope.interface import implements
     
 import models.component as mdl
 import os
@@ -275,7 +279,8 @@ class Cursor(widgets.Cursor):
 
         return False
 
-class TXRFPlottingFrame(gtk.Frame):
+class PlottingFrame(gtk.Frame):
+    implements(IPlottingFrame)
     def __init__(self, label=None, parent_ui=None, model=None):
         gtk.Frame.__init__(self, label=label)
         self.ui=Ui()
@@ -343,7 +348,8 @@ class TXRFPlottingFrame(gtk.Frame):
 
         local.msg_id=self.ui.sb.push(local.ctx_id, s)
 
-class TXRFApplication(object):
+class Application(object):
+    implements(IApplication)
 
     # Signal connection is linked in the glade XML file
     def main_window_delete_event_cb(self, widget, data=None):
@@ -355,7 +361,8 @@ class TXRFApplication(object):
         text = self.entry1.get_text()
         self.label1.set_text(text)
      
-    def __init__(self):
+    def __init__(self, model = None):
+        self.model = model
         # Create a new Builder object
         builder = gtk.Builder()
         # Add the UI objects (widgets) from the Glade XML file
@@ -376,7 +383,6 @@ class TXRFApplication(object):
         # Show the window and all its children
         self.ui.window.show_all()
         self.ui.active_widget=None
-        self.spectra = None
 
         # Shoul be the last one, it seems
         if DEBUG>2:
@@ -396,7 +402,7 @@ class TXRFApplication(object):
         if filename is None:
             filename = self.get_open_filename()
         if filename:
-            self.spectra=mdl.Spectra(filename)
+            self.model = mdl.Spectra(filename)
             self.default_action()
             
     def get_open_filename(self):
@@ -435,8 +441,8 @@ class TXRFApplication(object):
         dialog.destroy()
 
     def default_action(self):
-        self.spectra.get_spectra()
-        self.spectra.set_scale(mdl.Scale(zero=CALIBR_ZERO, scale=CALIBR_KEV))
+        self.model.get_spectra()
+        self.model.set_scale(mdl.Scale(zero=CALIBR_ZERO, scale=CALIBR_KEV))
         self.default_view()
         #self.spectra.r_plot()
         #print "AAA:", EPS_CMD
@@ -450,15 +456,19 @@ class TXRFApplication(object):
         self.ui.active_widget.destroy()
         self.ui.active_widget=None
 
-    def insert_plotting_area(self, ui):
-        self.remove_active_widget()
-        self.ui.active_widget=TXRFPlottingFrame(parent_ui=ui, model=self.spectra)
-        ui.main_vbox.pack_start(self.ui.active_widget,True, True)
-        self.ui.active_widget.show_all()
+    def insert_active_widget(self, widget):
+        if self.ui.active_widget:
+            self.remove_active_widget()
+        self.ui.active_widget = widget
+        self.ui.main_vbox.pack_start(widget, True, True)
+        widget.show_all()
 
+    def insert_plotting_area(self, ui):
+        widget=PlottingFrame(parent_ui=ui, model=self.model)
+        self.insert_active_widget(widget)
 
 def main():
-    TXRFApplication()
+    Application()
     return gtk.main()
     
 if __name__ == "__main__":
