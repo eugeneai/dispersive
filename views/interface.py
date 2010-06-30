@@ -8,7 +8,7 @@ class IView(ZI.Interface):
     ui = ZI.Attribute("User interface component holder.")
 
 class IApplication(IView):
-    pass
+    def remove_active_widget
 
 class IFrame(IView):
     pass
