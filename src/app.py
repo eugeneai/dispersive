@@ -2,7 +2,7 @@
 # encoding: utf-8
 import sys
 from zope.configuration.xmlconfig import xmlconfig
-import views.component as views
+import dispersive.views.component as views
 
 # this is a namespace package
 try:
@@ -14,7 +14,7 @@ except ImportError:
         
 
 if __name__=="__main__":
-    xmlconfig(open('configure.zcml'))
+    #xmlconfig(open('configure.zcml'))
     sys.exit(views.main())
 
     

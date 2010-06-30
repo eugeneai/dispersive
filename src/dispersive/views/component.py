@@ -13,7 +13,7 @@ import zope.component as ZC
 import zope.component.interfaces as ZCI
 from zope.component.factory import Factory
     
-import models.component as mdl
+import dispersive.models.component as mdl
 import os
 import subprocess as spp
 

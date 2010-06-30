@@ -2,7 +2,7 @@
 
 <include package="zope.component" files="meta.zcml" />
 
-<include file="views/configure.zcml" />
+<include package="dispersive.views" />
                 
 </configure>
                 

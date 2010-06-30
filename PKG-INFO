@@ -1,0 +1,13 @@
+Metadata-Version: 0.0.1
+Name: dispersive
+Version: 0.3.7
+Summary: Dispersive XRF Component Library
+Home-page: http://xray.irnok.net/
+Author: Evgeny Cherkashim
+Author-email: eugene@irnok.net
+License: GNU GPL
+Description: Docutils is a modular system for processing documentation
+        into useful formats, such as HTML, XML, and LaTeX.  For
+        input Docutils supports reStructuredText, an easy-to-read,
+        what-you-see-is-what-you-get plaintext markup syntax.
+Platform: OS-independent
