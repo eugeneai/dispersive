@@ -9,6 +9,9 @@ if __name__=="__main__":
 
 from interface import *
 from zope.interface import implements
+import zope.component as ZC
+import zope.component.interfaces as ZCI
+from zope.component.factory import Factory
     
 import models.component as mdl
 import os
@@ -51,6 +54,9 @@ FILE_PATTERNS = {
     "*.rtx": "Spectra file, many spectra",
     "*.spx": "Single spectra file",
     }
+
+def gsm():
+    return ZC.getGlobalSiteManager()
 
 class Ui:
     pass
@@ -348,6 +354,9 @@ class PlottingFrame(gtk.Frame):
 
         local.msg_id=self.ui.sb.push(local.ctx_id, s)
 
+pffactory = Factory(PlottingFrame, 'PlottingFrame', 'Frame, where one can plot spectra.')
+gsm().registerUtility(pffactory, ZCI.IFactory, 'PlottingFrame')
+
 class Application(object):
     implements(IApplication)
 
@@ -464,7 +473,9 @@ class Application(object):
         widget.show_all()
 
     def insert_plotting_area(self, ui):
-        widget=PlottingFrame(parent_ui=ui, model=self.model)
+        widget = ZC.createObject('PlottingFrame',
+            parent_ui=ui, model=self.model)
+        # widget=PlottingFrame(parent_ui=ui, model=self.model)
         self.insert_active_widget(widget)
 
 def main():
