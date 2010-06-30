@@ -354,8 +354,8 @@ class PlottingFrame(gtk.Frame):
 
         local.msg_id=self.ui.sb.push(local.ctx_id, s)
 
-pffactory = Factory(PlottingFrame, 'PlottingFrame', 'Frame, where one can plot spectra.')
-gsm().registerUtility(pffactory, ZCI.IFactory, 'PlottingFrame')
+#pffactory = Factory(PlottingFrame, 'PlottingFrame', 'Frame, where one can plot spectra.')
+#gsm().registerUtility(pffactory, ZCI.IFactory, 'PlottingFrame')
 
 class Application(object):
     implements(IApplication)

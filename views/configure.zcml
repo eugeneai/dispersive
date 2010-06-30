@@ -1,0 +1,8 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+<utility
+    factory=".component.PlottingFrame"
+    provides="zope.component.interfaces.IFactory"
+    name="PlottingFrame"
+    />
+</configure>
