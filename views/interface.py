@@ -8,7 +8,8 @@ class IView(ZI.Interface):
     ui = ZI.Attribute("User interface component holder.")
 
 class IApplication(IView):
-    def remove_active_widget
+    def remove_active_widget():
+        """Remove active widget froom the active area."""
 
 class IFrame(IView):
     pass
