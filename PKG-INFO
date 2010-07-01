@@ -1,13 +1,13 @@
-Metadata-Version: 0.0.1
+Metadata-Version: 1.0
 Name: dispersive
-Version: 0.3.7
+Version: 0.0.1
 Summary: Dispersive XRF Component Library
 Home-page: http://xray.irnok.net/
 Author: Evgeny Cherkashim
 Author-email: eugene@irnok.net
 License: GNU GPL
-Description: Docutils is a modular system for processing documentation
-        into useful formats, such as HTML, XML, and LaTeX.  For
-        input Docutils supports reStructuredText, an easy-to-read,
-        what-you-see-is-what-you-get plaintext markup syntax.
+Description: Dispersive (working name) ia a package of components for 
+        Dispersive X-Ray Fluorescence spectra analysis.  All explorations
+        will be organized as projects.  The package will able to load 
+        various proprietrary data formats from various sources.
 Platform: OS-independent

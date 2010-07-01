@@ -7,6 +7,5 @@ setup(
     package_dir={"": "src"},
     namespace_packages=["dispersive"],
     install_requires=["setuptools",
-                      "zope.component",
-                      "matplotlib"],
+                      "zope.component",],
     )
