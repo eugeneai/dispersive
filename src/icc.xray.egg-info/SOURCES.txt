@@ -14,6 +14,3 @@ src/icc/xray/models/components.py
 src/icc/xray/views/__init__.py
 src/icc/xray/views/components.py
 src/icc/xray/views/interfaces.py
-src/icc/xray/views/ui/__init__.py
-src/icc/xray/views/ui/main_win.py
-src/icc/xray/views/ui/spectra.py
