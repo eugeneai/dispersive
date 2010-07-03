@@ -1,6 +1,6 @@
 setup.py
 src/icc/__init__.py
-src/icc/app.py
+src/icc/icc_xray_app.py
 src/icc/prog.py
 src/icc.xray.egg-info/PKG-INFO
 src/icc.xray.egg-info/SOURCES.txt
@@ -8,7 +8,9 @@ src/icc.xray.egg-info/dependency_links.txt
 src/icc.xray.egg-info/namespace_packages.txt
 src/icc.xray.egg-info/requires.txt
 src/icc.xray.egg-info/top_level.txt
+src/icc.xray.egg-info/zip-safe
 src/icc/xray/__init__.py
+src/icc/xray/app.py
 src/icc/xray/models/__init__.py
 src/icc/xray/models/components.py
 src/icc/xray/views/__init__.py

@@ -12,6 +12,7 @@ from zope.interface import implements
 import zope.component as ZC
 import zope.component.interfaces as ZCI
 from zope.component.factory import Factory
+from pkg_resources import resource_stream, resource_string
     
 import icc.xray.models.components as mdl
 import os
@@ -187,6 +188,14 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
             parent=self.main_ui.window,
             filetypes=self.canvas.get_supported_filetypes(),
             default_filetype=self.canvas.get_default_filetype())
+
+    def pan(self, *args, **kwargs):
+        self.zoom_button.set_active(False)
+        return NavigationToolbar2GTKAgg.pan(self, *args, **kwargs)
+
+    def zoom(self, *args, **kwargs):
+        self.pan_button.set_active(False)
+        return NavigationToolbar2GTKAgg.zoom(self, *args, **kwargs)
 
     def explore_channels(self, widget, data=None):
         self.zoom_button.set_active(False)
@@ -374,7 +383,8 @@ class Application(object):
         # Create a new Builder object
         builder = gtk.Builder()
         # Add the UI objects (widgets) from the Glade XML file
-        builder.add_from_file("ui/main_win_gtk.glade")
+        ui_glade_src = resource_string(__name__,"ui/main_win_gtk.glade")
+        builder.add_from_string(ui_glade_src)
         #builder.add_from_file("builder.ui")
         
         # Get objects (widgets) from the Builder
@@ -477,9 +487,4 @@ class Application(object):
         # widget=PlottingFrame(parent_ui=ui, model=self.model)
         self.insert_active_widget(widget)
 
-def main():
-    Application()
-    return gtk.main()
-    
-if __name__ == "__main__":
-    sys.exit(main())
+
