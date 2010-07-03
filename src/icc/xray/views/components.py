@@ -293,6 +293,32 @@ class Cursor(widgets.Cursor):
 
         return False
 
+class View(object):
+    template = None
+    names    = None
+    def __init__(self, model = None):
+        self.ui=Ui()
+        self.set_model(model)
+        self.load_ui(self.__class__.template,
+                     self.__class__.names)
+
+    def set_model(self, model):
+        self.model=model
+        # some update needed???
+
+    def load_ui(self, template, names = None):
+        if template:
+            builder=self.ui._builder = gtk.Builder()
+            builder.add_from_string(resource_string(__name__, template))
+            builder.connect_signals(self, builder)
+            if names:
+                for name in names:
+                    widget = builder.get_object(name)
+                    if widget is None:
+                        raise ValueError("widget '%s' not found in  template '%s'" % (name, template))
+                    setattr(self.ui, name, widget)
+        
+
 class PlottingFrame(gtk.Frame):
     implements(IPlottingFrame)
     def __init__(self, label=None, parent_ui=None, model=None):
@@ -365,8 +391,17 @@ class PlottingFrame(gtk.Frame):
 #pffactory = Factory(PlottingFrame, 'PlottingFrame', 'Frame, where one can plot spectra.')
 #gsm().registerUtility(pffactory, ZCI.IFactory, 'PlottingFrame')
 
-class Application(object):
+class ProjectFrame(gtk.Frame, View):
+    template = "ui/project_frame.glade"
+    def __init__(self, label=None, parent_ui=None, model=None):
+        gtk.Frame.__init__(self, lanel=label)
+        View.__init__(self, model=model)
+
+class Application(View):
     implements(IApplication)
+    template = "ui/main_win_gtk.glade"
+    names = ['main_window', 'statusbar', 'toolbar',
+             "main_vbox"]
 
     # Signal connection is linked in the glade XML file
     def main_window_delete_event_cb(self, widget, data=None):
@@ -379,26 +414,9 @@ class Application(object):
         self.label1.set_text(text)
      
     def __init__(self, model = None):
-        self.model = model
-        # Create a new Builder object
-        builder = gtk.Builder()
-        # Add the UI objects (widgets) from the Glade XML file
-        ui_glade_src = resource_string(__name__,"ui/main_win_gtk.glade")
-        builder.add_from_string(ui_glade_src)
-        #builder.add_from_file("builder.ui")
-        
-        # Get objects (widgets) from the Builder
-        self.ui=Ui()
-        self.ui.window = builder.get_object("main_window")
-        #self.exp_area = builder.get_object("exp_area")
-        self.ui.main_vbox = builder.get_object("main_vbox")
-        self.ui.statusbar = builder.get_object("statusbar")
-        self.ui.toolbar = builder.get_object("toolbar")
-        #self.entry1 = builder.get_object("entry1");
-        #self.label1 = builder.get_object("label1");
-        # Connect all singals to methods in this class
-        builder.connect_signals(self)
-        # Show the window and all its children
+        View.__init__(self, model=model)
+        self.ui.window=self.ui.main_window
+        print dir(self.ui)
         self.ui.window.show_all()
         self.ui.active_widget=None
 
