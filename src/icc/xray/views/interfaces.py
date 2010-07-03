@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# encoding: utf-8
 
 import zope.interface as ZI
 

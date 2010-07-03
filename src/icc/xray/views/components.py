@@ -403,27 +403,21 @@ class Application(View):
     names = ['main_window', 'statusbar', 'toolbar',
              "main_vbox"]
 
-    # Signal connection is linked in the glade XML file
-    def main_window_delete_event_cb(self, widget, data=None):
-        gtk.main_quit()
-    m_quit_activate_cb=main_window_delete_event_cb
-
-    # Signal connection is linked in the glade XML file
-    def on_button1_clicked(self, widget, data=None):
-        text = self.entry1.get_text()
-        self.label1.set_text(text)
-     
     def __init__(self, model = None):
         View.__init__(self, model=model)
         self.ui.window=self.ui.main_window
-        print dir(self.ui)
         self.ui.window.show_all()
         self.ui.active_widget=None
 
         # Shoul be the last one, it seems
         if DEBUG>2:
             self.default_view()
-            self.on_file_open(self, LOAD_FILE)
+            self.open_project(self, LOAD_FILE)
+
+    # Signal connection is linked in the glade XML file
+    def main_window_delete_event_cb(self, widget, data1=None, data2=None):
+        gtk.main_quit()
+    m_quit_activate_cb=main_window_delete_event_cb
 
     def default_view(self):
         self.insert_plotting_area(self.ui)
@@ -434,12 +428,15 @@ class Application(View):
         self.spectra = None
         self.insert_plotting_area(self.ui)
 
-    def on_file_open(self, widget, filename=None):
+    def open_project(self, filename=None):
         if filename is None:
             filename = self.get_open_filename()
         if filename:
             self.model = mdl.Spectra(filename)
             self.default_action()
+
+    def on_file_open(self, widget, data=None):
+        return self.open_project()
             
     def get_open_filename(self):
         
@@ -460,7 +457,7 @@ class Application(View):
         if response == gtk.RESPONSE_OK:
             filename = chooser.get_filename()
         chooser.destroy()
-        print "File:", filename
+        # print "File:", filename
         return filename
     
     def error_message(self, message):
@@ -501,7 +498,8 @@ class Application(View):
 
     def insert_plotting_area(self, ui):
         widget = ZC.createObject('PlottingFrame',
-            parent_ui=ui, model=self.model)
+           parent_ui=ui, model=self.model)
+        # widget = IView(self.model)
         # widget=PlottingFrame(parent_ui=ui, model=self.model)
         self.insert_active_widget(widget)
 

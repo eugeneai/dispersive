@@ -4,6 +4,8 @@
 from lxml import etree
 import subprocess as spp
 import os, os.path
+from zope.interface import implements
+from interfaces import *
 
 DEBUG = True
 
@@ -50,6 +52,7 @@ class Scale(object):
 scale_none=Scale()
 
 class Spectra(object):
+    implements(ISpectra)
     """Set of spectra with the same Energy axis scale (x-axis)
     """
     def __init__(self, source, scale=None):
@@ -148,7 +151,7 @@ dev.off()
         
 
 def test0(filename, spectrum=None):
-    ss = Spectrums(filename)
+    ss = Spectra(filename)
     ss.r_plot(func='', spectrum=spectrum)
     print 'Spectra length:', len(ss.spectra[0])
     print 'Spectra count:', len(ss.spectra)
