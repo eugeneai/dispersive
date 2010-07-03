@@ -6,6 +6,11 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     namespace_packages=["icc"],
+    scripts = ['src/icc/app.py'],
     install_requires=["setuptools",
                       "zope.component",],
+    package_data = {
+        # If any package contains *.txt or *.rst files, include them:
+        '': ['*.glade', ],
+        }
     )
