@@ -7,13 +7,13 @@ import gtk, sys
 if __name__=="__main__":
     sys.path.append("..")
 
-from interface import *
+from interfaces import *
 from zope.interface import implements
 import zope.component as ZC
 import zope.component.interfaces as ZCI
 from zope.component.factory import Factory
     
-import dispersive.models.component as mdl
+import icc.xray.models.components as mdl
 import os
 import subprocess as spp
 
