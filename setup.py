@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     zip_safe = True,
     name="icc.xray",
-    version="0.0.2",
+    version="0.0.3",
     packages=find_packages("src"),
     package_dir={"": "src"},
     namespace_packages=["icc"],
@@ -11,7 +11,7 @@ setup(
     install_requires=["setuptools",
                       "zope.component",],
     package_data = {
-        'icc.xray.views': ['ui/*.glade', ],
+        'icc.xray.views': ['ui/*.glade', "ui/icons/tango/16x16/*/*.png"],
         },
     author = "Evgeny Cherkashin",
     author_email = "eugene@irnok.net",

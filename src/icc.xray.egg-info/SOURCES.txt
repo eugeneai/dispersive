@@ -13,6 +13,7 @@ src/icc/xray/__init__.py
 src/icc/xray/app.py
 src/icc/xray/models/__init__.py
 src/icc/xray/models/components.py
+src/icc/xray/models/interfaces.py
 src/icc/xray/views/__init__.py
 src/icc/xray/views/components.py
 src/icc/xray/views/interfaces.py
