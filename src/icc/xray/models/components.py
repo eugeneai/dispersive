@@ -55,17 +55,19 @@ class Spectra(object):
     implements(ISpectra)
     """Set of spectra with the same Energy axis scale (x-axis)
     """
-    def __init__(self, source, scale=None):
+    def __init__(self, source=None, scale=None):
         self.source = source
         if scale is None:
             self.set_scale(scale_none)
         else:
             self.set_scale(scale)
             
-        if source.lstrip().startswith('<?'):
-            raise RuntimeError('Not implemented')
         self.xml=self.spectra=None
-        self.load(open(self.source))
+
+        if self.source:
+            self.load(open(self.source))
+            if source.lstrip().startswith('<?'):
+                raise RuntimeError('Not implemented')
         
     def load(self, source):
         self.xml= etree.parse(source)
@@ -76,7 +78,11 @@ class Spectra(object):
     def get_spectra(self):
         def _c(x):
             return int(x)
+
+        if self.source is None:
+            return []
         
+        # print self.source
         spectra = self.xml.xpath('//Channels/text()')
         spectra = [map(_c, sp.split(',')) for sp in spectra]
         self.spectra = spectra

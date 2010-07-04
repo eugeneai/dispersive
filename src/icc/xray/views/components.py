@@ -414,6 +414,11 @@ class Application(View):
             self.default_view()
             self.open_project(self, LOAD_FILE)
 
+    def set_model(self, model = None):
+        if model is None:
+            model = mdl.Spectra()
+        return View.set_model(self, model)
+
     # Signal connection is linked in the glade XML file
     def main_window_delete_event_cb(self, widget, data1=None, data2=None):
         gtk.main_quit()
@@ -497,7 +502,8 @@ class Application(View):
         widget.show_all()
 
     def insert_plotting_area(self, ui):
-        widget = ZC.createObject('PlottingFrame', model=self.model)
+        print self.model
+        widget = IView(self.model)
         # widget = IView(self.model)
         # widget=PlottingFrame(parent_ui=ui, model=self.model)
         self.insert_active_widget(widget)
