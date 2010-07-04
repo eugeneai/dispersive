@@ -321,11 +321,11 @@ class View(object):
 
 class PlottingFrame(gtk.Frame):
     implements(IPlottingFrame)
-    def __init__(self, label=None, parent_ui=None, model=None):
+    def __init__(self, label=None, model=None):
         gtk.Frame.__init__(self, label=label)
         self.ui=Ui()
         self.spectra = model
-        ui = parent_ui
+        parent_ui= ui = gsm().getUtility(IApplication).ui
 
         local=Ui()
         self.local=local
@@ -497,8 +497,7 @@ class Application(View):
         widget.show_all()
 
     def insert_plotting_area(self, ui):
-        widget = ZC.createObject('PlottingFrame',
-           parent_ui=ui, model=self.model)
+        widget = ZC.createObject('PlottingFrame', model=self.model)
         # widget = IView(self.model)
         # widget=PlottingFrame(parent_ui=ui, model=self.model)
         self.insert_active_widget(widget)
