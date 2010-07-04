@@ -17,7 +17,7 @@
             <child>
               <object class="GtkMenuItem" id="menu_file">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_&#x418;&#x441;&#x441;&#x43B;&#x435;&#x434;&#x43E;&#x432;&#x430;&#x43D;&#x438;&#x435;</property>
+                <property name="label" translatable="yes">_Project</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu1">
@@ -77,7 +77,7 @@
             <child>
               <object class="GtkMenuItem" id="menu_edit">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_&#x41F;&#x440;&#x430;&#x432;&#x43A;&#x430;</property>
+                <property name="label" translatable="yes">_Edit</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu2">
@@ -121,35 +121,35 @@
             <child>
               <object class="GtkMenuItem" id="menu_view">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_&#x412;&#x438;&#x434;</property>
+                <property name="label" translatable="yes">_View</property>
                 <property name="use_underline">True</property>
               </object>
             </child>
             <child>
               <object class="GtkMenuItem" id="menu_action">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_&#x414;&#x435;&#x439;&#x441;&#x442;&#x432;&#x438;&#x435;</property>
+                <property name="label" translatable="yes">_Action</property>
                 <property name="use_underline">True</property>
               </object>
             </child>
             <child>
               <object class="GtkMenuItem" id="menu_load">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_&#x417;&#x430;&#x433;&#x440;&#x443;&#x437;&#x438;&#x442;&#x44C;</property>
+                <property name="label" translatable="yes">_Load</property>
                 <property name="use_underline">True</property>
               </object>
             </child>
             <child>
               <object class="GtkMenuItem" id="menu_window">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_&#x41E;&#x43A;&#x43D;&#x430;</property>
+                <property name="label" translatable="yes">_Windows</property>
                 <property name="use_underline">True</property>
               </object>
             </child>
             <child>
               <object class="GtkMenuItem" id="menu_about">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_&#x421;&#x43F;&#x440;&#x430;&#x432;&#x43A;&#x430;</property>
+                <property name="label" translatable="yes">_Help</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu3">

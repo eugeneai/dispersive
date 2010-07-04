@@ -503,4 +503,8 @@ class Application(View):
         # widget=PlottingFrame(parent_ui=ui, model=self.model)
         self.insert_active_widget(widget)
 
+    def main(self):
+        return gtk.main()
+    run = main
+
 

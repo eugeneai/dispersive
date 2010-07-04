@@ -2,6 +2,62 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkListStore" id="project_list_model">
+    <columns>
+      <!-- column-name no -->
+      <column type="gint"/>
+      <!-- column-name element -->
+      <column type="gchararray"/>
+      <!-- column-name line -->
+      <column type="gchararray"/>
+      <!-- column-name energy -->
+      <column type="gfloat"/>
+      <!-- column-name cycles -->
+      <column type="gint"/>
+      <!-- column-name net -->
+      <column type="gfloat"/>
+      <!-- column-name background -->
+      <column type="gfloat"/>
+      <!-- column-name sigma -->
+      <column type="gfloat"/>
+      <!-- column-name chi -->
+      <column type="gfloat"/>
+      <!-- column-name concentration -->
+      <column type="gfloat"/>
+      <!-- column-name conc_sigma -->
+      <column type="gfloat"/>
+      <!-- column-name lld -->
+      <column type="gfloat"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">1</col>
+        <col id="1" translatable="yes">Nb</col>
+        <col id="2" translatable="yes">Ka1</col>
+        <col id="3" translatable="yes">14.5</col>
+        <col id="4">500</col>
+        <col id="5" translatable="yes">1</col>
+        <col id="6" translatable="yes">57740</col>
+        <col id="7">340</col>
+        <col id="8">0.75999999046325684</col>
+        <col id="9">200.33999633789062</col>
+        <col id="10">445</col>
+        <col id="11">10</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkTreeStore" id="project_tree_model">
+    <columns>
+      <!-- column-name node -->
+      <column type="gchararray"/>
+      <!-- column-name icon -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name active -->
+      <column type="gboolean"/>
+      <!-- column-name enabled -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
   <object class="GtkFrame" id="project_frame">
     <property name="visible">True</property>
     <property name="label_xalign">0</property>
@@ -15,28 +71,46 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
-              <object class="GtkTreeView" id="project_tree_view">
+              <object class="GtkScrolledWindow" id="scrolledwindow3">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="model">project_tree_model</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <object class="GtkTreeViewColumn" id="icon_column">
-                    <property name="title">icon</property>
+                  <object class="GtkViewport" id="viewport3">
+                    <property name="visible">True</property>
+                    <property name="resize_mode">queue</property>
                     <child>
-                      <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf1"/>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="name_column">
-                    <property name="max_width">0</property>
-                    <property name="title">name</property>
-                    <child>
-                      <object class="GtkCellRendererToggle" id="cellrenderertext1"/>
-                      <attributes>
-                        <attribute name="activatable">3</attribute>
-                        <attribute name="active">2</attribute>
-                      </attributes>
+                      <object class="GtkTreeView" id="project_tree_view">
+                        <property name="width_request">100</property>
+                        <property name="height_request">100</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">project_tree_model</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="search_column">0</property>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="icon_column">
+                            <property name="title">icon</property>
+                            <child>
+                              <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf1"/>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="name_column">
+                            <property name="max_width">0</property>
+                            <property name="title">name</property>
+                            <child>
+                              <object class="GtkCellRendererToggle" id="cellrenderertext1"/>
+                              <attributes>
+                                <attribute name="activatable">3</attribute>
+                                <attribute name="active">2</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
                     </child>
                   </object>
                 </child>
@@ -47,22 +121,33 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="common_lebel">
-                <property name="width_request">100</property>
-                <property name="height_request">100</property>
+              <object class="GtkScrolledWindow" id="scrolledwindow2">
                 <property name="visible">True</property>
-                <property name="has_tooltip">True</property>
-                <property name="tooltip_text" translatable="yes">The area to publish 
-general information</property>
-                <property name="xalign">0</property>
-                <property name="yalign">0</property>
-                <property name="xpad">5</property>
-                <property name="ypad">5</property>
-                <property name="label" translatable="yes">General &lt;b&gt;area&lt;/b&gt; for screen the information.</property>
-                <property name="use_markup">True</property>
-                <property name="wrap">True</property>
-                <property name="selectable">True</property>
-                <property name="ellipsize">start</property>
+                <property name="can_focus">True</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="GtkViewport" id="viewport2">
+                    <property name="visible">True</property>
+                    <property name="resize_mode">queue</property>
+                    <child>
+                      <object class="GtkLabel" id="common_label">
+                        <property name="width_request">100</property>
+                        <property name="height_request">100</property>
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <property name="xpad">5</property>
+                        <property name="ypad">5</property>
+                        <property name="label" translatable="yes">General &lt;b&gt;area&lt;/b&gt; for screen the information.</property>
+                        <property name="use_markup">True</property>
+                        <property name="wrap">True</property>
+                        <property name="selectable">True</property>
+                        <property name="ellipsize">start</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="resize">True</property>
@@ -81,6 +166,8 @@ general information</property>
             <property name="can_focus">True</property>
             <child>
               <object class="GtkVBox" id="main_vbox">
+                <property name="width_request">300</property>
+                <property name="height_request">200</property>
                 <property name="visible">True</property>
                 <child>
                   <placeholder/>
@@ -103,6 +190,7 @@ general information</property>
                     <property name="resize_mode">queue</property>
                     <child>
                       <object class="GtkTreeView" id="project_list_view">
+                        <property name="height_request">100</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="model">project_list_model</property>
@@ -262,61 +350,5 @@ general information</property>
     <child type="label_item">
       <placeholder/>
     </child>
-  </object>
-  <object class="GtkListStore" id="project_list_model">
-    <columns>
-      <!-- column-name no -->
-      <column type="gint"/>
-      <!-- column-name element -->
-      <column type="gchararray"/>
-      <!-- column-name line -->
-      <column type="gchararray"/>
-      <!-- column-name energy -->
-      <column type="gchararray"/>
-      <!-- column-name cycles -->
-      <column type="gint"/>
-      <!-- column-name net -->
-      <column type="gchararray"/>
-      <!-- column-name background -->
-      <column type="gchararray"/>
-      <!-- column-name sigma -->
-      <column type="gfloat"/>
-      <!-- column-name chi -->
-      <column type="gfloat"/>
-      <!-- column-name concentration -->
-      <column type="gfloat"/>
-      <!-- column-name conc_sigma -->
-      <column type="gfloat"/>
-      <!-- column-name lld -->
-      <column type="gfloat"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0">1</col>
-        <col id="1" translatable="yes">Nb</col>
-        <col id="2" translatable="yes">Ka1</col>
-        <col id="3" translatable="yes">14.5</col>
-        <col id="4">500</col>
-        <col id="5" translatable="yes">1</col>
-        <col id="6" translatable="yes">57740</col>
-        <col id="7">340</col>
-        <col id="8">0.75999999046325684</col>
-        <col id="9">200.33999633789062</col>
-        <col id="10">445</col>
-        <col id="11">10</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkTreeStore" id="project_tree_model">
-    <columns>
-      <!-- column-name node -->
-      <column type="gchararray"/>
-      <!-- column-name icon -->
-      <column type="GdkPixbuf"/>
-      <!-- column-name active -->
-      <column type="gboolean"/>
-      <!-- column-name enabled -->
-      <column type="gboolean"/>
-    </columns>
   </object>
 </interface>

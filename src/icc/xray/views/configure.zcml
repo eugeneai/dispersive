@@ -5,4 +5,10 @@
     provides="zope.component.interfaces.IFactory"
     name="PlottingFrame"
     />
+
+<utility
+    component=".components.Application"
+    provides="zope.component.interfaces.IFactory"
+    name="Application"
+    />
 </configure>
