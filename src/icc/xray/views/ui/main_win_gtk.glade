@@ -210,31 +210,10 @@
           </packing>
         </child>
         <child>
-          <object class="GtkScrolledWindow" id="scrolledwindow1">
-            <property name="width_request">600</property>
-            <property name="height_request">400</property>
+          <object class="GtkVBox" id="main_vbox">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
             <child>
-              <object class="GtkViewport" id="viewport1">
-                <property name="visible">True</property>
-                <property name="resize_mode">queue</property>
-                <child>
-                  <object class="GtkAlignment" id="main">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkVBox" id="main_vbox">
-                        <property name="visible">True</property>
-                        <child>
-                          <placeholder/>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
+              <placeholder/>
             </child>
           </object>
           <packing>
