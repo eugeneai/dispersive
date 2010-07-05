@@ -7,7 +7,7 @@ import gtk, sys
 if __name__=="__main__":
     sys.path.append("..")
 
-from interfaces import *
+from icc.xray.views.interfaces import *
 from zope.interface import implements, implementsOnly
 import zope.component as ZC
 import zope.component.interfaces as ZCI
@@ -506,14 +506,7 @@ class Application(View):
         widget.show_all()
 
     def insert_plotting_area(self, ui):
-        print self.model
-        print gsm().adapters._adapters
-        print mdli.ISpectra.providedBy(self.model)
-        print IPlottingFrame.implementedBy(PlottingFrame)
-        print ZC.queryAdapter(self.model, IView)
         widget = IPlottingFrame(self.model)
-        # widget = IView(self.model)
-        # widget=PlottingFrame(parent_ui=ui, model=self.model)
         self.insert_active_widget(widget)
 
     def main(self):
