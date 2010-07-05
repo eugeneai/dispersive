@@ -297,7 +297,7 @@ class Cursor(widgets.Cursor):
 class View(object):
     template = None
     names    = None
-    #implements(IView)
+    implements(IView)
     ZC.adapts(mdli.IModel)
     def __init__(self, model = None):
         self.ui=Ui()
