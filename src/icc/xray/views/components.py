@@ -8,13 +8,14 @@ if __name__=="__main__":
     sys.path.append("..")
 
 from interfaces import *
-from zope.interface import implements
+from zope.interface import implements, implementsOnly
 import zope.component as ZC
 import zope.component.interfaces as ZCI
 from zope.component.factory import Factory
 from pkg_resources import resource_stream, resource_string
     
 import icc.xray.models.components as mdl
+import icc.xray.models.interfaces as mdli
 import os
 import subprocess as spp
 
@@ -296,6 +297,8 @@ class Cursor(widgets.Cursor):
 class View(object):
     template = None
     names    = None
+    #implements(IView)
+    ZC.adapts(mdli.IModel)
     def __init__(self, model = None):
         self.ui=Ui()
         self.set_model(model)
@@ -321,7 +324,8 @@ class View(object):
 
 class PlottingFrame(gtk.Frame):
     implements(IPlottingFrame)
-    def __init__(self, label=None, model=None):
+    ZC.adapts(mdli.ISpectra)
+    def __init__(self, model=None, label=None):
         gtk.Frame.__init__(self, label=label)
         self.ui=Ui()
         self.spectra = model
@@ -503,7 +507,11 @@ class Application(View):
 
     def insert_plotting_area(self, ui):
         print self.model
-        widget = IView(self.model)
+        print gsm().adapters._adapters
+        print mdli.ISpectra.providedBy(self.model)
+        print IPlottingFrame.implementedBy(PlottingFrame)
+        print ZC.queryAdapter(self.model, IView)
+        widget = IPlottingFrame(self.model)
         # widget = IView(self.model)
         # widget=PlottingFrame(parent_ui=ui, model=self.model)
         self.insert_active_widget(widget)

@@ -2,7 +2,8 @@
 
 <adapter
     factory=".components.PlottingFrame"
-    for="xray.models.interfaces.ISpectra"
+    provides="icc.xray.views.interfaces.IPlottingFrame"
+    for="icc.xray.models.interfaces.ISpectra"
     />
 
 <utility
