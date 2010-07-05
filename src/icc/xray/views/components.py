@@ -322,20 +322,20 @@ class View(object):
                     setattr(self.ui, name, widget)
         
 
-class PlottingFrame(gtk.Frame):
-    implements(IPlottingFrame)
+class PlottingView(View):
+    implements(IPlottingView)
     ZC.adapts(mdli.ISpectra)
     def __init__(self, model=None, label=None):
-        gtk.Frame.__init__(self, label=label)
-        self.ui=Ui()
+        View.__init__(self, model)
+        self.ui=Ui()   
+        self.ui.win=gtk.Frame(label=label)
         self.spectra = model
         parent_ui= ui = gsm().getUtility(IApplication).ui
 
         local=Ui()
         self.local=local
 
-        win = self
-        self.ui.win=win
+        self.ui.main_frame = win = self.ui.win
         win.set_shadow_type(gtk.SHADOW_NONE)
         
         vbox = gtk.VBox()
@@ -411,7 +411,7 @@ class Application(View):
         View.__init__(self, model=model)
         self.ui.window=self.ui.main_window
         self.ui.window.show_all()
-        self.ui.active_widget=None
+        self.active_view=None
 
         # Shoul be the last one, it seems
         if DEBUG>2:
@@ -491,23 +491,24 @@ class Application(View):
         #sp=spp.Popen([EPS_CMD, 'plot.eps'])
         #sp.communicate()
 
-    def remove_active_widget(self):
-        if self.ui.active_widget is None:
+    def remove_active_view(self):
+        if self.active_view is None:
             return
-        self.ui.main_vbox.remove(self.ui.active_widget)
-        self.ui.active_widget.destroy()
-        self.ui.active_widget=None
+        main_widget = self.ui.active_view.ui.main_frame
+        self.ui.main_vbox.remove(main_widget)
+        main_widget.destroy()
+        self.active_wiew=None
 
-    def insert_active_widget(self, widget):
-        if self.ui.active_widget:
-            self.remove_active_widget()
-        self.ui.active_widget = widget
-        self.ui.main_vbox.pack_start(widget, True, True)
-        widget.show_all()
+    def insert_active_view(self, view):
+        if self.active_view:
+            self.remove_active_view()
+        self.active_view = view
+        self.ui.main_vbox.pack_start(view.ui.main_frame, True, True)
+        view.ui.main_frame.show_all()
 
     def insert_plotting_area(self, ui):
-        widget = IPlottingFrame(self.model)
-        self.insert_active_widget(widget)
+        view = IPlottingView(self.model)
+        self.insert_active_view(view)
 
     def main(self):
         return gtk.main()

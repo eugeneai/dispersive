@@ -10,9 +10,6 @@ class IApplication(IView):
     def remove_active_widget():
         """Remove active widget froom the active area."""
 
-class IFrame(IView):
-    pass
-
-class IPlottingFrame(IFrame):
+class IPlottingView(IView):
     pass
 

@@ -1,8 +1,8 @@
 <configure xmlns="http://namespaces.zope.org/zope">
 
 <adapter
-    factory=".components.PlottingFrame"
-    provides="icc.xray.views.interfaces.IPlottingFrame"
+    factory=".components.PlottingView"
+    provides="icc.xray.views.interfaces.IPlottingView"
     for="icc.xray.models.interfaces.ISpectra"
     />
 
