@@ -400,10 +400,17 @@ class ProjectView(View):
                     "project_tree_view", "main_vbox", "common_label",
                     "project_list_model", "project_tree_model"]
     def __init__(self, model=None, label=None):
+        self.active_view = None
         View.__init__(self, model=model)
         self.ui.main_frame=self.ui.project_frame
-        self.plotting_area = IPlottingView(self.model)
-        self.ui.main_vbox.pack_start(self.plotting_area.ui.main_frame)
+        self.active_view = IPlottingView(self.model)
+        self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
+        
+    def set_model(self, model=None):
+        View.set_model(self, model=model)
+        if self.active_view:
+            self.active_view.set_model(self.model)
+        
         
 
 class Application(View):

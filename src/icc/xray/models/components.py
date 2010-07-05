@@ -91,6 +91,9 @@ class Spectra(object):
         else:
             self.ch_len = None
 
+    def transplant_object_tree(self, tree_model):
+        pass
+
     def r_vect(self, spectrum, name):
         return '%s = c(%s)\n' % (name, ','.join(map(str, spectrum)))
         
