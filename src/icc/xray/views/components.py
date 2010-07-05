@@ -295,26 +295,26 @@ class Cursor(widgets.Cursor):
 
 class View(object):
     template = None
-    names    = None
+    widget_names    = None
     #implements(IView)
     ZC.adapts(mdli.IModel)
     def __init__(self, model = None):
         self.ui=Ui()
         self.set_model(model)
         self.load_ui(self.__class__.template,
-                     self.__class__.names)
+                     self.__class__.widget_names)
 
     def set_model(self, model):
         self.model=model
         # some update needed???
 
-    def load_ui(self, template, names = None):
+    def load_ui(self, template, widget_names = None):
         if template:
             builder=self.ui._builder = gtk.Builder()
             builder.add_from_string(resource_string(__name__, template))
             builder.connect_signals(self, builder)
-            if names:
-                for name in names:
+            if widget_names:
+                for name in widget_names:
                     widget = builder.get_object(name)
                     if widget is None:
                         raise ValueError("widget '%s' not found in  template '%s'" % (name, template))
@@ -394,16 +394,19 @@ class PlottingView(View):
 #pffactory = Factory(PlottingFrame, 'PlottingFrame', 'Frame, where one can plot spectra.')
 #gsm().registerUtility(pffactory, ZCI.IFactory, 'PlottingFrame')
 
-class ProjectFrame(gtk.Frame, View):
+class ProjectView(View):
     template = "ui/project_frame.glade"
-    def __init__(self, label=None, parent_ui=None, model=None):
-        gtk.Frame.__init__(self, lanel=label)
+    widget_names = ["project_frame", "vpaned_left", "vpaned_right",
+                    "project_tree_view", "main_vbox", "common_label",
+                    "project_list_model", "project_tree_model"]
+    def __init__(self, model=None, label=None):
         View.__init__(self, model=model)
+        self.ui.main_frame=self.ui.project_frame
 
 class Application(View):
     implements(IApplication)
     template = "ui/main_win_gtk.glade"
-    names = ['main_window', 'statusbar', 'toolbar',
+    widget_names = ['main_window', 'statusbar', 'toolbar',
              "main_vbox"]
 
     def __init__(self, model = None):
@@ -493,7 +496,7 @@ class Application(View):
     def remove_active_view(self):
         if self.active_view is None:
             return
-        main_widget = self.ui.active_view.ui.main_frame
+        main_widget = self.active_view.ui.main_frame
         self.ui.main_vbox.remove(main_widget)
         main_widget.destroy()
         self.active_wiew=None
@@ -511,6 +514,7 @@ class Application(View):
 
     def main(self):
         return gtk.main()
+    
     run = main
 
 
