@@ -402,6 +402,9 @@ class ProjectView(View):
     def __init__(self, model=None, label=None):
         View.__init__(self, model=model)
         self.ui.main_frame=self.ui.project_frame
+        self.plotting_area = IPlottingView(self.model)
+        self.ui.main_vbox.pack_start(self.plotting_area.ui.main_frame)
+        
 
 class Application(View):
     implements(IApplication)
@@ -431,13 +434,13 @@ class Application(View):
     m_quit_activate_cb=main_window_delete_event_cb
 
     def default_view(self):
-        self.insert_plotting_area(self.ui)
+        self.insert_project_view(self.ui)
 
     def on_file_new(self, widget, data=None):
         # print "Created"
         # check wether data has been saved. YYY
         self.spectra = None
-        self.insert_plotting_area(self.ui)
+        self.insert_project_view(self.ui)
 
     def open_project(self, filename=None):
         if filename is None:
@@ -510,6 +513,10 @@ class Application(View):
 
     def insert_plotting_area(self, ui):
         view = IPlottingView(self.model)
+        self.insert_active_view(view)
+
+    def insert_project_view(self, ui):
+        view = IProjectView(self.model)
         self.insert_active_view(view)
 
     def main(self):

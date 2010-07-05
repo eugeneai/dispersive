@@ -6,6 +6,12 @@
     for="icc.xray.models.interfaces.ISpectra"
     />
 
+<adapter
+    factory=".components.ProjectView"
+    provides="icc.xray.views.interfaces.IProjectView"
+    for="icc.xray.models.interfaces.ISpectra"
+    />
+
 <utility
     component=".components.Application"
     provides="zope.component.interfaces.IFactory"

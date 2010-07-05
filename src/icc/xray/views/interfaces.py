@@ -6,6 +6,11 @@ class IView(ZI.Interface):
     model = ZI.Attribute("Project under exploration. The MVC Model.")
     ui = ZI.Attribute("User interface component holder.")
 
+class IProjectView(IView):
+    """View the project tree, which includes not only spectra,
+    but various metainformation, e.g., experiments' names.
+    """
+
 class IApplication(IView):
     def remove_active_widget():
         """Remove active widget froom the active area."""
