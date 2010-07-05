@@ -75,8 +75,8 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         (True,  'Channels', 'Explore channel counts','filesave.png', 'explore_channels', 'gtk-color-picker'),
         )
     
-    def __init__(self, canvas, window, main_ui, subplots=False):
-        self.win = window
+    def __init__(self, canvas, view, main_ui, subplots=False):
+        self.view = view
         self.main_ui = main_ui
         self.toolbar = main_ui.toolbar
         self.statusbar = main_ui.statusbar
@@ -84,15 +84,14 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         #gtk.Toolbar.__init__(self)
         NavigationToolbar2.__init__(self, canvas)
         self._idle_draw_id = 0
-        window.connect('destroy', self.on_destroy)
-        self.win=window
+        view.ui.main_frame.connect('destroy', self.on_destroy)
 
     def on_destroy(self, widget, data=None):
         # print self._widgets
         for w in self._widgets:
             if w:
                 self.toolbar.remove(w)
-        self.win=None
+        self.view=None
 
     def _init_toolbar(self):
         self.set_style(gtk.TOOLBAR_ICONS)
@@ -201,10 +200,10 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
     def explore_channels(self, widget, data=None):
         self.zoom_button.set_active(False)
         try:
-            cur = self.win.ui.cursor
+            cur = self.view.ui.cursor
         except AttributeError:
-            self.win.ui.cursor = Cursor(self.win.ui.ax, useblit=True, hline=False, color='red', linewidth=1, aa=False )
-            cur = self.win.ui.cursor
+            self.view.ui.cursor = Cursor(self.view.ui.ax, useblit=True, hline=False, color='red', linewidth=1, aa=False )
+            cur = self.view.ui.cursor
         cur.toggle_active()
         self.zoom_button.set_sensitive(not cur.active)
 
@@ -297,7 +296,7 @@ class Cursor(widgets.Cursor):
 class View(object):
     template = None
     names    = None
-    implements(IView)
+    #implements(IView)
     ZC.adapts(mdli.IModel)
     def __init__(self, model = None):
         self.ui=Ui()
@@ -370,7 +369,7 @@ class PlottingView(View):
         self.ui.canvas = canvas
         canvas.set_size_request(600, 400)
         vbox.pack_start(canvas, True, True)
-        toolbar_ = TXRFNavigationToolbar(canvas, win, parent_ui)
+        toolbar_ = TXRFNavigationToolbar(canvas, self, parent_ui)
         # vbox.pack_start(toolbar, False, False)
 
         self.ui.sb=ui.statusbar
