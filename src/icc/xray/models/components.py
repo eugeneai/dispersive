@@ -91,8 +91,10 @@ class Spectra(object):
         else:
             self.ch_len = None
 
-    def transplant_object_tree(self, tree_model):
-        pass
+    def get_header(self):
+        creator = self.xml.xpath("//Creator/text()")
+        comment = self.xml.xpath("//Comment/text()")
+        return {'creator':creator, 'comment':comment}
 
     def r_vect(self, spectrum, name):
         return '%s = c(%s)\n' % (name, ','.join(map(str, spectrum)))
