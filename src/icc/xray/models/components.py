@@ -158,7 +158,7 @@ class Project(object):
 
     def get_objects(self):
         o_root = self.get_xml().xpath("//ClassInstance[@Type='TRTBase']")[0]
-        spectra = o_root.xpath("//ClassInstance[@Type='TRTSpectrum']")
+        spectra = o_root.xpath("//ClassInstance[@Type='TRTSpectrum']/@Name")
         d = self.get_header()
         d['root']=o_root
         d['spectra']=spectra

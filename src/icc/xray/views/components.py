@@ -56,6 +56,78 @@ FILE_PATTERNS = {
     "*.spx": "Single spectra file",
     }
 
+XPM_META = [
+  "16 16 3 1",
+  "       c None",
+  ".      c #000000000000",
+  "X      c #FFFFFFFFFFFF",
+  "                ",
+  "   ......       ",
+  "   .XXX.X.      ",
+  "   .XXX.XX.     ",
+  "   .XXX.XXX.    ",
+  "   .XXX.....    ",
+  "   .XXXXXXX.    ",
+  "   .XXXXXXX.    ",
+  "   .XXXXXXX.    ",
+  "   .XXXXXXX.    ",
+  "   .XXXXXXX.    ",
+  "   .XXXXXXX.    ",
+  "   .XXXXXXX.    ",
+  "   .........    ",
+  "                ",
+  "                "
+  ]
+
+XPM_SPECTRUM = [
+  "16 16 3 1",
+  "       c None",
+  ".      c #000000000000",
+  "X      c #FFFFFFFFFFFF",
+  "................",
+  ".XX.XX.XX.XX.XX.",
+  ".XXXXXXXXXXXXXX.",
+  "..XXXX.XXXXXXX..",
+  ".XXXXX.XXXXXXXX.",
+  ".XXXXX.XXXXXXXX.",
+  "..XXXX.XXXXXXX..",
+  ".XXXXX.XXXXXXXX.",
+  ".XXXX.X.XXXXXXX.",
+  "..XXX.X.XXXXXX..",
+  ".XXXX.X.XXXXXXX.",
+  ".XXX.XXX.XXX..X.",
+  "....XXXXX...XX..",
+  ".XXXXXXXXXXXXXX.",
+  ".XX.XX.XX.XX.XX.",
+  "................"
+  ]
+
+XPM_PROJECT = [
+  "16 16 3 1",
+  "       c None",
+  ".      c #000000000000",
+  "X      c #FFFFFFFFFFFF",
+  " .............  ",
+  " .XXXXXXXXXXX.  ",
+  " .XXXXXXXXXXX.  ",
+  "  .XXXXXXXXX.   ",
+  "  .XXXXXXXXX.   ",
+  "  ...........   ",
+  "   .XXXXXXX.    ",
+  "   .........    ",
+  "      .X.       ",
+  "      .X.       ",
+  "      .X.       ",
+  "   .........    ",
+  "   .XXXXXXX.    ",
+  "   .XXXXXXX.    ",
+  "   .........    ",
+  "                "
+  ]
+
+
+
+
 def gsm():
     return ZC.getGlobalSiteManager()
 
@@ -300,9 +372,9 @@ class View(object):
     ZC.adapts(mdli.IModel)
     def __init__(self, model = None):
         self.ui=Ui()
-        self.set_model(model)
         self.load_ui(self.__class__.template,
                      self.__class__.widget_names)
+        self.set_model(model)
 
     def set_model(self, model):
         self.model=model
@@ -415,7 +487,21 @@ class ProjectView(View):
         if self.active_view:
             self.active_view.set_model(self.model)
 
-        obj_dict = self.model.get_objects()
+        d = self.model.get_objects()
+        try:
+            t = self.ui.project_tree_model
+        except AttributeError:
+            return
+        t.clear()
+        pb = gtk.gdk.pixbuf_new_from_xpm_data(XPM_PROJECT)
+        pm = gtk.gdk.pixbuf_new_from_xpm_data(XPM_META)
+        pc = gtk.gdk.pixbuf_new_from_xpm_data(XPM_SPECTRUM)
+        root = t.append(None, ('Project', pb, False, False))
+        meta = t.append(root, ('Meta', pm, False, False))
+        spectra = t.append(root, ('Spectra', pc, False, False))
+        for sp in d['spectra']:
+            t.append(spectra, (sp, pc, False, False))
+        
         
         
         

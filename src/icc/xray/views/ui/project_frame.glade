@@ -98,6 +98,11 @@
                             <property name="title">icon</property>
                             <child>
                               <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf1"/>
+                              <attributes>
+                                <attribute name="pixbuf">1</attribute>
+                                <attribute name="pixbuf-expander-closed">1</attribute>
+                                <attribute name="pixbuf-expander-open">1</attribute>
+                              </attributes>
                             </child>
                           </object>
                         </child>
@@ -106,10 +111,11 @@
                             <property name="max_width">0</property>
                             <property name="title">name</property>
                             <child>
-                              <object class="GtkCellRendererToggle" id="cellrenderertext1"/>
+                              <object class="GtkCellRendererText" id="cellrenderertext1"/>
                               <attributes>
-                                <attribute name="activatable">3</attribute>
-                                <attribute name="active">2</attribute>
+                                <attribute name="editable">3</attribute>
+                                <attribute name="text">0</attribute>
+                                <attribute name="underline">2</attribute>
                               </attributes>
                             </child>
                           </object>
