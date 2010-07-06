@@ -414,6 +414,9 @@ class ProjectView(View):
         View.set_model(self, model=model)
         if self.active_view:
             self.active_view.set_model(self.model)
+
+        obj_dict = self.model.get_objects()
+        
         
         
 

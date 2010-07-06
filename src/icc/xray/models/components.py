@@ -134,9 +134,11 @@ class Project(object):
                 self.load(open(self.source))
         
     def load(self, source):
-        self.xml= etree.parse(source)
+        self.xml = etree.parse(source)
 
     def get_xml(self):
+        if self.xml is not None:
+            return self.xml
         if self.source:
             self.load_xml()
             return self.xml
@@ -147,9 +149,20 @@ class Project(object):
         self.scale=scale
 
     def get_header(self):
-        creator = self.xml.xpath("//Creator/text()")
-        comment = self.xml.xpath("//Comment/text()")
+        creator = self.get_xml().xpath("//Creator/text()")[0]
+        try:
+            comment = self.get_xml().xpath("//Comment/text()")[0]
+        except IndexError:
+            comment = ''
         return {'creator':creator, 'comment':comment}
+
+    def get_objects(self):
+        o_root = self.get_xml().xpath("//ClassInstance[@Type='TRTBase']")[0]
+        spectra = o_root.xpath("//ClassInstance[@Type='TRTSpectrum']")
+        d = self.get_header()
+        d['root']=o_root
+        d['spectra']=spectra
+        return d
 
 class SpectraOfProject(Spectra):
     implements(ISpectra)
