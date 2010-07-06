@@ -5,7 +5,8 @@ from lxml import etree
 import subprocess as spp
 import os, os.path
 from zope.interface import implements
-from interfaces import *
+from icc.xray.models.interfaces import *
+import cStringIO as StringIO
 
 DEBUG = True
 
@@ -53,52 +54,20 @@ scale_none=Scale()
 
 class Spectra(object):
     implements(ISpectra)
-    """Set of spectra with the same Energy axis scale (x-axis)
-    """
-    def __init__(self, source=None, scale=None):
-        self.source = source
-        if scale is None:
-            self.set_scale(scale_none)
-        else:
-            self.set_scale(scale)
-            
-        self.xml=self.spectra=None
-
-        if self.source:
-            self.load(open(self.source))
-            if source.lstrip().startswith('<?'):
-                raise RuntimeError('Not implemented')
+    def __init__(self, spectra=None):
+        """Paramter spectra is a list the following structure:
+        (channel_array, showing notation).
+        """
+        if spectra is None:
+            spectra = []
+        self.spectra = spectra
+        self.scale = scale_none
         
-    def load(self, source):
-        self.xml= etree.parse(source)
-
     def set_scale(self, scale):
         self.scale=scale
-
-    def get_spectra(self):
-        def _c(x):
-            return int(x)
-
-        if self.source is None:
-            return []
         
-        # print self.source
-        spectra = self.xml.xpath('//Channels/text()')
-        spectra = [map(_c, sp.split(',')) for sp in spectra]
-        self.spectra = spectra
-        if self.spectra:
-            self.ch_len = len(self.spectra[0])
-        else:
-            self.ch_len = None
-
-    def get_header(self):
-        creator = self.xml.xpath("//Creator/text()")
-        comment = self.xml.xpath("//Comment/text()")
-        return {'creator':creator, 'comment':comment}
-
     def r_vect(self, spectrum, name):
         return '%s = c(%s)\n' % (name, ','.join(map(str, spectrum)))
-        
     
     def r_plot(self, func = '',type_='l', spectrum=None):
         if self.spectra is None:
@@ -142,6 +111,75 @@ class Spectra(object):
 
     def _get_tmp(self, ext):
         return os.path.join(TMP_DIR,'temp.'+ext)
+
+
+class Project(object):
+    implements(IProject)
+    """Set of spectra with the same Energy axis scale (x-axis)
+    """
+    def __init__(self, source=None, scale=None): # scale here is not of use!! YYY
+        self.source = source
+        if scale is None:
+            self.set_scale(scale_none)
+        else:
+            self.set_scale(scale)
+            
+        self.xml=self.spectra=None
+
+    def load_xml(self):
+        if self.source:
+            if self.source.lstrip().startswith('<?'):
+                self.load(StringIO.StringIO(self.source))
+            else:
+                self.load(open(self.source))
+        
+    def load(self, source):
+        self.xml= etree.parse(source)
+
+    def get_xml(self):
+        if self.source:
+            self.load_xml()
+            return self.xml
+        else:
+            return None
+
+    def set_scale(self, scale):
+        self.scale=scale
+
+    def get_header(self):
+        creator = self.xml.xpath("//Creator/text()")
+        comment = self.xml.xpath("//Comment/text()")
+        return {'creator':creator, 'comment':comment}
+
+class SpectraOfProject(Spectra):
+    implements(ISpectra)
+    def __init__(self, project):
+        self.set_project(project)
+
+    def set_project(self, project):
+        self.project = project
+        self.get_spectra(self.project)
+        self.scale = project.scale
+        return project
+        
+    def get_spectra(self, project = None):
+        def _c(x):
+            return int(x)
+
+        if project is None:
+            project = self.project
+
+        if project is None:
+            return []
+        
+        # print self.source
+        xml = project.get_xml()
+        if xml is None:
+            self.spectra = None
+            return
+        spectra = xml.xpath('//Channels/text()')
+        spectra = [(map(_c, sp.split(',')), True) for sp in spectra]
+        self.spectra = spectra
 
 PLOT_CMD='''
 source('%s')

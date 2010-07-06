@@ -350,14 +350,18 @@ class PlottingView(View):
             s = sin(2*pi*t)
             ax.plot(t,s)
         else:
-            sp_len = len(self.spectra.spectra[0])
+            sp_len = len(self.spectra.spectra[0][0])
             X = arange(sp_len)
             kevs = self.spectra.scale.to_keV(X)
-            for i,spectrum in enumerate(self.spectra.spectra):
-                ax.plot(kevs,spectrum, label='plot_%i' % (i+1))
+            for i,spectrum_d in enumerate(self.spectra.spectra):
+                spectrum, plot_k = spectrum_d
+                if plot_k:
+                    ax.plot(kevs,spectrum, label='plot_%i' % (i+1), alpha=1.0)
+                else:
+                    ax.plot(kevs,spectrum, label='plot_%i' % (i+1), alpha=0.0) # transparent
             ax.set_ylabel('Counts')
             ax.set_xlabel('k$e$V')
-            ax.set_title('Spectra plot')
+            #ax.set_title('Spectra plot')
             ax.set_xlim(kevs[0],kevs[-1])
             # ax.set_yscale('log')
             ax.ticklabel_format(style='sci', scilimits=(3,0), axis='y')
@@ -403,7 +407,7 @@ class ProjectView(View):
         self.active_view = None
         View.__init__(self, model=model)
         self.ui.main_frame=self.ui.project_frame
-        self.active_view = IPlottingView(self.model)
+        self.active_view = IPlottingView(mdli.ISpectra(self.model))
         self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
         
     def set_model(self, model=None):
@@ -432,7 +436,7 @@ class Application(View):
 
     def set_model(self, model = None):
         if model is None:
-            model = mdl.Spectra()
+            model = mdl.Project()
         return View.set_model(self, model)
 
     # Signal connection is linked in the glade XML file
@@ -453,7 +457,7 @@ class Application(View):
         if filename is None:
             filename = self.get_open_filename()
         if filename:
-            self.model = mdl.Spectra(filename)
+            self.model = mdl.Project(filename)
             self.default_action()
 
     def on_file_open(self, widget, data=None):
@@ -495,7 +499,6 @@ class Application(View):
         dialog.destroy()
 
     def default_action(self):
-        self.model.get_spectra()
         self.model.set_scale(mdl.Scale(zero=CALIBR_ZERO, scale=CALIBR_KEV))
         self.default_view()
         #self.spectra.r_plot()

@@ -2,6 +2,7 @@
 
 <include package="zope.component" file="meta.zcml" />
 
+<include package="xray.models" />
 <include package="xray.views" />
                 
 </configure>
