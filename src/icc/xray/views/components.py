@@ -488,16 +488,18 @@ class ProjectView(View):
             self.active_view.set_model(self.model)
 
         try:
-            d = self.model.get_objects()
-        except ValueError, exc:
-            print "EXC:", exc
-            d = {"creator":'', 'comment':'',
-                 'spectra':[]}
-        try:
             t = self.ui.project_tree_model
         except AttributeError:
             return
         t.clear()
+
+        try:
+            d = self.model.get_objects()
+        except ValueError, exc:
+            #print "EXC:", exc
+            d = {"creator":'', 'comment':'',
+                 'spectra':[]}
+            
         pb = gtk.gdk.pixbuf_new_from_xpm_data(XPM_PROJECT)
         pm = gtk.gdk.pixbuf_new_from_xpm_data(XPM_META)
         pc = gtk.gdk.pixbuf_new_from_xpm_data(XPM_SPECTRUM)

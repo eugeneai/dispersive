@@ -132,6 +132,7 @@ class Project(object):
                 self.load(StringIO.StringIO(self.source))
             else:
                 self.load(open(self.source))
+            return
         raise ValueError("wrong xml")
         
     def load(self, source):
