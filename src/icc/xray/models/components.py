@@ -132,6 +132,7 @@ class Project(object):
                 self.load(StringIO.StringIO(self.source))
             else:
                 self.load(open(self.source))
+        raise ValueError("wrong xml")
         
     def load(self, source):
         self.xml = etree.parse(source)
@@ -139,11 +140,8 @@ class Project(object):
     def get_xml(self):
         if self.xml is not None:
             return self.xml
-        if self.source:
-            self.load_xml()
-            return self.xml
-        else:
-            return None
+        self.load_xml()
+        return self.xml
 
     def set_scale(self, scale):
         self.scale=scale
@@ -186,9 +184,10 @@ class SpectraOfProject(Spectra):
             return []
         
         # print self.source
-        xml = project.get_xml()
-        if xml is None:
-            self.spectra = None
+        try:
+            xml = project.get_xml()
+        except ValueError:
+            self.spectra = []
             return
         spectra = xml.xpath('//Channels/text()')
         spectra = [(map(_c, sp.split(',')), True) for sp in spectra]

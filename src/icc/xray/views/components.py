@@ -487,7 +487,12 @@ class ProjectView(View):
         if self.active_view:
             self.active_view.set_model(self.model)
 
-        d = self.model.get_objects()
+        try:
+            d = self.model.get_objects()
+        except ValueError, exc:
+            print "EXC:", exc
+            d = {"creator":'', 'comment':'',
+                 'spectra':[]}
         try:
             t = self.ui.project_tree_model
         except AttributeError:
