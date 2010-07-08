@@ -79,6 +79,29 @@ XPM_META = [
   "                "
   ]
 
+XPM_EMPTY = [
+  "16 16 3 1",
+  "       c None",
+  ".      c #000000000000",
+  "X      c #FFFFFFFFFFFF",
+  "................",
+  ".XX.XX.XX.XX.XX.",
+  ".XXXXXXXXXXXXXX.",
+  "..XXXXXXXXXXXX..",
+  ".XXXXXXXXXXXXXX.",
+  ".XXXXXXXXXXXXXX.",
+  "..XXXXXXXXXXXX..",
+  ".XXXXXXXXXXXXXX.",
+  ".XXXXXXXXXXXXXX.",
+  "..XXXXXXXXXXXX..",
+  ".XXXXXXXXXXXXXX.",
+  ".XXXXXXXXXXXXXX.",
+  "..XXXXXXXXXXXX..",
+  ".XXXXXXXXXXXXXX.",
+  ".XX.XX.XX.XX.XX.",
+  "................"
+  ]
+
 XPM_SPECTRUM = [
   "16 16 3 1",
   "       c None",
@@ -425,12 +448,14 @@ class PlottingView(View):
             sp_len = len(self.spectra.spectra[0][0])
             X = arange(sp_len)
             kevs = self.spectra.scale.to_keV(X)
-            for i,spectrum_d in enumerate(self.spectra.spectra):
-                spectrum, plot_k = spectrum_d
+            for i, spectrum_d in enumerate(self.spectra.spectra):
+                spec, plot_k = spectrum_d
+                spectrum = spec['spectrum']
                 kwargs={"aa":True, 'linewidth':1}
+                kwargs.update(spec)
                 if not plot_k:
                     kwargs['alpha']=0.0
-                ax.plot(kevs,spectrum, label='plot_%i' % (i+1), **kwargs)
+                ax.plot(kevs, spectrum, **kwargs)
 
             ax.set_ylabel('Counts')
             ax.set_xlabel('k$e$V')
@@ -439,7 +464,7 @@ class PlottingView(View):
             # ax.set_yscale('log')
             ax.ticklabel_format(style='sci', scilimits=(3,0), axis='y')
             ax.grid(b=True, aa=False, alpha=0.3)
-            # ax.legend(loc=0) # best location.
+            ax.legend()
             ax.minorticks_on()
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
@@ -473,7 +498,7 @@ class PlottingView(View):
 
 class ProjectView(View):
     template = "ui/project_frame.glade"
-    widget_names = ["project_frame", "vpaned_left", "vpaned_right",
+    widget_names = ["project_frame", 'hpaned', # "vpaned_left", "vpaned_right",
                     "project_tree_view", "main_vbox", "common_label",
                     "project_list_model", "project_tree_model"]
     def __init__(self, model=None, label=None):
