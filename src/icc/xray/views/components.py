@@ -565,7 +565,7 @@ class ProjectView(View):
             for sp in d['spectra']:
                 if sp['path']==path:
                     break
-            # send a message
+            # send a message YYY
         
         
         
