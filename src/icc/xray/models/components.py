@@ -198,8 +198,8 @@ class SpectraOfProject(Spectra):
             self.spectra = []
             return
         spectra = xml.xpath('//Channels/text()')
-        spectra = [(map(_c, sp.split(',')), True) for sp in spectra]
-        names = xml.xpath('//Channels/../../@Name')
+        spectra = [map(_c, sp.split(',')) for sp in spectra]
+        names = xml.xpath('//Channels/../@Name')
         spectra = [{"spectrum": sp, "label":nm} for sp, nm in zip(spectra, names)]
         self.spectra = spectra
         return spectra

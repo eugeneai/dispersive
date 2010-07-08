@@ -445,16 +445,16 @@ class PlottingView(View):
             s = sin(2*pi*t)
             ax.plot(t,s)
         else:
-            sp_len = len(self.spectra.spectra[0][0])
+            #print self.spectra.spectra
+            sp_len = len(self.spectra.spectra[0]["spectrum"])
             X = arange(sp_len)
             kevs = self.spectra.scale.to_keV(X)
-            for i, spectrum_d in enumerate(self.spectra.spectra):
-                spec, plot_k = spectrum_d
+            for i, spec in enumerate(self.spectra.spectra):
                 spectrum = spec['spectrum']
                 kwargs={"aa":True, 'linewidth':1}
                 kwargs.update(spec)
-                if not plot_k:
-                    kwargs['alpha']=0.0
+                kwargs['alpha']=1.0
+                del kwargs['spectrum']
                 ax.plot(kevs, spectrum, **kwargs)
 
             ax.set_ylabel('Counts')

@@ -3,13 +3,13 @@ from setuptools import setup, find_packages
 setup(
     zip_safe = True,
     name="icc.xray",
-    version="0.0.3",
+    version="0.0.4",
     packages=find_packages("src"),
     package_dir={"": "src"},
     namespace_packages=["icc"],
     scripts = ['src/icc/icc_xray_app.py'],
     install_requires=["setuptools",
-                      "zope.component",],
+                      "zope.component [zcml]",],
     package_data = {
         'icc.xray.views': ['ui/*.glade', "ui/icons/tango/16x16/*/*.png"],
         },
