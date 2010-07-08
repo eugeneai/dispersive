@@ -148,7 +148,10 @@ class Project(object):
         self.scale=scale
 
     def get_header(self):
-        creator = self.get_xml().xpath("//Creator/text()")[0]
+        try:
+            creator = self.get_xml().xpath("//Creator/text()")[0]
+        except IndexError:
+            creator = ''
         try:
             comment = self.get_xml().xpath("//Comment/text()")[0]
         except IndexError:
@@ -156,9 +159,13 @@ class Project(object):
         return {'creator':creator, 'comment':comment}
 
     def get_objects(self):
-        o_root = self.get_xml().xpath("//ClassInstance[@Type='TRTBase']")[0]
-        spectra = o_root.xpath("//ClassInstance[@Type='TRTSpectrum']/@Name")
         d = self.get_header()
+        xml = self.get_xml()
+        try:
+            o_root = xml.xpath("//ClassInstance[@Type='TRTBase']")[0]
+        except IndexError:
+            o_root = xml
+        spectra = o_root.xpath("//ClassInstance[@Type='TRTSpectrum']/@Name")
         d['root']=o_root
         d['spectra']=spectra
         return d

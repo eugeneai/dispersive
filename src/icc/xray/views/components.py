@@ -427,10 +427,11 @@ class PlottingView(View):
             kevs = self.spectra.scale.to_keV(X)
             for i,spectrum_d in enumerate(self.spectra.spectra):
                 spectrum, plot_k = spectrum_d
-                if plot_k:
-                    ax.plot(kevs,spectrum, label='plot_%i' % (i+1), alpha=1.0)
-                else:
-                    ax.plot(kevs,spectrum, label='plot_%i' % (i+1), alpha=0.0) # transparent
+                kwargs={"aa":True, 'linewidth':1}
+                if not plot_k:
+                    kwargs['alpha']=0.0
+                ax.plot(kevs,spectrum, label='plot_%i' % (i+1), **kwargs)
+
             ax.set_ylabel('Counts')
             ax.set_xlabel('k$e$V')
             #ax.set_title('Spectra plot')
@@ -546,7 +547,7 @@ class Application(View):
     def on_file_new(self, widget, data=None):
         # print "Created"
         # check wether data has been saved. YYY
-        self.spectra = None
+        self.set_model(None)
         self.insert_project_view(self.ui)
 
     def open_project(self, filename=None):
@@ -617,9 +618,9 @@ class Application(View):
         self.ui.main_vbox.pack_start(view.ui.main_frame, True, True)
         view.ui.main_frame.show_all()
 
-    def insert_plotting_area(self, ui):
-        view = IPlottingView(self.model)
-        self.insert_active_view(view)
+    #def insert_plotting_area(self, ui):
+    #    view = IPlottingView(self.model)
+    #    self.insert_active_view(view)
 
     def insert_project_view(self, ui):
         view = IProjectView(self.model)
