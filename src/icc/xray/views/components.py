@@ -445,17 +445,17 @@ class PlottingView(View):
             s = sin(2*pi*t)
             ax.plot(t,s)
         else:
-            #print self.spectra.spectra
-            sp_len = len(self.spectra.spectra[0]["spectrum"])
-            X = arange(sp_len)
-            kevs = self.spectra.scale.to_keV(X)
             for i, spec in enumerate(self.spectra.spectra):
                 spectrum = spec['spectrum']
+                sp_len = len(spectrum)
+                X = arange(sp_len)
+                kevs = self.spectra.scale.to_keV(X)
                 kwargs={"aa":True, 'linewidth':1}
                 kwargs.update(spec)
                 kwargs['alpha']=1.0
                 del kwargs['spectrum']
-                ax.plot(kevs, spectrum, **kwargs)
+                pl = ax.plot(kevs, spectrum, **kwargs)
+                spec['line2D'] = pl
 
             ax.set_ylabel('Counts')
             ax.set_xlabel('k$e$V')
@@ -464,7 +464,7 @@ class PlottingView(View):
             # ax.set_yscale('log')
             ax.ticklabel_format(style='sci', scilimits=(3,0), axis='y')
             ax.grid(b=True, aa=False, alpha=0.3)
-            ax.legend()
+            #ax.legend()
             ax.minorticks_on()
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
@@ -507,6 +507,21 @@ class ProjectView(View):
         self.ui.main_frame=self.ui.project_frame
         self.active_view = IPlottingView(mdli.ISpectra(self.model))
         self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
+
+    def get_objects(self):
+        try:
+            d = self._obj_cache
+            return d
+        except AttributeError:
+            try:
+                d = self.model.get_objects()
+                self._obj_cache = d
+            except ValueError, exc:
+                #print "EXC:", exc
+                d = {"creator":'', 'comment':'',
+                     'spectra':[]}
+                # skip cache !!!
+        return d            
         
     def set_model(self, model=None):
         View.set_model(self, model=model)
@@ -519,21 +534,38 @@ class ProjectView(View):
             return
         t.clear()
 
-        try:
-            d = self.model.get_objects()
-        except ValueError, exc:
-            #print "EXC:", exc
-            d = {"creator":'', 'comment':'',
-                 'spectra':[]}
-            
+        d = self.get_objects()
+
         pb = gtk.gdk.pixbuf_new_from_xpm_data(XPM_PROJECT)
         pm = gtk.gdk.pixbuf_new_from_xpm_data(XPM_META)
         pc = gtk.gdk.pixbuf_new_from_xpm_data(XPM_SPECTRUM)
         root = t.append(None, ('Project', pb, False, False))
         meta = t.append(root, ('Meta', pm, False, False))
         spectra = t.append(root, ('Spectra', pc, False, False))
+        self.spectra_it = spectra
         for sp in d['spectra']:
-            t.append(spectra, (sp, pc, False, False))
+            sp_it = t.append(spectra, (sp['name'], pc, False, False))
+            sp['path']=t.get_path(sp_it)
+            
+    def on_row_activated(self, tree_view, path, column, data=None):
+        print tree_view, path, column, data
+        tm = self.ui.project_tree_model
+        it = tm.get_iter(path)
+        sp_it = self.spectra_it
+        sp_it_path = tm.get_path(sp_it)
+        it_parent = self.ui.project_tree_model.iter_parent(it)
+        if it_parent is None:
+            # clicked root node
+            return
+        d = self.get_objects()
+        if path == sp_it_path:
+            print "!!! WOW!"
+        elif tm.get_path(it_parent)==sp_it_path:
+            print "Local!!", d
+            for sp in d['spectra']:
+                if sp['path']==path:
+                    break
+            # send a message
         
         
         

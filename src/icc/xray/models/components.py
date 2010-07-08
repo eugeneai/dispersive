@@ -167,7 +167,7 @@ class Project(object):
             o_root = xml
         spectra = o_root.xpath("//ClassInstance[@Type='TRTSpectrum']/@Name")
         d['root']=o_root
-        d['spectra']=spectra
+        d['spectra']=[{'name':spectrum} for spectrum in spectra]
         return d
 
 class SpectraOfProject(Spectra):

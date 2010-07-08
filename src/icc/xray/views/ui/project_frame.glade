@@ -93,6 +93,7 @@
                         <property name="model">project_tree_model</property>
                         <property name="headers_clickable">False</property>
                         <property name="search_column">0</property>
+                        <signal name="row_activated" handler="on_row_activated"/>
                         <child>
                           <object class="GtkTreeViewColumn" id="icon_column">
                             <property name="title">icon</property>
