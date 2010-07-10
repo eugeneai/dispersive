@@ -512,7 +512,18 @@ class PlottingView(View):
         print "Spectra_clicked!!"
 
     def on_spectrum_clicked(self, project_view, spectrum_data, user_data=None):
-        print "Spectrum selected:", spectrum_data
+        #print "Spectrum selected:", spectrum_data
+        path = spectrum_data['path']
+        index = path[-1]
+        spec = self.spectra.spectra[index]
+        spec['path'] = path
+        if spec['label'] != spectrum_data['name']:
+            print "Warning: name difference!!"
+
+        # print spec
+        line = spec['line2D']
+        print "Color:", line, line.__class__
+        print line.get_c()
 
 #pffactory = Factory(PlottingFrame, 'PlottingFrame', 'Frame, where one can plot spectra.')
 #gsm().registerUtility(pffactory, ZCI.IFactory, 'PlottingFrame')
@@ -571,7 +582,7 @@ class ProjectView(View):
             sp['path']=t.get_path(sp_it)
             
     def on_row_activated(self, tree_view, path, column, data=None):
-        print tree_view, path, column, data
+        #print tree_view, path, column, data
         tm = self.ui.project_tree_model
         it = tm.get_iter(path)
         sp_it = self.spectra_it
@@ -582,10 +593,10 @@ class ProjectView(View):
             return
         d = self.get_objects()
         if path == sp_it_path:
-            print "!!! WOW!"
+            #print "!!! WOW!"
             self.emit('spectra_clicked')
         elif tm.get_path(it_parent)==sp_it_path:
-            print "Local!!", d
+            #print "Local!!", d
             for sp in d['spectra']:
                 if sp['path']==path:
                     break
