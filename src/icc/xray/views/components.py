@@ -398,6 +398,21 @@ class View(object):
         self.load_ui(self.__class__.template,
                      self.__class__.widget_names)
         self.set_model(model)
+        self.signals = {}
+
+    def connect(self, signal, method, user_data=None):
+        l = self.signals.setdefault(signal, [])
+        l.append((method, user_data))
+
+    def emit(self, signal, arg=None):
+        d = self.signals.get(signal, [])
+        for method, user_data in d:
+            args = []
+            if arg is not None:
+                args.append(arg)
+            if user_data is not None:
+                args.append(user_data)
+            method(self, *args)
 
     def set_model(self, model):
         self.model=model
@@ -493,6 +508,12 @@ class PlottingView(View):
 
         local.msg_id=self.ui.sb.push(local.ctx_id, s)
 
+    def on_spectra_clicked(self, project_view):
+        print "Spectra_clicked!!"
+
+    def on_spectrum_clicked(self, project_view, spectrum_data, user_data=None):
+        print "Spectrum selected:", spectrum_data
+
 #pffactory = Factory(PlottingFrame, 'PlottingFrame', 'Frame, where one can plot spectra.')
 #gsm().registerUtility(pffactory, ZCI.IFactory, 'PlottingFrame')
 
@@ -506,6 +527,8 @@ class ProjectView(View):
         View.__init__(self, model=model)
         self.ui.main_frame=self.ui.project_frame
         self.active_view = IPlottingView(mdli.ISpectra(self.model))
+        self.connect('spectrum_clicked', self.active_view.on_spectrum_clicked)
+        self.connect('spectra_clicked', self.active_view.on_spectra_clicked)
         self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
 
     def get_objects(self):
@@ -560,15 +583,13 @@ class ProjectView(View):
         d = self.get_objects()
         if path == sp_it_path:
             print "!!! WOW!"
+            self.emit('spectra_clicked')
         elif tm.get_path(it_parent)==sp_it_path:
             print "Local!!", d
             for sp in d['spectra']:
                 if sp['path']==path:
                     break
-            # send a message YYY
-        
-        
-        
+            self.emit('spectrum_clicked', sp) 
         
 
 class Application(View):
