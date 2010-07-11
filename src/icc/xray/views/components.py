@@ -465,9 +465,11 @@ class PlottingView(View):
                 sp_len = len(spectrum)
                 X = arange(sp_len)
                 kevs = self.spectra.scale.to_keV(X)
-                kwargs={"aa":True, 'linewidth':1}
+                spec.setdefault('aa', True)
+                spec.setdefault('linewidth', 1)
+                spec.setdefault('alpha',1.0)
+                kwargs = {}
                 kwargs.update(spec)
-                kwargs['alpha']=1.0
                 del kwargs['spectrum']
                 pl, = ax.plot(kevs, spectrum, **kwargs)
                 spec['line2D'] = pl
@@ -509,7 +511,9 @@ class PlottingView(View):
         local.msg_id=self.ui.sb.push(local.ctx_id, s)
 
     def on_spectra_clicked(self, project_view):
-        print "Spectra_clicked!!"
+        #print "Spectra_clicked!!"
+        [self._toggle(sp) for sp in self.spectra.spectra]
+        self.ui.canvas.draw()
 
     def on_spectrum_clicked(self, project_view, spectrum_data, user_data=None):
         #print "Spectrum selected:", spectrum_data
@@ -521,9 +525,16 @@ class PlottingView(View):
             print "Warning: name difference!!"
 
         # print spec
+        self._toggle(spec)
+        self.ui.canvas.draw()
+
+    def _toggle(self, spec):
         line = spec['line2D']
-        print "Color:", line, line.__class__
-        print line.get_c()
+        newalpha = 1.0 - spec.get('alpha', 1.0)
+        line.set(alpha=newalpha)
+        spec['alpha']=newalpha
+
+
 
 #pffactory = Factory(PlottingFrame, 'PlottingFrame', 'Frame, where one can plot spectra.')
 #gsm().registerUtility(pffactory, ZCI.IFactory, 'PlottingFrame')
