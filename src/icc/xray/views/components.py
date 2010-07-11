@@ -512,7 +512,12 @@ class PlottingView(View):
 
     def on_spectra_clicked(self, project_view):
         #print "Spectra_clicked!!"
-        [self._toggle(sp) for sp in self.spectra.spectra]
+        any_vis = False
+        for sp in self.spectra.spectra:
+            alpha = sp.setdefault('alpha',1.0)
+            if alpha>0.1:
+                any_vis = True
+        [self._set(sp, not any_vis) for sp in self.spectra.spectra]
         self.ui.canvas.draw()
 
     def on_spectrum_clicked(self, project_view, spectrum_data, user_data=None):
@@ -534,6 +539,11 @@ class PlottingView(View):
         line.set(alpha=newalpha)
         spec['alpha']=newalpha
 
+    def _set(self, spec, vis):
+        line = spec['line2D']
+        newalpha = int(vis) * 1.0
+        line.set(alpha=newalpha)
+        spec['alpha']=newalpha
 
 
 #pffactory = Factory(PlottingFrame, 'PlottingFrame', 'Frame, where one can plot spectra.')
