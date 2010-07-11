@@ -469,7 +469,7 @@ class PlottingView(View):
                 kwargs.update(spec)
                 kwargs['alpha']=1.0
                 del kwargs['spectrum']
-                pl = ax.plot(kevs, spectrum, **kwargs)
+                pl, = ax.plot(kevs, spectrum, **kwargs)
                 spec['line2D'] = pl
 
             ax.set_ylabel('Counts')
