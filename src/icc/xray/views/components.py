@@ -551,6 +551,8 @@ class ProjectView(View):
         self.active_view = IPlottingView(mdli.ISpectra(self.model))
         self.connect('spectrum_clicked', self.active_view.on_spectrum_clicked)
         self.connect('spectra_clicked', self.active_view.on_spectra_clicked)
+        self.connect('spectrum_clicked', self.on_spectrum_clicked)
+        self.connect('spectra_clicked', self.on_spectra_clicked)
         self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
 
     def get_objects(self):
@@ -584,6 +586,10 @@ class ProjectView(View):
         pb = gtk.gdk.pixbuf_new_from_xpm_data(XPM_PROJECT)
         pm = gtk.gdk.pixbuf_new_from_xpm_data(XPM_META)
         pc = gtk.gdk.pixbuf_new_from_xpm_data(XPM_SPECTRUM)
+        self.ui.pb_project = pb
+        self.ui.pb_meta = pm
+        self.ui.pb_spectrum = pc
+        self.ui.pb_empty = gtk.gdk.pixbuf_new_from_xpm_data(XPM_EMPTY)
         root = t.append(None, ('Project', pb, False, False))
         meta = t.append(root, ('Meta', pm, False, False))
         spectra = t.append(root, ('Spectra', pc, False, False))
@@ -591,7 +597,42 @@ class ProjectView(View):
         for sp in d['spectra']:
             sp_it = t.append(spectra, (sp['name'], pc, False, False))
             sp['path']=t.get_path(sp_it)
-            
+
+        self.ui.project_tree_view.expand_all()
+        
+
+    def set_pb(self, path, pb):
+        tm =  self.ui.project_tree_model
+        it = tm.get_iter(path)
+        tm.set_value(it, 1, pb)
+
+    def on_spectra_clicked(self, widget, user_data=None):
+        self._renew_vis_project_tree()
+
+    def on_spectrum_clicked(self, widget, spec, user_data=None):
+        self._renew_vis_project_tree()
+
+    def _renew_vis_project_tree(self):
+        any_vis = False
+        sd = self.get_objects()['spectra']
+        t = self.ui.project_tree_model
+        for i, sp in enumerate(self.active_view.spectra.spectra):
+            alpha = sp.setdefault('alpha', 1.0)
+            path = sp.setdefault('path', sd[i].get('path', None))
+            if path is None:
+                continue
+            if alpha>0.1:
+                self.set_pb(path, self.ui.pb_spectrum)
+                any_vis = True
+            else:
+                self.set_pb(path, self.ui.pb_empty)
+        path = t.get_path(self.spectra_it)
+        if any_vis:
+            self.set_pb(path, self.ui.pb_spectrum)
+        else:
+            self.set_pb(path, self.ui.pb_empty)            
+                       
+        
     def on_row_activated(self, tree_view, path, column, data=None):
         #print tree_view, path, column, data
         tm = self.ui.project_tree_model
