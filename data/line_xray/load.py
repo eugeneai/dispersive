@@ -5,7 +5,7 @@ import types, rpy2
 from xray import *
 
 els=[u"Na",u"Mg",u"Al",u"Si",u"P",u"K",u"Ca",u"Ti",
-u"Mn",u"Fe",u"S",u"Ba",u"Sr",u"Zr",u"Cl"]
+         u"Mn",u"Fe",u"S",u"Ba",u"Sr",u"Zr",u"Cl"]
 defMdl={
     "Si":"c0+c1*Si+c2*Fe", 
     "Fe":"c0+c1*Fe+c2*Si",
