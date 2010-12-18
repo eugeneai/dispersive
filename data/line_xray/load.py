@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import pprint, csv, os, os.path
+import types
 
 els=[u"Na",u"Mg",u"Al",u"Si",u"P",u"K",u"Ca",u"Ti",
 u"Mn",u"Fe",u"S",u"Ba",u"Sr",u"Zr",u"Cl"]
@@ -151,6 +152,10 @@ def print_parties(self, parties):
         print "Партия:%s" % name
         print_ints(ints)
 
+def _as_utf8(s):
+    if type(s)==types.UnicodeType:
+        return s.encode('utf8')
+    return s
 
 def csv_export_party(party, csvw):
     """Export party probes in a CSV stream"""
@@ -162,9 +167,8 @@ def csv_export_party(party, csvw):
         row=[probe.replace(" ","_")]
         for el in els:
             row.append(elems[el])
-        row=[unicode(s).encode('utf8') for s in row]
+        row=map(_as_utf8, row)
         csvw.writerow(row)
-    
 
 def csv_export(parties, prefix):
     """Export data to a number of CSV files.
@@ -178,10 +182,6 @@ def csv_export(parties, prefix):
         csvw=csv.writer(open(file_name, 'w'), delimiter=' ', quoting=csv.QUOTE_NONNUMERIC)
         csv_export_party(probes, csvw)
         del csvw
-            
-        
-
-
 
 
 def main():
