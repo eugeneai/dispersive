@@ -1,9 +1,9 @@
 #!/home/chertenok/dev/python-2.4/bin/python2.4
 # Regression analysis of X-RAY
 
-from numpy import *
+import numpy 
 #from appliance import *
-from scipy import *
+import scipy.optimize as so
 from compiler.ast import *
 from compiler.pycodegen import ModuleCodeGenerator
 from math import *
@@ -64,7 +64,8 @@ def compile_model_as_module(func_name, model):
         [tuple(consts)]+vars+["_Y_target"], [], 0, "User model %s" % model, 
         Stmt([Return(Sub((v.expr, Name("_Y_target"),)))]))
     func.filename="<user models>"
-    mod=Module("user_models", Stmt([From('math', [('*', None)]), func]))
+    stmt=Stmt([From('math', [('*', None)], 0), func])
+    mod=Module("user_models", stmt)
     mod.filename="<user models>"
     gen=compiler.pycodegen.ModuleCodeGenerator(mod)
     code=gen.getCode()
@@ -195,7 +196,7 @@ class Calibration:
             #(cr, chi)=leastSquaresFit(model, tuple(init), data)
 	    #print data, init
 	    #print ">>>", v
-	    cr,success = optimize.leastsq(model, list(init), args = tuple(data))
+	    cr, success = so.leastsq(model, list(init), args = tuple(data))
 	    #print p1,success
 	    if not success:
 		raise ExperimentError, "cannot fit"
@@ -278,7 +279,7 @@ class Calibration:
 	llast=lh-1
 	newa=[]
 	for i in xrange(lh):
-	    newa.append(zeros(lv,float))
+	    newa.append(numpy.zeros(lv,float))
 	for i, row in enumerate(answer):
 	    vx, y=row
 	    for j, x in enumerate(vx):

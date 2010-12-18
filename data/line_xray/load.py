@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import pprint, csv, os, os.path
-import types
+import types, rpy2
+from xray import *
 
 els=[u"Na",u"Mg",u"Al",u"Si",u"P",u"K",u"Ca",u"Ti",
 u"Mn",u"Fe",u"S",u"Ba",u"Sr",u"Zr",u"Cl"]
@@ -194,15 +195,13 @@ def main():
     fexp.close()
 
     #pprint.pprint(ss)
-    csv_export(eexp, 'D_')
-    csv_export({"SRSC":ss}, "")
+    #csv_export(eexp, 'D_')
+    #csv_export({"SRSC":ss}, "")
     
     
     # experiment
 
-    return
-    
-    calibr=eexp["unknown"]
+    calibr=eexp[u"SRS"]
     e=ExperimentData(calibr, ss)
     mdl=defMdl
     c=Calibration(e, mdl)
