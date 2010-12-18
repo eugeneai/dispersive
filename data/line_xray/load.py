@@ -160,7 +160,7 @@ def csv_export(parties, prefix):
     for group, probes in parties.iteritems():
         file_name=prefix+group.replace(" ","_")+".csv"
         print file_name    
-        csvw=csv.writer(open(file_name, 'w'), delimiter=' ', )
+        csvw=csv.writer(open(file_name, 'w'), delimiter=' ', quoting=csv.QUOTE_NONNUMERIC)
         header=["name"]+els
         csvw.writerow(header)
         for probe, elems in probes:
