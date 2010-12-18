@@ -31,7 +31,7 @@ def load_sss(file):
         ans=load_ss(file)
         if ans:
             (name, d)=ans
-            name=name.strip()
+            name=name.strip().decode('utf8')
             ss[name]=d
         else:
             break
@@ -151,6 +151,21 @@ def print_parties(self, parties):
         print "Партия:%s" % name
         print_ints(ints)
 
+
+def csv_export_party(party, csvw):
+    """Export party probes in a CSV stream"""
+    header=["name"]+els
+    csvw.writerow(header)
+    if type(party)==dict:
+        party=party.items()
+    for probe, elems in party:
+        row=[probe.replace(" ","_")]
+        for el in els:
+            row.append(elems[el])
+        row=[unicode(s).encode('utf8') for s in row]
+        csvw.writerow(row)
+    
+
 def csv_export(parties, prefix):
     """Export data to a number of CSV files.
     :param:parties is a exported data,
@@ -161,14 +176,7 @@ def csv_export(parties, prefix):
         file_name=prefix+group.replace(" ","_")+".csv"
         print file_name    
         csvw=csv.writer(open(file_name, 'w'), delimiter=' ', quoting=csv.QUOTE_NONNUMERIC)
-        header=["name"]+els
-        csvw.writerow(header)
-        for probe, elems in probes:
-            row=[probe.replace(" ","_")]
-            for el in els:
-                row.append(elems[el])
-            row=[unicode(s).encode('utf8') for s in row]
-            csvw.writerow(row)
+        csv_export_party(probes, csvw)
         del csvw
             
         
@@ -185,8 +193,9 @@ def main():
     eexp=load_exp(fexp)
     fexp.close()
 
-    #pprint.pprint(eexp)
+    #pprint.pprint(ss)
     csv_export(eexp, 'D_')
+    csv_export({"SRSC":ss}, "")
     
     
     # experiment
