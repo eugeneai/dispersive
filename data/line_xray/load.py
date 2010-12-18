@@ -1,7 +1,9 @@
-#!/home/chertenok/dev/python-2.4/bin/python2.4
+#!/usr/bin/env python
 # encoding: utf-8
-els=("Na","Mg","Al","Si","P","K","Ca","Ti",
-"Mn","Fe","S","Ba","Sr","Zr","Cl")
+import pprint, csv, os, os.path
+
+els=[u"Na",u"Mg",u"Al",u"Si",u"P",u"K",u"Ca",u"Ti",
+u"Mn",u"Fe",u"S",u"Ba",u"Sr",u"Zr",u"Cl"]
 defMdl={
     "Si":"c0+c1*Si+c2*Fe", 
     "Fe":"c0+c1*Fe+c2*Si",
@@ -29,7 +31,7 @@ def load_sss(file):
         ans=load_ss(file)
         if ans:
             (name, d)=ans
-            name=name
+            name=name.strip()
             ss[name]=d
         else:
             break
@@ -66,7 +68,7 @@ def load_ss(file):
                 pass
     except IndexError:
         pass
-    return (name, c)
+    return (name.strip(), c)
     
 def load_exp(file):
     exps=()
@@ -75,7 +77,7 @@ def load_exp(file):
         if ans:
             (name, d)=ans
             global curr_name, cprobes, probes
-            cprobes.append((name, d))
+            cprobes.append((name.strip(), d))
         else:
             break
     probes[curr_name]=cprobes
@@ -86,16 +88,16 @@ cprobes=[]
 curr_name="unknown"
 
 def load_ex(file):
-    first=file.readline()
+    first=file.readline().strip()
     if first=="": return
     first=first.lstrip()
     if first[0]==":":
         global curr_name, cprobes, probes
-        probes[curr_name]=cprobes
+        probes[unicode(curr_name)]=cprobes
         cprobes=[]
         first=first.split(" ")
         curr_name=" ".join(first[1:])
-        first=file.readline()
+        first=file.readline().strip()
         if first=="": return
     name=first.strip()
     first=file.readline().strip()
@@ -121,7 +123,7 @@ def load_ex(file):
                 pass
     except IndexError:
         pass
-    return (name, c)    
+    return (unicode(name), c)    
 
     
 def print_ints(ints):
@@ -149,7 +151,30 @@ def print_parties(self, parties):
         print "Партия:%s" % name
         print_ints(ints)
 
-from pprint import *
+def csv_export(parties, prefix):
+    """Export data to a number of CSV files.
+    :param:parties is a exported data,
+    :param:prefix is a file name prefix added to each group
+    """
+
+    for group, probes in parties.iteritems():
+        file_name=prefix+group.replace(" ","_")+".csv"
+        print file_name    
+        csvw=csv.writer(open(file_name, 'w'), delimiter=' ', )
+        header=["name"]+els
+        csvw.writerow(header)
+        for probe, elems in probes:
+            row=[probe.replace(" ","_")]
+            for el in els:
+                row.append(elems[el])
+            csvw.writerow(row)
+        del csvw
+            
+        
+
+
+
+
 def main():
     fss=open("Data_calc/poch.cst")
     ss=load_sss(fss)
@@ -157,16 +182,18 @@ def main():
     fss.close()
     fexp=open("Data_calc/Exp.dat")
     eexp=load_exp(fexp)
-    #pprint(eexp)
     fexp.close()
-    #pprint.pprint(eexp["unknown"])
+
+    #pprint.pprint(eexp)
+    csv_export(eexp, 'D_')
+    
     
     # experiment
-    from xray import *
+
+    return
     
     calibr=eexp["unknown"]
     e=ExperimentData(calibr, ss)
-    #pprint(e)
     mdl=defMdl
     c=Calibration(e, mdl)
     #c.calculate(init_values={"Si":{"c0":0, "c1":0}})
