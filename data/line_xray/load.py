@@ -93,7 +93,7 @@ def load_ex(file):
     first=first.lstrip()
     if first[0]==":":
         global curr_name, cprobes, probes
-        probes[unicode(curr_name)]=cprobes
+        probes[unicode(curr_name, 'utf8')]=cprobes
         cprobes=[]
         first=first.split(" ")
         curr_name=" ".join(first[1:])
@@ -123,7 +123,7 @@ def load_ex(file):
                 pass
     except IndexError:
         pass
-    return (unicode(name), c)    
+    return (unicode(name, 'utf8'), c)    
 
     
 def print_ints(ints):
@@ -167,6 +167,7 @@ def csv_export(parties, prefix):
             row=[probe.replace(" ","_")]
             for el in els:
                 row.append(elems[el])
+            row=[unicode(s).encode('utf8') for s in row]
             csvw.writerow(row)
         del csvw
             
