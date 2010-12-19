@@ -24,6 +24,24 @@ defMdl={
     "Cl":"c0+c1*Cl",
 }
 
+defMdlR={ # Model for R variant of fitting procedure
+    "Si":"1+Si+Fe", 
+    "Fe":"1+Fe+Si",
+    "Na":"1+Na+Al",
+    "Mg":"1+Mg+Ca",
+    "Al":"1+Al", #"+Si",
+    "P":"1+P", # +Fe
+    "K":"1+K", 
+    "Ca":"1+Ca+Mg", #+Mg 
+    "Ti":"1+Ti", 
+    "Mn":"1+Mn+Fe", 
+    "S":"1+S", 
+    "Ba":"1+Ba+Ti", 
+    "Sr":"1+Sr",  # +Ba
+    "Zr":"1+Zr+Sr", 
+    "Cl":"1+Cl",
+}
+
 
 def load_sss(file):
     file.readline()
@@ -129,7 +147,8 @@ def load_ex(file):
 
     
 def print_ints(ints):
-    for (iname, idata) in ints:
+    for iname, idata in ints:
+
         print "\t", iname.encode('utf8')
         print_els(idata)
             
@@ -203,12 +222,11 @@ def main():
 
     calibr=eexp[u"SRS"]
     e=ExperimentData(calibr, ss)
-    mdl=defMdl
+    mdl=defMdlR
     c=Calibration(e, mdl)
     #c.calculate(init_values={"Si":{"c0":0, "c1":0}})
     c.calculate()
     test_ss=c.concentrations(calibr)
-    return
 
     print "Аттестованные содержания"
     names=ss.keys()

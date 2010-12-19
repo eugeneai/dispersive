@@ -9,8 +9,7 @@ from compiler.ast import *
 from compiler.pycodegen import ModuleCodeGenerator
 from math import *
 import rpy2
-import uuid
-    
+import rpy2.robjects as robjects
 
 class ExperimentError(StandardError):
 	pass
@@ -86,9 +85,6 @@ def compile_model(func_name, model):
 #""")
 # Data: ((x1,x2), y, value), 0<=value<=1 - significance
 
-
-def tmp_var_name():
-        return 'pyV'+str(uuid.uuid4().hex)
 
 class ExperimentData:
     def __init__(self,
@@ -170,7 +166,29 @@ class Calibration:
         self.elements=elements
         self.prepared=0
         self.calibrated=0
-        
+
+    def as_frame(self, element, data, encoding='utf-8', conc=True):
+            cols={'probe':[]}
+            if conc:
+                    cols['conc']=[]
+            for probe, elems in data:
+                    cols['probe'].append(probe)
+                    if conc:
+                            if probe in self.ed.ss:
+                                    c = self.ed.ss[probe][element]
+                                    cols['conc'].append(c)
+                            else:
+                                    cols['conc'].append(None)
+                    for e,v in elems.iteritems():
+                            l = cols.setdefault(e, [])
+                            l.append(v)
+
+            ncols={}
+            for c,v in cols.iteritems():
+                    ncols[c.encode('utf8')]=robjects.FloatVector(v)
+            df = robjects.DataFrame(ncols)
+            return df, cols.keys()
+    
     def calculate(self, init_values=None, raw_init_values=1, significance=None):
         """
         Calculate the calibration.
@@ -185,32 +203,23 @@ class Calibration:
         raw_data=self.ed.select(ss=1) # Select all intensities for standard samples
         res={}
         for (el, v) in self.models.iteritems():
-            (_el, _equ, model, consts, vars)=v
-	    print "V is", v
+            (_el, _equ, model)=v
+	    #print "V is", v
 	    #print "Raw:", raw_data
-            data=self.select_ints(raw_data, vars, el, significance)
-            if init_values is not None:
-                init=init_values.get(el, None)
-                if init is None:
-                    init=tuple((raw_init_values,) * len(consts))
-                else:
-                    ans=[]
-                    for v in consts:
-                        ans.append(init[v])
-                    init=tuple(ans)
-            else:
-                init=tuple((raw_init_values,) * len(consts))
-            #(cr, chi)=leastSquaresFit(model, tuple(init), data)
-	    #print data, init
-	    #print ">>>", v
-	    cr, success = so.leastsq(model, list(init), args = tuple(data))
-	    #print p1,success
-	    if not success:
-		raise ExperimentError, "cannot fit"
-            cs={}
-            for n, v in enumerate(consts):
-                cs[v]=cr[n]
-            res[el]=(cr, cs) # const tuple, const dictionary, chi-quadrat
+            data=raw_data # self.select_ints(raw_data, vars, el, significance)
+            #print "Data:", data
+
+            # create a data frame for R
+            df, _keys = self.as_frame(_el, data)
+
+            robjects.globalenv['cal_data']=df
+            cmd='lm(%s, data=cal_data)' % model
+            #print cmd
+            fit = robjects.r(cmd)
+            #print fit
+            robjects.r['rm']('cal_data')
+            res[_el]=fit
+
         self.calibration=res
         self.calibrated=1
         return res
@@ -226,18 +235,22 @@ class Calibration:
         """
         if elements is None:
             elements=self.calibration.keys()
+        cal = self.calibration
+        answer = {}
+        a={}
+        for el in elements:
+                df, keys = self.as_frame(el, ints, conc=False)
+                rc = robjects.r['predict'](cal[el], df)
+                a[el]=rc
+        # transpose
+        row=0
         answer=[]
-        for (iname, idata) in ints:
-            row={}
-            for el in elements:
-                (_el, _equ, model, consts, vars)=self.models[el]
-		#print "Calb:", (model, consts, vars)
-                (cr, cs)=self.calibration[el]
-                dta=self.select_ints([(iname, idata)], vars)
-		args=[cr]+dta
-            	res=apply(model, args)
-                row[el]=res
-            answer.append((iname, row))
+        for name, _ in ints:
+               ed={}
+               for el in elements:
+                       ed[el]=a[el][row]
+               row+=1
+               answer.append((name, ed))
         return answer
     
     def prepare(self):
@@ -298,7 +311,7 @@ class Calibration:
     def prepare_functions(self):
         models={}
         for (el, equ) in self.elements.iteritems():
-            models[el]=(el, equ) + compile_model("mod%s" % el, equ)
+            models[el]=(el, equ, 'conc~'+equ)
         self.models=models
         
     # -------- util -------------
@@ -373,5 +386,4 @@ class Calibration:
 
 if __name__=='__main__':
     import load
-    print tmp_var_name()
     load.main()
