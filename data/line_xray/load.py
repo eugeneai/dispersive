@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import pprint, csv, os, os.path
-import types, rpy2
+import types
 from xray import *
 
 els=[u"Na",u"Mg",u"Al",u"Si",u"P",u"K",u"Ca",u"Ti",
-         u"Mn",u"Fe",u"S",u"Ba",u"Sr",u"Zr",u"Cl"]
+     u"Mn",u"Fe",u"S",u"Ba",u"Sr",u"Zr",u"Cl"]
 defMdl={
     "Si":"c0+c1*Si+c2*Fe", 
     "Fe":"c0+c1*Fe+c2*Si",
@@ -130,7 +130,7 @@ def load_ex(file):
     
 def print_ints(ints):
     for (iname, idata) in ints:
-        print "\t", iname
+        print "\t", iname.encode('utf8')
         print_els(idata)
             
 def print_els(data):
@@ -208,6 +208,8 @@ def main():
     #c.calculate(init_values={"Si":{"c0":0, "c1":0}})
     c.calculate()
     test_ss=c.concentrations(calibr)
+    return
+
     print "Аттестованные содержания"
     names=ss.keys()
     names.sort()
@@ -218,8 +220,8 @@ def main():
     print "Калибровка (пересчитанная)"
     print_ints(test_ss)
     for (name, ints) in eexp.iteritems():
-        if name!="unknown":
-            print "Партия:%s" % name
+        if name!=u"unknown":
+            print (u"Партия:%s" % name).encode('utf8')
             print_ints(c.concentrations(ints))
 
 if __name__=="__main__":

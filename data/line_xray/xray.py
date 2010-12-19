@@ -1,4 +1,5 @@
 #!/home/chertenok/dev/python-2.4/bin/python2.4
+# encoding:utf8
 # Regression analysis of X-RAY
 
 import numpy 
@@ -7,6 +8,8 @@ import scipy.optimize as so
 from compiler.ast import *
 from compiler.pycodegen import ModuleCodeGenerator
 from math import *
+import rpy2
+import uuid
     
 
 class ExperimentError(StandardError):
@@ -83,13 +86,17 @@ def compile_model(func_name, model):
 #""")
 # Data: ((x1,x2), y, value), 0<=value<=1 - significance
 
+
+def tmp_var_name():
+        return 'pyV'+str(uuid.uuid4().hex)
+
 class ExperimentData:
     def __init__(self,
                     intensities,     
                     # list of tuples of dictionaries of dictionaries - 
                     # not done!! #    [(<identifier of sample>, {"<element>":{"line-name":<intensity>,...}...}), ...]. It is "sorted" in the measurement sequence
                     ss, # dictionary of dictionaries - {<identifier of sample>:{"<element>":<concentrations>,...}}. These concentrations are supposed to be known.
-                    reper=None # name of sample, which supposed to be a reper
+                    reper=None # name of a sample, which supposed to be a reper
                     ):
         self.intensities=intensities
         self.ss=ss      # I.e., standard samples.
@@ -175,11 +182,11 @@ class Calibration:
         answer={}
         if not self.prepared:
             self.prepare()
-        raw_data=self.ed.select(ss=1)
+        raw_data=self.ed.select(ss=1) # Select all intensities for standard samples
         res={}
         for (el, v) in self.models.iteritems():
-            (model, consts, vars)=v
-	    #print "V is", v
+            (_el, _equ, model, consts, vars)=v
+	    print "V is", v
 	    #print "Raw:", raw_data
             data=self.select_ints(raw_data, vars, el, significance)
             if init_values is not None:
@@ -223,7 +230,7 @@ class Calibration:
         for (iname, idata) in ints:
             row={}
             for el in elements:
-                (model, consts, vars)=self.models[el]
+                (_el, _equ, model, consts, vars)=self.models[el]
 		#print "Calb:", (model, consts, vars)
                 (cr, cs)=self.calibration[el]
                 dta=self.select_ints([(iname, idata)], vars)
@@ -270,7 +277,8 @@ class Calibration:
                 else:   # significance is None
                     a=(els, fel)
             else:
-                a=(els, 0.)# exit for concentration calculation
+                a=(els, 0.)
+                # exit for concentration calculation
             answer.append(a)
 	if not answer:
 	    return answer
@@ -290,7 +298,7 @@ class Calibration:
     def prepare_functions(self):
         models={}
         for (el, equ) in self.elements.iteritems():
-            models[el]=compile_model("mod%s" % el, equ)
+            models[el]=(el, equ) + compile_model("mod%s" % el, equ)
         self.models=models
         
     # -------- util -------------
@@ -365,4 +373,5 @@ class Calibration:
 
 if __name__=='__main__':
     import load
+    print tmp_var_name()
     load.main()
