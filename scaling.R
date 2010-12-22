@@ -2,6 +2,17 @@ source('global.R')
 
 STEP=FWHM/4.0/sc
 
+scaled.X=function (x0=0, sc=1) {
+        s = chan.nos - x0
+        s = s * SC
+        s
+}
+
+plot.xrf.spec = function (spectrum, x0=0, sc=1, col='red') {
+        s = scaled.X(x0=x0, sc=sc)         
+        plot(s, spectrum, type='l', col=col)
+}
+
 find_pike = function (start_x0=97, spectrum, step=STEP, channels=10*FWHM/sc, eps=1.0, plot=FALSE, fit_fwhm=TRUE) {
     x0 = start_x0
     term_x = x0 + channels
@@ -14,7 +25,7 @@ find_pike = function (start_x0=97, spectrum, step=STEP, channels=10*FWHM/sc, eps
            f$found=FALSE
            break;
         }
-        g = gauss(X,x0=x0, zc=0, A=1, sc=sc)
+        g = gauss(chan.nos,x0=x0, zc=0, A=1, sc=sc)
         if (phase=='prec') {
            mm = mask(g, level=0.001)
            fm = spectrum ~ g + 0
@@ -71,7 +82,7 @@ find_pike = function (start_x0=97, spectrum, step=STEP, channels=10*FWHM/sc, eps
        fwhm = FWHM
        print ('Fit fwhm')
        repeat {
-           g = gauss(X,x0=x0, zc=0, A=1, sc=sc, fwhm=fwhm)
+           g = gauss(chan.nos,x0=x0, zc=0, A=1, sc=sc, fwhm=fwhm)
            fm = spectrum ~ g # + 0
            fw = lm (fm, weights = f$mask)
            cfs = fw$coefficients
@@ -100,12 +111,11 @@ find_pike = function (start_x0=97, spectrum, step=STEP, channels=10*FWHM/sc, eps
        }
     }
     if (plot && f$found) {
-        s = X - f$x0
-        s = s * SC
-
-        plot(s, spectrum, type='l', col='red')
-        g = gauss(X, f$x0, A=f$A, zc=0., sc=SC, fwhm=f$fwhm)+f$b
+        plot.xrf.spec(spectrum, f$x0, sc=SC)
+        s = scaled.X(x0=x0, sc=sc)         
+        g = gauss(chan.nos, f$x0, A=f$A, zc=0., sc=SC, fwhm=f$fwhm)+f$b
         lines(s, g, type='l')
+        lines(c(6.4,6.4), c(0,max(spectrum)/2.), col='green')
     }
     f
 }
@@ -119,4 +129,8 @@ ch=0:(length(A)-1)
 
 # plot(ch, A, type="l")
 
+png('plot.png', width=1280, height=1024)
+
 fit=find_pike(97, A, plot=TRUE)
+
+dev.off()

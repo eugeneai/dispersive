@@ -4,9 +4,10 @@ FWHM=0.138
 sig_lim = 10
 SC = 20/(4096-ZC)
 l5_9=5.92/SC
+Nchan=4096
 
 cols=colors()
-X = c(0:4095)
+chan.nos = c(0:(Nchan-1))
 Z = X * 0
 O = Z + 1
 
