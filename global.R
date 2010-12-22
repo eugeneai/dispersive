@@ -15,7 +15,7 @@ gauss = function(x, x0=l5_9, A=1.0, sc=SC, zc=ZC, fwhm=FWHM) {
     A*exp(-((x-(x0+zc))*sc)**2/(2*sigma**2))
 };
 
-mask = function(chan, level=0.01) {
+mask = function(chan, level=0.001) {
     l = chan>level
     idx = X[l]+1
     r = Z
