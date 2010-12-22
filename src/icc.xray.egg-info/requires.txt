@@ -1,2 +1,2 @@
-setuptools
+distribute
 zope.component [zcml]
