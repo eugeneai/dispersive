@@ -1,4 +1,5 @@
 import sqlite3 as sql
+import csv
 
 def create_tables(conn):
     c=conn.cursor()
@@ -9,6 +10,7 @@ def create_tables(conn):
         symbol varchar(10)
     )""")
 
+def load_
 
 def in_mem():
     return sql.connect(":memory:")
