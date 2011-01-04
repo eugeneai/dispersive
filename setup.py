@@ -9,7 +9,8 @@ setup(
     namespace_packages=["icc"],
     scripts = ['src/icc/icc_xray_app.py'],
     install_requires=["distribute",
-                      "zope.component [zcml]",],
+                      "zope.component [zcml]",
+                      "cfgparse"],
     package_data = {
         'icc.xray.views': ['ui/*.glade', "ui/icons/tango/16x16/*/*.png"],
         },
