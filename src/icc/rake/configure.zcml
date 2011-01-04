@@ -2,8 +2,8 @@
 
 <include package="zope.component" file="meta.zcml" />
 
-<include package="rake.models" />
-<include package="rake.views" />
+<include package="icc.rake.models" />
+<include package="icc.rake.views" />
                 
 </configure>
                 

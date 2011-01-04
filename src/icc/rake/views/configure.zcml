@@ -1,17 +1,4 @@
 <configure xmlns="http://namespaces.zope.org/zope">
-
-<adapter
-    factory=".components.PlottingView"
-    provides="icc.rake.views.interfaces.IPlottingView"
-    for="icc.rake.models.interfaces.ISpectra"
-    />
-
-<adapter
-    factory=".components.ProjectView"
-    provides="icc.rake.views.interfaces.IProjectView"
-    for="icc.rake.models.interfaces.IProject"
-    />
-
 <utility
     component=".components.Application"
     provides="zope.component.interfaces.IFactory"

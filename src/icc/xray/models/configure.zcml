@@ -1,0 +1,9 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+<adapter
+    factory=".components.SpectraOfProject"
+    provides="icc.xray.models.interfaces.ISpectra"
+    for="icc.xray.models.interfaces.IProject"
+    />
+
+</configure>

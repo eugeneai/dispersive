@@ -1,0 +1,13 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+<include package="zope.component" file="meta.zcml" />
+
+<!-- Initialize core components of Data Mining system -->
+<include package="icc.rake" />
+
+<!-- Initialize components of XRAY explore application -->
+<include package="xray.models" />
+<include package="xray.views" />
+                
+</configure>
+                

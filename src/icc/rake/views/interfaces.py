@@ -7,14 +7,11 @@ class IView(ZI.Interface):
     ui = ZI.Attribute("User interface component holder.")
 
 class IProjectView(IView):
-    """View the project tree, which includes not only spectra,
-    but various metainformation, e.g., experiments' names.
+    """View the a project. To make "New" action working applications
+    shoud adapt this interface to their models.
     """
 
 class IApplication(IView):
     def remove_active_widget():
         """Remove active widget froom the active area."""
-
-class IPlottingView(IView):
-    pass
 

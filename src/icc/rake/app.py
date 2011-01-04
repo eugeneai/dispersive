@@ -1,10 +1,12 @@
 from zope.configuration.xmlconfig import xmlconfig
 import zope.component as ZC
-from pkg_resources import resource_stream
+from pkg_resources import resource_stream, resource_string
 import sys
 
-def main():
-    xmlconfig(resource_stream(__name__, "configure.zcml"))
+def main(package=None):
+    if package == None:
+        package=__name__
+    xmlconfig(resource_stream(package, "configure.zcml"))
     app=ZC.createObject("Application")
     gsm = ZC.getGlobalSiteManager()
     gsm.registerUtility(app)
