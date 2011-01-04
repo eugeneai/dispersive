@@ -16,7 +16,8 @@ from pkg_resources import resource_stream, resource_string
     
 import icc.xray.models.components as mdl
 import icc.xray.models.interfaces as mdli
-from icc.rake.views.components import View
+import icc.rake.views.components as rakeviews
+import icc.rake.views.interfaces as rakeints
 import os
 import subprocess as spp
 
@@ -434,17 +435,20 @@ class Cursor(widgets.Cursor):
 
         return False
 
+class View(rakeviews.View):
+    ui_resource=__name__
+
 class PlottingView(View):
     implements(IPlottingView)
     ZC.adapts(mdli.ISpectra)
     def __init__(self, model=None, label=None):
         View.__init__(self, model)
-        self.ui=Ui()   
+        self.ui=rakeviews.Ui()   
         self.ui.win=gtk.Frame(label=label)
         self.spectra = model
-        parent_ui= ui = gsm().getUtility(IApplication).ui
+        parent_ui= ui = gsm().getUtility(rakeints.IApplication).ui
 
-        local=Ui()
+        local=rakeviews.Ui()
         self.local=local
 
         self.ui.main_frame = win = self.ui.win

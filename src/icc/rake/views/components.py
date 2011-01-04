@@ -24,7 +24,8 @@ class Ui:
 
 class View(object):
     template = None
-    widget_names    = None
+    widget_names = None
+    ui_resource = __name__
     #implements(IView)
     ZC.adapts(mdli.IModel)
     def __init__(self, model = None):
@@ -55,7 +56,7 @@ class View(object):
     def load_ui(self, template, widget_names = None):
         if template:
             builder=self.ui._builder = gtk.Builder()
-            builder.add_from_string(resource_string(__name__, template))
+            builder.add_from_string(resource_string(self.ui_resource, template))
             builder.connect_signals(self, builder)
             if widget_names:
                 for name in widget_names:
