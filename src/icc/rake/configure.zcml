@@ -2,8 +2,8 @@
 
 <include package="zope.component" file="meta.zcml" />
 
-<include package="xray.models" />
-<include package="xray.views" />
+<include package="rake.models" />
+<include package="rake.views" />
                 
 </configure>
                 

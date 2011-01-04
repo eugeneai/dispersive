@@ -2,8 +2,8 @@
 
 <adapter
     factory=".components.SpectraOfProject"
-    provides="icc.xray.models.interfaces.ISpectra"
-    for="icc.xray.models.interfaces.IProject"
+    provides="icc.rake.models.interfaces.ISpectra"
+    for="icc.rake.models.interfaces.IProject"
     />
 
 </configure>

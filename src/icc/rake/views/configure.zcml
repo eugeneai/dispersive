@@ -2,14 +2,14 @@
 
 <adapter
     factory=".components.PlottingView"
-    provides="icc.xray.views.interfaces.IPlottingView"
-    for="icc.xray.models.interfaces.ISpectra"
+    provides="icc.rake.views.interfaces.IPlottingView"
+    for="icc.rake.models.interfaces.ISpectra"
     />
 
 <adapter
     factory=".components.ProjectView"
-    provides="icc.xray.views.interfaces.IProjectView"
-    for="icc.xray.models.interfaces.IProject"
+    provides="icc.rake.views.interfaces.IProjectView"
+    for="icc.rake.models.interfaces.IProject"
     />
 
 <utility

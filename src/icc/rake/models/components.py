@@ -5,7 +5,7 @@ from lxml import etree
 import subprocess as spp
 import os, os.path
 from zope.interface import implements
-from icc.xray.models.interfaces import *
+from icc.rake.models.interfaces import *
 import cStringIO as StringIO
 
 DEBUG = True

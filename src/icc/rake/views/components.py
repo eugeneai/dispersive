@@ -7,15 +7,15 @@ import gtk, sys
 if __name__=="__main__":
     sys.path.append("..")
 
-from icc.xray.views.interfaces import *
+from icc.rake.views.interfaces import *
 from zope.interface import implements, implementsOnly
 import zope.component as ZC
 import zope.component.interfaces as ZCI
 from zope.component.factory import Factory
 from pkg_resources import resource_stream, resource_string
     
-import icc.xray.models.components as mdl
-import icc.xray.models.interfaces as mdli
+import icc.rake.models.components as mdl
+import icc.rake.models.interfaces as mdli
 import os
 import subprocess as spp
 
