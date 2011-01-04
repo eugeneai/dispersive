@@ -5,5 +5,11 @@
     provides="icc.xray.models.interfaces.ISpectra"
     for="icc.xray.models.interfaces.IProject"
     />
+    
+<utility
+    component=".components.Project"
+    provides="zope.component.interfaces.IFactory"
+    name="main_model"
+    />
 
 </configure>

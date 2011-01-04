@@ -16,6 +16,7 @@ from pkg_resources import resource_stream, resource_string
     
 import icc.rake.models.components as mdl
 import icc.rake.models.interfaces as mdli
+import icc.rake.interfaces as ri
 import os
 
 class Ui:
@@ -91,13 +92,15 @@ class Application(View):
         gtk.main_quit()
     m_quit_activate_cb=main_window_delete_event_cb
 
-    def default_view(self):
+    def default_view(self):             
         self.insert_project_view(self.ui)
 
     def on_file_new(self, widget, data=None):
         # print "Created"
         # check wether data has been saved. YYY
-        self.set_model(None)
+        c=ZC.getUtility(ri.IConfiguration)
+        factory_name=c.add_option('factory_name', default='main_model')
+        self.set_model(ZC.createObject(factory_name.get()))
         self.insert_project_view(self.ui)
 
     def open_project(self, filename=None):
