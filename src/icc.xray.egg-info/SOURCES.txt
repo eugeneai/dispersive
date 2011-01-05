@@ -12,6 +12,7 @@ src/icc.xray.egg-info/top_level.txt
 src/icc.xray.egg-info/zip-safe
 src/icc/rake/__init__.py
 src/icc/rake/app.py
+src/icc/rake/interfaces.py
 src/icc/rake/models/__init__.py
 src/icc/rake/models/components.py
 src/icc/rake/models/interfaces.py
