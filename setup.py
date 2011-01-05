@@ -12,6 +12,7 @@ setup(
                       "zope.component [zcml]",
                       "cfgparse",
                       "matplotlib",
+                      #"rsvg",
                       # "numpy",
                       # "PyGTK"
                       ],

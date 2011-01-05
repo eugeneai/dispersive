@@ -20,6 +20,7 @@ import icc.rake.interfaces as ri
 import os
 
 import cairo, math
+import rsvg
 
 class Ui:
     pass
