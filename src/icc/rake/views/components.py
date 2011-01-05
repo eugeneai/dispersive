@@ -203,8 +203,9 @@ class Canvas(View):
         self.ui.main_frame.show_all()
         
     def on_canvas_button_press_event(self, canvas, ev, data=None):
-        cc = canvas.window.cairo_create()
-        cr = cc
+        cr = canvas.window.cairo_create()
+
+        svg=rsvg.Handle(data=resource_string(__name__, "ui/pics/test.svg"))
 
         M_PI=math.pi
 
@@ -229,11 +230,14 @@ class Canvas(View):
         cr.line_to (xc, yc);
         cr.arc (xc, yc, radius, angle2, angle2);
         cr.line_to (xc, yc);
-        cr.stroke ();
-        print "press:", ev.x
+        cr.stroke ()
+
+        cr.identity_matrix()
+        if svg != None:
+            for i in xrange(10):
+                svg.render_cairo(cr)
+                cr.translate(32,0)
 
     def on_canvas_button_release_event(self, canvas, ev, user=None):
-        print "release:", ev
+        pass
 
-    def on_button1_clicked(self, btn, data=None):
-        print "Btn:", btn
