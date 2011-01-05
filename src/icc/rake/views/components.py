@@ -21,6 +21,7 @@ import os
 
 import cairo, math
 import rsvg
+M_PI=math.pi
 
 class Ui:
     pass
@@ -200,43 +201,32 @@ class Canvas(View):
     
     def __init__(self, model = None):
         View.__init__(self, model=model)
+        self._init_pics()
         self.ui.main_frame.show_all()
+
+    def _init_pics(self):
+        self.svg=rsvg.Handle(data=resource_string(__name__, "ui/pics/test.svg"))
+
+    def _component(self, canvas, x, y):
+        canvas.set_line_width(1.0)
+        m = canvas.get_matrix()
+        canvas.translate(x, y)
+        canvas.translate(-16,-16)
+        canvas.rectangle(0, 0, 32, 32)
+        canvas.stroke()
+        canvas.arc(-2, 16, 2, 0, M_PI*2)
+        canvas.stroke()
+        canvas.arc(34, 16, 2, 0, M_PI*2)
+        canvas.stroke()
+
+        if self.svg != None:
+            self.svg.render_cairo(canvas)
+        canvas.set_matrix(m)
         
     def on_canvas_button_press_event(self, canvas, ev, data=None):
         cr = canvas.window.cairo_create()
-
-        svg=rsvg.Handle(data=resource_string(__name__, "ui/pics/test.svg"))
-
-        M_PI=math.pi
-
-        xc = 128.0;
-        yc = 128.0;
-        radius = 100.0;
-        angle1 = 45.0  * (M_PI/180.0);  
-        angle2 = 180.0 * (M_PI/180.0); #  /* in radians           */
-
-        cr.set_line_width (10.0);
-        cr.arc (xc, yc, radius, angle1, angle2);
-        cr.stroke ();
-
-        #/* draw helping lines */
-        cr.set_source_rgba (1, 0.2, 0.2, 0.6);
-        cr.set_line_width (6.0);
-
-        cr.arc (xc, yc, 10.0, 0, 2*M_PI);
-        cr.fill ();
-
-        cr.arc (xc, yc, radius, angle1, angle1);
-        cr.line_to (xc, yc);
-        cr.arc (xc, yc, radius, angle2, angle2);
-        cr.line_to (xc, yc);
-        cr.stroke ()
-
-        cr.identity_matrix()
-        if svg != None:
-            for i in xrange(10):
-                svg.render_cairo(cr)
-                cr.translate(32,0)
+        self._component(cr, ev.x, ev.y)
+        
 
     def on_canvas_button_release_event(self, canvas, ev, user=None):
         pass
