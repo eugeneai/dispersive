@@ -23,9 +23,11 @@
                     <property name="width_request">1024</property>
                     <property name="height_request">768</property>
                     <property name="visible">True</property>
+                    <property name="app_paintable">True</property>
                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON1_MOTION_MASK | GDK_BUTTON2_MOTION_MASK | GDK_BUTTON3_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_STRUCTURE_MASK</property>
                     <signal name="button-press-event" handler="on_canvas_button_press_event" swapped="no"/>
                     <signal name="button-release-event" handler="on_canvas_button_release_event" swapped="no"/>
+                    <signal name="expose-event" handler="on_canvas_expose_event" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>

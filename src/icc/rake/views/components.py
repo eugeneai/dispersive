@@ -232,3 +232,10 @@ class Canvas(View):
     def on_canvas_button_release_event(self, canvas, ev, user=None):
         pass
 
+    def on_canvas_expose_event(self, canvas, ev, data=None):
+        cr = canvas.window.cairo_create()
+        cr.set_line_width(0.0)
+        cr.rectangle(0,0, 200,200)
+        cr.fill()
+        self._component(cr, 100, 100)
+        
