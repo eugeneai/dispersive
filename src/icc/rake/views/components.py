@@ -207,6 +207,7 @@ class Canvas(View):
     def _init_pics(self):
         self.svg=rsvg.Handle(data=resource_string(__name__, "ui/pics/test.svg"))
         self.background=rsvg.Handle(data=resource_string(__name__, "ui/pics/background.svg"))
+        self.lm=rsvg.Handle(data=resource_string(__name__, "ui/pics/lm.svg"))
 
     def _component(self, canvas, x, y):
         canvas.set_line_width(1.0)
@@ -215,6 +216,7 @@ class Canvas(View):
         canvas.translate(-16,-16)
 
         self.background.render_cairo(canvas)
+        self.lm.render_cairo(canvas)
         canvas.arc(-2, 16, 2, 0, M_PI*2)
         canvas.stroke()
         canvas.arc(34, 16, 2, 0, M_PI*2)
