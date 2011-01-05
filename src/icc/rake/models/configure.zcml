@@ -5,4 +5,10 @@
     name="empty_model"
     />
 
+<utility
+    component=".components.Canvas"
+    provides="zope.component.interfaces.IFactory"
+    name="canvas_model"
+    />
+
 </configure>

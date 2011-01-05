@@ -6,3 +6,8 @@ from icc.rake.models.interfaces import *
 class Model:
     implements(IModel)
     pass
+
+class Canvas:
+    implements(ICanvas)
+    pass
+

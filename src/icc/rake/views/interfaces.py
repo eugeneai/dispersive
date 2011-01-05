@@ -11,6 +11,10 @@ class IProjectView(IView):
     shoud adapt this interface to their models.
     """
 
+class ICanvas(IProjectView):
+    """We use drawing canvas as main project view
+    """
+
 class IApplication(IView):
     def remove_active_widget():
         """Remove active widget froom the active area."""

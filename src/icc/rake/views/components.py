@@ -26,12 +26,14 @@ class View(object):
     template = None
     widget_names = None
     ui_resource = __name__
+    main_widget_name = 'main_frame'
     #implements(IView)
     ZC.adapts(mdli.IModel)
     def __init__(self, model = None):
         self.ui=Ui()
-        self.load_ui(self.__class__.template,
-                     self.__class__.widget_names)
+        if self.__class__.template != None:
+            self.load_ui(self.__class__.template,
+                         self.__class__.widget_names)
         self.set_model(model)
         self.signals = {}
 
@@ -169,7 +171,8 @@ class Application(View):
         if self.active_view:
             self.remove_active_view()
         self.active_view = view
-        self.ui.main_vbox.pack_start(view.ui.main_frame, True, True)
+        main_widget_name = view.__class__.main_widget_name
+        self.ui.main_vbox.pack_start(getattr(view.ui, main_widget_name), True, True)
         view.ui.main_frame.show_all()
 
     #def insert_plotting_area(self, ui):
@@ -186,3 +189,20 @@ class Application(View):
     run = main
 
 
+class Canvas(View):
+    implements(ICanvas)
+    
+    template = "ui/canvas_view.glade"
+    widget_names = ['canvas', 'main_frame']
+    
+    def __init__(self, model = None):
+        View.__init__(self, model=model)
+        
+    def on_canvas_button_press_event(self, canvas, ev, data=None):
+        print "press:", ev
+
+    def on_canvas_button_release_event(self, canvas, ev, user=None):
+        print "release:", ev
+
+    def on_button1_clicked(self, btn, data=None):
+        print "Btn:", btn

@@ -4,4 +4,11 @@
     provides="zope.component.interfaces.IFactory"
     name="Application"
     />
+
+<adapter
+    factory=".components.Canvas"
+    provides="icc.rake.views.interfaces.IProjectView"
+    for="icc.rake.models.interfaces.ICanvas"
+    />
+
 </configure>
