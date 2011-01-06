@@ -200,6 +200,9 @@ class Canvas(View):
     widget_names = ['canvas', 'main_frame']
     
     def __init__(self, model = None):
+        self.p=Ui()
+        self.p.x=0
+        self.p.y=0
         View.__init__(self, model=model)
         self._init_pics()
         self.ui.main_frame.show_all()
@@ -223,11 +226,37 @@ class Canvas(View):
         canvas.stroke()
 
         canvas.set_matrix(m)
-        
+
+    def _connect(self, canvas, x1, y1, x2, y2):
+        #x=25.6;  y=128.0
+        #x1=102.4; y1=230.4
+        #x2=153.6; y2=25.6
+        #x3=230.4; y3=128.0
+        dx=x2-x1
+        dy=y2-y1
+        dx,dy=dx/2.,dy/2.
+        sx=16+2
+
+        src = canvas.get_source()
+        canvas.move_to (x1+sx, y1)
+        canvas.curve_to (x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
+        canvas.set_source_rgba (1, 1, 1, 0.8);
+        canvas.set_line_width (6.0)
+        canvas.stroke()
+
+        canvas.move_to (x1+sx, y1)
+        canvas.curve_to (x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
+        canvas.set_source_rgba (0.5, 0, 0, 0.7);
+        canvas.set_line_width (3.0)
+        canvas.stroke()
+        canvas.set_source(src)
+
     def on_canvas_button_press_event(self, canvas, ev, data=None):
         cr = canvas.window.cairo_create()
+        self._connect(cr, self.p.x, self.p.y, ev.x, ev.y)
         self._component(cr, ev.x, ev.y)
-        
+        self.p.x=ev.x
+        self.p.y=ev.y
 
     def on_canvas_button_release_event(self, canvas, ev, user=None):
         pass
@@ -240,5 +269,6 @@ class Canvas(View):
         dx=dy=60
         for x in xrange(5):
             for y in xrange(5):
+                self._connect(cr, 0,0, x*dx, y*dy)
                 self._component(cr, x*dx, y*dy)
         
