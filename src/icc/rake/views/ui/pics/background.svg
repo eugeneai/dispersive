@@ -7,6 +7,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="32px"
@@ -16,7 +17,40 @@
    inkscape:version="0.48.0 r9654"
    sodipodi:docname="background.svg">
   <defs
-     id="defs3038" />
+     id="defs3038">
+    <linearGradient
+       id="linearGradient4935">
+      <stop
+         style="stop-color:#ccedf2;stop-opacity:0.76923078;"
+         offset="0"
+         id="stop4937" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0.83653843;"
+         offset="1"
+         id="stop4939" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4913">
+      <stop
+         id="stop4915"
+         offset="0"
+         style="stop-color:#ccedf2;stop-opacity:0;" />
+      <stop
+         id="stop4917"
+         offset="1"
+         style="stop-color:#93ffff;stop-opacity:0.77403843;" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4913"
+       id="linearGradient4911"
+       x1="1"
+       y1="24"
+       x2="31"
+       y2="15"
+       gradientUnits="userSpaceOnUse"
+       spreadMethod="pad" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -25,13 +59,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16.86083"
-     inkscape:cx="15.204768"
+     inkscape:cx="14.548742"
      inkscape:cy="15.500954"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
-     inkscape:snap-global="false"
+     inkscape:snap-global="true"
      inkscape:window-width="1280"
      inkscape:window-height="949"
      inkscape:window-x="0"
@@ -58,7 +92,16 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:none;stroke:#000000;stroke-width:1.00074458;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#ffffff;fill-opacity:0.70881224;fill-rule:nonzero;stroke:none;stroke-opacity:0.13026820000000000"
+       id="rect4919"
+       width="42"
+       height="42"
+       x="-5"
+       y="-5"
+       rx="4.4210529"
+       ry="4.4210529" />
+    <rect
+       style="fill:url(#linearGradient4911);stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:0.27203064999999998;stroke-dasharray:none;fill-opacity:1;fill-rule:nonzero"
        id="rect3008"
        width="30.999256"
        height="30.999256"
