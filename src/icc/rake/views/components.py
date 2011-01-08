@@ -210,8 +210,7 @@ class Canvas(View):
         View.__init__(self, model=model)
 
     def get_position(self, module):
-        # return self.model.get_position(module)
-        return (100, 100)
+        return self.model.get_position(module)
 
     def _init_resources(self):
         View._init_resources(self)
