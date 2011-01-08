@@ -10,3 +10,7 @@ class ICanvas(IModel):
     Basic idea taken from Orange project, but impoemented
     on the basis of ZCA.
     """
+
+class IModule(IModel):
+    """Module model """
+    

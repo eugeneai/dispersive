@@ -29,17 +29,22 @@ class Ui:
 class View(object):
     template = None
     widget_names = None
-    ui_resource = __name__
+    resource = __name__
     main_widget_name = 'main_frame'
     #implements(IView)
     ZC.adapts(mdli.IModel)
+    
     def __init__(self, model = None):
         self.ui=Ui()
+        self._init_resources()
         if self.__class__.template != None:
             self.load_ui(self.__class__.template,
                          self.__class__.widget_names)
         self.set_model(model)
         self.signals = {}
+
+    def _init_resources(self):
+        pass
 
     def connect(self, signal, method, user_data=None):
         l = self.signals.setdefault(signal, [])
@@ -62,7 +67,7 @@ class View(object):
     def load_ui(self, template, widget_names = None):
         if template:
             builder=self.ui._builder = gtk.Builder()
-            builder.add_from_string(resource_string(self.ui_resource, template))
+            builder.add_from_string(resource_string(self.resource, template))
             builder.connect_signals(self, builder)
             if widget_names:
                 for name in widget_names:
@@ -192,9 +197,8 @@ class Application(View):
     
     run = main
 
-
 class Canvas(View):
-    implements(ICanvas)
+    implements(ICanvasView)
     
     template = "ui/canvas_view.glade"
     widget_names = ['canvas', 'main_frame']
@@ -204,34 +208,45 @@ class Canvas(View):
         self.p.x=0
         self.p.y=0
         View.__init__(self, model=model)
-        self._init_pics()
-        self.ui.main_frame.show_all()
 
-    def _init_pics(self):
-        self.svg=rsvg.Handle(data=resource_string(__name__, "ui/pics/test.svg"))
-        self.background=rsvg.Handle(data=resource_string(__name__, "ui/pics/background.svg"))
-        self.lm=rsvg.Handle(data=resource_string(__name__, "ui/pics/frame_open.svg"))
+    def get_position(self, module):
+        # return self.model.get_position(module)
+        return (100, 100)
 
-    def _component(self, canvas, x, y):
+    def _init_resources(self):
+        View._init_resources(self)
+        self.module_icon_background = rsvg.Handle(
+                data=resource_string(__name__,
+                      "modules/ui/pics/background.svg"))
+
+    def _component(self, canvas, module):
         canvas.set_line_width(1.0)
         m = canvas.get_matrix()
-        canvas.translate(x, y)
+        x, y = self.get_position(module)
+        try:
+            canvas.translate(x, y)
+        except ValueError:
+            canvas.translate(100, 100)
+            
         canvas.translate(-16,-16)
 
-        self.background.render_cairo(canvas)
-        self.lm.render_cairo(canvas)
-        canvas.arc(-2, 16, 2, 0, M_PI*2)
-        canvas.stroke()
-        canvas.arc(34, 16, 2, 0, M_PI*2)
-        canvas.stroke()
+        self.module_icon_background.render_cairo(canvas)
+        if module:
+            view=ModuleView(module)
+            view.render_on_canvas(canvas)
+            if module.inputs:
+                canvas.arc(-2, 16, 2, 0, M_PI*2)
+                canvas.stroke()
+            if module.outputs:
+                canvas.arc(34, 16, 2, 0, M_PI*2)
+                canvas.stroke()
+            if module.controls:
+                canvas.arc(16, 34, 2, 0, M_PI*2)
+                canvas.stroke()
 
         canvas.set_matrix(m)
 
-    def _connect(self, canvas, x1, y1, x2, y2):
-        #x=25.6;  y=128.0
-        #x1=102.4; y1=230.4
-        #x2=153.6; y2=25.6
-        #x3=230.4; y3=128.0
+    def _connection(self, canvas, x1, y1, x2, y2):
         dx=x2-x1
         dy=y2-y1
         dx,dy=dx/2.,dy/2.
@@ -263,12 +278,20 @@ class Canvas(View):
 
     def on_canvas_expose_event(self, canvas, ev, data=None):
         cr = canvas.window.cairo_create()
-        #cr.set_line_width(0.0)
-        #cr.rectangle(0,0, 200,200)
-        #cr.fill()
         dx=dy=60
-        for x in xrange(5):
-            for y in xrange(5):
-                self._connect(cr, 0,0, x*dx, y*dy)
-                self._component(cr, x*dx, y*dy)
         
+class ModuleView(View):
+    def _init_resources(self):
+        View._init_resources()
+        if self.model !=None and self.model.__class__.icon:
+            # WWW May be we need initialize icons for
+            # all classes only not for instances.
+            self.icon = rsvg.Handle(
+                data=resource_string(self.__class__.resource,
+                     self.model.__class__.icon))
+            
+    def render_on_canvas(self, canvas):
+        """Render myself on a cairo canvas"""
+        self.icon_svg.render_cairo(canvas)
+
+    
