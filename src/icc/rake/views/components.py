@@ -210,7 +210,7 @@ class Canvas(View):
     def _init_pics(self):
         self.svg=rsvg.Handle(data=resource_string(__name__, "ui/pics/test.svg"))
         self.background=rsvg.Handle(data=resource_string(__name__, "ui/pics/background.svg"))
-        self.lm=rsvg.Handle(data=resource_string(__name__, "ui/pics/lm.svg"))
+        self.lm=rsvg.Handle(data=resource_string(__name__, "ui/pics/plot.svg"))
 
     def _component(self, canvas, x, y):
         canvas.set_line_width(1.0)
