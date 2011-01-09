@@ -2,6 +2,7 @@
 import os, os.path
 from zope.interface import implements
 from icc.rake.models.interfaces import *
+from collections import OrderedDict
 
 class Model:
     implements(IModel)
@@ -13,9 +14,9 @@ class Record(object):
 class Module():
     implements(IModule)
     # class fields
-    inputs=[]
-    outputs=[]
-    controls=[]
+    inputs=OrderedDict()
+    outputs=OrderedDict()
+    controls=OrderedDict()
     name="<Module>"
     icon=None # Shoul not be here
 
@@ -27,6 +28,9 @@ class Canvas:
         # connections of the modules
         self.forwards={}
         self.backwards={}
+
+        # test case
+        self.
 
     def place(self, module, x, y):
         self.modules[module]=(x, y)
@@ -59,4 +63,8 @@ class Canvas:
         if idx != -1:
             del connl[idx]
 
+
+class TableLoadModule(Module):
+    outputs['data']=('data.frame',)
+    
 
