@@ -216,7 +216,7 @@ class Canvas(View):
         View._init_resources(self)
         self.module_icon_background = rsvg.Handle(
                 data=resource_string(__name__,
-                      "modules/ui/pics/background.svg"))
+                      "ui/pics/background.svg"))
 
     def _component(self, canvas, module):
         canvas.set_line_width(1.0)
@@ -280,13 +280,14 @@ class Canvas(View):
         dx=dy=60
         
 class ModuleView(View):
+    module_resource='icc.rake.modules.views'
     def _init_resources(self):
         View._init_resources()
         if self.model !=None and self.model.__class__.icon:
             # WWW May be we need initialize icons for
             # all classes only not for instances.
             self.icon = rsvg.Handle(
-                data=resource_string(self.__class__.resource,
+                data=resource_string(self.__class__.module_resource,
                      self.model.__class__.icon))
             
     def render_on_canvas(self, canvas):

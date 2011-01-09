@@ -11,7 +11,7 @@ class Model:
 class Record(object):
     pass
     
-class Module():
+class Module:
     implements(IModule)
     # class fields
     inputs=OrderedDict()
@@ -30,7 +30,11 @@ class Canvas:
         self.backwards={}
 
         # test case
-        self.
+        m1 = FrameLoadModule()
+        m2 = FrameViewModule()
+        self.place(m1, 20,20)
+        self.place(m2, 50, 30)
+        self.connect(m1,m2)
 
     def place(self, module, x, y):
         self.modules[module]=(x, y)
@@ -52,19 +56,22 @@ class Canvas:
 
     def _add_con(self, mfrom, mto, conns):
         connl=conns.setdefault(mfrom, [])
-        if connl.find(mto) != -1:
+        if not mto in connl:
             connl.append(mto)
             
     def _rem_con(self, mfrom, mto, conns):
-        connl=conns.get(mfrom, None)
-        if connl == None:
-            return 
-        idx = connl.find(mto)
-        if idx != -1:
+        connl=conns.get(mfrom, [])
+        if mfrom in connl:
             del connl[idx]
 
-
-class TableLoadModule(Module):
-    outputs['data']=('data.frame',)
+class FrameLoadModule(Module):
+    #outputs['data']=('data.frame',)
+    icon='ui/pics/frame_open.svg'
+    name='Load a Data Frame'
+    
+class FrameViewModule(Module):
+    #inputs['data']=('data.frame',)
+    icon='ui/pics/frame_view.svg'
+    name='View a Data Frame'
     
 
