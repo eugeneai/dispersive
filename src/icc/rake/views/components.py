@@ -214,7 +214,10 @@ class Canvas(View):
     def __init__(self, model = None):
         View.__init__(self, model=model)
         self.icon_cache={}
-        self.states=Ui()
+        self.state=Ui()
+        self.selected_module=None
+        self.modify_paint=False
+        self.force_paint=True
 
     def get_position(self, module):
         return self.model.get_position(module)
@@ -224,8 +227,11 @@ class Canvas(View):
         self.module_icon_background = rsvg.Handle(
                 data=resource_string(__name__,
                       "ui/pics/background.svg"))
+        self.module_icon_selected = rsvg.Handle(
+                data=resource_string(__name__,
+                      "ui/pics/selected.svg"))
 
-    def _module(self, canvas, module):
+    def _module(self, canvas, module, selected=False):
         canvas.set_line_width(1.0)
         m = canvas.get_matrix()
         x, y = self.get_position(module)
@@ -236,11 +242,15 @@ class Canvas(View):
             
         canvas.translate(-16,-16)
 
-        self.module_icon_background.render_cairo(canvas)
+        if selected:
+            self.module_icon_selected.render_cairo(canvas)
+        else:
+            self.module_icon_background.render_cairo(canvas)
         if module:
             view=IModuleView(module)
             view.set_parent(self)
             view.render_on_canvas(canvas)
+            canvas.set_source_rgb(0,0,0)
             if module.inputs:
                 canvas.arc(-2, 16, 2, 0, M_2PI)
                 canvas.stroke()
@@ -256,7 +266,7 @@ class Canvas(View):
 
         canvas.set_matrix(m)
 
-    def _connection(self, canvas, x1, y1, x2, y2):
+    def _connection(self, canvas, x1, y1, x2, y2, selected=False):
         dx=x2-x1
         dy=y2-y1
         dx,dy=dx/2.,dy/2.
@@ -271,21 +281,43 @@ class Canvas(View):
 
         canvas.move_to (x1+sx, y1)
         canvas.curve_to (x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
-        canvas.set_source_rgba (0.5, 0, 0, 0.7);
+        if selected:
+            canvas.set_source_rgba (0.0, 0.5, 0, 0.7)
+        else:
+            canvas.set_source_rgba (0.5, 0, 0, 0.7)
         canvas.set_line_width (3.0)
         canvas.stroke()
         canvas.set_source(src)
 
     def on_canvas_button_press_event(self, canvas, ev, data=None):
-        pass
-
+        self.selected_module = self.model.find_module(ev.x, ev.y)
+        #(w, h) = canvas.window.get_size()
+        self.modify_paint = self.selected_module != None
+        if self.modify_paint:
+            (px, py) = self.model.get_position(self.selected_module)
+            self.mdx, self.mdy = px - ev.x, py - ev.y
+        self.force_paint = True
+        canvas.queue_draw()
 
     def on_canvas_button_release_event(self, canvas, ev, user=None):
-        pass
+        if self.selected_module:
+            self.model.place(self.selected_module, ev.x+self.mdx, ev.y+self.mdy)
+        self.selected_module=None
+        self.modify_paint=False
+        self.force_paint=True
+        canvas.queue_draw()
+
+    def on_canvas_motion_notify_event(self, canvas, ev, user=None):
+        if self.selected_module:
+            self.model.place(self.selected_module, ev.x+self.mdx, ev.y+self.mdy)
+            canvas.queue_draw()
 
     def on_canvas_expose_event(self, canvas, ev, data=None):
         (w, h) = canvas.window.get_size()
-        if self.model.changed:
+        if not self.modify_paint:
+            if self.model.changed:
+                self.force_paint = True
+        if self.force_paint:
             surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
             ccanvas = cairo.Context(surface)
             # fill canvas with bacground color
@@ -295,23 +327,46 @@ class Canvas(View):
             ccanvas.set_source_rgb(c,c,c)
             ccanvas.fill()
             ccanvas.set_source(src)
-            self.draw_model_on(ccanvas)
+            self.draw_model_on(ccanvas, self.selected_module)
             self.model.changed = False
             self.cache_surface = surface
+            self.force_paint = False
         else:
             surface = self.cache_surface
         ocanvas = canvas.window.cairo_create()
         ocanvas.set_source_surface(surface)
         ocanvas.paint()
+        if self.modify_paint:
+            pass
+            self.draw_model_on(ocanvas, exc_mod = self.selected_module, selected=True)
 
-    def draw_model_on(self, canvas):
+    def draw_model_on(self, canvas, exc_mod=None, selected=False):
+        """Draw logics on the cairo canvas.
+        Specially process exc_mod and its connections.
+        The procedding of the exc_mod depends on selected.
+        """
         for (mf, l) in self.model.forwards.iteritems():
             (x1, y1) = self.model.get_position(mf)
+            emph = False
+            if mf == exc_mod:
+                if not selected:
+                    continue
+                else:
+                    emph = True
             for mt in l:
                 (x2, y2) = self.model.get_position(mt)
-                self._connection(canvas, x1, y1, x2, y2)
+                if mt == exc_mod:
+                    if not selected:
+                        continue
+                    else:
+                        emph = True
+                self._connection(canvas, x1, y1, x2, y2, selected=emph)
         for m in self.model.modules:
-            self._module(canvas, m)
+            if m == exc_mod:
+                if selected:
+                    self._module(canvas, m, selected = True)
+            else:
+                self._module(canvas, m)
                 
             
 class ModuleView(View):

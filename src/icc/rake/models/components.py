@@ -41,6 +41,14 @@ class Canvas:
         self.connect(m1,m2)
         self.connect(m1,m3)
         self.connect(m2,m3)
+        self.exc_mod=m3
+
+    def find_module(self, x, y):
+        for m, pos in self.modules.iteritems():
+            (px, py) = pos
+            if abs(px-x)<=16 and abs(py-y)<=16:
+                return m
+        return None
 
     def place(self, module, x, y):
         if module in self.modules:
