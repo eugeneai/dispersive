@@ -19,8 +19,8 @@ class IApplication(IView):
     def remove_active_widget():
         """Remove active widget froom the active area."""
 
-class IModuleView(IView):
-    """Module view, through which the system can render module data,
-    edit fields, etc.
+class IModuleCanvasView(IView):
+    """Module view, through which the canvas can render module,
+    usually as an icon.
     """
 

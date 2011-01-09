@@ -247,7 +247,7 @@ class Canvas(View):
         else:
             self.module_icon_background.render_cairo(canvas)
         if module:
-            view=IModuleView(module)
+            view=IModuleCanvasView(module)
             view.set_parent(self)
             view.render_on_canvas(canvas)
             canvas.set_source_rgb(0,0,0)
@@ -337,7 +337,6 @@ class Canvas(View):
         ocanvas.set_source_surface(surface)
         ocanvas.paint()
         if self.modify_paint:
-            pass
             self.draw_model_on(ocanvas, exc_mod = self.selected_module, selected=True)
 
     def draw_model_on(self, canvas, exc_mod=None, selected=False):
@@ -354,19 +353,21 @@ class Canvas(View):
                 else:
                     emph = True
             for mt in l:
+                emph1=emph
                 (x2, y2) = self.model.get_position(mt)
                 if mt == exc_mod:
                     if not selected:
                         continue
                     else:
-                        emph = True
-                self._connection(canvas, x1, y1, x2, y2, selected=emph)
+                        emph1 = True
+                self._connection(canvas, x1, y1, x2, y2, selected=emph1)
         for m in self.model.modules:
             if m == exc_mod:
                 if selected:
                     self._module(canvas, m, selected = True)
             else:
-                self._module(canvas, m)
+                if not selected:
+                    self._module(canvas, m)
                 
             
 class ModuleView(View):
@@ -397,5 +398,13 @@ class ModuleView(View):
         """Render myself on a cairo canvas"""
         if self.icon:
             self.icon.render_cairo(canvas)
+        canvas.move_to(16, 38)
+        canvas.select_font_face ("Sans")
+        text = self.model.name
+        x_bearing, y_bearing, width, height, x_advance, y_advance = canvas.text_extents(text)
+        canvas.rel_move_to(-width/2., height)
+        canvas.set_source_rgb(0,0,0)
+        canvas.show_text(text)
+        canvas.stroke()
 
     
