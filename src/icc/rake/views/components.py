@@ -36,14 +36,16 @@ class View(object):
     
     def __init__(self, model = None):
         self.ui=Ui()
-        self._init_resources()
+        self.model=None
+        self.parent_view=None
         if self.__class__.template != None:
             self.load_ui(self.__class__.template,
                          self.__class__.widget_names)
         self.set_model(model)
+        self.init_resources()
         self.signals = {}
 
-    def _init_resources(self):
+    def init_resources(self):
         pass
 
     def connect(self, signal, method, user_data=None):
@@ -61,8 +63,13 @@ class View(object):
             method(self, *args)
 
     def set_model(self, model):
-        self.model=model
-        # some update needed???
+        if self.model != model:
+            self.model=model
+            # some update needed???
+
+    def set_parent(self, view):
+        """Set parent view. Used for some reason"""
+        self.parent_view=view
 
     def load_ui(self, template, widget_names = None):
         if template:
@@ -204,21 +211,19 @@ class Canvas(View):
     widget_names = ['canvas', 'main_frame']
     
     def __init__(self, model = None):
-        self.p=Ui()
-        self.p.x=0
-        self.p.y=0
         View.__init__(self, model=model)
+        self.icon_cache={}
 
     def get_position(self, module):
         return self.model.get_position(module)
 
-    def _init_resources(self):
-        View._init_resources(self)
+    def init_resources(self):
+        View.init_resources(self)
         self.module_icon_background = rsvg.Handle(
                 data=resource_string(__name__,
                       "ui/pics/background.svg"))
 
-    def _component(self, canvas, module):
+    def _module(self, canvas, module):
         canvas.set_line_width(1.0)
         m = canvas.get_matrix()
         x, y = self.get_position(module)
@@ -231,7 +236,8 @@ class Canvas(View):
 
         self.module_icon_background.render_cairo(canvas)
         if module:
-            view=ModuleView(module)
+            view=IModuleView(module)
+            view.set_parent(self)
             view.render_on_canvas(canvas)
             if module.inputs:
                 canvas.arc(-2, 16, 2, 0, M_PI*2)
@@ -266,32 +272,53 @@ class Canvas(View):
         canvas.set_source(src)
 
     def on_canvas_button_press_event(self, canvas, ev, data=None):
-        cr = canvas.window.cairo_create()
-        self._connect(cr, self.p.x, self.p.y, ev.x, ev.y)
-        self._component(cr, ev.x, ev.y)
-        self.p.x=ev.x
-        self.p.y=ev.y
+        pass
+
 
     def on_canvas_button_release_event(self, canvas, ev, user=None):
         pass
 
     def on_canvas_expose_event(self, canvas, ev, data=None):
-        cr = canvas.window.cairo_create()
-        dx=dy=60
-        
+        canvas = canvas.window.cairo_create()
+        self.draw_model_on(canvas)
+
+    def draw_model_on(self, canvas):
+        for (mf, l) in self.model.forwards.iteritems():
+            (x1, y1) = self.model.get_position(mf)
+            for mt in l:
+                (x2, y2) = self.model.get_position(mt)
+                self._connection(canvas, x1, y1, x2, y2)
+        for m in self.model.modules:
+            self._module(canvas, m)
+                
+            
 class ModuleView(View):
     module_resource='icc.rake.modules.views'
-    def _init_resources(self):
-        View._init_resources()
-        if self.model !=None and self.model.__class__.icon:
-            # WWW May be we need initialize icons for
-            # all classes only not for instances.
-            self.icon = rsvg.Handle(
-                data=resource_string(self.__class__.module_resource,
-                     self.model.__class__.icon))
+
+    def set_model(self, model):
+        if self.model != model:
+            View.set_model(self, model)
+            self.init_resources()
+
+    def set_parent(self, parent):
+        View.set_parent(self, parent)
+        self.init_resources()
+
+    def init_resources(self):
+        View.init_resources(self)
+        self.icon = None
+        if self.parent_view:
+            if self.model != None and self.model.__class__.icon:
+                self.icon = self.parent_view.icon_cache.get(self.model.__class__, None)
+                if self.icon == None:
+                    self.icon = rsvg.Handle(
+                        data=resource_string(self.__class__.module_resource,
+                             self.model.__class__.icon))
+                    self.parent_view.icon_cache[self.model.__class__]=self.icon
             
     def render_on_canvas(self, canvas):
         """Render myself on a cairo canvas"""
-        self.icon_svg.render_cairo(canvas)
+        if self.icon:
+            self.icon.render_cairo(canvas)
 
     

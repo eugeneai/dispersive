@@ -11,4 +11,10 @@
     for="icc.rake.models.interfaces.ICanvas"
     />
 
+<adapter
+    factory=".components.ModuleView"
+    provides="icc.rake.views.interfaces.IModuleView"
+    for="icc.rake.models.interfaces.IModule"
+    />
+
 </configure>

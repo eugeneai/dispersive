@@ -31,10 +31,14 @@ class Canvas:
 
         # test case
         m1 = FrameLoadModule()
-        m2 = FrameViewModule()
-        self.place(m1, 20,20)
-        self.place(m2, 50, 30)
+        m2 = LmModule()
+        m3 = FrameViewModule()
+        self.place(m1, 20, 20)
+        self.place(m2, 200, 30)
+        self.place(m3, 500, 100)
         self.connect(m1,m2)
+        self.connect(m1,m3)
+        self.connect(m2,m3)
 
     def place(self, module, x, y):
         self.modules[module]=(x, y)
@@ -65,13 +69,20 @@ class Canvas:
             del connl[idx]
 
 class FrameLoadModule(Module):
-    #outputs['data']=('data.frame',)
+    outputs=OrderedDict(data = ('data.frame',))
     icon='ui/pics/frame_open.svg'
     name='Load a Data Frame'
     
 class FrameViewModule(Module):
-    #inputs['data']=('data.frame',)
+    inputs=OrderedDict(data = ('data.frame',))
     icon='ui/pics/frame_view.svg'
     name='View a Data Frame'
+
+class LmModule(Module):
+    inputs=OrderedDict(data = ('data.frame',))
+    outputs=OrderedDict(model = ('model.lm',))
+    icon='ui/pics/lm.svg'
+    name='Linear Regression'
+    
     
 
