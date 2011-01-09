@@ -21,7 +21,8 @@ import os
 
 import cairo, math
 import rsvg
-M_PI=math.pi
+
+M_2PI=math.pi*2.
 
 class Ui:
     pass
@@ -213,6 +214,7 @@ class Canvas(View):
     def __init__(self, model = None):
         View.__init__(self, model=model)
         self.icon_cache={}
+        self.states=Ui()
 
     def get_position(self, module):
         return self.model.get_position(module)
@@ -240,13 +242,16 @@ class Canvas(View):
             view.set_parent(self)
             view.render_on_canvas(canvas)
             if module.inputs:
-                canvas.arc(-2, 16, 2, 0, M_PI*2)
+                canvas.arc(-2, 16, 2, 0, M_2PI)
                 canvas.stroke()
             if module.outputs:
-                canvas.arc(34, 16, 2, 0, M_PI*2)
+                canvas.arc(34, 16, 2, 0, M_2PI)
                 canvas.stroke()
             if module.controls:
-                canvas.arc(16, 34, 2, 0, M_PI*2)
+                canvas.arc(16, 34, 2, 0, M_2PI)
+                canvas.stroke()
+            if module.implementors:
+                canvas.arc(16, -2, 2, 0, M_2PI)
                 canvas.stroke()
 
         canvas.set_matrix(m)
@@ -279,8 +284,25 @@ class Canvas(View):
         pass
 
     def on_canvas_expose_event(self, canvas, ev, data=None):
-        canvas = canvas.window.cairo_create()
-        self.draw_model_on(canvas)
+        (w, h) = canvas.window.get_size()
+        if self.model.changed:
+            surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
+            ccanvas = cairo.Context(surface)
+            # fill canvas with bacground color
+            src = ccanvas.get_source()
+            ccanvas.rectangle(0,0, w,h)
+            c=0.9
+            ccanvas.set_source_rgb(c,c,c)
+            ccanvas.fill()
+            ccanvas.set_source(src)
+            self.draw_model_on(ccanvas)
+            self.model.changed = False
+            self.cache_surface = surface
+        else:
+            surface = self.cache_surface
+        ocanvas = canvas.window.cairo_create()
+        ocanvas.set_source_surface(surface)
+        ocanvas.paint()
 
     def draw_model_on(self, canvas):
         for (mf, l) in self.model.forwards.iteritems():

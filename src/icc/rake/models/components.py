@@ -13,10 +13,11 @@ class Record(object):
     
 class Module:
     implements(IModule)
-    # class fields
+    # IDEF0 taken as a Metamodel
     inputs=OrderedDict()
     outputs=OrderedDict()
     controls=OrderedDict()
+    implementors=OrderedDict()
     name="<Module>"
     icon=None # Shoul not be here
 
@@ -28,6 +29,7 @@ class Canvas:
         # connections of the modules
         self.forwards={}
         self.backwards={}
+        self.changed=True
 
         # test case
         m1 = FrameLoadModule()
@@ -41,7 +43,19 @@ class Canvas:
         self.connect(m2,m3)
 
     def place(self, module, x, y):
-        self.modules[module]=(x, y)
+        if module in self.modules:
+            (px, py) = self.modules[module]
+            if px ==x and py == y:
+                pass
+            else:
+                self.modules[module] = (x, y)
+                self.updated()
+        else:
+                self.modules[module] = (x, y)
+                self.updated()
+
+    def updated(self):
+        self.changed=True
 
     def remove(self, module):
         del self.forwards[module]
@@ -62,11 +76,13 @@ class Canvas:
         connl=conns.setdefault(mfrom, [])
         if not mto in connl:
             connl.append(mto)
+            self.updated()
             
     def _rem_con(self, mfrom, mto, conns):
         connl=conns.get(mfrom, [])
         if mfrom in connl:
             del connl[idx]
+            self.updated()
 
 class FrameLoadModule(Module):
     outputs=OrderedDict(data = ('data.frame',))
