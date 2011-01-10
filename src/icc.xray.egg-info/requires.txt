@@ -1,4 +1,5 @@
 distribute
 zope.component [zcml]
 cfgparse
+numpy
 matplotlib

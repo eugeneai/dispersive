@@ -11,7 +11,8 @@ setup(
     install_requires=["distribute",
                       "zope.component [zcml]",
                       "cfgparse",
-                      "matplotlib",
+                      "numpy",
+                      #"matplotlib",
                       #"rsvg",
                       # "numpy",
                       # "PyGTK"
