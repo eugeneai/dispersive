@@ -62,6 +62,19 @@ def InputDialog(message, value='', field='Name:', secondary=''):
         return value
     return getText(value)
 
+def ConfirmationDialog(message, secondary=''):
+    dialog = gtk.MessageDialog(
+            None,
+            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+            gtk.MESSAGE_QUESTION,
+            gtk.BUTTONS_YES_NO,
+            None)
+    dialog.set_markup(message)
+    dialog.format_secondary_markup(secondary)
+    rc = dialog.run() == gtk.RESPONSE_YES
+    dialog.destroy()
+    return rc
+
 class View(object):
     template = None
     widget_names = None
@@ -348,21 +361,24 @@ class Canvas(View):
                            dx=sc*dx, dy=sc*dy):
                 if action=="rename":
                     module = self.selected_module
-                    module.name = InputDialog(
+                    name = InputDialog(
                         message='Enter the block <b>indetifier</b> (name)',
                         value=module.name,
                         field='Name:', 
                         secondary='It could be used for Your convenience as a comment.')
+                    module.modified = module.modified or name != module.name
+                    module.name = name
                     self.force_paint = True
                     canvas.queue_draw()
                     break
                 if action=="remove":
-                    self.model.remove(self.selected_module)
-                    self.selected_module=None
-                    self.force_paint = True
-                    self.modify_paint = False
-                    self.module_movement = False
-                    canvas.queue_draw()
+                    if not self.selected_module.modified or ConfirmationDialog('<b>Remove</b> the module?', 'Module had been modified.'):
+                            self.model.remove(self.selected_module)
+                            self.selected_module=None
+                            self.force_paint = True
+                            self.modify_paint = False
+                            self.module_movement = False
+                            canvas.queue_draw()
             
 
     def on_canvas_button_press_event(self, canvas, ev, data=None):

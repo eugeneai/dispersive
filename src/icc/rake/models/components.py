@@ -20,6 +20,7 @@ class Module:
     implementors=OrderedDict()
     name="<Module>"
     icon=None # Shoul not be here
+    modified=False
 
 class Canvas:
     implements(ICanvas)
@@ -35,13 +36,15 @@ class Canvas:
         m1 = FrameLoadModule()
         m2 = LmModule()
         m3 = FrameViewModule()
+        mp = PlotModule()
         self.place(m1, 20, 20)
         self.place(m2, 200, 30)
         self.place(m3, 500, 100)
+        self.place(mp, 300, 300)
         self.connect(m1,m2)
         self.connect(m1,m3)
         self.connect(m2,m3)
-        self.exc_mod=m3
+        self.connect(m2,mp)
 
     def find_module(self, x, y):
         for m, pos in self.modules.iteritems():
@@ -102,18 +105,24 @@ class Canvas:
 class FrameLoadModule(Module):
     outputs=OrderedDict(data = ('data.frame',))
     icon='ui/pics/frame_open.svg'
-    name='Load a Data Frame'
+    name='Data Frame Loading' 
     
 class FrameViewModule(Module):
     inputs=OrderedDict(data = ('data.frame',))
     icon='ui/pics/frame_view.svg'
-    name='View a Data Frame'
+    name='Data Frame Viewing'
 
 class LmModule(Module):
     inputs=OrderedDict(data = ('data.frame',))
-    outputs=OrderedDict(model = ('model.lm',))
+    outputs=OrderedDict(model = ('class.lm',))
     icon='ui/pics/lm.svg'
     name='Linear Regression'
+    
+class PlotModule(Module):
+    inputs=OrderedDict(x = ('',), y=('',))
+    outputs=OrderedDict()
+    icon='ui/pics/plot.svg'
+    name='Plot(anything)'
     
     
 
