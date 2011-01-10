@@ -1,4 +1,5 @@
 setup.py
+src/icc/icc_xray_app.py
 src/icc/__init__.py
 src/icc/icc_rake_app.py
 src/icc/icc_xray_app.py
@@ -16,6 +17,9 @@ src/icc/rake/interfaces.py
 src/icc/rake/models/__init__.py
 src/icc/rake/models/components.py
 src/icc/rake/models/interfaces.py
+src/icc/rake/modules/__init__.py
+src/icc/rake/modules/models/__init__.py
+src/icc/rake/modules/views/__init__.py
 src/icc/rake/views/__init__.py
 src/icc/rake/views/components.py
 src/icc/rake/views/interfaces.py

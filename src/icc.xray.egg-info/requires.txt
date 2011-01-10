@@ -2,4 +2,3 @@ distribute
 zope.component [zcml]
 cfgparse
 matplotlib
-rsvg
