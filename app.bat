@@ -1,4 +1,3 @@
 @echo off
-c:
-cd \dispersive
-c:\Python25\pythonw app.py
+cd src\icc
+c:\Python27\pythonw icc_rake_app.py
