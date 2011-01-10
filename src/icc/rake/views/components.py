@@ -26,6 +26,41 @@ M_2PI=math.pi*2.
 
 class Ui:
     pass
+    
+def InputDialog(message, value='', field='Name:', secondary=''):
+    "Obtained and adopted from http://ardoris.wordpress.com/2008/07/05/pygtk-text-entry-dialog/"
+    def responseToDialog(entry, dialog, response):
+        dialog.response(response)
+    def getText(value):
+        #base this on a message dialog
+        dialog = gtk.MessageDialog(
+            None,
+            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+            gtk.MESSAGE_QUESTION,
+            gtk.BUTTONS_OK,
+            None)
+        dialog.set_markup(message)
+        #create the text input field
+        entry = gtk.Entry()
+        #allow the user to press enter to do ok
+        entry.connect("activate", responseToDialog, dialog, gtk.RESPONSE_OK)
+        #create a horizontal box to pack the entry and a label
+        entry.set_text(value)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(field), False, 5, 5)
+        hbox.pack_end(entry)
+        #some secondary text
+        dialog.format_secondary_markup(secondary)
+        #add it and show it
+        dialog.vbox.pack_end(hbox, True, True, 0)
+        dialog.show_all()
+        #go go go
+        result = dialog.run()
+        if result != gtk.RESPONSE_CLOSE:
+            value = entry.get_text()
+        dialog.destroy()
+        return value
+    return getText(value)
 
 class View(object):
     template = None
@@ -294,18 +329,20 @@ class Canvas(View):
             if ev.type == gtk.gdk.BUTTON_PRESS:
                 self.selected_module = self.model.find_module(ev.x, ev.y)
                 #(w, h) = canvas.window.get_size()
-                self.modify_paint = self.selected_module != None
-                if self.modify_paint:
-                    (px, py) = self.model.get_position(self.selected_module)
-                    self.mdx, self.mdy = px - ev.x, py - ev.y
                 self.force_paint = True
                 canvas.queue_draw()
-            """
-            if ev.type == gtk.gdk._2BUTTON_PRESS:
-                print "Double click"
             if ev.type == gtk.gdk._3BUTTON_PRESS:
-                print "Triple click"
-            """
+                module = self.model.find_module(ev.x, ev.y)
+                if module != None:
+                    module.name = InputDialog(message='Enter the block <b>indetifier</b> (name)', value=module.name, field='Name:', 
+                        secondary='It could be used for Your convenience as a comment.')
+                    self.selected_module = None
+                    self.force_paint = True
+                    canvas.queue_draw()
+            self.modify_paint = self.selected_module != None
+            if self.modify_paint:
+                (px, py) = self.model.get_position(self.selected_module)
+                self.mdx, self.mdy = px - ev.x, py - ev.y
         #print ev.type
 
     def on_canvas_button_release_event(self, canvas, ev, user=None):
