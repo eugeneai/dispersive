@@ -360,7 +360,8 @@ class Canvas(View):
                         continue
                     else:
                         emph1 = True
-                self._connection(canvas, x1, y1, x2, y2, selected=emph1)
+                if exc_mod == None or not selected or emph1:
+				    self._connection(canvas, x1, y1, x2, y2, selected=emph1)
         for m in self.model.modules:
             if m == exc_mod:
                 if selected:
