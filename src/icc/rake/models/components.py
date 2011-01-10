@@ -66,8 +66,15 @@ class Canvas:
         self.changed=True
 
     def remove(self, module):
-        del self.forwards[module]
-        del self.backwards[module]
+        conn_ms=self.forwards.get(module, []) + self.backwards.get(module,[])
+        for mto in conn_ms:
+            self.disconnect(module, mto)
+            self.disconnect(mto, module)
+        if module in self.forwards:
+            del self.forwards[module]
+        if module in self.backwards:
+            del self.backwards[module]
+        del self.modules[module]
 
     def get_position(self, module):
         return self.modules[module]
@@ -88,8 +95,8 @@ class Canvas:
             
     def _rem_con(self, mfrom, mto, conns):
         connl=conns.get(mfrom, [])
-        if mfrom in connl:
-            del connl[idx]
+        while mto in connl:
+            connl.remove(mto)
             self.updated()
 
 class FrameLoadModule(Module):

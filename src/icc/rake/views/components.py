@@ -240,6 +240,18 @@ class Application(View):
     
     run = main
 
+TBL_ACTIONS=[
+    ( 1,-1, "remove"),
+    (-1, 1, "rename"),
+    ( 1, 1, "info"),
+    (-1,-1, "edit"),
+
+    ( 1, 0, "right"),
+    (-1, 0, "left"),
+    ( 0,-1, "up"),
+    ( 0, 1, "down"),
+    ]
+
 class Canvas(View):
     implements(ICanvasView)
     
@@ -329,6 +341,30 @@ class Canvas(View):
         canvas.stroke()
         canvas.set_source(src)
 
+    def toolboxlet_action(self, canvas, x,y):
+        sc=19.5
+        for dx, dy, action in TBL_ACTIONS:
+            if self.is_spotted(self.selected_module, x, y, 5,
+                           dx=sc*dx, dy=sc*dy):
+                if action=="rename":
+                    module = self.selected_module
+                    module.name = InputDialog(
+                        message='Enter the block <b>indetifier</b> (name)',
+                        value=module.name,
+                        field='Name:', 
+                        secondary='It could be used for Your convenience as a comment.')
+                    self.force_paint = True
+                    canvas.queue_draw()
+                    break
+                if action=="remove":
+                    self.model.remove(self.selected_module)
+                    self.selected_module=None
+                    self.force_paint = True
+                    self.modify_paint = False
+                    self.module_movement = False
+                    canvas.queue_draw()
+            
+
     def on_canvas_button_press_event(self, canvas, ev, data=None):
         if ev.button == 1:
             if ev.type == gtk.gdk.BUTTON_PRESS:
@@ -337,17 +373,9 @@ class Canvas(View):
                         self.module_movement=True
                         self.modify_paint=True
                         canvas.queue_draw()
-            if ev.type == gtk.gdk._3BUTTON_PRESS:
-                module = self.model.find_module(ev.x, ev.y)
-                if module != None:
-                    module.name = InputDialog(
-                        message='Enter the block <b>indetifier</b> (name)',
-                        value=module.name,
-                        field='Name:', 
-                        secondary='It could be used for Your convenience as a comment.')
-                    self.selected_module = None
-                    self.force_paint = True
-                    canvas.queue_draw()
+                    if self.toolboxlet_action(canvas, ev.x, ev.y):
+                        canvas.queue_draw()
+                        
             if self.modify_paint:
                 (px, py) = self.model.get_position(self.selected_module)
                 self.mdx, self.mdy = px - ev.x, py - ev.y
