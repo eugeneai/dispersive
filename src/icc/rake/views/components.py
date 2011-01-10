@@ -56,7 +56,7 @@ def InputDialog(message, value='', field='Name:', secondary=''):
         dialog.show_all()
         #go go go
         result = dialog.run()
-        if result != gtk.RESPONSE_CLOSE:
+        if result == gtk.RESPONSE_OK:
             value = entry.get_text()
         dialog.destroy()
         return value
@@ -251,6 +251,7 @@ class Canvas(View):
         self.icon_cache={}
         self.state=Ui()
         self.selected_module=None
+        self.module_movement=False
         self.modify_paint=False
         self.force_paint=True
 
@@ -265,6 +266,9 @@ class Canvas(View):
         self.module_icon_selected = rsvg.Handle(
                 data=resource_string(__name__,
                       "ui/pics/selected.svg"))
+        self.module_icon_toolboxed = rsvg.Handle(
+                data=resource_string(__name__,
+                      "ui/pics/toolboxed.svg"))
 
     def _module(self, canvas, module, selected=False):
         canvas.set_line_width(1.0)
@@ -278,7 +282,8 @@ class Canvas(View):
         canvas.translate(-16,-16)
 
         if selected:
-            self.module_icon_selected.render_cairo(canvas)
+            self.module_icon_toolboxed.render_cairo(canvas)
+            # self.module_icon_selected.render_cairo(canvas)
         else:
             self.module_icon_background.render_cairo(canvas)
         if module:
@@ -327,19 +332,22 @@ class Canvas(View):
     def on_canvas_button_press_event(self, canvas, ev, data=None):
         if ev.button == 1:
             if ev.type == gtk.gdk.BUTTON_PRESS:
-                self.selected_module = self.model.find_module(ev.x, ev.y)
-                #(w, h) = canvas.window.get_size()
-                self.force_paint = True
-                canvas.queue_draw()
+                if self.selected_module != None:
+                    if self.is_spotted(self.selected_module, ev.x, ev.y, 16):
+                        self.module_movement=True
+                        self.modify_paint=True
+                        canvas.queue_draw()
             if ev.type == gtk.gdk._3BUTTON_PRESS:
                 module = self.model.find_module(ev.x, ev.y)
                 if module != None:
-                    module.name = InputDialog(message='Enter the block <b>indetifier</b> (name)', value=module.name, field='Name:', 
+                    module.name = InputDialog(
+                        message='Enter the block <b>indetifier</b> (name)',
+                        value=module.name,
+                        field='Name:', 
                         secondary='It could be used for Your convenience as a comment.')
                     self.selected_module = None
                     self.force_paint = True
                     canvas.queue_draw()
-            self.modify_paint = self.selected_module != None
             if self.modify_paint:
                 (px, py) = self.model.get_position(self.selected_module)
                 self.mdx, self.mdy = px - ev.x, py - ev.y
@@ -347,18 +355,44 @@ class Canvas(View):
 
     def on_canvas_button_release_event(self, canvas, ev, user=None):
         if ev.button == 1:
-            if self.selected_module:
+            if self.module_movement:
                 self.model.place(self.selected_module, ev.x+self.mdx, ev.y+self.mdy)
-            self.selected_module=None
-            self.modify_paint=False
+                #self.selected_module=None
+                self.module_movement=False
             self.force_paint=True
             canvas.queue_draw()
         #print ev.type
 
+    def is_spotted(self, module, x,y, distance, dx=0, dy=0):
+        if module != None:
+            (mx, my) = self.model.get_position(module)
+            d = distance
+            if abs(mx+dx-x)<=d and abs(my+dy-y)<=d:
+                return True
+        return False
+
+    def leaved_selection(self, module, x, y):
+        return not self.is_spotted(module, x,y, 26)
+
     def on_canvas_motion_notify_event(self, canvas, ev, user=None):
-        if self.selected_module:
+        if self.module_movement:
             self.model.place(self.selected_module, ev.x+self.mdx, ev.y+self.mdy)
             canvas.queue_draw()
+            return
+
+        module = None
+        if self.selected_module != None:
+            module = self.selected_module
+            if self.leaved_selection(self.selected_module, ev.x, ev.y):
+                module = self.model.find_module(ev.x, ev.y)
+        else:
+            module = self.model.find_module(ev.x, ev.y)
+        if self.selected_module != module:
+            self.selected_module = module
+            self.force_paint = True
+            self.modify_paint = module != None
+            canvas.queue_draw()
+
 
     def on_canvas_expose_event(self, canvas, ev, data=None):
         (w, h) = canvas.window.get_size()
