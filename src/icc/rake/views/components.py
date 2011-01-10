@@ -290,22 +290,33 @@ class Canvas(View):
         canvas.set_source(src)
 
     def on_canvas_button_press_event(self, canvas, ev, data=None):
-        self.selected_module = self.model.find_module(ev.x, ev.y)
-        #(w, h) = canvas.window.get_size()
-        self.modify_paint = self.selected_module != None
-        if self.modify_paint:
-            (px, py) = self.model.get_position(self.selected_module)
-            self.mdx, self.mdy = px - ev.x, py - ev.y
-        self.force_paint = True
-        canvas.queue_draw()
+        if ev.button == 1:
+            if ev.type == gtk.gdk.BUTTON_PRESS:
+                self.selected_module = self.model.find_module(ev.x, ev.y)
+                #(w, h) = canvas.window.get_size()
+                self.modify_paint = self.selected_module != None
+                if self.modify_paint:
+                    (px, py) = self.model.get_position(self.selected_module)
+                    self.mdx, self.mdy = px - ev.x, py - ev.y
+                self.force_paint = True
+                canvas.queue_draw()
+            """
+            if ev.type == gtk.gdk._2BUTTON_PRESS:
+                print "Double click"
+            if ev.type == gtk.gdk._3BUTTON_PRESS:
+                print "Triple click"
+            """
+        #print ev.type
 
     def on_canvas_button_release_event(self, canvas, ev, user=None):
-        if self.selected_module:
-            self.model.place(self.selected_module, ev.x+self.mdx, ev.y+self.mdy)
-        self.selected_module=None
-        self.modify_paint=False
-        self.force_paint=True
-        canvas.queue_draw()
+        if ev.button == 1:
+            if self.selected_module:
+                self.model.place(self.selected_module, ev.x+self.mdx, ev.y+self.mdy)
+            self.selected_module=None
+            self.modify_paint=False
+            self.force_paint=True
+            canvas.queue_draw()
+        #print ev.type
 
     def on_canvas_motion_notify_event(self, canvas, ev, user=None):
         if self.selected_module:
