@@ -12,6 +12,7 @@ setup(
                       "zope.component [zcml]",
                       "cfgparse",
                       "numpy",
+                      "lxml",
                       #"matplotlib",
                       #"rsvg",
                       # "numpy",

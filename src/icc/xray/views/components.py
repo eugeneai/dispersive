@@ -436,7 +436,7 @@ class Cursor(widgets.Cursor):
         return False
 
 class View(rakeviews.View):
-    ui_resource=__name__
+    resource=__name__
 
 class PlottingView(View):
     implements(IPlottingView)
