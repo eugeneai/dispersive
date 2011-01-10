@@ -2,7 +2,11 @@
 import os, os.path
 from zope.interface import implements
 from icc.rake.models.interfaces import *
-from collections import OrderedDict
+try:
+    from collections import OrderedDict
+except ImportError:
+    # For pythons < 2.7.0
+    OrderedDict=dict
 
 class Model:
     implements(IModel)
