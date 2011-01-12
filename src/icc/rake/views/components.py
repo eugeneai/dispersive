@@ -379,7 +379,9 @@ class Canvas(View):
                             self.modify_paint = False
                             self.module_movement = False
                             canvas.queue_draw()
-            
+                    break
+                if action=="edit":
+                    ConfirmationDialog('<b>Edit</b> this module?'):            
 
     def on_canvas_button_press_event(self, canvas, ev, data=None):
         if ev.button == 1:
