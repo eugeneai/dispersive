@@ -12,7 +12,7 @@
     />
 
 <adapter
-    factory=".components.ModuleView"
+    factory=".components.ModuleCanvasView"
     provides="icc.rake.views.interfaces.IModuleCanvasView"
     for="icc.rake.models.interfaces.IModule"
     />

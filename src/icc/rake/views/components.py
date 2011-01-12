@@ -497,7 +497,7 @@ class Canvas(View):
                     self._module(canvas, m)
                 
             
-class ModuleView(View):
+class ModuleCanvasView(View):
     module_resource='icc.rake.modules.views'
 
     def set_model(self, model):
