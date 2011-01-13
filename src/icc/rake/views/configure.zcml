@@ -17,4 +17,10 @@
     for="icc.rake.models.interfaces.IModule"
     />
 
+<adapter
+    factory=".components.AdjustenmentView"
+    provides="icc.rake.views.interfaces.IAdjustenmentView"
+    for="icc.rake.models.interfaces.IModule"
+    />
+
 </configure>

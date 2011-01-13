@@ -381,7 +381,11 @@ class Canvas(View):
                             canvas.queue_draw()
                     break
                 if action=="edit":
-                    ConfirmationDialog('<b>Edit</b> this module?')
+                    editor=None
+                    view=IAdjustenmentView(self.selected_module)
+                    view.set_parent(self)
+                    self.force_paint = True
+                    canvas.queue_draw()
 
     def on_canvas_button_press_event(self, canvas, ev, data=None):
         if ev.button == 1:
@@ -536,4 +540,22 @@ class ModuleCanvasView(View):
         canvas.show_text(text)
         canvas.stroke()
 
+    
+class AdjustenmentView(View):
+    implements(IAdjustenmentView)
+    
+    template = "ui/adjustenment_window.glade"
+    widget_names = ['vbox', 'main_window']
+
+    def __init__(self, model):
+        View.__init__(self, model)
+        self.ui.main_window.set_title(self.model.name)
+        self.ui.main_window.show_all()
+
+    def on_ok_button_clicked(self, button, data=None):
+        self.ui.main_window.destroy()
+        self.parent_view.selected_module=None
+        self.parent_view.force_paint=True
+        self.parent_view.modify_paint=False
+        #self.parent_view.queue_draw()
     
