@@ -1,3 +1,6 @@
+<!--@+leo-ver=5-thin-->
+<!--@+node:eugeneai.20110116171118.1408: * @file configure.zcml-->
+<!--@@language xml-->
 <configure xmlns="http://namespaces.zope.org/zope">
 
 <adapter
@@ -12,3 +15,4 @@
     for="icc.xray.models.interfaces.IProject"
     />
 </configure>
+<!--@-leo-->

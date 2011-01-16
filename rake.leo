@@ -50,7 +50,17 @@ expanded="eugeneai.20110116171118.1368,"><vh>@file interfaces.py</vh></v>
 </v>
 </v>
 <v t="eugeneai.20110116171118.1333" a="E"><vh>Views</vh>
-<v t="eugeneai.20110116171118.1335"><vh>@path views</vh></v>
+<v t="eugeneai.20110116171118.1335" a="E"><vh>@path views</vh>
+<v t="eugeneai.20110116171118.1413" a="E"><vh>Glade interfaces</vh>
+<v t="eugeneai.20110116171118.1412" a="E"><vh>@path ui</vh>
+<v t="eugeneai.20110116171118.1414"><vh>@auto project_frame.glade</vh></v>
+</v>
+</v>
+<v t="eugeneai.20110116171118.1331"></v>
+<v t="eugeneai.20110116171118.1370"><vh>@file components.py</vh></v>
+<v t="eugeneai.20110116171118.1408"><vh>@file configure.zcml</vh></v>
+<v t="eugeneai.20110116171118.1409" a="E"><vh>@file interfaces.py</vh></v>
+</v>
 </v>
 <v t="eugeneai.20110116171118.1326" a="E"><vh>@file application.ini</vh></v>
 <v t="eugeneai.20110116171118.1330"><vh>@file configure.zcml</vh></v>
@@ -105,5 +115,7 @@ Diff...
 <t tx="eugeneai.20110116171118.1333"></t>
 <t tx="eugeneai.20110116171118.1334"></t>
 <t tx="eugeneai.20110116171118.1335"></t>
+<t tx="eugeneai.20110116171118.1412"></t>
+<t tx="eugeneai.20110116171118.1413"></t>
 </tnodes>
 </leo_file>

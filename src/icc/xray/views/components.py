@@ -1,3 +1,9 @@
+#@+leo-ver=5-thin
+#@+node:eugeneai.20110116171118.1370: * @file components.py
+#@@language python
+#@@tabwidth -4
+#@+others
+#@+node:eugeneai.20110116171118.1371: ** components declarations
 #!/usr/bin/python
 
 import pygtk
@@ -13,7 +19,7 @@ import zope.component as ZC
 import zope.component.interfaces as ZCI
 from zope.component.factory import Factory
 from pkg_resources import resource_stream, resource_string
-    
+
 import icc.xray.models.components as mdl
 import icc.xray.models.interfaces as mdli
 import icc.rake.views.components as rakeviews
@@ -201,9 +207,11 @@ XPM_NONE = [
 
 
 
+#@+node:eugeneai.20110116171118.1372: ** gsm
 def gsm():
     return ZC.getGlobalSiteManager()
 
+#@+node:eugeneai.20110116171118.1373: ** class TXRFNavigationToolbar
 class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
     toolitems = (
         (False, 'Home', 'Reset original view', 'home.png', 'home', 'gtk-zoom-fit'),
@@ -216,7 +224,9 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         (False, 'Save', 'Save the figure','filesave.png', 'save_figure', 'gtk-convert'),
         (True,  'Channels', 'Explore channel counts','filesave.png', 'explore_channels', 'gtk-color-picker'),
         )
-    
+
+    #@+others
+    #@+node:eugeneai.20110116171118.1374: *3* __init__
     def __init__(self, canvas, view, main_ui, subplots=False):
         self.view = view
         self.main_ui = main_ui
@@ -228,6 +238,7 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         self._idle_draw_id = 0
         view.ui.main_frame.connect('destroy', self.on_destroy)
 
+    #@+node:eugeneai.20110116171118.1375: *3* on_destroy
     def on_destroy(self, widget, data=None):
         # print self._widgets
         for w in self._widgets:
@@ -235,10 +246,12 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
                 self.toolbar.remove(w)
         self.view=None
 
+    #@+node:eugeneai.20110116171118.1376: *3* _init_toolbar
     def _init_toolbar(self):
         self.set_style(gtk.TOOLBAR_ICONS)
         self._init_toolbar2_4()
 
+    #@+node:eugeneai.20110116171118.1377: *3* insert
     def insert(self, widget, pos=-1):
         try:
             self._widgets
@@ -247,11 +260,12 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         self.toolbar.insert(widget, pos)
         self._widgets.append(widget)
 
+    #@+node:eugeneai.20110116171118.1378: *3* _init_toolbar2_4
     def _init_toolbar2_4(self):
         basedir = os.path.join(matplotlib.rcParams['datapath'],'images')
         self.tooltips = gtk.Tooltips()
 
-        
+
         toolitem = gtk.SeparatorToolItem()
         self.insert(toolitem, -1)
         for toggled, text, tooltip_text, image_file, callback, stock in self.toolitems:
@@ -295,6 +309,7 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
 
         self.toolbar.show_all()
 
+    #@+node:eugeneai.20110116171118.1379: *3* draw_rubberband
     def draw_rubberband(self, event, x0, y0, x1, y1):
         'adapted from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/189744'
         drawable = self.canvas.window
@@ -321,9 +336,11 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         self._imageBack = rect
         return
 
+    #@+node:eugeneai.20110116171118.1380: *3* set_message
     def set_message(self, s):
         pass 
 
+    #@+node:eugeneai.20110116171118.1381: *3* get_filechooser
     def get_filechooser(self):
         return FileChooserDialog(
             title='Save the figure',
@@ -331,14 +348,17 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
             filetypes=self.canvas.get_supported_filetypes(),
             default_filetype=self.canvas.get_default_filetype())
 
+    #@+node:eugeneai.20110116171118.1382: *3* pan
     def pan(self, *args, **kwargs):
         self.zoom_button.set_active(False)
         return NavigationToolbar2GTKAgg.pan(self, *args, **kwargs)
 
+    #@+node:eugeneai.20110116171118.1383: *3* zoom
     def zoom(self, *args, **kwargs):
         self.pan_button.set_active(False)
         return NavigationToolbar2GTKAgg.zoom(self, *args, **kwargs)
 
+    #@+node:eugeneai.20110116171118.1384: *3* explore_channels
     def explore_channels(self, widget, data=None):
         self.zoom_button.set_active(False)
         try:
@@ -349,6 +369,8 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         cur.toggle_active()
         self.zoom_button.set_sensitive(not cur.active)
 
+    #@-others
+#@+node:eugeneai.20110116171118.1385: ** class Cursor
 class Cursor(widgets.Cursor):
     """
     A horizontal and vertical line span the axes that and move with
@@ -360,6 +382,8 @@ class Cursor(widgets.Cursor):
 
     And the visibility of the cursor itself with visible attribute
     """
+    #@+others
+    #@+node:eugeneai.20110116171118.1386: *3* __init__
     def __init__(self, ax, useblit=False, hline=True, **lineprops):
         """
         Add a cursor to ax.  If useblit=True, use the backend
@@ -369,7 +393,7 @@ class Cursor(widgets.Cursor):
         """
         self.ax = ax
         self.canvas = ax.figure.canvas
-        
+
         self.visible = True
         self.horizOn = hline
         self.vertOn = True
@@ -380,6 +404,7 @@ class Cursor(widgets.Cursor):
 
         self.active = False
 
+    #@+node:eugeneai.20110116171118.1387: *3* toggle_active
     def toggle_active(self):
         if self.active:
             self.canvas.mpl_disconnect(self.cid_d)
@@ -393,6 +418,7 @@ class Cursor(widgets.Cursor):
         self.needclear = True
         self.background = None
 
+    #@+node:eugeneai.20110116171118.1388: *3* clear
     def clear(self, event):
         'clear the cursor'
         if self.useblit:
@@ -400,6 +426,7 @@ class Cursor(widgets.Cursor):
         self.linev.set_visible(False)
         self.lineh.set_visible(False)
 
+    #@+node:eugeneai.20110116171118.1389: *3* onmove
     def onmove(self, event):
         'on mouse motion draw the cursor if visible'
         if event.inaxes != self.ax:
@@ -421,6 +448,7 @@ class Cursor(widgets.Cursor):
         self._update()
 
 
+    #@+node:eugeneai.20110116171118.1390: *3* _update
     def _update(self):
 
         if self.useblit:
@@ -435,12 +463,17 @@ class Cursor(widgets.Cursor):
 
         return False
 
+    #@-others
+#@+node:eugeneai.20110116171118.1391: ** class View
 class View(rakeviews.View):
     resource=__name__
 
+#@+node:eugeneai.20110116171118.1392: ** class PlottingView
 class PlottingView(View):
     implements(IPlottingView)
     ZC.adapts(mdli.ISpectra)
+    #@+others
+    #@+node:eugeneai.20110116171118.1393: *3* __init__
     def __init__(self, model=None, label=None):
         View.__init__(self, model)
         self.ui=rakeviews.Ui()   
@@ -453,10 +486,10 @@ class PlottingView(View):
 
         self.ui.main_frame = win = self.ui.win
         win.set_shadow_type(gtk.SHADOW_NONE)
-        
+
         vbox = gtk.VBox()
         win.add(vbox)
-        
+
         fig = Figure(figsize=(5,4), dpi=100)
         self.ui.fig = fig
         ax = fig.add_subplot(111)
@@ -505,6 +538,7 @@ class PlottingView(View):
         self.ui.cid = canvas.mpl_connect('button_press_event', self.on_click)
         # self.ui.check_buttons = widgets.CheckButtons(ax, ['1']*20, [True]*20)
 
+    #@+node:eugeneai.20110116171118.1394: *3* on_click
     def on_click(self, event, data=None): 
         local = self.local
         if local.msg_id is not None:
@@ -517,6 +551,7 @@ class PlottingView(View):
 
         local.msg_id=self.ui.sb.push(local.ctx_id, s)
 
+    #@+node:eugeneai.20110116171118.1395: *3* on_spectra_clicked
     def on_spectra_clicked(self, project_view):
         #print "Spectra_clicked!!"
         any_vis = False
@@ -527,6 +562,7 @@ class PlottingView(View):
         [self._set(sp, not any_vis) for sp in self.spectra.spectra]
         self.ui.canvas.draw()
 
+    #@+node:eugeneai.20110116171118.1396: *3* on_spectrum_clicked
     def on_spectrum_clicked(self, project_view, spectrum_data, user_data=None):
         #print "Spectrum selected:", spectrum_data
         path = spectrum_data['path']
@@ -540,12 +576,14 @@ class PlottingView(View):
         self._toggle(spec)
         self.ui.canvas.draw()
 
+    #@+node:eugeneai.20110116171118.1397: *3* _toggle
     def _toggle(self, spec):
         line = spec['line2D']
         newalpha = 1.0 - spec.get('alpha', 1.0)
         line.set(alpha=newalpha)
         spec['alpha']=newalpha
 
+    #@+node:eugeneai.20110116171118.1398: *3* _set
     def _set(self, spec, vis):
         line = spec['line2D']
         newalpha = int(vis) * 1.0
@@ -553,6 +591,8 @@ class PlottingView(View):
         spec['alpha']=newalpha
 
 
+    #@-others
+#@+node:eugeneai.20110116171118.1399: ** class ProjectView
 #pffactory = Factory(PlottingFrame, 'PlottingFrame', 'Frame, where one can plot spectra.')
 #gsm().registerUtility(pffactory, ZCI.IFactory, 'PlottingFrame')
 
@@ -561,6 +601,8 @@ class ProjectView(View):
     widget_names = ["project_frame", 'hpaned', # "vpaned_left", "vpaned_right",
                     "project_tree_view", "main_vbox", "common_label",
                     "project_list_model", "project_tree_model"]
+    #@+others
+    #@+node:eugeneai.20110116171118.1400: *3* __init__
     def __init__(self, model=None, label=None):
         self.active_view = None
         View.__init__(self, model=model)
@@ -572,6 +614,7 @@ class ProjectView(View):
         self.connect('spectra_clicked', self.on_spectra_clicked)
         self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
 
+    #@+node:eugeneai.20110116171118.1401: *3* get_objects
     def get_objects(self):
         try:
             d = self._obj_cache
@@ -586,7 +629,8 @@ class ProjectView(View):
                      'spectra':[]}
                 # skip cache !!!
         return d            
-        
+
+    #@+node:eugeneai.20110116171118.1402: *3* set_model
     def set_model(self, model=None):
         View.set_model(self, model=model)
         if self.active_view:
@@ -620,19 +664,23 @@ class ProjectView(View):
             sp['path']=t.get_path(sp_it)
 
         self.ui.project_tree_view.expand_all()
-        
 
+
+    #@+node:eugeneai.20110116171118.1403: *3* set_pb
     def set_pb(self, path, pb):
         tm =  self.ui.project_tree_model
         it = tm.get_iter(path)
         tm.set_value(it, 1, pb)
 
+    #@+node:eugeneai.20110116171118.1404: *3* on_spectra_clicked
     def on_spectra_clicked(self, widget, user_data=None):
         self._renew_vis_project_tree()
 
+    #@+node:eugeneai.20110116171118.1405: *3* on_spectrum_clicked
     def on_spectrum_clicked(self, widget, spec, user_data=None):
         self._renew_vis_project_tree()
 
+    #@+node:eugeneai.20110116171118.1406: *3* _renew_vis_project_tree
     def _renew_vis_project_tree(self):
         any_vis = False
         sd = self.get_objects()['spectra']
@@ -652,8 +700,9 @@ class ProjectView(View):
             self.set_pb(path, self.ui.pb_spectrum)
         else:
             self.set_pb(path, self.ui.pb_empty)            
-                       
-        
+
+
+    #@+node:eugeneai.20110116171118.1407: *3* on_row_activated
     def on_row_activated(self, tree_view, path, column, data=None):
         #print tree_view, path, column, data
         tm = self.ui.project_tree_model
@@ -674,5 +723,8 @@ class ProjectView(View):
                 if sp['path']==path:
                     break
             self.emit('spectrum_clicked', sp) 
-        
 
+
+    #@-others
+#@-others
+#@-leo
