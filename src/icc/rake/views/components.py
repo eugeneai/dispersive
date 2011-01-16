@@ -1,3 +1,9 @@
+#@+leo-ver=5-thin
+#@+node:eugeneai.20110116171118.1453: * @file components.py
+#@@language python
+#@@tabwidth -4
+#@+others
+#@+node:eugeneai.20110116171118.1454: ** components declarations
 #!/usr/bin/python
 
 import pygtk
@@ -13,7 +19,7 @@ import zope.component as ZC
 import zope.component.interfaces as ZCI
 from zope.component.factory import Factory
 from pkg_resources import resource_stream, resource_string
-    
+
 import icc.rake.models.components as mdl
 import icc.rake.models.interfaces as mdli
 import icc.rake.interfaces as ri
@@ -24,9 +30,11 @@ import rsvg
 
 M_2PI=math.pi*2.
 
+#@+node:eugeneai.20110116171118.1455: ** class Ui
 class Ui:
     pass
-    
+
+#@+node:eugeneai.20110116171118.1456: ** InputDialog
 def InputDialog(message, value='', field='Name:', secondary=''):
     "Obtained and adopted from http://ardoris.wordpress.com/2008/07/05/pygtk-text-entry-dialog/"
     def responseToDialog(entry, dialog, response):
@@ -62,6 +70,7 @@ def InputDialog(message, value='', field='Name:', secondary=''):
         return value
     return getText(value)
 
+#@+node:eugeneai.20110116171118.1457: ** ConfirmationDialog
 def ConfirmationDialog(message, secondary=''):
     dialog = gtk.MessageDialog(
             None,
@@ -75,6 +84,7 @@ def ConfirmationDialog(message, secondary=''):
     dialog.destroy()
     return rc
 
+#@+node:eugeneai.20110116171118.1458: ** class View
 class View(object):
     template = None
     widget_names = None
@@ -82,7 +92,9 @@ class View(object):
     main_widget_name = 'main_frame'
     #implements(IView)
     ZC.adapts(mdli.IModel)
-    
+
+    #@+others
+    #@+node:eugeneai.20110116171118.1459: *3* __init__
     def __init__(self, model = None):
         self.ui=Ui()
         self.model=None
@@ -94,13 +106,16 @@ class View(object):
         self.init_resources()
         self.signals = {}
 
+    #@+node:eugeneai.20110116171118.1460: *3* init_resources
     def init_resources(self):
         pass
 
+    #@+node:eugeneai.20110116171118.1461: *3* connect
     def connect(self, signal, method, user_data=None):
         l = self.signals.setdefault(signal, [])
         l.append((method, user_data))
 
+    #@+node:eugeneai.20110116171118.1462: *3* emit
     def emit(self, signal, arg=None):
         d = self.signals.get(signal, [])
         for method, user_data in d:
@@ -111,15 +126,18 @@ class View(object):
                 args.append(user_data)
             method(self, *args)
 
+    #@+node:eugeneai.20110116171118.1463: *3* set_model
     def set_model(self, model):
         if self.model != model:
             self.model=model
             # some update needed???
 
+    #@+node:eugeneai.20110116171118.1464: *3* set_parent
     def set_parent(self, view):
         """Set parent view. Used for some reason"""
         self.parent_view=view
 
+    #@+node:eugeneai.20110116171118.1465: *3* load_ui
     def load_ui(self, template, widget_names = None):
         if template:
             builder=self.ui._builder = gtk.Builder()
@@ -132,12 +150,16 @@ class View(object):
                         raise ValueError("widget '%s' not found in  template '%s'" % (name, template))
                     setattr(self.ui, name, widget)
 
+    #@-others
+#@+node:eugeneai.20110116171118.1466: ** class Application
 class Application(View):
     implements(IApplication)
     template = "ui/main_win_gtk.glade"
     widget_names = ['main_window', 'statusbar', 'toolbar',
              "main_vbox"]
 
+    #@+others
+    #@+node:eugeneai.20110116171118.1467: *3* __init__
     def __init__(self, model = None):
         View.__init__(self, model=model)
         self.ui.window=self.ui.main_window
@@ -149,20 +171,24 @@ class Application(View):
             self.default_view()
             self.open_project(self, LOAD_FILE)
 
+    #@+node:eugeneai.20110116171118.1468: *3* set_model
     def set_model(self, model = None):
         # There shoul be event created to force model creation
         #if model is None:
         #    model = mdl.Project()
         return View.set_model(self, model)
 
+    #@+node:eugeneai.20110116171118.1469: *3* main_window_delete_event_cb
     # Signal connection is linked in the glade XML file
     def main_window_delete_event_cb(self, widget, data1=None, data2=None):
         gtk.main_quit()
+    #@+node:eugeneai.20110116171118.1470: *3* default_view
     m_quit_activate_cb=main_window_delete_event_cb
 
     def default_view(self):             
         self.insert_project_view(self.ui)
 
+    #@+node:eugeneai.20110116171118.1471: *3* on_file_new
     def on_file_new(self, widget, data=None):
         # print "Created"
         # check wether data has been saved. YYY
@@ -171,6 +197,7 @@ class Application(View):
         self.set_model(ZC.createObject(factory_name.get()))
         self.insert_project_view(self.ui)
 
+    #@+node:eugeneai.20110116171118.1472: *3* open_project
     def open_project(self, filename=None):
         if filename is None:
             filename = self.get_open_filename()
@@ -178,11 +205,13 @@ class Application(View):
             self.model = mdl.Project(filename)
             self.default_action()
 
+    #@+node:eugeneai.20110116171118.1473: *3* on_file_open
     def on_file_open(self, widget, data=None):
         return self.open_project()
-            
+
+    #@+node:eugeneai.20110116171118.1474: *3* get_open_filename
     def get_open_filename(self):
-        
+
         filename = None
         chooser = gtk.FileChooserDialog("Open Project...", self.ui.window,
                                         gtk.FILE_CHOOSER_ACTION_OPEN,
@@ -195,27 +224,29 @@ class Application(View):
 
         chooser.set_filter(ffilter)
         #print gtk.FileChooserDialog.__doc__
-        
+
         response = chooser.run()
         if response == gtk.RESPONSE_OK:
             filename = chooser.get_filename()
         chooser.destroy()
         # print "File:", filename
         return filename
-    
+
+    #@+node:eugeneai.20110116171118.1475: *3* error_message
     def error_message(self, message):
-    
+
         # log to terminal window
         # print message
-        
+
         # create an error message dialog and display modally to the user
         dialog = gtk.MessageDialog(None,
                                    gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                                    gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, message)
-        
+
         dialog.run()
         dialog.destroy()
 
+    #@+node:eugeneai.20110116171118.1476: *3* default_action
     def default_action(self):
         self.model.set_scale(mdl.Scale(zero=CALIBR_ZERO, scale=CALIBR_KEV))
         self.default_view()
@@ -224,6 +255,7 @@ class Application(View):
         #sp=spp.Popen([EPS_CMD, 'plot.eps'])
         #sp.communicate()
 
+    #@+node:eugeneai.20110116171118.1477: *3* remove_active_view
     def remove_active_view(self):
         if self.active_view is None:
             return
@@ -232,6 +264,7 @@ class Application(View):
         main_widget.destroy()
         self.active_wiew=None
 
+    #@+node:eugeneai.20110116171118.1478: *3* insert_active_view
     def insert_active_view(self, view):
         if self.active_view:
             self.remove_active_view()
@@ -240,6 +273,7 @@ class Application(View):
         self.ui.main_vbox.pack_start(getattr(view.ui, main_widget_name), True, True)
         view.ui.main_frame.show_all()
 
+    #@+node:eugeneai.20110116171118.1479: *3* insert_project_view
     #def insert_plotting_area(self, ui):
     #    view = IPlottingView(self.model)
     #    self.insert_active_view(view)
@@ -248,11 +282,14 @@ class Application(View):
         view = IProjectView(self.model)
         self.insert_active_view(view)
 
+    #@+node:eugeneai.20110116171118.1480: *3* main
     def main(self):
         return gtk.main()
-    
+
+    #@-others
     run = main
 
+#@+node:eugeneai.20110116171118.1481: ** class Canvas
 TBL_ACTIONS=[
     ( 1,-1, "remove"),
     (-1, 1, "rename"),
@@ -267,10 +304,12 @@ TBL_ACTIONS=[
 
 class Canvas(View):
     implements(ICanvasView)
-    
+
     template = "ui/canvas_view.glade"
     widget_names = ['canvas', 'main_frame']
-    
+
+    #@+others
+    #@+node:eugeneai.20110116171118.1482: *3* __init__
     def __init__(self, model = None):
         View.__init__(self, model=model)
         self.icon_cache={}
@@ -280,9 +319,11 @@ class Canvas(View):
         self.modify_paint=False
         self.force_paint=True
 
+    #@+node:eugeneai.20110116171118.1483: *3* get_position
     def get_position(self, module):
         return self.model.get_position(module)
 
+    #@+node:eugeneai.20110116171118.1484: *3* init_resources
     def init_resources(self):
         View.init_resources(self)
         self.module_icon_background = rsvg.Handle(
@@ -295,6 +336,7 @@ class Canvas(View):
                 data=resource_string(__name__,
                       "ui/pics/toolboxed.svg"))
 
+    #@+node:eugeneai.20110116171118.1485: *3* _module
     def _module(self, canvas, module, selected=False):
         canvas.set_line_width(1.0)
         m = canvas.get_matrix()
@@ -303,7 +345,7 @@ class Canvas(View):
             canvas.translate(x, y)
         except ValueError:
             canvas.translate(100, 100)
-            
+
         canvas.translate(-16,-16)
 
         if selected:
@@ -331,6 +373,7 @@ class Canvas(View):
 
         canvas.set_matrix(m)
 
+    #@+node:eugeneai.20110116171118.1486: *3* _connection
     def _connection(self, canvas, x1, y1, x2, y2, selected=False):
         dx=x2-x1
         dy=y2-y1
@@ -354,6 +397,7 @@ class Canvas(View):
         canvas.stroke()
         canvas.set_source(src)
 
+    #@+node:eugeneai.20110116171118.1487: *3* toolboxlet_action
     def toolboxlet_action(self, canvas, x,y):
         sc=19.5
         for dx, dy, action in TBL_ACTIONS:
@@ -387,6 +431,7 @@ class Canvas(View):
                     self.force_paint = True
                     canvas.queue_draw()
 
+    #@+node:eugeneai.20110116171118.1488: *3* on_canvas_button_press_event
     def on_canvas_button_press_event(self, canvas, ev, data=None):
         if ev.button == 1:
             if ev.type == gtk.gdk.BUTTON_PRESS:
@@ -397,12 +442,13 @@ class Canvas(View):
                         canvas.queue_draw()
                     if self.toolboxlet_action(canvas, ev.x, ev.y):
                         canvas.queue_draw()
-                        
+
             if self.modify_paint:
                 (px, py) = self.model.get_position(self.selected_module)
                 self.mdx, self.mdy = px - ev.x, py - ev.y
         #print ev.type
 
+    #@+node:eugeneai.20110116171118.1489: *3* on_canvas_button_release_event
     def on_canvas_button_release_event(self, canvas, ev, user=None):
         if ev.button == 1:
             if self.module_movement:
@@ -413,6 +459,7 @@ class Canvas(View):
             canvas.queue_draw()
         #print ev.type
 
+    #@+node:eugeneai.20110116171118.1490: *3* is_spotted
     def is_spotted(self, module, x,y, distance, dx=0, dy=0):
         if module != None:
             (mx, my) = self.model.get_position(module)
@@ -421,9 +468,11 @@ class Canvas(View):
                 return True
         return False
 
+    #@+node:eugeneai.20110116171118.1491: *3* leaved_selection
     def leaved_selection(self, module, x, y):
         return not self.is_spotted(module, x,y, 26)
 
+    #@+node:eugeneai.20110116171118.1492: *3* on_canvas_motion_notify_event
     def on_canvas_motion_notify_event(self, canvas, ev, user=None):
         if self.module_movement:
             self.model.place(self.selected_module, ev.x+self.mdx, ev.y+self.mdy)
@@ -444,6 +493,7 @@ class Canvas(View):
             canvas.queue_draw()
 
 
+    #@+node:eugeneai.20110116171118.1493: *3* on_canvas_expose_event
     def on_canvas_expose_event(self, canvas, ev, data=None):
         (w, h) = canvas.window.get_size()
         if not self.modify_paint:
@@ -471,6 +521,7 @@ class Canvas(View):
         if self.modify_paint:
             self.draw_model_on(ocanvas, exc_mod = self.selected_module, selected=True)
 
+    #@+node:eugeneai.20110116171118.1494: *3* draw_model_on
     def draw_model_on(self, canvas, exc_mod=None, selected=False):
         """Draw logics on the cairo canvas.
         Specially process exc_mod and its connections.
@@ -493,7 +544,7 @@ class Canvas(View):
                     else:
                         emph1 = True
                 if exc_mod == None or not selected or emph1:
-				    self._connection(canvas, x1, y1, x2, y2, selected=emph1)
+                    self._connection(canvas, x1, y1, x2, y2, selected=emph1)
         for m in self.model.modules:
             if m == exc_mod:
                 if selected:
@@ -501,20 +552,26 @@ class Canvas(View):
             else:
                 if not selected:
                     self._module(canvas, m)
-                
-            
+
+
+    #@-others
+#@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
 class ModuleCanvasView(View):
     module_resource='icc.rake.modules.views'
 
+    #@+others
+    #@+node:eugeneai.20110116171118.1496: *3* set_model
     def set_model(self, model):
         if self.model != model:
             View.set_model(self, model)
             self.init_resources()
 
+    #@+node:eugeneai.20110116171118.1497: *3* set_parent
     def set_parent(self, parent):
         View.set_parent(self, parent)
         self.init_resources()
 
+    #@+node:eugeneai.20110116171118.1498: *3* init_resources
     def init_resources(self):
         View.init_resources(self)
         self.icon = None
@@ -526,7 +583,8 @@ class ModuleCanvasView(View):
                         data=resource_string(self.__class__.module_resource,
                              self.model.__class__.icon))
                     self.parent_view.icon_cache[self.model.__class__]=self.icon
-            
+
+    #@+node:eugeneai.20110116171118.1499: *3* render_on_canvas
     def render_on_canvas(self, canvas):
         """Render myself on a cairo canvas"""
         if self.icon:
@@ -540,22 +598,30 @@ class ModuleCanvasView(View):
         canvas.show_text(text)
         canvas.stroke()
 
-    
+
+    #@-others
+#@+node:eugeneai.20110116171118.1500: ** class AdjustenmentView
 class AdjustenmentView(View):
     implements(IAdjustenmentView)
-    
+
     template = "ui/adjustenment_window.glade"
     widget_names = ['vbox', 'main_window']
 
+    #@+others
+    #@+node:eugeneai.20110116171118.1501: *3* __init__
     def __init__(self, model):
         View.__init__(self, model)
         self.ui.main_window.set_title(self.model.name)
         self.ui.main_window.show_all()
 
+    #@+node:eugeneai.20110116171118.1502: *3* on_ok_button_clicked
     def on_ok_button_clicked(self, button, data=None):
         self.ui.main_window.destroy()
         self.parent_view.selected_module=None
         self.parent_view.force_paint=True
         self.parent_view.modify_paint=False
         #self.parent_view.queue_draw()
-    
+
+    #@-others
+#@-others
+#@-leo

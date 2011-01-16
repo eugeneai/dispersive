@@ -1,3 +1,9 @@
+#@+leo-ver=5-thin
+#@+node:eugeneai.20110116171118.1423: * @file app.py
+#@@language python
+#@@tabwidth -4
+#@+others
+#@+node:eugeneai.20110116171118.1424: ** app declarations
 from zope.configuration.xmlconfig import xmlconfig
 import zope.component as ZC
 from pkg_resources import resource_stream, resource_string
@@ -6,6 +12,7 @@ import cfgparse as cfg
 from icc.rake.interfaces import IConfiguration
 from zope.interface import directlyProvides
 
+#@+node:eugeneai.20110116171118.1425: ** main
 def main(package=None):
     if package == None:
         package=__name__
@@ -23,6 +30,8 @@ def main(package=None):
     gsm.registerUtility(app)
     gsm.registerUtility(app, name=view.get())
     return app.main()
-    
+
+#@-others
 if __name__ == "__main__":
     sys.exit(main())
+#@-leo
