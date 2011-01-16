@@ -15,7 +15,7 @@
 <v t="eugeneai.20110115235621.1295"><vh>&lt;&lt; e-mail &gt;&gt;</vh></v>
 </v>
 </v>
-<v t="eugeneai.20110115234720.1264" a="E"><vh>Documentation</vh>
+<v t="eugeneai.20110115234720.1264"><vh>Documentation</vh>
 <v t="eugeneai.20110115234720.1266" a="E"><vh>@path doc</vh>
 <v t="eugeneai.20110116000634.1305" a="E"
 expanded="eugeneai.20110115235621.1294,"><vh>@shadow README.txt</vh></v>
@@ -32,6 +32,10 @@ expanded="eugeneai.20110115235621.1288,"><vh>@file setup.py</vh></v>
 </v>
 </v>
 <v t="eugeneai.20110115234720.1268" a="E"><vh>Applications</vh>
+<v t="eugeneai.20110116171118.1575" a="E"><vh>Run scripts</vh>
+<v t="eugeneai.20110116171118.1573"><vh>@auto icc_xray_app.sh</vh></v>
+<v t="eugeneai.20110116171118.1576"><vh>@auto app.bat</vh></v>
+</v>
 <v t="eugeneai.20110115234720.1272" a="E"><vh>Sources</vh>
 <v t="eugeneai.20110115234720.1271"><vh>@path src</vh>
 <v t="eugeneai.20110116000634.1446" a="E"><vh>@path icc</vh>
@@ -145,15 +149,8 @@ expanded="eugeneai.20110116171118.1516,"><vh>@file interfaces.py</vh></v>
 </v>
 <v t="eugeneai.20110116171118.1550" a="E"><vh>Installation support</vh>
 <v t="eugeneai.20110116171118.1552"><vh>@auto distribute_setup.py</vh></v>
-<v t="eugeneai.20110116171118.1573"><vh>@auto icc_xray_app.sh</vh></v>
 <v t="eugeneai.20110116171118.1574"><vh>@auto install.bat</vh></v>
 </v>
-</v>
-</v>
-<v t="eugeneai.20110116171118.1310" a="E"><vh>Recovered Nodes</vh>
-<v t="eugeneai.20110116171118.1311"><vh>Recovered node "&lt;&lt; author name &gt;&gt; from @shadow README.txt</vh>
-<v t="eugeneai.20110116171118.1312"><vh>old:&lt;&lt; author name &gt;&gt;</vh></v>
-<v t="eugeneai.20110116171118.1313"><vh>new:&lt;&lt; author name &gt;&gt;</vh></v>
 </v>
 </v>
 </vnodes>
@@ -175,12 +172,6 @@ expanded="eugeneai.20110116171118.1516,"><vh>@file interfaces.py</vh></v>
 <t tx="eugeneai.20110115235621.1295"></t>
 <t tx="eugeneai.20110115235621.1296">e-mail: eugene@irnok.net</t>
 <t tx="eugeneai.20110116000634.1446"></t>
-<t tx="eugeneai.20110116171118.1310"></t>
-<t tx="eugeneai.20110116171118.1311">(uncached) eugeneai.20110115235621.1296
-Diff...
-- e-mail: eugene@irnok.net+ Evgeny Cherkashin 232 </t>
-<t tx="eugeneai.20110116171118.1312">Evgeny Cherkashin 232 </t>
-<t tx="eugeneai.20110116171118.1313">e-mail: eugene@irnok.net</t>
 <t tx="eugeneai.20110116171118.1324"></t>
 <t tx="eugeneai.20110116171118.1325"></t>
 <t tx="eugeneai.20110116171118.1332"></t>
@@ -1759,5 +1750,6 @@ Diff...
 &lt;/svg&gt;
 </t>
 <t tx="eugeneai.20110116171118.1550"></t>
+<t tx="eugeneai.20110116171118.1575"></t>
 </tnodes>
 </leo_file>
