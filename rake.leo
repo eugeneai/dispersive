@@ -35,12 +35,43 @@ expanded="eugeneai.20110115235621.1288,"><vh>@file setup.py</vh></v>
 <v t="eugeneai.20110115234720.1272" a="E"><vh>Sources</vh>
 <v t="eugeneai.20110115234720.1271" a="E"><vh>@path src</vh>
 <v t="eugeneai.20110116000634.1446" a="E"><vh>@path icc</vh>
-<v t="eugeneai.20110116000634.1447" a="E"><vh>@file __init__.py</vh></v>
+<v t="eugeneai.20110116000634.1447"><vh>@file __init__.py</vh></v>
+<v t="eugeneai.20110115234720.1270" a="E"><vh>Galica</vh>
+<v t="eugeneai.20110116171118.1324" a="E"><vh>Application</vh>
+<v t="eugeneai.20110116171118.1325" a="E"><vh>@path xray</vh>
+<v t="eugeneai.20110116171118.1332" a="E"><vh>Models</vh>
+<v t="eugeneai.20110116171118.1334" a="E"><vh>@path models</vh>
+<v t="eugeneai.20110116171118.1331"><vh>@auto __init__.py</vh></v>
+<v t="eugeneai.20110116171118.1336"
+expanded="eugeneai.20110116171118.1338,eugeneai.20110116171118.1342,eugeneai.20110116171118.1348,eugeneai.20110116171118.1356,"><vh>@file components.py</vh></v>
+<v t="eugeneai.20110116171118.1361"
+expanded="eugeneai.20110116171118.1368,"><vh>@file interfaces.py</vh></v>
+<v t="eugeneai.20110116171118.1366"><vh>@file configure.zcml</vh></v>
 </v>
-<v t="eugeneai.20110115234720.1270"><vh>Galica</vh></v>
-<v t="eugeneai.20110115234720.1269"><vh>Rake</vh></v>
+</v>
+<v t="eugeneai.20110116171118.1333" a="E"><vh>Views</vh>
+<v t="eugeneai.20110116171118.1335"><vh>@path views</vh></v>
+</v>
+<v t="eugeneai.20110116171118.1326" a="E"><vh>@file application.ini</vh></v>
+<v t="eugeneai.20110116171118.1330"><vh>@file configure.zcml</vh></v>
+<v t="eugeneai.20110116171118.1331"></v>
 </v>
 </v>
+<v t="eugeneai.20110116171118.1317" a="E"
+expanded="eugeneai.20110116171118.1318,"><vh>@shadow icc_xray_app.py</vh></v>
+</v>
+<v t="eugeneai.20110115234720.1269" a="E"><vh>Rake</vh>
+<v t="eugeneai.20110116171118.1315" a="E"><vh>@shadow icc_rake_app.py</vh></v>
+</v>
+</v>
+</v>
+</v>
+</v>
+</v>
+<v t="eugeneai.20110116171118.1310" a="E"><vh>Recovered Nodes</vh>
+<v t="eugeneai.20110116171118.1311"><vh>Recovered node "&lt;&lt; author name &gt;&gt; from @shadow README.txt</vh>
+<v t="eugeneai.20110116171118.1312"><vh>old:&lt;&lt; author name &gt;&gt;</vh></v>
+<v t="eugeneai.20110116171118.1313"><vh>new:&lt;&lt; author name &gt;&gt;</vh></v>
 </v>
 </v>
 </vnodes>
@@ -59,8 +90,20 @@ expanded="eugeneai.20110115235621.1288,"><vh>@file setup.py</vh></v>
 <t tx="eugeneai.20110115235621.1286"></t>
 <t tx="eugeneai.20110115235621.1293"></t>
 <t tx="eugeneai.20110115235621.1294"></t>
-<t tx="eugeneai.20110115235621.1295">eugene@irnok.net</t>
-<t tx="eugeneai.20110115235621.1296">Evgeny Cherkashin 232 </t>
+<t tx="eugeneai.20110115235621.1295"></t>
+<t tx="eugeneai.20110115235621.1296">e-mail: eugene@irnok.net</t>
 <t tx="eugeneai.20110116000634.1446"></t>
+<t tx="eugeneai.20110116171118.1310"></t>
+<t tx="eugeneai.20110116171118.1311">(uncached) eugeneai.20110115235621.1296
+Diff...
+- e-mail: eugene@irnok.net+ Evgeny Cherkashin 232 </t>
+<t tx="eugeneai.20110116171118.1312">Evgeny Cherkashin 232 </t>
+<t tx="eugeneai.20110116171118.1313">e-mail: eugene@irnok.net</t>
+<t tx="eugeneai.20110116171118.1324"></t>
+<t tx="eugeneai.20110116171118.1325"></t>
+<t tx="eugeneai.20110116171118.1332"></t>
+<t tx="eugeneai.20110116171118.1333"></t>
+<t tx="eugeneai.20110116171118.1334"></t>
+<t tx="eugeneai.20110116171118.1335"></t>
 </tnodes>
 </leo_file>

@@ -3,7 +3,7 @@
 #@@language python
 #@@tabwidth -4
 #@+others
-#@+node:eugeneai.20110116000634.1448: ** __init__ declarations
+#@+node:eugeneai.20110116000634.1448: ** namespace declarations
 # this is a namespace package
 try:
     import pkg_resources
