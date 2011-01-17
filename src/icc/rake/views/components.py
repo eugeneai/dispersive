@@ -96,9 +96,21 @@ class PicItem(goocanvas.ItemSimple, goocanvas.Item):
         super(PicItem, self).__init__(**kwargs)
         self.graph=graph
         self.module = module
+        self.bounds = goocanvas.Bounds()
 
-    #@+node:eugeneai.20110117171340.1640: *4* do_simple_create_path
-    def do_simple_create_path(self, canvas):
+
+    #@+node:eugeneai.20110117171340.1642: *4* do_update
+    def do_update(self, entire_tree, cr):
+        x, y = self.graph.get_position(self.module)
+        self.bounds.x1 = x - 16.
+        self.bounds.y1 = y - 16.
+        self.bounds.x2 = x + 16.
+        self.bounds.y2 = y + 16.
+        return self.bounds
+
+    #@+node:eugeneai.20110117171340.1645: *4* do_paint
+    def do_paint(self, canvas, bounds, scale):
+        #print bounds.x1, bounds.y1, bounds.x2, bounds.y2
         canvas.set_line_width(1.0)
         m = canvas.get_matrix()
 
@@ -134,8 +146,12 @@ class PicItem(goocanvas.ItemSimple, goocanvas.Item):
                 canvas.stroke()
 
         canvas.set_matrix(m)
-    #@-others
 
+    #@+node:eugeneai.20110117171340.1644: *4* do_get_bounds
+    def do_get_bounds(self):
+        print "!"
+        return self.bounds
+    #@-others
 #@+node:eugeneai.20110117171340.1636: *3* register PicItem in gobject
 gobject.type_register(PicItem)
 #@+node:eugeneai.20110116171118.1458: ** class View
@@ -399,8 +415,21 @@ class Canvas(View):
         if model == None:
             return
         root = self.canvas_root
+
         for m in self.model.modules:
-            pic = PicItem(m, self, parent=root)
+            pic = PicItem(m, self)
+            root.add_child(pic, -1)
+            #pic.connect('enter-notify-event', self.on_module_enter_notify_event)
+
+        for mf, l in self.model.forwards.iteritems():
+            x1, y1 = self.get_position(mf)
+            for mt in l:
+                x2, y2 = self.get_position(mt)
+                b,f = self._connection(x1,y1,x2,y2)
+                root.add_child(b,-1)
+                root.add_child(f,-1)
+                f.connect('enter-notify-event', self.on_curve_enter)
+
         self.ui.canvas.request_update()
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
     def init_resources(self):
@@ -453,21 +482,21 @@ class Canvas(View):
         canvas.set_matrix(m)
 
     #@+node:eugeneai.20110116171118.1486: *3* _connection
-    def _connection(self, canvas, x1, y1, x2, y2, selected=False):
+    def _connection(self, x1, y1, x2, y2, selected=False):
         dx=x2-x1
         dy=y2-y1
         dx,dy=dx/2.,dy/2.
         sx=16+2
 
-        src = canvas.get_source()
-        canvas.move_to (x1+sx, y1)
-        canvas.curve_to (x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
-        canvas.set_source_rgba (1, 1, 1, 0.8);
-        canvas.set_line_width (6.0)
-        canvas.stroke()
+        data='M%s,%s C%s,%s %s,%s %s,%s' % (x1+sx, y1,  x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
+        #data='M%s,%s L%s,%s' % (x1+sx, y1, x2-sx, y2)
 
-        canvas.move_to (x1+sx, y1)
-        canvas.curve_to (x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
+        bkg_path = goocanvas.Path(data=data, line_width=6.0, stroke_color='white')
+
+        frg_path = goocanvas.Path(data=data, line_width=4.0, stroke_color='brown')
+        #print data    
+        return (bkg_path, frg_path)
+
         if selected:
             canvas.set_source_rgba (0.0, 0.5, 0, 0.7)
         else:
@@ -590,8 +619,15 @@ class Canvas(View):
     #@+node:eugeneai.20110117171340.1633: *3* on_text_enter_notify_event
     def on_text_enter_notify_event(self, item, target, event):
         #print "Enter", item, target, event
-        #item.rotate(5, 300, 300)
+        item.rotate(10, 300, 300)
+        #pass
+    #@+node:eugeneai.20110117171340.1646: *3* on_module_enter_notify_event
+    def on_module_enter_notify_event(self, item, target, event):
+        #print "Module enter:", item
         pass
+    #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter
+    def on_curve_enter(sef, item, target, event):
+        print "Enter:", item, target, event
     #@+node:eugeneai.20110116171118.1490: *3* is_spotted
     def is_spotted(self, module, x,y, distance, dx=0, dy=0):
         if module != None:
