@@ -1,5 +1,4 @@
 setup.py
-src/icc/icc_xray_app.py
 src/icc/__init__.py
 src/icc/icc_rake_app.py
 src/icc/icc_xray_app.py

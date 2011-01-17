@@ -9,6 +9,7 @@
 import pygtk
 pygtk.require('2.0')
 import gtk, sys
+import goocanvas, gobject
 
 if __name__=="__main__":
     sys.path.append("..")
@@ -84,6 +85,59 @@ def ConfirmationDialog(message, secondary=''):
     dialog.destroy()
     return rc
 
+#@+node:eugeneai.20110117171340.1635: ** Pictogramm machinery
+#@+node:eugeneai.20110117171340.1634: *3* class PicItem
+class PicItem(goocanvas.ItemSimple, goocanvas.Item):
+    #@+others
+    #@+node:eugeneai.20110117171340.1637: *4* __init__
+    def __init__(self, module, graph, **kwargs):
+        """Icon driwer for module, using main graph canvas view `graph`
+        """
+        super(PicItem, self).__init__(**kwargs)
+        self.graph=graph
+        self.module = module
+
+    #@+node:eugeneai.20110117171340.1640: *4* do_simple_create_path
+    def do_simple_create_path(self, canvas):
+        canvas.set_line_width(1.0)
+        m = canvas.get_matrix()
+
+        module = self.module
+
+        x, y = self.graph.get_position(module)
+
+        canvas.translate(x,y)
+        canvas.translate(-16,-16)
+
+        selected = False
+
+        if selected:
+            self.graph.module_icon_toolboxed.render_cairo(canvas)
+        else:
+            self.graph.module_icon_background.render_cairo(canvas)
+        if module:
+            view=IModuleCanvasView(module)
+            view.set_parent(self.graph)
+            view.render_on_canvas(canvas)
+            canvas.set_source_rgb(0,0,0)
+            if module.inputs:
+                canvas.arc(-2, 16, 2, 0, M_2PI)
+                canvas.stroke()
+            if module.outputs:
+                canvas.arc(34, 16, 2, 0, M_2PI)
+                canvas.stroke()
+            if module.controls:
+                canvas.arc(16, 34, 2, 0, M_2PI)
+                canvas.stroke()
+            if module.implementors:
+                canvas.arc(16, -2, 2, 0, M_2PI)
+                canvas.stroke()
+
+        canvas.set_matrix(m)
+    #@-others
+
+#@+node:eugeneai.20110117171340.1636: *3* register PicItem in gobject
+gobject.type_register(PicItem)
 #@+node:eugeneai.20110116171118.1458: ** class View
 class View(object):
     template = None
@@ -306,12 +360,12 @@ class Canvas(View):
     implements(ICanvasView)
 
     template = "ui/canvas_view.glade"
-    widget_names = ['canvas', 'main_frame']
+    widget_names = ['vbox', 'main_frame']
 
     #@+others
     #@+node:eugeneai.20110116171118.1482: *3* __init__
     def __init__(self, model = None):
-        View.__init__(self, model=model)
+        View.__init__(self, model=None)
         self.icon_cache={}
         self.state=Ui()
         self.selected_module=None
@@ -319,10 +373,35 @@ class Canvas(View):
         self.modify_paint=False
         self.force_paint=True
 
+        self.ui.canvas=canvas=goocanvas.Canvas()
+        canvas.set_size_request(1024,768)
+        canvas.set_bounds(0,0, 2000, 2000)
+        self.canvas_root=root=canvas.get_root_item()
+
+        text=goocanvas.Text(text="Hello World",
+                       x=300, y=300,
+                       anchor=gtk.ANCHOR_CENTER,
+                       font="Sans 24", parent=root)
+        text.rotate(45, 300, 300)
+        print text.get_model()
+
+        text.connect('enter-notify-event', self.on_text_enter_notify_event)
+
+        self.ui.vbox.add(canvas)
+        self.set_model(model)
     #@+node:eugeneai.20110116171118.1483: *3* get_position
     def get_position(self, module):
         return self.model.get_position(module)
 
+    #@+node:eugeneai.20110117171340.1641: *3* set_model
+    def set_model(self, model):
+        View.set_model(self, model)
+        if model == None:
+            return
+        root = self.canvas_root
+        for m in self.model.modules:
+            pic = PicItem(m, self, parent=root)
+        self.ui.canvas.request_update()
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
     def init_resources(self):
         View.init_resources(self)
@@ -459,19 +538,6 @@ class Canvas(View):
             canvas.queue_draw()
         #print ev.type
 
-    #@+node:eugeneai.20110116171118.1490: *3* is_spotted
-    def is_spotted(self, module, x,y, distance, dx=0, dy=0):
-        if module != None:
-            (mx, my) = self.model.get_position(module)
-            d = distance
-            if abs(mx+dx-x)<=d and abs(my+dy-y)<=d:
-                return True
-        return False
-
-    #@+node:eugeneai.20110116171118.1491: *3* leaved_selection
-    def leaved_selection(self, module, x, y):
-        return not self.is_spotted(module, x,y, 26)
-
     #@+node:eugeneai.20110116171118.1492: *3* on_canvas_motion_notify_event
     def on_canvas_motion_notify_event(self, canvas, ev, user=None):
         if self.module_movement:
@@ -520,6 +586,24 @@ class Canvas(View):
         ocanvas.paint()
         if self.modify_paint:
             self.draw_model_on(ocanvas, exc_mod = self.selected_module, selected=True)
+
+    #@+node:eugeneai.20110117171340.1633: *3* on_text_enter_notify_event
+    def on_text_enter_notify_event(self, item, target, event):
+        #print "Enter", item, target, event
+        #item.rotate(5, 300, 300)
+        pass
+    #@+node:eugeneai.20110116171118.1490: *3* is_spotted
+    def is_spotted(self, module, x,y, distance, dx=0, dy=0):
+        if module != None:
+            (mx, my) = self.model.get_position(module)
+            d = distance
+            if abs(mx+dx-x)<=d and abs(my+dy-y)<=d:
+                return True
+        return False
+
+    #@+node:eugeneai.20110116171118.1491: *3* leaved_selection
+    def leaved_selection(self, module, x, y):
+        return not self.is_spotted(module, x,y, 26)
 
     #@+node:eugeneai.20110116171118.1494: *3* draw_model_on
     def draw_model_on(self, canvas, exc_mod=None, selected=False):

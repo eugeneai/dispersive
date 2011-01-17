@@ -9,12 +9,11 @@ Application to draw investigations.
 #@nl
 
 
-Author: Evgeny Cherkashin 232 
+Author: Evgeny Cherkashin 232 e-mail: eugene@irnok.net
 #@nonl
 #@<< author name >>
 #@+middle:eugeneai.20110115235621.1294:<< Author >>
 #@+node:eugeneai.20110115235621.1296:<< author name >>
-e-mail: eugene@irnok.net
 #@nonl
 #@-node:eugeneai.20110115235621.1296:<< author name >>
 #@-middle:eugeneai.20110115235621.1294:<< Author >>

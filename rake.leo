@@ -37,7 +37,7 @@ expanded="eugeneai.20110115235621.1288,"><vh>@file setup.py</vh></v>
 <v t="eugeneai.20110116171118.1576"><vh>@auto app.bat</vh></v>
 </v>
 <v t="eugeneai.20110115234720.1272" a="E"><vh>Sources</vh>
-<v t="eugeneai.20110115234720.1271"><vh>@path src</vh>
+<v t="eugeneai.20110115234720.1271" a="E"><vh>@path src</vh>
 <v t="eugeneai.20110116000634.1446" a="E"><vh>@path icc</vh>
 <v t="eugeneai.20110116000634.1447"><vh>@file __init__.py</vh></v>
 <v t="eugeneai.20110115234720.1270"><vh>Galica</vh>
@@ -86,10 +86,11 @@ expanded="eugeneai.20110116171118.1318,"><vh>@shadow icc_xray_app.py</vh></v>
 <v t="eugeneai.20110116171118.1427"><vh>@file components.py</vh></v>
 </v>
 </v>
-<v t="eugeneai.20110116171118.1418"><vh>Views</vh>
+<v t="eugeneai.20110116171118.1418" a="E"><vh>Views</vh>
 <v t="eugeneai.20110116171118.1421" a="E"><vh>@path views</vh>
 <v t="eugeneai.20110116171118.1331"></v>
-<v t="eugeneai.20110116171118.1453" a="E"><vh>@file components.py</vh></v>
+<v t="eugeneai.20110116171118.1453" a="E"
+expanded="eugeneai.20110117171340.1635,eugeneai.20110117171340.1634,eugeneai.20110116171118.1458,eugeneai.20110116171118.1481,"><vh>@file components.py</vh></v>
 <v t="eugeneai.20110116171118.1503"><vh>@file configure.zcml</vh></v>
 <v t="eugeneai.20110116171118.1504"
 expanded="eugeneai.20110116171118.1516,"><vh>@file interfaces.py</vh></v>
@@ -170,7 +171,7 @@ expanded="eugeneai.20110116171118.1516,"><vh>@file interfaces.py</vh></v>
 <t tx="eugeneai.20110115235621.1293"></t>
 <t tx="eugeneai.20110115235621.1294"></t>
 <t tx="eugeneai.20110115235621.1295"></t>
-<t tx="eugeneai.20110115235621.1296">e-mail: eugene@irnok.net</t>
+<t tx="eugeneai.20110115235621.1296"></t>
 <t tx="eugeneai.20110116000634.1446"></t>
 <t tx="eugeneai.20110116171118.1324"></t>
 <t tx="eugeneai.20110116171118.1325"></t>
