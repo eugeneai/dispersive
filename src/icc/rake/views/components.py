@@ -85,76 +85,6 @@ def ConfirmationDialog(message, secondary=''):
     dialog.destroy()
     return rc
 
-#@+node:eugeneai.20110117171340.1635: ** Pictogramm machinery
-#@+node:eugeneai.20110117171340.1634: *3* class PicItem
-class PicItem(goocanvas.ItemSimple, goocanvas.Item):
-    #@+others
-    #@+node:eugeneai.20110117171340.1637: *4* __init__
-    def __init__(self, module, graph, **kwargs):
-        """Icon driwer for module, using main graph canvas view `graph`
-        """
-        super(PicItem, self).__init__(**kwargs)
-        self.graph=graph
-        self.module = module
-        self.bounds = goocanvas.Bounds()
-
-
-    #@+node:eugeneai.20110117171340.1642: *4* do_update
-    def do_update(self, entire_tree, cr):
-        x, y = self.graph.get_position(self.module)
-        self.bounds.x1 = x - 16.
-        self.bounds.y1 = y - 16.
-        self.bounds.x2 = x + 16.
-        self.bounds.y2 = y + 16.
-        return self.bounds
-
-    #@+node:eugeneai.20110117171340.1645: *4* do_paint
-    def do_paint(self, canvas, bounds, scale):
-        #print bounds.x1, bounds.y1, bounds.x2, bounds.y2
-        #return
-        canvas.set_line_width(1.0)
-        m = canvas.get_matrix()
-
-        module = self.module
-
-        x, y = self.graph.get_position(module)
-
-        canvas.translate(x,y)
-        canvas.translate(-16,-16)
-
-        selected = False
-
-        if selected:
-            self.graph.module_icon_toolboxed.render_cairo(canvas)
-        else:
-            self.graph.module_icon_background.render_cairo(canvas)
-        if module:
-            view=IModuleCanvasView(module)
-            view.set_parent(self.graph)
-            view.render_on_canvas(canvas)
-            canvas.set_source_rgb(0,0,0)
-            if module.inputs:
-                canvas.arc(-2, 16, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.outputs:
-                canvas.arc(34, 16, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.controls:
-                canvas.arc(16, 34, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.implementors:
-                canvas.arc(16, -2, 2, 0, M_2PI)
-                canvas.stroke()
-
-        canvas.set_matrix(m)
-
-    #@+node:eugeneai.20110117171340.1644: *4* do_get_bounds
-    def do_get_bounds(self):
-        print "!"
-        return self.bounds
-    #@-others
-#@+node:eugeneai.20110117171340.1636: *3* register PicItem in gobject
-gobject.type_register(PicItem)
 #@+node:eugeneai.20110116171118.1458: ** class View
 class View(object):
     template = None
@@ -360,6 +290,127 @@ class Application(View):
     #@-others
     run = main
 
+#@+node:eugeneai.20110117171340.1635: ** Pictogramm machinery
+#@+node:eugeneai.20110117171340.1634: *3* class PicItem
+class PicItem(goocanvas.ItemSimple, goocanvas.Item):
+    #@+others
+    #@+node:eugeneai.20110117171340.1637: *4* __init__
+    def __init__(self, module, graph, **kwargs):
+        """Icon driwer for module, using main graph canvas view `graph`
+        """
+        super(PicItem, self).__init__(**kwargs)
+        self.graph=graph
+        self.module = module
+        x,y = self.graph.get_position(module)
+        self.x=x-16
+        self.y=y-16
+        self.width=32
+        self.height=32
+        #self.bounds = goocanvas.Bounds()
+
+
+    #@+node:eugeneai.20110117171340.1642: *4* _do_update
+    def _do_update(self, entire_tree, cr):
+        x, y = self.graph.get_position(self.module)
+        self.bounds.x1 = x - 16.
+        self.bounds.y1 = y - 16.
+        self.bounds.x2 = x + 16.
+        self.bounds.y2 = y + 16.
+        return self.bounds
+
+    #@+node:eugeneai.20110117171340.1645: *4* _do_paint
+    def _do_paint(self, canvas, bounds, scale):
+        #print bounds.x1, bounds.y1, bounds.x2, bounds.y2
+        #return
+        canvas.set_line_width(1.0)
+        m = canvas.get_matrix()
+
+        module = self.module
+
+        x, y = self.graph.get_position(module)
+
+        canvas.translate(x,y)
+        canvas.translate(-16,-16)
+
+        selected = False
+
+        if selected:
+            self.graph.module_icon_toolboxed.render_cairo(canvas)
+        else:
+            self.graph.module_icon_background.render_cairo(canvas)
+        if module:
+            view=IModuleCanvasView(module)
+            view.set_parent(self.graph)
+            view.render_on_canvas(canvas)
+            canvas.set_source_rgb(0,0,0)
+            if module.inputs:
+                canvas.arc(-2, 16, 2, 0, M_2PI)
+                canvas.stroke()
+            if module.outputs:
+                canvas.arc(34, 16, 2, 0, M_2PI)
+                canvas.stroke()
+            if module.controls:
+                canvas.arc(16, 34, 2, 0, M_2PI)
+                canvas.stroke()
+            if module.implementors:
+                canvas.arc(16, -2, 2, 0, M_2PI)
+                canvas.stroke()
+
+        canvas.set_matrix(m)
+
+    #@+node:eugeneai.20110122224638.1646: *4* do_simple_create_path
+    def do_simple_create_path(self, canvas):
+        #print bounds.x1, bounds.y1, bounds.x2, bounds.y2
+        #return
+        canvas.set_line_width(1.0)
+        m = canvas.get_matrix()
+
+        module = self.module
+        print "Paint", module
+
+        x, y = self.graph.get_position(module)
+
+        canvas.translate(x,y)
+        canvas.translate(-16,-16)
+
+        #canvas.rectangle(0,0,32,32)
+        #canvas.stroke()
+
+
+        selected = False
+
+        if selected:
+            self.graph.module_icon_toolboxed.render_cairo(canvas)
+        else:
+            self.graph.module_icon_background.render_cairo(canvas)
+        if module:
+            view=IModuleCanvasView(module)
+            view.set_parent(self.graph)
+            #view.render_on_canvas(canvas)
+            #we will draw text ourselves
+            canvas.set_source_rgb(0,0,0)
+            if module.inputs:
+                canvas.arc(-2, 16, 2, 0, M_2PI)
+                canvas.stroke()
+            if module.outputs:
+                canvas.arc(34, 16, 2, 0, M_2PI)
+                canvas.stroke()
+            if module.controls:
+                canvas.arc(16, 34, 2, 0, M_2PI)
+                canvas.stroke()
+            if module.implementors:
+                canvas.arc(16, -2, 2, 0, M_2PI)
+                canvas.stroke()
+
+        canvas.set_matrix(m)
+
+    #@+node:eugeneai.20110117171340.1644: *4* _do_get_bounds
+    def _do_get_bounds(self):
+        print "!"
+        return self.bounds
+    #@-others
+#@+node:eugeneai.20110117171340.1636: *3* register PicItem in gobject
+gobject.type_register(PicItem)
 #@+node:eugeneai.20110116171118.1481: ** class Canvas
 TBL_ACTIONS=[
     ( 1,-1, "remove"),
@@ -418,9 +469,11 @@ class Canvas(View):
         root = self.ui.canvas.get_root_item()
 
         for m in self.model.modules:
-            pic = PicItem(m, self)
+            #pic = PicItem(m, self)
+            pic, text=self._module(m)
             root.add_child(pic, -1)
-            #pic.connect('enter-notify-event', self.on_module_enter_notify_event)
+            root.add_child(text, -1)
+            pic.connect('enter-notify-event', self.on_module_enter_notify_event)
 
         for mf, l in self.model.forwards.iteritems():
             x1, y1 = self.get_position(mf)
@@ -446,16 +499,14 @@ class Canvas(View):
                       "ui/pics/toolboxed.svg"))
 
     #@+node:eugeneai.20110116171118.1485: *3* _module
-    def _module(self, canvas, module, selected=False):
+    def _module(self, module, selected=False):
+        h=w=44
+        sx=sy=(44-32)/2.
+        surface=cairo.ImageSurface(cairo.FORMAT_ARGB32,h,w)
+        canvas=cairo.Context(surface)
         canvas.set_line_width(1.0)
-        m = canvas.get_matrix()
-        x, y = self.get_position(module)
-        try:
-            canvas.translate(x, y)
-        except ValueError:
-            canvas.translate(100, 100)
 
-        canvas.translate(-16,-16)
+        canvas.translate(sx,sy)
 
         if selected:
             self.module_icon_toolboxed.render_cairo(canvas)
@@ -480,7 +531,10 @@ class Canvas(View):
                 canvas.arc(16, -2, 2, 0, M_2PI)
                 canvas.stroke()
 
-        canvas.set_matrix(m)
+        x, y = self.get_position(module)
+        img = goocanvas.Image(x=x-w/2., y=y-h/2., width=w, height=h, pattern=cairo.SurfacePattern(surface))
+        text = goocanvas.Text(text=module.name, x=x, y=y+18, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans', )
+        return img, text
 
     #@+node:eugeneai.20110116171118.1486: *3* _connection
     def _connection(self, x1, y1, x2, y2, selected=False):
@@ -624,7 +678,7 @@ class Canvas(View):
         #pass
     #@+node:eugeneai.20110117171340.1646: *3* on_module_enter_notify_event
     def on_module_enter_notify_event(self, item, target, event):
-        #print "Module enter:", item
+        print "Module enter:", item
         pass
     #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter
     def on_curve_enter(sef, item, target, event):
@@ -710,6 +764,7 @@ class ModuleCanvasView(View):
         """Render myself on a cairo canvas"""
         if self.icon:
             self.icon.render_cairo(canvas)
+        """
         canvas.move_to(16, 38)
         canvas.select_font_face ("Sans")
         text = self.model.name
@@ -718,6 +773,7 @@ class ModuleCanvasView(View):
         canvas.set_source_rgb(0,0,0)
         canvas.show_text(text)
         canvas.stroke()
+        """
 
 
     #@-others
