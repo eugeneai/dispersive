@@ -111,6 +111,7 @@ class PicItem(goocanvas.ItemSimple, goocanvas.Item):
     #@+node:eugeneai.20110117171340.1645: *4* do_paint
     def do_paint(self, canvas, bounds, scale):
         #print bounds.x1, bounds.y1, bounds.x2, bounds.y2
+        #return
         canvas.set_line_width(1.0)
         m = canvas.get_matrix()
 
@@ -392,7 +393,7 @@ class Canvas(View):
         self.ui.canvas=canvas=goocanvas.Canvas()
         canvas.set_size_request(1024,768)
         canvas.set_bounds(0,0, 2000, 2000)
-        self.canvas_root=root=canvas.get_root_item()
+        root=canvas.get_root_item()
 
         text=goocanvas.Text(text="Hello World",
                        x=300, y=300,
@@ -414,7 +415,7 @@ class Canvas(View):
         View.set_model(self, model)
         if model == None:
             return
-        root = self.canvas_root
+        root = self.ui.canvas.get_root_item()
 
         for m in self.model.modules:
             pic = PicItem(m, self)
