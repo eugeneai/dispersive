@@ -491,9 +491,14 @@ class Canvas(View):
         self.module_movement=False
         self.tmp_toolbox = [] # Temporary local toolbox group
 
+        self.active_group = None  # active icon group, where mouse entered.
+        self.active_area = None   # active area in the icon group, where mouse entered.
+        self.area_conn_ids = None
+
         self.ui.canvas=canvas=goocanvas.Canvas()
         canvas.set_size_request(1024,768)
         canvas.set_bounds(0,0, 2000, 2000)
+        canvas.connect_after('motion-notify-event', self.on_canvas_motion)
         root=canvas.get_root_item()
         #root.connect('enter-notify-event', self.on_root_enter_leave)
         #root.connect('leave-notify-event', self.on_root_enter_leave)
@@ -539,7 +544,6 @@ class Canvas(View):
             text.module = m
             group.add_child(pic, -1)
             group.add_child(text, -1)
-            group.connect('leave-notify-event', self.on_module_group_leave)
             pic.connect('enter-notify-event', self.on_module_enter_leave)
             pic.connect('leave-notify-event', self.on_module_enter_leave)
             pic.connect('motion-notify-event', self.on_module_motion)
@@ -670,6 +674,25 @@ class Canvas(View):
                     self.force_paint = True
                     canvas.queue_draw()
 
+    #@+node:eugeneai.20110123122541.1670: *3* on_canvas_motion
+    def on_canvas_motion(self, canvas, event):
+        print "Motion (CANVAS)"
+        if self.active_group and not self.active_area:
+            for i in self.area_conn_ids:
+                self.active_group.disconnect(i)
+
+            self.selected_item.set_property('pattern', self.draw_module_pattern(self.selected_module))
+            for tool in self.tmp_toolbox:
+                tool.remove()
+                #tool.destroy()
+
+            self.tmp_toolbox=[]
+            self.tmp_toolbox_group=[]
+            self.active_group=None
+            self.movement_mode = False
+            self.selected_module = None
+            self.selected_item = None
+
     #@+node:eugeneai.20110116171118.1488: *3* on_canvas_button_press_event
     def on_canvas_button_press_event(self, canvas, ev, data=None):
         if ev.button == 1:
@@ -760,6 +783,11 @@ class Canvas(View):
                 module=self.selected_module = item.module
                 self.selected_item=item
                 self.tmp_toolbox_group = item.get_parent()
+                group=self.active_group = item.get_parent()
+                id1 = group.connect('leave-notify-event', self.on_module_group_enter_leave)
+                id2 = group.connect('enter-notify-event', self.on_module_group_enter_leave)
+                self.area_conn_ids = (id1, id2)
+
                 x,y = self.get_position(module)
                 x,y = x-6, y-6
                 self.tmp_toolbox=[]
@@ -866,12 +894,19 @@ class Canvas(View):
             pass
 
 
-    #@+node:eugeneai.20110123122541.1669: *3* on_module_group_leave
-    def on_module_group_leave(self, item, target, event):
+    #@+node:eugeneai.20110123122541.1669: *3* on_module_group_enter_leave
+    def on_module_group_enter_leave(self, item, target, event):
+        if event.type == gtk.gdk.ENTER_NOTIFY:
+            self.active_area = target
+        elif event.type == gtk.gdk.LEAVE_NOTIFY:
+            self.active_area = None
+        self.active_group = item
+        """
         if item==target:
             print 'Toolbox leave', item, target
         else:
             print 'Toolbox leave child', item, target
+        """
     #@+node:eugeneai.20110116171118.1490: *3* is_spotted
     def is_spotted(self, module, x,y, distance, dx=0, dy=0):
         if module != None:
