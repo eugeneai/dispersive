@@ -485,7 +485,9 @@ class Canvas(View):
         View.__init__(self, model=None)
         self.icon_cache={}
         self.state=Ui()
-        self.selected_module=None
+        self.selected_module=None # module and its
+        self.selected_item = None # corresponding icon
+        self.selected_tool = None # and icon's tool icon
         self.module_movement=False
         self.tmp_toolbox = [] # Temporary local toolbox group
 
@@ -493,6 +495,8 @@ class Canvas(View):
         canvas.set_size_request(1024,768)
         canvas.set_bounds(0,0, 2000, 2000)
         root=canvas.get_root_item()
+        root.connect('enter-notify-event', self.on_root_enter_leave)
+        root.connect('leave-notify-event', self.on_root_enter_leave)
 
         text=goocanvas.Text(text="Touch me, and I will rotate!",
                        x=300, y=300,
@@ -747,25 +751,27 @@ class Canvas(View):
         #pass
     #@+node:eugeneai.20110117171340.1646: *3* on_module_enter_leave
     def on_module_enter_leave(self, item, target, event):
+        print "Module:", event.type
         if event.type==gtk.gdk.ENTER_NOTIFY:
             module=self.selected_module = item.module
+            self.selected_item=item
             self.tmp_toolbox_group = goocanvas.Group()
             x,y = self.get_position(module)
             x,y = x-6, y-6
             self.tmp_toolbox=[]
             for (dx, dy, name, ui) in TBL_ACTIONS:
                 tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=x + dx*20, y=y + dy*20)
+                tool.item=item # Whoze tool it is. 
                 self.tmp_toolbox_group.add_child(tool, -1)
                 self.tmp_toolbox.append(tool)
+                tool.connect('enter-notify-event', self.on_tool_enter_leave)
+                tool.connect('leave-notify-event', self.on_tool_enter_leave)
+                tool.connect('button-press-event', self.on_tool_pressed_released)
+                tool.connect('button-release-event', self.on_tool_pressed_released)
 
             root=item.get_canvas().get_root_item()
             root.add_child(self.tmp_toolbox_group, -1)
 
-        elif event.type==gtk.gdk.LEAVE_NOTIFY:
-            self.selected_module = None
-            if self.tmp_toolbox!=None:
-                self.tmp_toolbox_group.remove()
-                self.tmp_toolbox = []
         item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
     #@+node:eugeneai.20110123122541.1658: *3* on_module_press_release
     def on_module_press_release(self, item, target, event):
@@ -821,8 +827,44 @@ class Canvas(View):
                     item.set_property("text", name)
                 del item.button_pressed
             except AttributeError:
-                print "PASS"
                 pass
+    #@+node:eugeneai.20110123122541.1663: *3* on_tool_pressed_released
+    def on_tool_pressed_released(self, item, target, event):
+        if event.type == gtk.gdk.BUTTON_PRESS:
+            if event.button==1:
+                item.button_pressed=True
+        elif event.type == gtk.gdk.BUTTON_RELEASE:
+            try:
+                if item.button_pressed:
+                    self.emit('clicked')
+                del item.button_pressed
+            except AttributeError:
+                pass    
+
+    #@+node:eugeneai.20110123122541.1664: *3* on_tool_enter_leave
+    def on_tool_enter_leave(self, item, target, event):
+        if event.type == gtk.gdk.ENTER_NOTIFY:
+            self.selected_tool = item
+        elif event.type == gtk.gdk.LEAVE_NOTIFY:
+            self.selected_tool = None
+        print "Tool:", event.type, self.selected_tool
+        pass
+    #@+node:eugeneai.20110123122541.1665: *3* on_root_enter_leave
+    def on_root_enter_leave(self, item, target, event):
+        print "Root", event, "Item:", self.selected_item, "Tool:", self.selected_tool
+        if self.selected_item and self.tmp_toolbox and not self.selected_tool:
+            if self.tmp_toolbox!=None:
+                self.tmp_toolbox_group.remove()
+                self.tmp_toolbox = []
+
+            self.selected_module = None
+            if self.selected_item:
+                self.selected_item.set_property('pattern', self.draw_module_pattern(self.selected_item.module, selected = self.selected_module))
+            self.selected_item = None
+        else:
+            pass
+
+
     #@+node:eugeneai.20110116171118.1490: *3* is_spotted
     def is_spotted(self, module, x,y, distance, dx=0, dy=0):
         if module != None:
