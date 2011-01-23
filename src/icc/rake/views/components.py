@@ -693,83 +693,6 @@ class Canvas(View):
             self.selected_module = None
             self.selected_item = None
 
-    #@+node:eugeneai.20110116171118.1488: *3* on_canvas_button_press_event
-    def on_canvas_button_press_event(self, canvas, ev, data=None):
-        if ev.button == 1:
-            if ev.type == gtk.gdk.BUTTON_PRESS:
-                if self.selected_module != None:
-                    if self.is_spotted(self.selected_module, ev.x, ev.y, 16):
-                        self.module_movement=True
-                        self.modify_paint=True
-                        canvas.queue_draw()
-                    if self.toolboxlet_action(canvas, ev.x, ev.y):
-                        canvas.queue_draw()
-
-            if self.modify_paint:
-                (px, py) = self.model.get_position(self.selected_module)
-                self.mdx, self.mdy = px - ev.x, py - ev.y
-        #print ev.type
-
-    #@+node:eugeneai.20110116171118.1489: *3* on_canvas_button_release_event
-    def on_canvas_button_release_event(self, canvas, ev, user=None):
-        if ev.button == 1:
-            if self.module_movement:
-                self.model.place(self.selected_module, ev.x+self.mdx, ev.y+self.mdy)
-                #self.selected_module=None
-                self.module_movement=False
-            self.force_paint=True
-            canvas.queue_draw()
-        #print ev.type
-
-    #@+node:eugeneai.20110116171118.1492: *3* on_canvas_motion_notify_event
-    def on_canvas_motion_notify_event(self, canvas, ev, user=None):
-        if self.module_movement:
-            self.model.place(self.selected_module, ev.x+self.mdx, ev.y+self.mdy)
-            canvas.queue_draw()
-            return
-
-        module = None
-        if self.selected_module != None:
-            module = self.selected_module
-            if self.leaved_selection(self.selected_module, ev.x, ev.y):
-                module = self.model.find_module(ev.x, ev.y)
-        else:
-            module = self.model.find_module(ev.x, ev.y)
-        if self.selected_module != module:
-            self.selected_module = module
-            self.force_paint = True
-            self.modify_paint = module != None
-            canvas.queue_draw()
-
-
-    #@+node:eugeneai.20110116171118.1493: *3* on_canvas_expose_event
-    def on_canvas_expose_event(self, canvas, ev, data=None):
-        (w, h) = canvas.window.get_size()
-        if not self.modify_paint:
-            if self.model.changed:
-                self.force_paint = True
-        if self.force_paint:
-            surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
-            ccanvas = cairo.Context(surface)
-            # fill canvas with bacground color
-            src = ccanvas.get_source()
-            ccanvas.rectangle(0,0, w,h)
-            c=0.9
-            ccanvas.set_source_rgb(c,c,c)
-            ccanvas.fill()
-            ccanvas.set_source(src)
-            self.draw_model_on(ccanvas, self.selected_module)
-            self.model.changed = False
-            self.cache_surface = surface
-            self.force_paint = False
-        else:
-            surface = self.cache_surface
-        ocanvas = canvas.window.cairo_create()
-        ocanvas.set_source_surface(surface)
-        ocanvas.paint()
-        if self.modify_paint:
-            self.draw_model_on(ocanvas, exc_mod = self.selected_module, selected=True)
-
     #@+node:eugeneai.20110117171340.1633: *3* on_text_enter_notify_event
     def on_text_enter_notify_event(self, item, target, event):
         #print "Enter", item, target, event
@@ -796,13 +719,10 @@ class Canvas(View):
                     tool.item=item # Whoze tool it is. 
                     self.tmp_toolbox_group.add_child(tool, -1)
                     self.tmp_toolbox.append(tool)
-                    tool.connect('enter-notify-event', self.on_tool_enter_leave)
-                    tool.connect('leave-notify-event', self.on_tool_enter_leave)
+                    #tool.connect('enter-notify-event', self.on_tool_enter_leave)
+                    #tool.connect('leave-notify-event', self.on_tool_enter_leave)
                     tool.connect('button-press-event', self.on_tool_pressed_released)
                     tool.connect('button-release-event', self.on_tool_pressed_released)
-
-                #root.add_child(self.tmp_toolbox_group, -1)
-                #self.tmp_toolbox_group.connect('leave-notify-event', self.on_toolbox_leave)
 
                 item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
     #@+node:eugeneai.20110123122541.1658: *3* on_module_press_release
@@ -901,12 +821,6 @@ class Canvas(View):
         elif event.type == gtk.gdk.LEAVE_NOTIFY:
             self.active_area = None
         self.active_group = item
-        """
-        if item==target:
-            print 'Toolbox leave', item, target
-        else:
-            print 'Toolbox leave child', item, target
-        """
     #@+node:eugeneai.20110116171118.1490: *3* is_spotted
     def is_spotted(self, module, x,y, distance, dx=0, dy=0):
         if module != None:
