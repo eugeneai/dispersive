@@ -539,6 +539,8 @@ class Canvas(View):
             pic.connect('motion-notify-event', self.on_module_motion)
             pic.connect('button-press-event', self.on_module_press_release)
             pic.connect('button-release-event', self.on_module_press_release)
+            text.connect('button-press-event',self.on_module_text_clicked)
+            text.connect('button-release-event',self.on_module_text_clicked)
 
         self.ui.canvas.request_update()
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
@@ -791,7 +793,7 @@ class Canvas(View):
             for tool in self.tmp_toolbox:
                 tool.translate(dx,dy)
     #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
-    def on_curve_enter_leave(sef, item, target, event, fore_path):
+    def on_curve_enter_leave(self, item, target, event, fore_path):
         #print "Enter:", item, target, event
         stroke_color='brown'
         bkg_stroke_color='white'
@@ -800,6 +802,27 @@ class Canvas(View):
             bkg_stroke_color='brown'
         fore_path.set_property("stroke-color", stroke_color)
         fore_path.bkg_path.set_property("stroke-color", bkg_stroke_color)
+    #@+node:eugeneai.20110123122541.1662: *3* on_module_text_clicked
+    def on_module_text_clicked(self, item, target, event):
+        if event.type == gtk.gdk.BUTTON_PRESS:
+            if event.button==1:
+                item.button_pressed=True
+        elif event.type == gtk.gdk.BUTTON_RELEASE:
+            try:
+                if item.button_pressed:
+                    module = item.module
+                    name = InputDialog(
+                            message='Enter the block <b>indetifier</b> (name)',
+                            value=module.name,
+                            field='Name:', 
+                            secondary='It could be used for Your convenience as a comment.')
+                    module.modified = module.modified or name != module.name
+                    module.name = name
+                    item.set_property("text", name)
+                del item.button_pressed
+            except AttributeError:
+                print "PASS"
+                pass
     #@+node:eugeneai.20110116171118.1490: *3* is_spotted
     def is_spotted(self, module, x,y, distance, dx=0, dy=0):
         if module != None:
