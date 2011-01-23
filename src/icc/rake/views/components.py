@@ -495,8 +495,8 @@ class Canvas(View):
         canvas.set_size_request(1024,768)
         canvas.set_bounds(0,0, 2000, 2000)
         root=canvas.get_root_item()
-        root.connect('enter-notify-event', self.on_root_enter_leave)
-        root.connect('leave-notify-event', self.on_root_enter_leave)
+        #root.connect('enter-notify-event', self.on_root_enter_leave)
+        #root.connect('leave-notify-event', self.on_root_enter_leave)
 
         text=goocanvas.Text(text="Touch me, and I will rotate!",
                        x=300, y=300,
@@ -532,12 +532,14 @@ class Canvas(View):
                 f.connect('leave-notify-event', self.on_curve_enter_leave, f)
 
         for m in self.model.modules:
+            group=goocanvas.Group()
             #pic = PicItem(m, self)
             pic, text=self._module(m)
             pic.module = m
             text.module = m
-            root.add_child(pic, -1)
-            root.add_child(text, -1)
+            group.add_child(pic, -1)
+            group.add_child(text, -1)
+            group.connect('leave-notify-event', self.on_module_group_leave)
             pic.connect('enter-notify-event', self.on_module_enter_leave)
             pic.connect('leave-notify-event', self.on_module_enter_leave)
             pic.connect('motion-notify-event', self.on_module_motion)
@@ -545,6 +547,7 @@ class Canvas(View):
             pic.connect('button-release-event', self.on_module_press_release)
             text.connect('button-press-event',self.on_module_text_clicked)
             text.connect('button-release-event',self.on_module_text_clicked)
+            root.add_child(group, -1)
 
         self.ui.canvas.request_update()
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
@@ -753,26 +756,27 @@ class Canvas(View):
     def on_module_enter_leave(self, item, target, event):
         print "Module:", event.type
         if event.type==gtk.gdk.ENTER_NOTIFY:
-            module=self.selected_module = item.module
-            self.selected_item=item
-            self.tmp_toolbox_group = goocanvas.Group()
-            x,y = self.get_position(module)
-            x,y = x-6, y-6
-            self.tmp_toolbox=[]
-            for (dx, dy, name, ui) in TBL_ACTIONS:
-                tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=x + dx*20, y=y + dy*20)
-                tool.item=item # Whoze tool it is. 
-                self.tmp_toolbox_group.add_child(tool, -1)
-                self.tmp_toolbox.append(tool)
-                tool.connect('enter-notify-event', self.on_tool_enter_leave)
-                tool.connect('leave-notify-event', self.on_tool_enter_leave)
-                tool.connect('button-press-event', self.on_tool_pressed_released)
-                tool.connect('button-release-event', self.on_tool_pressed_released)
+            if not self.selected_module and not self.tmp_toolbox:
+                module=self.selected_module = item.module
+                self.selected_item=item
+                self.tmp_toolbox_group = item.get_parent()
+                x,y = self.get_position(module)
+                x,y = x-6, y-6
+                self.tmp_toolbox=[]
+                for (dx, dy, name, ui) in TBL_ACTIONS:
+                    tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=x + dx*20, y=y + dy*20)
+                    tool.item=item # Whoze tool it is. 
+                    self.tmp_toolbox_group.add_child(tool, -1)
+                    self.tmp_toolbox.append(tool)
+                    tool.connect('enter-notify-event', self.on_tool_enter_leave)
+                    tool.connect('leave-notify-event', self.on_tool_enter_leave)
+                    tool.connect('button-press-event', self.on_tool_pressed_released)
+                    tool.connect('button-release-event', self.on_tool_pressed_released)
 
-            root=item.get_canvas().get_root_item()
-            root.add_child(self.tmp_toolbox_group, -1)
+                #root.add_child(self.tmp_toolbox_group, -1)
+                #self.tmp_toolbox_group.connect('leave-notify-event', self.on_toolbox_leave)
 
-        item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
+                item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
     #@+node:eugeneai.20110123122541.1658: *3* on_module_press_release
     def on_module_press_release(self, item, target, event):
         if event.type==gtk.gdk.BUTTON_PRESS:
@@ -784,30 +788,17 @@ class Canvas(View):
             self.module_movement=False
             self.smx=None
             self.smy=None
-            self.tmp_toolbox_group.raise_(None)
+            item.lower(None)
 
     #@+node:eugeneai.20110123122541.1659: *3* on_module_motion
     def on_module_motion(self, item, target, event):
-        if self.module_movement:
+        if self.module_movement and item.module==self.selected_module:
             x,y = self.get_position(item.module)
             mx,my=event.x, event.y
             dx=mx-self.smx
             dy=my-self.smy
             self.model.place(item.module, x+dx, y+dy)
-            item.translate(dx, dy)
-            item.text.translate(dx, dy)
-            for tool in self.tmp_toolbox:
-                tool.translate(dx,dy)
-    #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
-    def on_curve_enter_leave(self, item, target, event, fore_path):
-        #print "Enter:", item, target, event
-        stroke_color='brown'
-        bkg_stroke_color='white'
-        if event.type==gtk.gdk.ENTER_NOTIFY:
-            stroke_color='yellow'
-            bkg_stroke_color='brown'
-        fore_path.set_property("stroke-color", stroke_color)
-        fore_path.bkg_path.set_property("stroke-color", bkg_stroke_color)
+            item.get_parent().translate(dx, dy)
     #@+node:eugeneai.20110123122541.1662: *3* on_module_text_clicked
     def on_module_text_clicked(self, item, target, event):
         if event.type == gtk.gdk.BUTTON_PRESS:
@@ -828,6 +819,16 @@ class Canvas(View):
                 del item.button_pressed
             except AttributeError:
                 pass
+    #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
+    def on_curve_enter_leave(self, item, target, event, fore_path):
+        #print "Enter:", item, target, event
+        stroke_color='brown'
+        bkg_stroke_color='white'
+        if event.type==gtk.gdk.ENTER_NOTIFY:
+            stroke_color='yellow'
+            bkg_stroke_color='brown'
+        fore_path.set_property("stroke-color", stroke_color)
+        fore_path.bkg_path.set_property("stroke-color", bkg_stroke_color)
     #@+node:eugeneai.20110123122541.1663: *3* on_tool_pressed_released
     def on_tool_pressed_released(self, item, target, event):
         if event.type == gtk.gdk.BUTTON_PRESS:
@@ -865,6 +866,12 @@ class Canvas(View):
             pass
 
 
+    #@+node:eugeneai.20110123122541.1669: *3* on_module_group_leave
+    def on_module_group_leave(self, item, target, event):
+        if item==target:
+            print 'Toolbox leave', item, target
+        else:
+            print 'Toolbox leave child', item, target
     #@+node:eugeneai.20110116171118.1490: *3* is_spotted
     def is_spotted(self, module, x,y, distance, dx=0, dy=0):
         if module != None:
