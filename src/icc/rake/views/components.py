@@ -486,7 +486,8 @@ class Canvas(View):
                 b.mfrom, b.mto = mf, mt
                 f.mfrom, f.mto = mf, mt
                 root.add_child(f,-1)
-                f.connect('enter-notify-event', self.on_curve_enter)
+                f.connect('enter-notify-event', self.on_curve_enter_leave)
+                f.connect('leave-notify-event', self.on_curve_enter_leave)
 
         self.ui.canvas.request_update()
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
@@ -537,7 +538,7 @@ class Canvas(View):
 
         x, y = self.get_position(module)
         img = goocanvas.Image(x=x-w/2., y=y-h/2., width=w, height=h, pattern=cairo.SurfacePattern(surface))
-        text = goocanvas.Text(text=module.name, x=x, y=y+18, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans', )
+        text = goocanvas.Text(text=module.name, x=x, y=y+18, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
 
         return img, text
 
@@ -554,6 +555,8 @@ class Canvas(View):
         bkg_path = goocanvas.Path(data=data, line_width=6.0, stroke_color='white')
 
         frg_path = goocanvas.Path(data=data, line_width=4.0, stroke_color='brown')
+
+        frg_path.bkg_path=bkg_path
 
         #print data    
         return (bkg_path, frg_path)
@@ -686,9 +689,16 @@ class Canvas(View):
     def on_module_enter_notify_event(self, item, target, event):
         print "Module enter:", item
         pass
-    #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter
-    def on_curve_enter(sef, item, target, event):
-        print "Enter:", item, target, event
+    #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
+    def on_curve_enter_leave(sef, item, target, event):
+        #print "Enter:", item, target, event
+        stroke_color='brown'
+        bkg_stroke_color='white'
+        if event.type==gtk.gdk.ENTER_NOTIFY:
+            stroke_color='yellow'
+            bkg_stroke_color='brown'
+        item.set_property("stroke-color", stroke_color)
+        item.bkg_path.set_property("stroke-color", bkg_stroke_color)
     #@+node:eugeneai.20110116171118.1490: *3* is_spotted
     def is_spotted(self, module, x,y, distance, dx=0, dy=0):
         if module != None:
