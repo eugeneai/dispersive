@@ -537,7 +537,8 @@ class Canvas(View):
                 f.connect('leave-notify-event', self.on_curve_enter_leave, f)
 
         for m in self.model.modules:
-            group=goocanvas.Group()
+            x, y = self.get_position(m)
+            group=goocanvas.Group(x=x, y=y)
             #pic = PicItem(m, self)
             pic, text=self._module(m)
             pic.module = m
@@ -576,10 +577,9 @@ class Canvas(View):
 
         pattern=self.draw_module_pattern(module, bheight=h, bwidth=w, fheight=32, fwidth=32, selected=selected)
 
-        x, y = self.get_position(module)
-        img = goocanvas.Image(x=x-w/2., y=y-h/2., width=w, height=h, pattern=pattern)
+        img = goocanvas.Image(x=-w/2., y=-h/2., width=w, height=h, pattern=pattern)
         #img = SVGImage(svg=None, x=x-w/2., y=y-h/2., width=w, height=h, pattern=pattern)
-        text = goocanvas.Text(text=module.name, x=x, y=y+22, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
+        text = goocanvas.Text(text=module.name, x=0, y=22, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
         img.text = text
 
         return img, text
@@ -676,7 +676,6 @@ class Canvas(View):
 
     #@+node:eugeneai.20110123122541.1670: *3* on_canvas_motion
     def on_canvas_motion(self, canvas, event):
-        print "Motion (CANVAS)"
         if self.active_group and not self.active_area:
             for i in self.area_conn_ids:
                 self.active_group.disconnect(i)
@@ -711,11 +710,10 @@ class Canvas(View):
                 id2 = group.connect('enter-notify-event', self.on_module_group_enter_leave)
                 self.area_conn_ids = (id1, id2)
 
-                x,y = self.get_position(module)
-                x,y = x-6, y-6
                 self.tmp_toolbox=[]
                 for (dx, dy, name, ui) in TBL_ACTIONS:
-                    tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=x + dx*20, y=y + dy*20)
+                    px, py = 20*dx-7, 20*dy-7 # XXX monkey patch.
+                    tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=px, y=py)
                     tool.item=item # Whoze tool it is. 
                     self.tmp_toolbox_group.add_child(tool, -1)
                     self.tmp_toolbox.append(tool)
@@ -729,10 +727,24 @@ class Canvas(View):
     def on_module_press_release(self, item, target, event):
         if event.type==gtk.gdk.BUTTON_PRESS:
             self.module_movement=True
-            self.smx=event.x
-            self.smy=event.y
+            self.smx=event.x_root
+            self.smy=event.y_root
+            x,y = self.get_position(item.module)
+
+            # shift from the center of the image
+            self.dx=self.smx - x
+            self.dy=self.smy - y
+            print x,y, self.smx, self.smy, self.dx, self.dy
             item.raise_(None)
         elif event.type==gtk.gdk.BUTTON_RELEASE:
+            x,y = self.get_position(item.module)
+            mx,my=event.x_root, event.y_root
+            dx=mx-self.smx
+            dy=my-self.smy
+            x=mx-self.dx
+            y=my-self.dy
+            self.model.place(item.module, x,y)
+            print "Place:", x,y, mx, my, self.dx, self.dy
             self.module_movement=False
             self.smx=None
             self.smy=None
@@ -740,13 +752,17 @@ class Canvas(View):
 
     #@+node:eugeneai.20110123122541.1659: *3* on_module_motion
     def on_module_motion(self, item, target, event):
+        #print dir(event)
         if self.module_movement and item.module==self.selected_module:
             x,y = self.get_position(item.module)
-            mx,my=event.x, event.y
+            mx,my=event.x_root, event.y_root
             dx=mx-self.smx
             dy=my-self.smy
-            self.model.place(item.module, x+dx, y+dy)
+            self.model.place(item.module, mx-self.dx, my-self.dy)
+            parent = item.get_parent()
             item.get_parent().translate(dx, dy)
+            self.smx=mx
+            self.smy=my
     #@+node:eugeneai.20110123122541.1662: *3* on_module_text_clicked
     def on_module_text_clicked(self, item, target, event):
         if event.type == gtk.gdk.BUTTON_PRESS:

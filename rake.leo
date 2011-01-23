@@ -78,7 +78,7 @@ expanded="eugeneai.20110116171118.1318,"><vh>@shadow icc_xray_app.py</vh></v>
 <v t="eugeneai.20110116171118.1415" a="E"><vh>Application</vh>
 <v t="eugeneai.20110116171118.1416" a="E"><vh>@path rake</vh>
 <v t="eugeneai.20110116171118.1331"></v>
-<v t="eugeneai.20110116171118.1417"><vh>Models</vh>
+<v t="eugeneai.20110116171118.1417" a="E"><vh>Models</vh>
 <v t="eugeneai.20110116171118.1420" a="E"><vh>@path models</vh>
 <v t="eugeneai.20110116171118.1331"></v>
 <v t="eugeneai.20110116171118.1447"><vh>@file interfaces.py</vh></v>
