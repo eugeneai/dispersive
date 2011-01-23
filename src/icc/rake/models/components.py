@@ -53,7 +53,7 @@ class Canvas:
         m2 = LmModule()
         m3 = FrameViewModule()
         mp = PlotModule()
-        self.place(m1, 20, 20)
+        self.place(m1, 70, 150)
         self.place(m2, 200, 30)
         self.place(m3, 500, 100)
         self.place(mp, 300, 300)

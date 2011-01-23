@@ -446,7 +446,7 @@ class Canvas(View):
         canvas.set_bounds(0,0, 2000, 2000)
         root=canvas.get_root_item()
 
-        text=goocanvas.Text(text="Hello World",
+        text=goocanvas.Text(text="Touch me, and I will rotate!",
                        x=300, y=300,
                        anchor=gtk.ANCHOR_CENTER,
                        font="Sans 24", parent=root)
@@ -468,15 +468,6 @@ class Canvas(View):
             return
         root = self.ui.canvas.get_root_item()
 
-        for m in self.model.modules:
-            #pic = PicItem(m, self)
-            pic, text=self._module(m)
-            pic.module = m
-            text.module = m
-            root.add_child(pic, -1)
-            root.add_child(text, -1)
-            pic.connect('enter-notify-event', self.on_module_enter_notify_event)
-
         for mf, l in self.model.forwards.iteritems():
             x1, y1 = self.get_position(mf)
             for mt in l:
@@ -486,8 +477,18 @@ class Canvas(View):
                 b.mfrom, b.mto = mf, mt
                 f.mfrom, f.mto = mf, mt
                 root.add_child(f,-1)
-                f.connect('enter-notify-event', self.on_curve_enter_leave)
-                f.connect('leave-notify-event', self.on_curve_enter_leave)
+                f.connect('enter-notify-event', self.on_curve_enter_leave, f)
+                f.connect('leave-notify-event', self.on_curve_enter_leave, f)
+
+        for m in self.model.modules:
+            #pic = PicItem(m, self)
+            pic, text=self._module(m)
+            pic.module = m
+            text.module = m
+            root.add_child(pic, -1)
+            root.add_child(text, -1)
+            pic.connect('enter-notify-event', self.on_module_enter_leave)
+            pic.connect('leave-notify-event', self.on_module_enter_leave)
 
         self.ui.canvas.request_update()
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
@@ -506,7 +507,21 @@ class Canvas(View):
     #@+node:eugeneai.20110116171118.1485: *3* _module
     def _module(self, module, selected=False):
         h=w=44
-        sx=sy=(44-32)/2.
+
+        pattern=self.draw_module_pattern(module, bheight=h, bwidth=w, fheight=32, fwidth=32, selected=selected)
+
+        x, y = self.get_position(module)
+        img = goocanvas.Image(x=x-w/2., y=y-h/2., width=w, height=h, pattern=pattern)
+        text = goocanvas.Text(text=module.name, x=x, y=y+18, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
+
+        return img, text
+
+    #@+node:eugeneai.20110123122541.1644: *3* draw_module_pattern
+    def draw_module_pattern(self, module, bheight=44, bwidth=44, fheight=32, fwidth=32, selected=False):
+        h,w=bheight,bwidth
+
+        sx,sy=(bwidth-fwidth)/2., (bheight-fheight)/2.
+
         surface=cairo.ImageSurface(cairo.FORMAT_ARGB32,h,w)
         canvas=cairo.Context(surface)
         canvas.set_line_width(1.0)
@@ -514,8 +529,8 @@ class Canvas(View):
         canvas.translate(sx,sy)
 
         if selected:
-            self.module_icon_toolboxed.render_cairo(canvas)
-            # self.module_icon_selected.render_cairo(canvas)
+            #self.module_icon_toolboxed.render_cairo(canvas)
+            self.module_icon_selected.render_cairo(canvas)
         else:
             self.module_icon_background.render_cairo(canvas)
         if module:
@@ -535,22 +550,11 @@ class Canvas(View):
             if module.implementors:
                 canvas.arc(16, -2, 2, 0, M_2PI)
                 canvas.stroke()
-
-        x, y = self.get_position(module)
-        img = goocanvas.Image(x=x-w/2., y=y-h/2., width=w, height=h, pattern=cairo.SurfacePattern(surface))
-        text = goocanvas.Text(text=module.name, x=x, y=y+18, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
-
-        return img, text
-
+        return cairo.SurfacePattern(surface)
     #@+node:eugeneai.20110116171118.1486: *3* _connection
     def _connection(self, x1, y1, x2, y2, selected=False):
-        dx=x2-x1
-        dy=y2-y1
-        dx,dy=dx/2.,dy/2.
-        sx=16+2
 
-        data='M%s,%s C%s,%s %s,%s %s,%s' % (x1+sx, y1,  x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
-        #data='M%s,%s L%s,%s' % (x1+sx, y1, x2-sx, y2)
+        data=self.draw_curve(x1,y1, x2,y2)
 
         bkg_path = goocanvas.Path(data=data, line_width=6.0, stroke_color='white')
 
@@ -558,17 +562,16 @@ class Canvas(View):
 
         frg_path.bkg_path=bkg_path
 
-        #print data    
         return (bkg_path, frg_path)
 
-        if selected:
-            canvas.set_source_rgba (0.0, 0.5, 0, 0.7)
-        else:
-            canvas.set_source_rgba (0.5, 0, 0, 0.7)
-        canvas.set_line_width (3.0)
-        canvas.stroke()
-        canvas.set_source(src)
 
+    #@+node:eugeneai.20110123122541.1647: *3* draw_curve
+    def draw_curve(self, x1, y1, x2, y2):
+        dx=x2-x1
+        dy=y2-y1
+        dx,dy=dx/2.,dy/2.
+        sx=16+2
+        return 'M%s,%s C%s,%s %s,%s %s,%s' % (x1+sx, y1,  x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
     #@+node:eugeneai.20110116171118.1487: *3* toolboxlet_action
     def toolboxlet_action(self, canvas, x,y):
         sc=19.5
@@ -685,20 +688,23 @@ class Canvas(View):
         #print "Enter", item, target, event
         item.rotate(10, 300, 300)
         #pass
-    #@+node:eugeneai.20110117171340.1646: *3* on_module_enter_notify_event
-    def on_module_enter_notify_event(self, item, target, event):
-        print "Module enter:", item
-        pass
+    #@+node:eugeneai.20110117171340.1646: *3* on_module_enter_leave
+    def on_module_enter_leave(self, item, target, event):
+        if event.type==gtk.gdk.ENTER_NOTIFY:
+            self.selected_module = item.module
+        elif event.type==gtk.gdk.LEAVE_NOTIFY:
+            self.selected_module = None
+        item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
     #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
-    def on_curve_enter_leave(sef, item, target, event):
+    def on_curve_enter_leave(sef, item, target, event, fore_path):
         #print "Enter:", item, target, event
         stroke_color='brown'
         bkg_stroke_color='white'
         if event.type==gtk.gdk.ENTER_NOTIFY:
             stroke_color='yellow'
             bkg_stroke_color='brown'
-        item.set_property("stroke-color", stroke_color)
-        item.bkg_path.set_property("stroke-color", bkg_stroke_color)
+        fore_path.set_property("stroke-color", stroke_color)
+        fore_path.bkg_path.set_property("stroke-color", bkg_stroke_color)
     #@+node:eugeneai.20110116171118.1490: *3* is_spotted
     def is_spotted(self, module, x,y, distance, dx=0, dy=0):
         if module != None:
