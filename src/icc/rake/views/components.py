@@ -471,6 +471,8 @@ class Canvas(View):
         for m in self.model.modules:
             #pic = PicItem(m, self)
             pic, text=self._module(m)
+            pic.module = m
+            text.module = m
             root.add_child(pic, -1)
             root.add_child(text, -1)
             pic.connect('enter-notify-event', self.on_module_enter_notify_event)
@@ -481,6 +483,8 @@ class Canvas(View):
                 x2, y2 = self.get_position(mt)
                 b,f = self._connection(x1,y1,x2,y2)
                 root.add_child(b,-1)
+                b.mfrom, b.mto = mf, mt
+                f.mfrom, f.mto = mf, mt
                 root.add_child(f,-1)
                 f.connect('enter-notify-event', self.on_curve_enter)
 
@@ -534,6 +538,7 @@ class Canvas(View):
         x, y = self.get_position(module)
         img = goocanvas.Image(x=x-w/2., y=y-h/2., width=w, height=h, pattern=cairo.SurfacePattern(surface))
         text = goocanvas.Text(text=module.name, x=x, y=y+18, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans', )
+
         return img, text
 
     #@+node:eugeneai.20110116171118.1486: *3* _connection
@@ -549,6 +554,7 @@ class Canvas(View):
         bkg_path = goocanvas.Path(data=data, line_width=6.0, stroke_color='white')
 
         frg_path = goocanvas.Path(data=data, line_width=4.0, stroke_color='brown')
+
         #print data    
         return (bkg_path, frg_path)
 
