@@ -536,6 +536,9 @@ class Canvas(View):
             root.add_child(text, -1)
             pic.connect('enter-notify-event', self.on_module_enter_leave)
             pic.connect('leave-notify-event', self.on_module_enter_leave)
+            pic.connect('motion-notify-event', self.on_module_motion)
+            pic.connect('button-press-event', self.on_module_press_release)
+            pic.connect('button-release-event', self.on_module_press_release)
 
         self.ui.canvas.request_update()
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
@@ -759,6 +762,12 @@ class Canvas(View):
                 self.tmp_toolbox.remove()
                 self.tmp_toolbox = None
         item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
+    #@+node:eugeneai.20110123122541.1658: *3* on_module_press_release
+    def on_press_release(self, item, target, event):
+        print "Press"
+    #@+node:eugeneai.20110123122541.1659: *3* on_module_motion
+    def on_module_motion(self, item, target, event):
+        print "Motion"
     #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
     def on_curve_enter_leave(sef, item, target, event, fore_path):
         #print "Enter:", item, target, event
