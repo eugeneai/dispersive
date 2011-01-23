@@ -487,7 +487,7 @@ class Canvas(View):
         self.state=Ui()
         self.selected_module=None
         self.module_movement=False
-        self.tmp_toolbox = None # Temporary local toolbox group
+        self.tmp_toolbox = [] # Temporary local toolbox group
 
         self.ui.canvas=canvas=goocanvas.Canvas()
         canvas.set_size_request(1024,768)
@@ -567,6 +567,7 @@ class Canvas(View):
         img = goocanvas.Image(x=x-w/2., y=y-h/2., width=w, height=h, pattern=pattern)
         #img = SVGImage(svg=None, x=x-w/2., y=y-h/2., width=w, height=h, pattern=pattern)
         text = goocanvas.Text(text=module.name, x=x, y=y+22, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
+        img.text = text
 
         return img, text
 
@@ -746,28 +747,49 @@ class Canvas(View):
     def on_module_enter_leave(self, item, target, event):
         if event.type==gtk.gdk.ENTER_NOTIFY:
             module=self.selected_module = item.module
-            self.tmp_toolbox = goocanvas.Group()
+            self.tmp_toolbox_group = goocanvas.Group()
             x,y = self.get_position(module)
             x,y = x-6, y-6
+            self.tmp_toolbox=[]
             for (dx, dy, name, ui) in TBL_ACTIONS:
                 tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=x + dx*20, y=y + dy*20)
-                self.tmp_toolbox.add_child(tool, -1)
+                self.tmp_toolbox_group.add_child(tool, -1)
+                self.tmp_toolbox.append(tool)
 
             root=item.get_canvas().get_root_item()
-            root.add_child(self.tmp_toolbox, -1)
+            root.add_child(self.tmp_toolbox_group, -1)
 
         elif event.type==gtk.gdk.LEAVE_NOTIFY:
             self.selected_module = None
             if self.tmp_toolbox!=None:
-                self.tmp_toolbox.remove()
-                self.tmp_toolbox = None
+                self.tmp_toolbox_group.remove()
+                self.tmp_toolbox = []
         item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
     #@+node:eugeneai.20110123122541.1658: *3* on_module_press_release
-    def on_press_release(self, item, target, event):
-        print "Press"
+    def on_module_press_release(self, item, target, event):
+        if event.type==gtk.gdk.BUTTON_PRESS:
+            self.module_movement=True
+            self.smx=event.x
+            self.smy=event.y
+            item.raise_(None)
+        elif event.type==gtk.gdk.BUTTON_RELEASE:
+            self.module_movement=False
+            self.smx=None
+            self.smy=None
+            self.tmp_toolbox_group.raise_(None)
+
     #@+node:eugeneai.20110123122541.1659: *3* on_module_motion
     def on_module_motion(self, item, target, event):
-        print "Motion"
+        if self.module_movement:
+            x,y = self.get_position(item.module)
+            mx,my=event.x, event.y
+            dx=mx-self.smx
+            dy=my-self.smy
+            self.model.place(item.module, x+dx, y+dy)
+            item.translate(dx, dy)
+            item.text.translate(dx, dy)
+            for tool in self.tmp_toolbox:
+                tool.translate(dx,dy)
     #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
     def on_curve_enter_leave(sef, item, target, event, fore_path):
         #print "Enter:", item, target, event
