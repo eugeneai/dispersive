@@ -152,7 +152,7 @@ class PlotModule(Module):
     inputs=OrderedDict(x = ('',), y=('',))
     outputs=OrderedDict()
     icon='ui/pics/plot.svg'
-    name='Plot(anything)'
+    name='Plot (anything)'
 
 
 

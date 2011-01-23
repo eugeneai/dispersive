@@ -29,6 +29,8 @@ import os
 import cairo, math
 import rsvg
 
+import types
+
 M_2PI=math.pi*2.
 
 #@+node:eugeneai.20110116171118.1455: ** class Ui
@@ -291,6 +293,53 @@ class Application(View):
     run = main
 
 #@+node:eugeneai.20110117171340.1635: ** Pictogramm machinery
+#@+node:eugeneai.20110123122541.1648: *3* class SVGImage
+class SVGImage(goocanvas.Image):
+    """SVGImage, that can be rendered from SVG.
+    """
+    #@+others
+    #@+node:eugeneai.20110123122541.1649: *4* __init__
+    def __init__(self, svg, **kwargs):
+        self.svg=svg
+        self.kwargs=kwargs
+        #pattern = self.render_pattern(**kwargs)
+        d={}
+        d.update(kwargs)
+        #d['pattern']=pattern
+        self.kwargs=d
+        #print "P:", pattern
+
+        goocanvas.Image.__init__(self, **d)
+        pattern = self.render_pattern(**kwargs)
+        self.set_property("pattern", pattern)
+
+    #@+node:eugeneai.20110123122541.1650: *4* render_pattern
+    def render_pattern(self, **kwargs):
+        def convert_rsvg(resource):
+            if type(resource) in [types.StringType, types.UnicodeType]:
+                return rsvg.Handle(data=resource_string(__name__, resource))
+            return resource
+
+        width, height = self.kwargs['width'], self.kwargs['height']
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        canvas = cairo.Context(surface)
+        canvas.set_source_rgb(0,1,0)
+        canvas.set_line_width(4.0)
+        if self.svg == None:
+            canvas.rectangle(0,0, width,height)
+            canvas.stroke()
+        else:
+            if type(self.svg) in (types.TupleType, types.ListType):
+                self.svg = map(convert_rsvg, self.svg)
+                for svg in self.svg:
+                    svg.render_cairo(canvas)
+            else:
+                self.svg=convert_rsvg(self.svg)
+                svg.render_cairo(canvas)
+
+        return cairo.SurfacePattern(surface)
+
+    #@-others
 #@+node:eugeneai.20110117171340.1634: *3* class PicItem
 class PicItem(goocanvas.ItemSimple, goocanvas.Item):
     #@+others
@@ -413,15 +462,15 @@ class PicItem(goocanvas.ItemSimple, goocanvas.Item):
 gobject.type_register(PicItem)
 #@+node:eugeneai.20110116171118.1481: ** class Canvas
 TBL_ACTIONS=[
-    ( 1,-1, "remove"),
-    (-1, 1, "rename"),
-    ( 1, 1, "info"),
-    (-1,-1, "edit"),
+    ( 1,-1, "remove", 'ui/pics/close.svg'),
+    (-1, 1, "rename", 'ui/pics/name.svg'),
+    ( 1, 1, "info", 'ui/pics/info.svg'),
+    (-1,-1, "edit", 'ui/pics/edit.svg'),
 
-    ( 1, 0, "right"),
-    (-1, 0, "left"),
-    ( 0,-1, "up"),
-    ( 0, 1, "down"),
+    ( 1, 0, "right", 'ui/pics/right.svg'),
+    (-1, 0, "left", 'ui/pics/right.svg'),
+    ( 0,-1, "up", 'ui/pics/down.svg'),
+    ( 0, 1, "down", 'ui/pics/down.svg'),
     ]
 
 class Canvas(View):
@@ -438,8 +487,7 @@ class Canvas(View):
         self.state=Ui()
         self.selected_module=None
         self.module_movement=False
-        self.modify_paint=False
-        self.force_paint=True
+        self.tmp_toolbox = None # Temporary local toolbox group
 
         self.ui.canvas=canvas=goocanvas.Canvas()
         canvas.set_size_request(1024,768)
@@ -451,7 +499,6 @@ class Canvas(View):
                        anchor=gtk.ANCHOR_CENTER,
                        font="Sans 24", parent=root)
         text.rotate(45, 300, 300)
-        print text.get_model()
 
         text.connect('enter-notify-event', self.on_text_enter_notify_event)
 
@@ -503,6 +550,9 @@ class Canvas(View):
         self.module_icon_toolboxed = rsvg.Handle(
                 data=resource_string(__name__,
                       "ui/pics/toolboxed.svg"))
+        self.toolbox_background = rsvg.Handle(
+                data=resource_string(__name__,
+                      'ui/pics/tool-bkg.svg'))
 
     #@+node:eugeneai.20110116171118.1485: *3* _module
     def _module(self, module, selected=False):
@@ -512,7 +562,8 @@ class Canvas(View):
 
         x, y = self.get_position(module)
         img = goocanvas.Image(x=x-w/2., y=y-h/2., width=w, height=h, pattern=pattern)
-        text = goocanvas.Text(text=module.name, x=x, y=y+18, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
+        #img = SVGImage(svg=None, x=x-w/2., y=y-h/2., width=w, height=h, pattern=pattern)
+        text = goocanvas.Text(text=module.name, x=x, y=y+22, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
 
         return img, text
 
@@ -691,9 +742,22 @@ class Canvas(View):
     #@+node:eugeneai.20110117171340.1646: *3* on_module_enter_leave
     def on_module_enter_leave(self, item, target, event):
         if event.type==gtk.gdk.ENTER_NOTIFY:
-            self.selected_module = item.module
+            module=self.selected_module = item.module
+            self.tmp_toolbox = goocanvas.Group()
+            x,y = self.get_position(module)
+            x,y = x-6, y-6
+            for (dx, dy, name, ui) in TBL_ACTIONS:
+                tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=x + dx*20, y=y + dy*20)
+                self.tmp_toolbox.add_child(tool, -1)
+
+            root=item.get_canvas().get_root_item()
+            root.add_child(self.tmp_toolbox, -1)
+
         elif event.type==gtk.gdk.LEAVE_NOTIFY:
             self.selected_module = None
+            if self.tmp_toolbox!=None:
+                self.tmp_toolbox.remove()
+                self.tmp_toolbox = None
         item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
     #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
     def on_curve_enter_leave(sef, item, target, event, fore_path):
