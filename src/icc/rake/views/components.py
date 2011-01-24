@@ -490,6 +490,7 @@ class Canvas(View):
         self.selected_tool = None # and icon's tool icon
         self.module_movement=False
         self.tmp_toolbox = [] # Temporary local toolbox group
+        self.paths=[]
 
         self.active_group = None  # active icon group, where mouse entered.
         self.active_area = None   # active area in the icon group, where mouse entered.
@@ -530,8 +531,9 @@ class Canvas(View):
                 x2, y2 = self.get_position(mt)
                 b,f = self._connection(x1,y1,x2,y2)
                 root.add_child(b,-1)
-                b.mfrom, b.mto = mf, mt
                 f.mfrom, f.mto = mf, mt
+                f.bkg = b
+                self.paths.append(f)
                 root.add_child(f,-1)
                 f.connect('enter-notify-event', self.on_curve_enter_leave, f)
                 f.connect('leave-notify-event', self.on_curve_enter_leave, f)
@@ -699,7 +701,7 @@ class Canvas(View):
         #pass
     #@+node:eugeneai.20110117171340.1646: *3* on_module_enter_leave
     def on_module_enter_leave(self, item, target, event):
-        print "Module:", event.type
+        #print "Module:", event.type
         if event.type==gtk.gdk.ENTER_NOTIFY:
             if not self.selected_module and not self.tmp_toolbox:
                 module=self.selected_module = item.module
@@ -734,7 +736,15 @@ class Canvas(View):
             # shift from the center of the image
             self.dx=self.smx - x
             self.dy=self.smy - y
-            print x,y, self.smx, self.smy, self.dx, self.dy
+
+
+            self.paths_from=[p for p in self.paths if p.mfrom==item.module]
+            self.paths_to  =[p for p in self.paths if p.mto  ==item.module]
+            for p in self.paths_from+self.paths_to:
+                p.set_property('stroke-color','green')
+                p.bkg.set_property('stroke-color','black')
+
+
             item.raise_(None)
         elif event.type==gtk.gdk.BUTTON_RELEASE:
             x,y = self.get_position(item.module)
@@ -744,11 +754,15 @@ class Canvas(View):
             x=mx-self.dx
             y=my-self.dy
             self.model.place(item.module, x,y)
-            print "Place:", x,y, mx, my, self.dx, self.dy
             self.module_movement=False
             self.smx=None
             self.smy=None
             item.lower(None)
+            for p in self.paths_from+self.paths_to:
+                p.set_property('stroke-color','brown')
+                p.bkg.set_property('stroke-color','white')
+            self.paths_from = []
+            self.paths_to   = []
 
     #@+node:eugeneai.20110123122541.1659: *3* on_module_motion
     def on_module_motion(self, item, target, event):
@@ -758,11 +772,29 @@ class Canvas(View):
             mx,my=event.x_root, event.y_root
             dx=mx-self.smx
             dy=my-self.smy
-            self.model.place(item.module, mx-self.dx, my-self.dy)
+            x=mx-self.dx
+            y=my-self.dy
+            self.model.place(item.module, x, y)
             parent = item.get_parent()
             item.get_parent().translate(dx, dy)
             self.smx=mx
             self.smy=my
+
+            for p in self.paths_from:
+                m = p.mto
+                x2,y2 = self.get_position(m)
+                curve = self.draw_curve(x,y, x2,y2)
+                p.set_property('data', curve)
+                p.bkg.set_property('data', curve)
+
+            for p in self.paths_to:
+                m = p.mfrom
+                x2,y2 = self.get_position(m)
+                curve = self.draw_curve(x2,y2, x,y)
+                p.set_property('data', curve)
+                p.bkg.set_property('data', curve)
+
+
     #@+node:eugeneai.20110123122541.1662: *3* on_module_text_clicked
     def on_module_text_clicked(self, item, target, event):
         if event.type == gtk.gdk.BUTTON_PRESS:
@@ -812,11 +844,11 @@ class Canvas(View):
             self.selected_tool = item
         elif event.type == gtk.gdk.LEAVE_NOTIFY:
             self.selected_tool = None
-        print "Tool:", event.type, self.selected_tool
+        #print "Tool:", event.type, self.selected_tool
         pass
     #@+node:eugeneai.20110123122541.1665: *3* on_root_enter_leave
     def on_root_enter_leave(self, item, target, event):
-        print "Root", event, "Item:", self.selected_item, "Tool:", self.selected_tool
+        #print "Root", event, "Item:", self.selected_item, "Tool:", self.selected_tool
         if self.selected_item and self.tmp_toolbox and not self.selected_tool:
             if self.tmp_toolbox!=None:
                 self.tmp_toolbox_group.remove()
