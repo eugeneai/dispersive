@@ -717,10 +717,9 @@ class Canvas(View):
                     px, py = 20*dx-7, 20*dy-7 # XXX monkey patch.
                     tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=px, y=py)
                     tool.item=item # Whoze tool it is. 
+                    tool.name=name
                     self.tmp_toolbox_group.add_child(tool, -1)
                     self.tmp_toolbox.append(tool)
-                    #tool.connect('enter-notify-event', self.on_tool_enter_leave)
-                    #tool.connect('leave-notify-event', self.on_tool_enter_leave)
                     tool.connect('button-press-event', self.on_tool_pressed_released)
                     tool.connect('button-release-event', self.on_tool_pressed_released)
 
@@ -833,11 +832,28 @@ class Canvas(View):
         elif event.type == gtk.gdk.BUTTON_RELEASE:
             try:
                 if item.button_pressed:
-                    self.emit('clicked')
+                    self.on_tool_clicked(item, target)
                 del item.button_pressed
             except AttributeError:
                 pass    
 
+    #@+node:eugeneai.20110124104607.1655: *3* on_tool_clicked
+    def on_tool_clicked(self, item, target):
+        mitem=item.item # Module item
+        m=mitem.module
+        if item.name=='remove':
+            g=mitem.get_parent()
+            g.remove()
+            for p in self.paths:
+                if m in [p.mform, p.mto]:
+                    p.bkg.remove()
+                    p.remove()
+                    print "here"
+            self.selected_module=None
+            self.selected_item=None
+            self.tmm_toolbox = []
+            self.tmp_toolbox_item=None
+            # remove from model
     #@+node:eugeneai.20110123122541.1664: *3* on_tool_enter_leave
     def on_tool_enter_leave(self, item, target, event):
         if event.type == gtk.gdk.ENTER_NOTIFY:
