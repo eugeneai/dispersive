@@ -529,6 +529,7 @@ class Canvas(View):
         if model == None:
             return
         root = self.ui.canvas.get_root_item()
+        self.paths=[]
 
         for mf, l in self.model.forwards.iteritems():
             x1, y1 = self.get_position(mf)
@@ -854,13 +855,16 @@ class Canvas(View):
         mitem=item.item # Module item
         m=mitem.module
         if item.name=='remove':
+            print len(self.paths)
+            for p in self.paths:
+                print p
+                #if m in [p.mform, p.mto]:
+                    #p.bkg.remove()
+                    #p.remove()
+                    #print "here"
+            return
             g=mitem.get_parent()
             g.remove()
-            for p in self.paths:
-                if m in [p.mform, p.mto]:
-                    p.bkg.remove()
-                    p.remove()
-                    print "here"
             self.selected_module=None
             self.selected_item=None
             self.tmm_toolbox = []
