@@ -749,11 +749,14 @@ class Canvas(View):
             self.paths_from=[p for p in self.paths if p.mfrom==item.module]
             self.paths_to  =[p for p in self.paths if p.mto  ==item.module]
             for p in self.paths_from+self.paths_to:
-                p.set_property('stroke-color','green')
+                p.bkg.raise_(None)
+                p.raise_(None)
                 p.bkg.set_property('stroke-color','black')
+                p.set_property('stroke-color','green')
 
 
             item.raise_(None)
+            item.get_parent().raise_(None)
         elif event.type==gtk.gdk.BUTTON_RELEASE:
             x,y = self.get_position(item.module)
             mx,my=event.x_root, event.y_root
