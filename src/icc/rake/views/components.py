@@ -33,6 +33,11 @@ import types
 
 M_2PI=math.pi*2.
 
+def sign(x):
+    if x>0: return 1
+    elif x<0: return -1
+    return 0
+
 #@+node:eugeneai.20110116171118.1455: ** class Ui
 class Ui:
     pass
@@ -639,9 +644,13 @@ class Canvas(View):
     def draw_curve(self, x1, y1, x2, y2):
         dx=x2-x1
         dy=y2-y1
-        dx,dy=dx/2.,dy/2.
+        #dx,dy=dx/2.,dy/2.
+        sc=100
+        dx=sc # sc*sign(dx)
+        dy=sc*sign(dy)
         sx=16+2
         return 'M%s,%s C%s,%s %s,%s %s,%s' % (x1+sx, y1,  x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
+
     #@+node:eugeneai.20110116171118.1487: *3* toolboxlet_action
     def toolboxlet_action(self, canvas, x,y):
         sc=19.5
