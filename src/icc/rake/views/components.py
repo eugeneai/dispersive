@@ -844,11 +844,13 @@ class Canvas(View):
                 item.button_pressed=True
         elif event.type == gtk.gdk.BUTTON_RELEASE:
             try:
-                if item.button_pressed:
-                    self.on_tool_clicked(item, target)
-                del item.button_pressed
+                item.button_pressed
             except AttributeError:
-                pass    
+                return
+            if item.button_pressed:
+                self.on_tool_clicked(item, target)
+                del item.button_pressed
+
 
     #@+node:eugeneai.20110124104607.1655: *3* on_tool_clicked
     def on_tool_clicked(self, item, target):
@@ -857,10 +859,10 @@ class Canvas(View):
         if item.name=='remove':
             print len(self.paths)
             for p in self.paths:
-                print p
-                #if m in [p.mform, p.mto]:
-                    #p.bkg.remove()
-                    #p.remove()
+                #print p
+                if m in [p.mfrom, p.mto]:
+                    p.bkg.remove()
+                    p.remove()
                     #print "here"
             return
             g=mitem.get_parent()
