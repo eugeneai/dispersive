@@ -509,6 +509,7 @@ class Canvas(View):
         #root.connect('enter-notify-event', self.on_root_enter_leave)
         #root.connect('leave-notify-event', self.on_root_enter_leave)
 
+        """
         text=goocanvas.Text(text="Touch me, and I will rotate!",
                        x=300, y=300,
                        anchor=gtk.ANCHOR_CENTER,
@@ -516,6 +517,7 @@ class Canvas(View):
         text.rotate(45, 300, 300)
 
         text.connect('enter-notify-event', self.on_text_enter_notify_event)
+        """
 
         self.ui.vbox.add(canvas)
         self.set_model(model)
