@@ -692,17 +692,8 @@ class Canvas(View):
             for i in self.area_conn_ids:
                 self.active_group.disconnect(i)
 
-            self.selected_item.set_property('pattern', self.draw_module_pattern(self.selected_module))
-            for tool in self.tmp_toolbox:
-                tool.remove()
-                #tool.destroy()
-
-            self.tmp_toolbox=[]
-            self.tmp_toolbox_group=[]
             self.active_group=None
-            self.movement_mode = False
-            self.selected_module = None
-            self.selected_item = None
+            self.remove_selection()
 
     #@+node:eugeneai.20110117171340.1633: *3* on_text_enter_notify_event
     def on_text_enter_notify_event(self, item, target, event):
@@ -857,21 +848,16 @@ class Canvas(View):
         mitem=item.item # Module item
         m=mitem.module
         if item.name=='remove':
-            print len(self.paths)
+            self.remove_selection()
+            rem=[]
             for p in self.paths:
-                #print p
                 if m in [p.mfrom, p.mto]:
                     p.bkg.remove()
                     p.remove()
-                    #print "here"
-            return
-            g=mitem.get_parent()
-            g.remove()
-            self.selected_module=None
-            self.selected_item=None
-            self.tmm_toolbox = []
-            self.tmp_toolbox_item=None
-            # remove from model
+                    rem.append(p)
+            for p in rem:
+                self.paths.remove(p)
+            mitem.get_parent().remove()
     #@+node:eugeneai.20110123122541.1664: *3* on_tool_enter_leave
     def on_tool_enter_leave(self, item, target, event):
         if event.type == gtk.gdk.ENTER_NOTIFY:
@@ -949,6 +935,20 @@ class Canvas(View):
                     self._module(canvas, m)
 
 
+    #@+node:eugeneai.20110125174013.1654: *3* remove_selection
+    def remove_selection(self):
+        self.selected_item.set_property('pattern', self.draw_module_pattern(self.selected_module))
+        for tool in self.tmp_toolbox:
+            tool.remove()
+        #self.tmp_toolbox_group.remove()    
+
+
+        self.tmp_toolbox=[]
+        self.tmp_toolbox_group=None
+
+        self.movement_mode = False
+        self.selected_module = None
+        self.selected_item = None
     #@-others
 #@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
 class ModuleCanvasView(View):
