@@ -506,6 +506,8 @@ class Canvas(View):
         canvas.set_bounds(0,0, 2000, 2000)
         canvas.connect_after('motion-notify-event', self.on_canvas_motion)
         root=canvas.get_root_item()
+        root.connect('motion-notify-event', self.on_root_motion)
+
         #root.connect('enter-notify-event', self.on_root_enter_leave)
         #root.connect('leave-notify-event', self.on_root_enter_leave)
 
@@ -690,7 +692,8 @@ class Canvas(View):
 
     #@+node:eugeneai.20110123122541.1670: *3* on_canvas_motion
     def on_canvas_motion(self, canvas, event):
-        if self.active_group and not self.active_area:
+        if not self.module_movement and self.active_group and not self.active_area:
+            # disconnecting events from area, which will be not active anymore
             for i in self.area_conn_ids:
                 self.active_group.disconnect(i)
 
@@ -772,34 +775,7 @@ class Canvas(View):
     #@+node:eugeneai.20110123122541.1659: *3* on_module_motion
     def on_module_motion(self, item, target, event):
         #print dir(event)
-        if self.module_movement and item.module==self.selected_module:
-            x,y = self.get_position(item.module)
-            mx,my=event.x_root, event.y_root
-            dx=mx-self.smx
-            dy=my-self.smy
-            x=mx-self.dx
-            y=my-self.dy
-            self.model.place(item.module, x, y)
-            parent = item.get_parent()
-            item.get_parent().translate(dx, dy)
-            self.smx=mx
-            self.smy=my
-
-            for p in self.paths_from:
-                m = p.mto
-                x2,y2 = self.get_position(m)
-                curve = self.draw_curve(x,y, x2,y2)
-                p.set_property('data', curve)
-                p.bkg.set_property('data', curve)
-
-            for p in self.paths_to:
-                m = p.mfrom
-                x2,y2 = self.get_position(m)
-                curve = self.draw_curve(x2,y2, x,y)
-                p.set_property('data', curve)
-                p.bkg.set_property('data', curve)
-
-
+        pass
     #@+node:eugeneai.20110123122541.1662: *3* on_module_text_clicked
     def on_module_text_clicked(self, item, target, event):
         if event.type == gtk.gdk.BUTTON_PRESS:
@@ -883,6 +859,37 @@ class Canvas(View):
         else:
             pass
 
+
+    #@+node:eugeneai.20110213211825.1656: *3* on_root_motion
+    def on_root_motion(self, group, target, event):
+        if self.module_movement and self.selected_module:
+            item=self.selected_item
+            module=self.selected_module
+            x,y = self.get_position(module)
+            mx,my=event.x_root, event.y_root
+            dx=mx-self.smx
+            dy=my-self.smy
+            x=mx-self.dx
+            y=my-self.dy
+            self.model.place(module, x, y)
+            parent = item.get_parent()
+            item.get_parent().translate(dx, dy)
+            self.smx=mx
+            self.smy=my
+
+            for p in self.paths_from:
+                m = p.mto
+                x2,y2 = self.get_position(m)
+                curve = self.draw_curve(x,y, x2,y2)
+                p.set_property('data', curve)
+                p.bkg.set_property('data', curve)
+
+            for p in self.paths_to:
+                m = p.mfrom
+                x2,y2 = self.get_position(m)
+                curve = self.draw_curve(x2,y2, x,y)
+                p.set_property('data', curve)
+                p.bkg.set_property('data', curve)
 
     #@+node:eugeneai.20110123122541.1669: *3* on_module_group_enter_leave
     def on_module_group_enter_leave(self, item, target, event):
