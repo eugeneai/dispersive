@@ -656,40 +656,6 @@ class Canvas(View):
         sx=16+2
         return 'M%s,%s C%s,%s %s,%s %s,%s' % (x1+sx, y1,  x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
 
-    #@+node:eugeneai.20110116171118.1487: *3* toolboxlet_action
-    def toolboxlet_action(self, canvas, x,y):
-        sc=19.5
-        for dx, dy, action in TBL_ACTIONS:
-            if self.is_spotted(self.selected_module, x, y, 5,
-                           dx=sc*dx, dy=sc*dy):
-                if action=="rename":
-                    module = self.selected_module
-                    name = InputDialog(
-                        message='Enter the block <b>indetifier</b> (name)',
-                        value=module.name,
-                        field='Name:', 
-                        secondary='It could be used for Your convenience as a comment.')
-                    module.modified = module.modified or name != module.name
-                    module.name = name
-                    self.force_paint = True
-                    canvas.queue_draw()
-                    break
-                if action=="remove":
-                    if not self.selected_module.modified or ConfirmationDialog('<b>Remove</b> the module?', 'Module had been modified.'):
-                            self.model.remove(self.selected_module)
-                            self.selected_module=None
-                            self.force_paint = True
-                            self.modify_paint = False
-                            self.module_movement = False
-                            canvas.queue_draw()
-                    break
-                if action=="edit":
-                    editor=None
-                    view=IAdjustenmentView(self.selected_module)
-                    view.set_parent(self)
-                    self.force_paint = True
-                    canvas.queue_draw()
-
     #@+node:eugeneai.20110123122541.1670: *3* on_canvas_motion
     def on_canvas_motion(self, canvas, event):
         if not self.module_movement and self.active_group and not self.active_area:
@@ -823,7 +789,10 @@ class Canvas(View):
             mitem.get_parent().remove()
         elif item.name=="rename":
             self.set_module_name(self.selected_item)
-
+        elif item.name=="edit":
+            #editor=None
+            view=IAdjustenmentView(self.selected_module)
+            view.set_parent(self)
     #@+node:eugeneai.20110123122541.1664: *3* on_tool_enter_leave
     def on_tool_enter_leave(self, item, target, event):
         if event.type == gtk.gdk.ENTER_NOTIFY:
