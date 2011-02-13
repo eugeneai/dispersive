@@ -778,24 +778,9 @@ class Canvas(View):
         pass
     #@+node:eugeneai.20110123122541.1662: *3* on_module_text_clicked
     def on_module_text_clicked(self, item, target, event):
-        if event.type == gtk.gdk.BUTTON_PRESS:
-            if event.button==1:
-                item.button_pressed=True
-        elif event.type == gtk.gdk.BUTTON_RELEASE:
-            try:
-                if item.button_pressed:
-                    module = item.module
-                    name = InputDialog(
-                            message='Enter the block <b>indetifier</b> (name)',
-                            value=module.name,
-                            field='Name:', 
-                            secondary='It could be used for Your convenience as a comment.')
-                    module.modified = module.modified or name != module.name
-                    module.name = name
-                    item.set_property("text", name)
-                del item.button_pressed
-            except AttributeError:
-                pass
+        if event.type == gtk.gdk.BUTTON_RELEASE:
+            self.set_module_name(self.selected_item)
+
     #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
     def on_curve_enter_leave(self, item, target, event, fore_path):
         #print "Enter:", item, target, event
@@ -836,6 +821,9 @@ class Canvas(View):
             for p in rem:
                 self.paths.remove(p)
             mitem.get_parent().remove()
+        elif item.name=="rename":
+            self.set_module_name(self.selected_item)
+
     #@+node:eugeneai.20110123122541.1664: *3* on_tool_enter_leave
     def on_tool_enter_leave(self, item, target, event):
         if event.type == gtk.gdk.ENTER_NOTIFY:
@@ -958,6 +946,18 @@ class Canvas(View):
         self.movement_mode = False
         self.selected_module = None
         self.selected_item = None
+    #@+node:eugeneai.20110213211825.1661: *3* set_module_name
+    def set_module_name(self, item):
+        module = item.module
+        name = InputDialog(
+                message='Enter the block <b>indetifier</b> (name)',
+                value=module.name,
+                field='Name:', 
+                secondary='It could be used for Your convenience as a comment.')
+        module.modified = module.modified or name != module.name
+        module.name = name
+        item.text.set_property("text", name)
+
     #@-others
 #@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
 class ModuleCanvasView(View):
