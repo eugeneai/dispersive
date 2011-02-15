@@ -544,9 +544,9 @@ class Canvas(View):
             for mt in l:
                 x2, y2 = self.get_position(mt)
                 b,f = self._connection(x1,y1,x2,y2)
+                self.set_curve_state(f, None)
                 root.add_child(b,-1)
                 f.mfrom, f.mto = mf, mt
-                f.bkg = b
                 self.paths.append(f)
                 root.add_child(f,-1)
                 f.connect('enter-notify-event', self.on_curve_enter_leave, f)
@@ -721,11 +721,9 @@ class Canvas(View):
             self.paths_from=[p for p in self.paths if p.mfrom==item.module]
             self.paths_to  =[p for p in self.paths if p.mto  ==item.module]
             for p in self.paths_from+self.paths_to:
-                p.bkg.raise_(None)
+                p.bkg_path.raise_(None)
                 p.raise_(None)
-                p.bkg.set_property('stroke-color','black')
-                p.set_property('stroke-color','green')
-
+                self.set_curve_state(p, "on_move")
 
             item.raise_(None)
             item.get_parent().raise_(None)
@@ -742,8 +740,7 @@ class Canvas(View):
             self.smy=None
             item.lower(None)
             for p in self.paths_from+self.paths_to:
-                p.set_property('stroke-color','brown')
-                p.bkg.set_property('stroke-color','white')
+                self.set_curve_state(p, None)
             self.paths_from = []
             self.paths_to   = []
 
@@ -761,14 +758,10 @@ class Canvas(View):
         #print "Enter:", item, target, event
         if self.new_connection:
             return
+        state=None
         if event.type==gtk.gdk.ENTER_NOTIFY:
-            stroke_color='yellow'
-            bkg_stroke_color='brown'
-        elif event.type==gtk.gdk.LEAVE_NOTIFY:
-            stroke_color='brown'
-            bkg_stroke_color='white'
-        fore_path.set_property("stroke-color", stroke_color)
-        fore_path.bkg_path.set_property("stroke-color", bkg_stroke_color)
+            state='selected'
+        self.set_curve_state(fore_path, state)
     #@+node:eugeneai.20110123122541.1663: *3* on_tool_pressed_released
     def on_tool_pressed_released(self, item, target, event):
         if event.type == gtk.gdk.BUTTON_PRESS:
@@ -780,6 +773,7 @@ class Canvas(View):
                 b, self.new_connection = self._connection(x,y, event.x_root,event.y_root, absolute=(False, True))
                 root.add_child(b, -1)
                 root.add_child(self.new_connection)
+                self.set_curve_state(self.new_connection,'on_move')
 
         elif event.type == gtk.gdk.BUTTON_RELEASE:
             try:
@@ -800,7 +794,7 @@ class Canvas(View):
             rem=[]
             for p in self.paths:
                 if m in [p.mfrom, p.mto]:
-                    p.bkg.remove()
+                    p.bkg_path.remove()
                     p.remove()
                     rem.append(p)
             for p in rem:
@@ -840,8 +834,9 @@ class Canvas(View):
     def on_root_press_release(self, item, target, event):
         if self.new_connection:
             if self.connect_to:
-                self.connect_to.set_property('pattern', self.draw_module_pattern(item.module, selected = False))
+                self.connect_to.set_property('pattern', self.draw_module_pattern(self.connect_to.module, selected = False))
                 self.connect_to=None
+                self.set_curve_state(self.new_connection,None)
 
 
             self.new_connection=None # release the tracking process
@@ -917,15 +912,6 @@ class Canvas(View):
         elif event.type == gtk.gdk.LEAVE_NOTIFY:
             self.active_area = None
         self.active_group = item
-    #@+node:eugeneai.20110116171118.1490: *3* is_spotted
-    def is_spotted(self, module, x,y, distance, dx=0, dy=0):
-        if module != None:
-            (mx, my) = self.model.get_position(module)
-            d = distance
-            if abs(mx+dx-x)<=d and abs(my+dy-y)<=d:
-                return True
-        return False
-
     #@+node:eugeneai.20110116171118.1491: *3* leaved_selection
     def leaved_selection(self, module, x, y):
         return not self.is_spotted(module, x,y, 26)
@@ -988,6 +974,23 @@ class Canvas(View):
         module.modified = module.modified or name != module.name
         module.name = name
         item.text.set_property("text", name)
+
+    #@+node:eugeneai.20110215215529.1657: *3* set_curve_state
+    def set_curve_state(self, link, state=None):
+        if state == None:
+            stroke_color='brown'
+            bkg_stroke_color='white'
+        elif state=='on_move':
+            #stroke_color= 'white'
+            #bkg_stroke_color= 'brown'            
+            stroke_color= 'green'
+            bkg_stroke_color= 'black'            
+        elif state=='selected':
+            stroke_color='yellow'
+            bkg_stroke_color='brown'
+
+        link.set_property('stroke-color',stroke_color)
+        link.bkg_path.set_property('stroke-color',bkg_stroke_color)
 
     #@-others
 #@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
