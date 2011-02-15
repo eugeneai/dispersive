@@ -501,12 +501,16 @@ class Canvas(View):
         self.active_area = None   # active area in the icon group, where mouse entered.
         self.area_conn_ids = None
 
+        self.new_connection = None # Widget used to track new connction creation
+        self.connect_to=None # used during tracking new connection to track possible modules to connect to
+
         self.ui.canvas=canvas=goocanvas.Canvas()
         canvas.set_size_request(1024,768)
         canvas.set_bounds(0,0, 2000, 2000)
         canvas.connect_after('motion-notify-event', self.on_canvas_motion)
         root=canvas.get_root_item()
         root.connect('motion-notify-event', self.on_root_motion)
+        root.connect('button-release-event', self.on_root_press_release)
 
         #root.connect('enter-notify-event', self.on_root_enter_leave)
         #root.connect('leave-notify-event', self.on_root_enter_leave)
@@ -632,9 +636,9 @@ class Canvas(View):
                 canvas.stroke()
         return cairo.SurfacePattern(surface)
     #@+node:eugeneai.20110116171118.1486: *3* _connection
-    def _connection(self, x1, y1, x2, y2, selected=False):
+    def _connection(self, x1, y1, x2, y2, selected=False, absolute = (False, False)):
 
-        data=self.draw_curve(x1,y1, x2,y2)
+        data=self.draw_curve(x1,y1, x2,y2, absolute)
 
         bkg_path = goocanvas.Path(data=data, line_width=6.0, stroke_color='white')
 
@@ -646,19 +650,23 @@ class Canvas(View):
 
 
     #@+node:eugeneai.20110123122541.1647: *3* draw_curve
-    def draw_curve(self, x1, y1, x2, y2):
+    def draw_curve(self, x1, y1, x2, y2, absolute = (False, False)):
         dx=x2-x1
         dy=y2-y1
-        #dx,dy=dx/2.,dy/2.
         sc=100
         dx=sc # sc*sign(dx)
         dy=sc*sign(dy)
-        sx=16+2
-        return 'M%s,%s C%s,%s %s,%s %s,%s' % (x1+sx, y1,  x1+sx+dx, y1,  x2-sx-dx, y2,  x2-sx, y2)
+        _dsx=16+2
+        sx1=sx2=0.0
+        if not absolute[0]:
+            sx1=_dsx
+        if not absolute[1]:
+            sx2=_dsx
+        return 'M%s,%s C%s,%s %s,%s %s,%s' % (x1+sx1, y1,  x1+sx1+dx, y1,  x2-sx2-dx, y2,  x2-sx2, y2)
 
     #@+node:eugeneai.20110123122541.1670: *3* on_canvas_motion
     def on_canvas_motion(self, canvas, event):
-        if not self.module_movement and self.active_group and not self.active_area:
+        if not self.module_movement and not self.new_connection and self.active_group and not self.active_area:
             # disconnecting events from area, which will be not active anymore
             for i in self.area_conn_ids:
                 self.active_group.disconnect(i)
@@ -673,7 +681,7 @@ class Canvas(View):
         #pass
     #@+node:eugeneai.20110117171340.1646: *3* on_module_enter_leave
     def on_module_enter_leave(self, item, target, event):
-        #print "Module:", event.type
+        # print "Module:", event.type
         if event.type==gtk.gdk.ENTER_NOTIFY:
             if not self.selected_module and not self.tmp_toolbox:
                 module=self.selected_module = item.module
@@ -696,6 +704,7 @@ class Canvas(View):
                     tool.connect('button-release-event', self.on_tool_pressed_released)
 
                 item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
+
     #@+node:eugeneai.20110123122541.1658: *3* on_module_press_release
     def on_module_press_release(self, item, target, event):
         if event.type==gtk.gdk.BUTTON_PRESS:
@@ -750,11 +759,14 @@ class Canvas(View):
     #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
     def on_curve_enter_leave(self, item, target, event, fore_path):
         #print "Enter:", item, target, event
-        stroke_color='brown'
-        bkg_stroke_color='white'
+        if self.new_connection:
+            return
         if event.type==gtk.gdk.ENTER_NOTIFY:
             stroke_color='yellow'
             bkg_stroke_color='brown'
+        elif event.type==gtk.gdk.LEAVE_NOTIFY:
+            stroke_color='brown'
+            bkg_stroke_color='white'
         fore_path.set_property("stroke-color", stroke_color)
         fore_path.bkg_path.set_property("stroke-color", bkg_stroke_color)
     #@+node:eugeneai.20110123122541.1663: *3* on_tool_pressed_released
@@ -762,18 +774,25 @@ class Canvas(View):
         if event.type == gtk.gdk.BUTTON_PRESS:
             if event.button==1:
                 item.button_pressed=True
+            if item.name=="right":
+                root = self.ui.canvas.get_root_item()
+                (x, y) = self.get_position(self.selected_module)
+                b, self.new_connection = self._connection(x,y, event.x_root,event.y_root, absolute=(False, True))
+                root.add_child(b, -1)
+                root.add_child(self.new_connection)
+
         elif event.type == gtk.gdk.BUTTON_RELEASE:
             try:
                 item.button_pressed
             except AttributeError:
                 return
             if item.button_pressed:
-                self.on_tool_clicked(item, target)
+                self.on_tool_clicked(item, target, event=event)
                 del item.button_pressed
 
 
     #@+node:eugeneai.20110124104607.1655: *3* on_tool_clicked
-    def on_tool_clicked(self, item, target):
+    def on_tool_clicked(self, item, target, event):
         mitem=item.item # Module item
         m=mitem.module
         if item.name=='remove':
@@ -817,36 +836,79 @@ class Canvas(View):
             pass
 
 
+    #@+node:eugeneai.20110215120545.1660: *3* on_root_press_release
+    def on_root_press_release(self, item, target, event):
+        if self.new_connection:
+            if self.connect_to:
+                self.connect_to.set_property('pattern', self.draw_module_pattern(item.module, selected = False))
+                self.connect_to=None
+
+
+            self.new_connection=None # release the tracking process
     #@+node:eugeneai.20110213211825.1656: *3* on_root_motion
     def on_root_motion(self, group, target, event):
-        if self.module_movement and self.selected_module:
+        if self.selected_module:
             item=self.selected_item
             module=self.selected_module
             x,y = self.get_position(module)
             mx,my=event.x_root, event.y_root
+            parent = item.get_parent()
+            root=self.ui.canvas.get_root_item()
+
+        if self.module_movement:
             dx=mx-self.smx
             dy=my-self.smy
             x=mx-self.dx
             y=my-self.dy
-            self.model.place(module, x, y)
-            parent = item.get_parent()
-            item.get_parent().translate(dx, dy)
             self.smx=mx
             self.smy=my
+            self.model.place(module, x, y)
+            item.get_parent().translate(dx, dy)
 
             for p in self.paths_from:
                 m = p.mto
                 x2,y2 = self.get_position(m)
                 curve = self.draw_curve(x,y, x2,y2)
                 p.set_property('data', curve)
-                p.bkg.set_property('data', curve)
+                p.bkg_path.set_property('data', curve)
 
             for p in self.paths_to:
                 m = p.mfrom
                 x2,y2 = self.get_position(m)
                 curve = self.draw_curve(x2,y2, x,y)
                 p.set_property('data', curve)
-                p.bkg.set_property('data', curve)
+                p.bkg_path.set_property('data', curve)
+
+        if self.new_connection:
+            p=self.new_connection
+
+            # This is workaround, as enter and leave events do not work while a button pressed.
+            i=None
+            its=self.ui.canvas.get_items_at(mx, my, is_pointer_event=False)
+
+            if its:
+                for _i in its:
+                    if _i == self.selected_item:
+                        continue
+                    if _i.__class__!=goocanvas.Image:
+                        continue
+                    if hasattr(_i,'module'):
+                        i=_i
+                        break
+
+            if i:   
+                self.connect_to=i
+                i.set_property('pattern', self.draw_module_pattern(item.module, selected = True))
+                mx,my = self.get_position(i.module)
+            else:
+                if self.connect_to:
+                    self.connect_to.set_property('pattern', self.draw_module_pattern(item.module, selected = False))
+                    self.connect_to=None
+            # end of the workaround
+
+            curve = self.draw_curve(x,y, mx, my, absolute=(False, i == None))
+            p.set_property('data', curve)
+            p.bkg_path.set_property('data', curve)
 
     #@+node:eugeneai.20110123122541.1669: *3* on_module_group_enter_leave
     def on_module_group_enter_leave(self, item, target, event):
