@@ -826,13 +826,24 @@ class Canvas(View):
     #@+node:eugeneai.20110215120545.1660: *3* on_root_press_release
     def on_root_press_release(self, item, target, event):
         if self.new_connection:
+            mt=None
             if self.connect_to:
-                self.connect_to.set_property('pattern', self.draw_module_pattern(self.connect_to.module, selected = False))
+                mt=self.connect_to.module
+                self.connect_to.set_property('pattern', self.draw_module_pattern(mt, selected = False))
+
                 self.connect_to=None
-                self.set_curve_state(self.new_connection,None)
 
+            else:
+                pass
 
+            print self.selected_module, mt
+            self.create_connection(self.selected_module, mt)
+            self.new_connection.bkg_path.remove()
+            self.new_connection.remove()
             self.new_connection=None # release the tracking process
+            self.remove_selection()            
+
+
     #@+node:eugeneai.20110213211825.1656: *3* on_root_motion
     def on_root_motion(self, group, target, event):
         if self.selected_module:
