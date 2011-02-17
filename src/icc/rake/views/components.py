@@ -838,6 +838,7 @@ class Canvas(View):
 
             print self.selected_module, mt
             self.create_connection(self.selected_module, mt)
+            self.model.connect(self.selected_module, mt)
             self.new_connection.bkg_path.remove()
             self.new_connection.remove()
             self.new_connection=None # release the tracking process
