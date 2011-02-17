@@ -546,22 +546,7 @@ class Canvas(View):
 
 
         for m in self.model.modules:
-            x, y = self.get_position(m)
-            group=goocanvas.Group(x=x, y=y)
-            #pic = PicItem(m, self)
-            pic, text=self._module(m)
-            pic.module = m
-            text.module = m
-            group.add_child(pic, -1)
-            group.add_child(text, -1)
-            pic.connect('enter-notify-event', self.on_module_enter_leave)
-            pic.connect('leave-notify-event', self.on_module_enter_leave)
-            pic.connect('motion-notify-event', self.on_module_motion)
-            pic.connect('button-press-event', self.on_module_press_release)
-            pic.connect('button-release-event', self.on_module_press_release)
-            text.connect('button-press-event',self.on_module_text_clicked)
-            text.connect('button-release-event',self.on_module_text_clicked)
-            root.add_child(group, -1)
+            self.create_module(m)
 
         self.ui.canvas.request_update()
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
@@ -697,7 +682,8 @@ class Canvas(View):
                     tool.connect('button-release-event', self.on_tool_pressed_released)
 
                 item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
-
+                item.get_parent().raise_(None)
+                self.tmp_toolbox_group.raise_(None)
     #@+node:eugeneai.20110123122541.1658: *3* on_module_press_release
     def on_module_press_release(self, item, target, event):
         if event.type==gtk.gdk.BUTTON_PRESS:
@@ -834,15 +820,17 @@ class Canvas(View):
                 self.connect_to=None
 
             else:
+                # There shoul be a dialog for module choice.
+                mt=self.create_module(mdl.LmModule(), event.x_root, event.y_root)
                 pass
 
-            print self.selected_module, mt
             self.create_connection(self.selected_module, mt)
             self.model.connect(self.selected_module, mt)
             self.new_connection.bkg_path.remove()
             self.new_connection.remove()
             self.new_connection=None # release the tracking process
-            self.remove_selection()            
+            self.selected_item.get_parent().raise_(None)
+            self.remove_selection()         
 
 
     #@+node:eugeneai.20110213211825.1656: *3* on_root_motion
@@ -956,11 +944,10 @@ class Canvas(View):
 
     #@+node:eugeneai.20110125174013.1654: *3* remove_selection
     def remove_selection(self):
-        self.selected_item.set_property('pattern', self.draw_module_pattern(self.selected_module))
-        for tool in self.tmp_toolbox:
-            tool.remove()
-        #self.tmp_toolbox_group.remove()    
-
+        if self.selected_item:
+            self.selected_item.set_property('pattern', self.draw_module_pattern(self.selected_module))
+            for tool in self.tmp_toolbox:
+                tool.remove()
 
         self.tmp_toolbox=[]
         self.tmp_toolbox_group=None
@@ -1011,6 +998,41 @@ class Canvas(View):
         root.add_child(b,-1)
         root.add_child(f,-1)
         return b,f
+    #@+node:eugeneai.20110217131909.1661: *3* create_module
+
+    def create_module(self, module, x=None, y=None):
+        """x=y=None means that the coordinates are taken 
+        from model.
+        """
+
+        if module in self.model.modules: 
+
+            if x == None or y == None and module in self.model.modules:
+                x,y = self.get_position(module)
+
+        else:
+            # XXX x and y should be checked on nonNone.
+            self.model.place(module, x, y)
+
+
+        group=goocanvas.Group(x=x, y=y)
+        #pic = PicItem(m, self)
+        pic, text=self._module(module)
+        pic.module = module
+        text.module = module
+        group.add_child(pic, -1)
+        group.add_child(text, -1)
+        pic.connect('enter-notify-event', self.on_module_enter_leave)
+        pic.connect('leave-notify-event', self.on_module_enter_leave)
+        pic.connect('motion-notify-event', self.on_module_motion)
+        pic.connect('button-press-event', self.on_module_press_release)
+        pic.connect('button-release-event', self.on_module_press_release)
+        text.connect('button-press-event',self.on_module_text_clicked)
+        text.connect('button-release-event',self.on_module_text_clicked)
+        root=self.ui.canvas.get_root_item()
+        root.add_child(group, -1)
+
+        return module
     #@-others
 #@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
 class ModuleCanvasView(View):
