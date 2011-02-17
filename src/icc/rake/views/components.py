@@ -540,17 +540,10 @@ class Canvas(View):
         self.paths=[]
 
         for mf, l in self.model.forwards.iteritems():
-            x1, y1 = self.get_position(mf)
             for mt in l:
-                x2, y2 = self.get_position(mt)
-                b,f = self._connection(x1,y1,x2,y2)
-                self.set_curve_state(f, None)
-                root.add_child(b,-1)
-                f.mfrom, f.mto = mf, mt
-                self.paths.append(f)
-                root.add_child(f,-1)
-                f.connect('enter-notify-event', self.on_curve_enter_leave, f)
-                f.connect('leave-notify-event', self.on_curve_enter_leave, f)
+                b,f = self.create_connection(mf, mt, state=None)
+
+
 
         for m in self.model.modules:
             x, y = self.get_position(m)
@@ -992,6 +985,20 @@ class Canvas(View):
         link.set_property('stroke-color',stroke_color)
         link.bkg_path.set_property('stroke-color',bkg_stroke_color)
 
+    #@+node:eugeneai.20110217131909.1658: *3* create_connection
+    def create_connection(self, mf, mt, state=None):
+        x1,y1 = self.get_position(mf)
+        x2,y2 = self.get_position(mt)
+        b,f = self._connection(x1,y1,x2,y2)
+        self.set_curve_state(f, None)
+        f.mfrom, f.mto = mf, mt
+        self.paths.append(f)
+        f.connect('enter-notify-event', self.on_curve_enter_leave, f)
+        f.connect('leave-notify-event', self.on_curve_enter_leave, f)
+        root=self.ui.canvas.get_root_item()
+        root.add_child(b,-1)
+        root.add_child(f,-1)
+        return b,f
     #@-others
 #@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
 class ModuleCanvasView(View):
