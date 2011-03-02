@@ -156,6 +156,7 @@ if (PLOT) {
     line.xrf.mark(ch.Fe, spectrum, col='gray')
     line.xrf.mark(x0.Fe, spectrum, col='red')
     #line.xrf.mark(6.4, spectrum, col='black', scale='spectrum')
+    line.xrf.mark(17.375, spectrum, col='black', scale='spectrum')
     #dev.off()
 }
 
