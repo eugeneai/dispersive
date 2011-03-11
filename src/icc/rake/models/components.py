@@ -62,6 +62,7 @@ class Canvas:
         self.connect(m2,m3)
         self.connect(m2,mp)
 
+
     #@+node:eugeneai.20110116171118.1434: *3* find_module
     def find_module(self, x, y):
         for m, pos in self.modules.iteritems():

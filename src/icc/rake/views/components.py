@@ -328,6 +328,7 @@ class SVGImage(goocanvas.Image):
         width, height = self.kwargs['width'], self.kwargs['height']
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
         canvas = cairo.Context(surface)
+        canvas.set_antialias(cairo.ANTIALIAS_NONE)
         canvas.set_source_rgb(0,1,0)
         canvas.set_line_width(4.0)
         if self.svg == None:
@@ -527,6 +528,7 @@ class Canvas(View):
 
         self.ui.vbox.add(canvas)
         self.set_model(model)
+
     #@+node:eugeneai.20110116171118.1483: *3* get_position
     def get_position(self, module):
         return self.model.get_position(module)
@@ -548,7 +550,7 @@ class Canvas(View):
         for m in self.model.modules:
             self.create_module(m)
 
-        self.ui.canvas.request_update()
+
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
     def init_resources(self):
         View.init_resources(self)
@@ -572,7 +574,6 @@ class Canvas(View):
         pattern=self.draw_module_pattern(module, bheight=h, bwidth=w, fheight=32, fwidth=32, selected=selected)
 
         img = goocanvas.Image(x=-w/2., y=-h/2., width=w, height=h, pattern=pattern)
-        #img = SVGImage(svg=None, x=x-w/2., y=y-h/2., width=w, height=h, pattern=pattern)
         text = goocanvas.Text(text=module.name, x=0, y=22, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
         img.text = text
 
@@ -670,11 +671,22 @@ class Canvas(View):
                 id2 = group.connect('enter-notify-event', self.on_module_group_enter_leave)
                 self.area_conn_ids = (id1, id2)
 
+                """
+                _it=self.tmp_toolbox_group
+                for pspec in _it.props:
+                    pname=pspec.name
+                    print dir(pspec)
+                    print pname
+                    if not pname in ['transform', 'stroke-pattern', 'fill-pattern', 'stroke-color', 'stroke-pixbuf',]:
+                        _it.get_property(pspec.name)
+                """
+
+
                 self.tmp_toolbox=[]
                 for (dx, dy, name, ui) in TBL_ACTIONS:
                     px, py = 20*dx-7, 20*dy-7 # XXX monkey patch.
                     tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=px, y=py)
-                    tool.item=item # Whoze tool it is. 
+                    tool.item=item # Whose tool it is. 
                     tool.name=name
                     self.tmp_toolbox_group.add_child(tool, -1)
                     self.tmp_toolbox.append(tool)
@@ -754,6 +766,7 @@ class Canvas(View):
                 root.add_child(self.new_connection)
                 self.set_curve_state(self.new_connection,'on_move')
 
+
         elif event.type == gtk.gdk.BUTTON_RELEASE:
             try:
                 item.button_pressed
@@ -801,10 +814,7 @@ class Canvas(View):
                 self.tmp_toolbox_group.remove()
                 self.tmp_toolbox = []
 
-            self.selected_module = None
-            if self.selected_item:
-                self.selected_item.set_property('pattern', self.draw_module_pattern(self.selected_item.module, selected = self.selected_module))
-            self.selected_item = None
+            self.remove_selection()
         else:
             pass
 
@@ -830,7 +840,10 @@ class Canvas(View):
             self.new_connection.remove()
             self.new_connection=None # release the tracking process
             self.selected_item.get_parent().raise_(None)
-            self.remove_selection()         
+            self.remove_selection()
+        else:
+            self._dbm(event)
+
 
 
     #@+node:eugeneai.20110213211825.1656: *3* on_root_motion
@@ -1033,6 +1046,12 @@ class Canvas(View):
         root.add_child(group, -1)
 
         return module
+    #@+node:eugeneai.20110311095959.1663: *3* _dbm (debug module)
+    def _dbm(self, event=None, x=None, y=None):
+        if event:
+            x=event.x
+            y=event.y
+        mt=self.create_module(mdl.LmModule(), x, y)
     #@-others
 #@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
 class ModuleCanvasView(View):
