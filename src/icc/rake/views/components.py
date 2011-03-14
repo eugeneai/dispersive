@@ -841,8 +841,6 @@ class Canvas(View):
             self.new_connection=None # release the tracking process
             self.selected_item.get_parent().raise_(None)
             self.remove_selection()
-        else:
-            self._dbm(event)
 
 
 
