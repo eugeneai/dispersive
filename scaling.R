@@ -151,8 +151,6 @@ find_pike = function(spec, x0, xmin=1, xmax=NULL) {
         print (A == spec[x0])
     }
     
-    x0=0;
-    
     l=list()
     l$x0=x0
     l$A=A
