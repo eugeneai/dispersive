@@ -132,13 +132,26 @@ find_pike1 = function (start_x0=97, spectrum, step=STEP, channels=3*FWHM/sc, eps
     }
 }
 
-find_pike = function(spec, x0, xmin=0, xmax=NULL) {
-    if (is.null(xmax)) {
-	xmax=length(spec)
-    }
-    x0=0;
-    A=326;
+DEBUG = 5
+
+find_pike = function(spec, x0, xmin=1, xmax=NULL) {
+    if (is.null(xmax)) xmax=length(spec)
+    if (xmin<1) xmin=1
+    if (x0<xmin) x0=xmin;
+    if (x0>xmax) x0=xmax;
     
+    interv = spec[xmin:xmax]
+    
+    x0_=which.max(interv)
+    x0=x0_+xmin-1
+    
+    A=interv[x0_]
+    
+    if (DEBUG>10) {
+        print (A == spec[x0])
+    }
+    
+    x0=0;
     
     l=list()
     l$x0=x0
