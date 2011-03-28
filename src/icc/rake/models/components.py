@@ -11,7 +11,7 @@ from icc.rake.models.interfaces import *
 try:
     from collections import OrderedDict
 except ImportError:
-    # For pythons < 2.7.0
+    # For python < 2.7.0
     OrderedDict=dict
 
 #@+node:eugeneai.20110116171118.1429: ** class Model
@@ -32,7 +32,7 @@ class Module:
     controls=OrderedDict()
     implementors=OrderedDict()
     name="<Module>"
-    icon=None # Shoul not be here
+    icon=None # Should not be here
     modified=False
 
 #@+node:eugeneai.20110116171118.1432: ** class Canvas

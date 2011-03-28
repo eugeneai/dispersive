@@ -1,0 +1,38 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:meta="http://namespaces.zope.org/meta"
+           xmlns:rake="http://rake.irnok.net/rake"
+           >
+
+  <meta:directive
+      name="register"
+      namespace="http://rake.irnok.net/rake"
+      schema=".interfaces.IRegisterModule"
+      handler=".engine.registerModule"
+      >
+
+      Register a module with the module registry
+
+  </meta:directive>
+ 
+
+  <!--
+
+  <files:register 
+      path="test_simple.py"
+      title="How to create a simple directive"
+      >
+    Describes how to implement a simple directive
+  </files:register>
+
+  <files:register path="simple.zcml">
+    Shows the ZCML directives needed to register a simple directive.
+    
+    Also show some usage examples,
+  </files:register>
+
+  <files:register path="__init__.py" title="Make this a package" />
+   -->
+
+</configure>
+
+  
