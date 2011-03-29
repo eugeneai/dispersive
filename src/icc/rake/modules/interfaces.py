@@ -11,13 +11,32 @@ class IRegisterModule(Interface):
         description=u"This is the factory of the module."
         )
 
-    source=fields.Path(
+    src=fields.Path(
         title=u"R module source path",
         description=u"This is the path name of the corresponding R module to be associated with registered module.",
-        required = False
+        required = True
         )
 
+    lang = schema.Text(
+        title=u"Language of the module",
+        description=u"Implementation language of the module",
+        required = True
+        )
+
+    func = schema.Text(
+        title=u"Short summary of the module",
+        description=u"This will be used in module list",
+        required = True
+        )
+
+
     title = schema.Text(
+        title=u"Short summary of the module",
+        description=u"This will be used in module list",
+        required = True
+        )
+
+    category = schema.Text(
         title=u"Short summary of the module",
         description=u"This will be used in module list",
         required = True
