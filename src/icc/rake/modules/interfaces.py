@@ -1,9 +1,10 @@
 
 from zope.interface import Interface
+from zope import schema
 from zope.configuration import fields, xmlconfig
 
 
-def IRegisterModule(Interface):
+class IRegisterModule(Interface):
     
     factory = fields.GlobalObject(
         title=u"Module factory",
