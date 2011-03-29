@@ -37,8 +37,8 @@ class IRegisterModule(Interface):
         )
 
     category = schema.Text(
-        title=u"Short summary of the module",
-        description=u"This will be used in module list",
+        title=u"Category of the module",
+        description=u"Category denotes classification of the modules",
         required = True
         )
 
