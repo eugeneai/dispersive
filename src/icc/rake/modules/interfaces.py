@@ -23,6 +23,12 @@ class IRegisterModule(Interface):
         required = True
         )
 
+    description = schema.Text(
+        title=u"Long Description of the module",
+        description=u"This will be used, e.g., as help messages",
+        required = False
+        )
+
     icon = fields.Path(
         title=u"Path to the icon file .svf",
         description=u"Icon, depicting the module in all the graphics interfaces.",

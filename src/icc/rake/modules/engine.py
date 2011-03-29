@@ -2,7 +2,7 @@
 from icc.rake.modules.interfaces import *
 from icc.rake.modules.components import *
 
-def registerModule(context, factory, title, source=None, icon=None):
+def registerModule(context, factory, title, source=None, icon=None, description=''):
     pass
 
 

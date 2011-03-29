@@ -13,6 +13,13 @@
       Register a module with the module registry
 
   </meta:directive>
+
+  <rake:register
+      title="Linear Model (Regression)"
+      description="Linear model module (lm)"
+      icon="ui/pics/lm.svg"
+      factory=".models.components.LmModule"
+  />
  
 
   <!--
