@@ -50,22 +50,19 @@ class Canvas:
         self.changed=True
 
         # test case
-        #m1 = FrameLoadModule()
+        m1 = createObject('frame_load')
         m2 = createObject('linear_model')
-        """
-        m3 = FrameViewModule()
-        mp = PlotModule()
+        m3 = createObject('frame_view')
+        mp = createObject('plot')
         self.place(m1, 70, 150)
-        """
         self.place(m2, 200, 30)
-        """
         self.place(m3, 500, 100)
         self.place(mp, 300, 300)
         self.connect(m1,m2)
         self.connect(m1,m3)
         self.connect(m2,m3)
         self.connect(m2,mp)
-        """
+
 
 
     #@+node:eugeneai.20110116171118.1434: *3* find_module
