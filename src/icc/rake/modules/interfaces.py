@@ -10,13 +10,18 @@ class IRegisterModule(Interface):
         title=u"Module factory",
         description=u"This is the factory of the module."
         )
-
+    
     src=fields.Path(
         title=u"R module source path",
         description=u"This is the path name of the corresponding R module to be associated with registered module.",
         required = True
         )
 
+    name = schema.Text(
+        title=u"Module name",
+        description=u"Module global identifier, used, e.g. to declare module constructor as factory",
+        required = True
+        )
     lang = schema.Text(
         title=u"Language of the module",
         description=u"Implementation language of the module",
@@ -53,5 +58,18 @@ class IRegisterModule(Interface):
         description=u"Icon, depicting the module in all the graphics interfaces.",
         required = False
         )
+
+    inputs = schema.Text(
+        title=u"Input variables",
+        description=u"Mapping of the input variable names to their types in the target language",
+        required = False
+        )
+
+    outputs = schema.Text(
+        title=u"Output variables",
+        description=u"Mapping of the output variable names to their types in the target language",
+        required = False
+        )
+
 
     

@@ -1,23 +1,63 @@
 #!/bin/env python
 from icc.rake.modules.interfaces import *
 from icc.rake.modules.components import *
+from icc.rake.models.components import Module, OrderedDict
+import zope.component.factory as zope_factory
+from zope.component import getGlobalSiteManager
+from zope.component.interfaces import IFactory
 
-module_registry = []
+module_registry = {}
+module_category = {}
 
-def registerModule(context, factory, title, func, src, lang, category, icon=None, description='',
+class Factory(zope_factory.Factory):
+    def __call__(self, *args, **kwargs):
+        c=self._callable
+        obj = c(*args, **kwargs)
+        obj.name=c.name
+        obj.title=c.title
+        obj.description=''
+        return obj
+
+def registerModuleFactory(f):
+    name=f._callable.name
+    module_registry[name]=f
+    c=module_category.setdefault(f.category, {})
+    c[name]=f
+
+    # Taken from ZCA
+    gsm = getGlobalSiteManager()
+    gsm.registerUtility(f, IFactory, name)
+
+"""
+To use the factory, you may do it like this::
+
+  >>> from zope.component import queryUtility
+  >>> queryUtility(IFactory, 'fakedb')() #doctest: +ELLIPSIS
+  <FakeDb object at ...>
+
+There is a shortcut to use factory::
+
+  >>> from zope.component import createObject
+  >>> createObject('fakedb') #doctest: +ELLIPSIS
+  <FakeDb object at ...>
+
+""" 
+
+def registerModule(context,name, factory, title, func, src, lang, category, icon=None, description='', inputs='{}', outputs='{}'
                    ):
-    m=factory()
-    m.title=title
-    m.src=src
-    m.lang=lang
-    m.func=func
-    m.icon=icon
-    m.description=description
-    m.category=category
+    f=Factory(factory, title, description)
+    factory.name=name
+    factory.src=src
+    factory.lang=lang
+    factory.func=func
+    factory.icon=icon
+    f.category=category
+    factory.inputs=OrderedDict(eval(inputs))
+    factory.outputs=OrderedDict(eval(outputs))
 
     context.action(discriminator=('RegisterModule', src, func),
-                   callable=module_registry.append,
-                   args=(m,)
+                   callable=registerModuleFactory,
+                   args=(f,)
                    )
 
 def get_module_registry():

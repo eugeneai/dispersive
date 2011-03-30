@@ -14,8 +14,7 @@ class FrameViewModule(Module):
 
 
 class LmModule(Module):
-    inputs=OrderedDict(data = ('data.frame',))
-    outputs=OrderedDict(model = ('class.lm',))
+    pass
 
 class PlotModule(Module):
     inputs=OrderedDict(x = ('',), y=('',))
