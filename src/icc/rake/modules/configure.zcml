@@ -28,6 +28,45 @@
       outputs="{'model':'class.lm'}"
   />
  
+  <rake:register
+      name="frame_load"
+      title="Data frame loading"
+      description="Data frame loading module (read.frame)"
+      icon="views/ui/pics/frame_open.svg"
+      factory=".models.components.FrameLoadModule"
+      src="R"
+      lang="R"
+      func="read.table"
+      category="data_acquisition"
+      outputs="{'data':'data.frame'}"
+  />
+ 
+  <rake:register
+      name="frame_view"
+      title="Data frame View"
+      description="View a Data frame"
+      icon="views/ui/pics/frame_view.svg"
+      factory=".models.components.FrameViewModule"
+      src=""
+      lang="Python"
+      func=""
+      category="view"
+      inputs="{'data':'data.frame'}"
+  />
+ 
+  <rake:register
+      name="plot"
+      title="2D Plot anything"
+      description="Plot any data as 2D plot (plot)"
+      icon="views/ui/pics/plot.svg"
+      factory=".models.components.PlotModule"
+      src="R"
+      lang="R"
+      func="plot"
+      category="view"
+      inputs="{'x':'', 'y':''}"
+  />
+ 
 
   <!--
 

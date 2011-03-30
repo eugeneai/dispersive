@@ -574,7 +574,7 @@ class Canvas(View):
         pattern=self.draw_module_pattern(module, bheight=h, bwidth=w, fheight=32, fwidth=32, selected=selected)
 
         img = goocanvas.Image(x=-w/2., y=-h/2., width=w, height=h, pattern=pattern)
-        text = goocanvas.Text(text=module.name, x=0, y=22, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
+        text = goocanvas.Text(text=module.name, x=0, y=22, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', ) # XXX change name to title and edit both
         img.text = text
 
         return img, text

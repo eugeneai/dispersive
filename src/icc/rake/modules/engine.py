@@ -43,7 +43,7 @@ There is a shortcut to use factory::
 
 """ 
 
-def registerModule(context,name, factory, title, func, src, lang, category, icon=None, description='', inputs='{}', outputs='{}'
+def registerModule(context, name, factory, title, func, src, lang, category, icon=None, description='', inputs='{}', outputs='{}'
                    ):
     f=Factory(factory, title, description)
     factory.name=name
