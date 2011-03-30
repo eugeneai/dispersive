@@ -1053,8 +1053,6 @@ class Canvas(View):
     #@-others
 #@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
 class ModuleCanvasView(View):
-    module_resource='icc.rake.modules.views'
-
     #@+others
     #@+node:eugeneai.20110116171118.1496: *3* set_model
     def set_model(self, model):
@@ -1076,8 +1074,7 @@ class ModuleCanvasView(View):
                 self.icon = self.parent_view.icon_cache.get(self.model.__class__, None)
                 if self.icon == None:
                     self.icon = rsvg.Handle(
-                        data=resource_string(self.__class__.module_resource,
-                             self.model.__class__.icon))
+                        data=open(self.model.__class__.icon).read())
                     self.parent_view.icon_cache[self.model.__class__]=self.icon
 
     #@+node:eugeneai.20110116171118.1499: *3* render_on_canvas

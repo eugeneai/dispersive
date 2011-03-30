@@ -14,7 +14,7 @@ class Factory(zope_factory.Factory):
         c=self._callable
         obj = c(*args, **kwargs)
         obj.name=c.name
-        obj.title=c.title
+        obj.title=self.title
         obj.description=''
         return obj
 

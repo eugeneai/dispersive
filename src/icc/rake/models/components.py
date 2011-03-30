@@ -7,6 +7,7 @@
 #!/usr/bin/python
 import os, os.path
 from zope.interface import implements
+from zope.component import createObject
 from icc.rake.models.interfaces import *
 try:
     from collections import OrderedDict
@@ -49,18 +50,22 @@ class Canvas:
         self.changed=True
 
         # test case
-        m1 = FrameLoadModule()
-        m2 = LmModule()
+        #m1 = FrameLoadModule()
+        m2 = createObject('linear_model')
+        """
         m3 = FrameViewModule()
         mp = PlotModule()
         self.place(m1, 70, 150)
+        """
         self.place(m2, 200, 30)
+        """
         self.place(m3, 500, 100)
         self.place(mp, 300, 300)
         self.connect(m1,m2)
         self.connect(m1,m3)
         self.connect(m2,m3)
         self.connect(m2,mp)
+        """
 
 
     #@+node:eugeneai.20110116171118.1434: *3* find_module
@@ -129,32 +134,6 @@ class Canvas:
             self.updated()
 
     #@-others
-#@+node:eugeneai.20110116171118.1443: ** class FrameLoadModule
-class FrameLoadModule(Module):
-    outputs=OrderedDict(data = ('data.frame',))
-    icon='ui/pics/frame_open.svg'
-    name='Data Frame Loading' 
-
-#@+node:eugeneai.20110116171118.1444: ** class FrameViewModule
-class FrameViewModule(Module):
-    inputs=OrderedDict(data = ('data.frame',))
-    icon='ui/pics/frame_view.svg'
-    name='Data Frame Viewing'
-
-#@+node:eugeneai.20110116171118.1445: ** class LmModule
-class LmModule(Module):
-    inputs=OrderedDict(data = ('data.frame',))
-    outputs=OrderedDict(model = ('class.lm',))
-    icon='ui/pics/lm.svg'
-    name='Linear Regression'
-
-#@+node:eugeneai.20110116171118.1446: ** class PlotModule
-class PlotModule(Module):
-    inputs=OrderedDict(x = ('',), y=('',))
-    outputs=OrderedDict()
-    icon='ui/pics/plot.svg'
-    name='Plot (anything)'
-
 
 
 #@-others

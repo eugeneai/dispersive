@@ -18,7 +18,7 @@
       name="linear_model"
       title="Linear Model (Regression)"
       description="Linear model module (lm)"
-      icon="ui/pics/lm.svg"
+      icon="views/ui/pics/lm.svg"
       factory=".models.components.LmModule"
       src="R"
       lang="R"
