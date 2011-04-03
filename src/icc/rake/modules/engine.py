@@ -3,11 +3,17 @@ from icc.rake.modules.interfaces import *
 from icc.rake.modules.components import *
 from icc.rake.models.components import Module, OrderedDict
 import zope.component.factory as zope_factory
-from zope.component import getGlobalSiteManager
+from zope.component import getGlobalSiteManager, getUtility
 from zope.component.interfaces import IFactory
+from zope.interface import implements
 
-module_registry = {}
-module_category = {}
+class ModuleRegistry(object):
+    implements(IModuleRegistry)
+    def __init__(self):
+        self.categories=OrderedDict()
+        self.modules=OrderedDict()
+
+module_registry=ModuleRegistry()
 
 class Factory(zope_factory.Factory):
     def __call__(self, *args, **kwargs):
@@ -20,8 +26,9 @@ class Factory(zope_factory.Factory):
 
 def registerModuleFactory(f):
     name=f._callable.name
-    module_registry[name]=f
-    c=module_category.setdefault(f.category, {})
+    #module_registry=getUtility('moule_registry')
+    module_registry.modules[name]=f
+    c=module_registry.categories.setdefault(f.category, {})
     c[name]=f
 
     # Taken from ZCA
