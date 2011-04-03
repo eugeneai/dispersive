@@ -831,7 +831,7 @@ class Canvas(View):
 
             else:
                 # There shoul be a dialog for module choice.
-                mt=self.create_module(mdl.LmModule(), event.x_root, event.y_root)
+                mt=self.create_module(self.choose_module(event), event.x_root, event.y_root)
                 pass
 
             self.create_connection(self.selected_module, mt)
@@ -841,6 +841,9 @@ class Canvas(View):
             self.new_connection=None # release the tracking process
             self.selected_item.get_parent().raise_(None)
             self.remove_selection()
+
+    def choose_module(self, event):
+        return 'linear_model'
 
 
 
@@ -1015,6 +1018,9 @@ class Canvas(View):
         """x=y=None means that the coordinates are taken 
         from model.
         """
+
+        if type(module) in [types.UnicodeType, types.StringType]:
+            module = ZC.createObject(module)
 
         if module in self.model.modules: 
 
