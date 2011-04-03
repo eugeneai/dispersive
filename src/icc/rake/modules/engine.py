@@ -26,7 +26,7 @@ class Factory(zope_factory.Factory):
 
 def registerModuleFactory(f):
     name=f._callable.name
-    #module_registry=getUtility('moule_registry')
+    #module_registry=getUtility('module_registry')
     module_registry.modules[name]=f
     c=module_registry.categories.setdefault(f.category, {})
     c[name]=f

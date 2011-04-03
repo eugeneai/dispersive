@@ -14,6 +14,11 @@
 
   </meta:directive>
 
+  <utility
+      component='.engine.module_registry'
+      name='module_registry'
+  />
+
   <rake:register
       name="linear_model"
       title="Linear Model (Regression)"

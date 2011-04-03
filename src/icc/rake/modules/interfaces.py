@@ -1,5 +1,5 @@
 
-from zope.interface import Interface
+from zope.interface import Interface, Attribute
 from zope import schema
 from zope.configuration import fields, xmlconfig
 
@@ -71,5 +71,6 @@ class IRegisterModule(Interface):
         required = False
         )
 
-
-    
+class IModuleRegistry(Interface):
+    categories=Attribute("Category hiererchy of the module factorues")
+    modules=Attribute("List of all the module factories")

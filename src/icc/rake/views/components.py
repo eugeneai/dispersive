@@ -845,6 +845,7 @@ class Canvas(View):
     def choose_module(self, event):
         name=InputDialog("Choose a module factory id", 'linear_model',
                       secondary='It should be correct.')
+        print 
         return name
 
 
@@ -1126,5 +1127,14 @@ class AdjustenmentView(View):
         #self.parent_view.queue_draw()
 
     #@-others
+
+class ModuleChooseDialog(View):
+    implements(IApplication)
+    template = "ui/module_choose_dialog.glade"
+    widget_names = ['main_window', 'statusbar', 'toolbar',
+             "main_vbox"]
+
+
+
 #@-others
 #@-leo
