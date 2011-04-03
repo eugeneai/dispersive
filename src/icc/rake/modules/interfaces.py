@@ -3,7 +3,6 @@ from zope.interface import Interface, Attribute
 from zope import schema
 from zope.configuration import fields, xmlconfig
 
-
 class IRegisterModule(Interface):
     
     factory = fields.GlobalObject(
