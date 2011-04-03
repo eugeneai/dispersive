@@ -1,5 +1,5 @@
 #!/bin/bash
-
-python src/icc/icc_rake_app.py $*
+DN=$(dirname $BASH_SOURCE) 
+python $DN/src/icc/icc_rake_app.py $*
 
 

@@ -132,6 +132,5 @@ class Canvas:
 
     #@-others
 
-
 #@-others
 #@-leo
