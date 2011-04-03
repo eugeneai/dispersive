@@ -1,0 +1,11 @@
+(message "Loading environment for XRAY.")
+(setq executable_name "icc_rake_app.sh")
+(setq project_dir "/home/eugeneai/Development/codes/dispersive")
+(setq main_executable (concat project_dir "/" executable_name))
+(message main_executable)
+(defun run-main-app ()
+  (interactive)
+  (start-file-process-shell-command "rake_app" "*rake_output*" main_executable))
+
+(global-set-key  (kbd "<f5>") 'run-main-app)
+;(run-main-app)
