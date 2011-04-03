@@ -843,7 +843,9 @@ class Canvas(View):
             self.remove_selection()
 
     def choose_module(self, event):
-        return 'linear_model'
+        name=InputDialog("Choose a module factory id", 'linear_model',
+                      secondary='It should be correct.')
+        return name
 
 
 
