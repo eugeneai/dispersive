@@ -822,6 +822,9 @@ class Canvas(View):
     #@+node:eugeneai.20110215120545.1660: *3* on_root_press_release
     def on_root_press_release(self, item, target, event):
         if self.new_connection:
+            self.new_connection.bkg_path.remove()
+            self.new_connection.remove()
+            self.new_connection=None # release the tracking process
             mt=None
             if self.connect_to:
                 mt=self.connect_to.module
@@ -831,24 +834,21 @@ class Canvas(View):
 
             else:
                 # There shoul be a dialog for module choice.
-                mt=self.create_module(self.choose_module(event), event.x_root, event.y_root)
-                pass
-
-            self.create_connection(self.selected_module, mt)
-            self.model.connect(self.selected_module, mt)
-            self.new_connection.bkg_path.remove()
-            self.new_connection.remove()
-            self.new_connection=None # release the tracking process
+                m_name = self.choose_module(event)
+                if m_name:
+                    mt=self.create_module(m_name, event.x_root, event.y_root)
+                else:
+                    mt=None
+            if mt:
+                self.create_connection(self.selected_module, mt)
+                self.model.connect(self.selected_module, mt)
             self.selected_item.get_parent().raise_(None)
             self.remove_selection()
 
     def choose_module(self, event):
-        name=InputDialog("Choose a module factory id", 'linear_model',
-                      secondary='It should be correct.')
-        print 
+        name=ModuleChooseDialog()
+        print name
         return name
-
-
 
     #@+node:eugeneai.20110213211825.1656: *3* on_root_motion
     def on_root_motion(self, group, target, event):
@@ -1131,10 +1131,25 @@ class AdjustenmentView(View):
 class ModuleChooseDialog(View):
     implements(IApplication)
     template = "ui/module_choose_dialog.glade"
-    widget_names = ['main_window', 'statusbar', 'toolbar',
-             "main_vbox"]
+    widget_names = ['dialog']
 
+    def __init__(self, model=None, no_run=False, message=''):
+        View.__init__(self, model=model)
+        if message:
+            self.ui.title.set_text(message)
+        if no_run:
+            pass
+        else:
+            return self.run()
 
+    def run(self):
+        result = self.ui.dialog.run()
+        if result == gtk.RESPONSE_OK:
+            value = 'linear_model' #self.entry.get_text()
+        else:
+            value = None
+        self.ui.dialog.destroy()
+        return value
 
 #@-others
 #@-leo
