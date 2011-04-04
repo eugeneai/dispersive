@@ -16,7 +16,6 @@
 
   <utility
       component='.engine.module_registry'
-      name='module_registry'
   />
 
   <rake:register

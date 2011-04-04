@@ -1176,13 +1176,15 @@ class ModuleChooseDialogView(DialogView):
         DialogView.__init__(self, model=model, **kwargs )
 
     def setup(self, message=""):
+        self.module_registry=ZC.getUtility(module_is.IModuleRegistry)
         cs=categories=self.ui.categories
-        mr=self.module_registry=ZC.getUtility(module_is.IModuleRegistry)
+        mr=self.module_registry
         for k, f in mr.modules.iteritems():
             name=k
             category=f.category
+            title=f.title
             pix=gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 32, 32)
-            it = cs.append([pix, name, category])
+            it = cs.append([pix, name, title])
         if message:
             self.ui.title.set_markup("<b>"+message+"</b>")
 
