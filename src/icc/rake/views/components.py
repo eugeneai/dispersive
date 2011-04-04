@@ -846,7 +846,7 @@ class Canvas(View):
             self.remove_selection()
 
     def choose_module(self, event):
-        name=ModuleChooseDialog()
+        name=ModuleChooseDialog(message='Choose a module')
         print name
         return name
 
@@ -1128,28 +1128,52 @@ class AdjustenmentView(View):
 
     #@-others
 
-class ModuleChooseDialog(View):
-    implements(IApplication)
-    template = "ui/module_choose_dialog.glade"
-    widget_names = ['dialog']
+def ModuleChooseDialog(message):
+    d=ModuleChooseDialogView(message=message)
+    v=d.run()
+    d.destroy()
+    return v
 
-    def __init__(self, model=None, no_run=False, message=''):
+class DialogView(View):
+    widget_names = ['dialog']
+    def __init__(self, model=None, buttons=()):
         View.__init__(self, model=model)
-        if message:
-            self.ui.title.set_text(message)
-        if no_run:
-            pass
-        else:
-            return self.run()
+        self.ui.dialog_vbox=self.ui.dialog.vbox
+        self.add_buttons(buttons)
+    
+    def add_buttons(self, buttons=()):
+        self.ui.dialog.add_buttons(*buttons)
 
     def run(self):
         result = self.ui.dialog.run()
         if result == gtk.RESPONSE_OK:
-            value = 'linear_model' #self.entry.get_text()
+            value = self.get_value()
         else:
             value = None
         self.ui.dialog.destroy()
         return value
+
+    def get_value(self):
+        raise RuntimeError, "should be implemented by subclass"
+
+    def destroy(self):
+        self.ui.dialog.destroy()
+
+class ModuleChooseDialogView(DialogView):
+    implements(IApplication)
+    template = "ui/module_choose_dialog.glade"
+    widget_names = ['dialog', 'vbox', 'title']
+
+    def __init__(self, model=None, message=''):
+        DialogView.__init__(self, model=model)
+        if message:
+            self.ui.title.set_markup("<b>"+message+"</b>")
+
+        self.add_buttons((gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                      gtk.STOCK_OK, gtk.RESPONSE_OK))
+
+    def get_value(self):
+        return "linear_model"
 
 #@-others
 #@-leo

@@ -18,5 +18,6 @@
 (global-set-key  (kbd "<f5>") 'run-main-app)
 ;(run-main-app)
 
+;(python-mode)
 (message main_executable)
 (message "Loaded environment for RAKE.")
