@@ -1136,11 +1136,17 @@ def ModuleChooseDialog(message):
 
 class DialogView(View):
     widget_names = ['dialog']
-    def __init__(self, model=None, buttons=()):
+    def __init__(self, model=None, buttons=(), **kwargs):
         View.__init__(self, model=model)
         self.ui.dialog_vbox=self.ui.dialog.vbox
+        kw={}
+        kw.update(kwargs)
+        self.setup(**kw)
         self.add_buttons(buttons)
-    
+
+    def setup(self, **kw):
+        pass
+   
     def add_buttons(self, buttons=()):
         self.ui.dialog.add_buttons(*buttons)
 
@@ -1164,8 +1170,10 @@ class ModuleChooseDialogView(DialogView):
     template = "ui/module_choose_dialog.glade"
     widget_names = ['dialog', 'vbox', 'title']
 
-    def __init__(self, model=None, message=''):
-        DialogView.__init__(self, model=model)
+    def __init__(self, model=None, **kwargs):
+        DialogView.__init__(self, model=model, **kwargs )
+
+    def setup(self, message=""):
         if message:
             self.ui.title.set_markup("<b>"+message+"</b>")
 
