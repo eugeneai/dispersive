@@ -1209,7 +1209,24 @@ class ModuleChooseDialogView(DialogView):
         f=self.module_registry.modules[name]
         self.ui.description.set_markup(f.description)
         
-        
 
+class IconRegistry(object):
+    implements(IIconRegistry)
+    def __init__(self):
+        self.icons={}
+
+    def register(self, resource, name=None):
+        icon=self.load(resource, name)
+        self.icons[resource]=icon
+        if name:
+            self.names=icon
+
+    def load(self, resource, name=None):
+        ### split : etc..
+        resource_string(__name__,
+                      'ui/pics/tool-bkg.svg'))
+
+    
+            
 #@-others
 #@-leo
