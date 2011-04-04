@@ -1170,7 +1170,7 @@ class ModuleChooseDialogView(DialogView):
     implements(IApplication)
     template = "ui/module_choose_dialog.glade"
     widget_names = ['dialog', 'vbox', 'title', 'categories',
-                    'categories_view']
+                    'categories_view', 'description']
 
     def __init__(self, model=None, **kwargs):
         DialogView.__init__(self, model=model, **kwargs )
@@ -1192,11 +1192,24 @@ class ModuleChooseDialogView(DialogView):
                       gtk.STOCK_OK, gtk.RESPONSE_OK))
 
     def get_value(self):
-        cv=self.ui.categories_view
+        return self.get_selection()
+
+    def get_selection(self, tv=None, column=1):
+        if tv == None:
+            tv=self.ui.categories_view
         cm=self.ui.categories
-        sel=cv.get_selection()
+        sel=tv.get_selection()
         m,i=sel.get_selected()
-        return cm.get_value(i, 1)
+        if i:
+            return cm.get_value(i, column)
+        return None
+
+    def on_categories_view_cursor_changed(self, tree_view, _):
+        name=self.get_selection(tree_view)
+        f=self.module_registry.modules[name]
+        self.ui.description.set_markup(f.description)
+        
+        
 
 #@-others
 #@-leo
