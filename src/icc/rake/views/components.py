@@ -24,6 +24,7 @@ from pkg_resources import resource_stream, resource_string
 import icc.rake.models.components as mdl
 import icc.rake.models.interfaces as mdli
 import icc.rake.interfaces as ri
+import icc.rake.modules.interfaces as module_is
 import os
 
 import cairo, math
@@ -39,7 +40,7 @@ def sign(x):
     return 0
 
 #@+node:eugeneai.20110116171118.1455: ** class Ui
-class Ui:
+class Ui(object):
     pass
 
 #@+node:eugeneai.20110116171118.1456: ** InputDialog
@@ -1168,12 +1169,20 @@ class DialogView(View):
 class ModuleChooseDialogView(DialogView):
     implements(IApplication)
     template = "ui/module_choose_dialog.glade"
-    widget_names = ['dialog', 'vbox', 'title']
+    widget_names = ['dialog', 'vbox', 'title', 'categories',
+                    'categories_view']
 
     def __init__(self, model=None, **kwargs):
         DialogView.__init__(self, model=model, **kwargs )
 
     def setup(self, message=""):
+        cs=categories=self.ui.categories
+        mr=self.module_registry=ZC.getUtility(module_is.IModuleRegistry)
+        for k, f in mr.modules.iteritems():
+            name=k
+            category=f.category
+            pix=gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 32, 32)
+            it = cs.append([pix, name, category])
         if message:
             self.ui.title.set_markup("<b>"+message+"</b>")
 
@@ -1181,7 +1190,11 @@ class ModuleChooseDialogView(DialogView):
                       gtk.STOCK_OK, gtk.RESPONSE_OK))
 
     def get_value(self):
-        return "linear_model"
+        cv=self.ui.categories_view
+        cm=self.ui.categories
+        sel=cv.get_selection()
+        m,i=sel.get_selected()
+        return cm.get_value(i, 1)
 
 #@-others
 #@-leo
