@@ -1209,6 +1209,7 @@ class IconRegistry(object):
         self.names = {}
         self.conv=(conv,)
         self.attr=attr
+        self.deps=[] # Dependant registry
 
     def resource(self, r=None, name = None):
         if r == None:
@@ -1216,10 +1217,17 @@ class IconRegistry(object):
                 r = self.names[name]
         if r in self.icons:
             return self.icons[r]
-        
-        icon = self.load(r, name)
+        return self.new_resource(r, name)
+
+    def new_resource(self, r=None, name = None, icon=None):
+        if icon == None:
+            icon = self.load(r, name)
+            answer = self.new_resource(r, name, icon)
+            for dep in self.deps:
+                dep.new_resource(r, name, icon) # So we load the file only onece.
+            return answer
         conv = self.conv[0]
-        if self.conv != None:
+        if self.conv[0] != None:
             if self.attr:
                 kwargs={self.attr:icon}
                 icon = conv(**kwargs)
@@ -1252,6 +1260,8 @@ class IconRegistry(object):
         return s
 
 icon_registry = IconRegistry(conv=rsvg.Handle, attr='data')
+pixmap_registry = IconRegistry()
+icon_registry.deps.append(pixmap_registry)
 
 #@-others
 #@-leo
