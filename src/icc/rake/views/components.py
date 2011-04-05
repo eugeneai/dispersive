@@ -1208,25 +1208,53 @@ class ModuleChooseDialogView(DialogView):
         name=self.get_selection(tree_view)
         f=self.module_registry.modules[name]
         self.ui.description.set_markup(f.description)
-        
+
+_mark554=object()
 
 class IconRegistry(object):
     implements(IIconRegistry)
     def __init__(self):
         self.icons={}
+        self.caches={}
 
     def register(self, resource, name=None):
         icon=self.load(resource, name)
         self.icons[resource]=icon
         if name:
-            self.names=icon
+            self.names[name]=icon
+
+    def put(self, cache, resource, value):
+        c = self.caches.setdefault(cache, {})
+        c[resource] = value
+        return value
+
+    def get(self, cache, resource, default=_mark554):
+        if cache in self.caches:
+            c = self.caches[cache]
+            if resource in c:
+                return c[resource]
+        if default==_mark554:
+            raise KeyError, 'cache or resource key unknown'
+
+        return default
 
     def load(self, resource, name=None):
         ### split : etc..
-        resource_string(__name__,
-                      'ui/pics/tool-bkg.svg'))
+        
+        if find(resource,':'):
+            mod, path= resource.split(":",1)
+        else:
+            mod=__name__
+            path=resource
 
-    
-            
+        if os.path.isabs(path):
+            path=resource
+            mod=None
+
+        s = resource_string(mod, path)
+        return s
+
+icon_registry=IconRegistry()
+
 #@-others
 #@-leo

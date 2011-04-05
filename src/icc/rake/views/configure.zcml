@@ -27,5 +27,11 @@
     for="icc.rake.models.interfaces.IModule"
     />
 
+<utility
+    component=".components.icon_registry"
+    name=""
+    />
+
+
 </configure>
 <!--@-leo-->
