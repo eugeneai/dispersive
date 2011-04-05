@@ -55,5 +55,8 @@ class IAdjustenmentView(IWindowView):
 class IModulePanel(IPanelView):
     """View, that allows to adjust parameters of modules"""
 
+class IIconRegistry(ZI.Interface):
+    """Contains All icon registry and format conversion methods."""
+
 #@-others
 #@-leo

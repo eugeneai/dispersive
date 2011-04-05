@@ -29,7 +29,12 @@
 
 <utility
     component=".components.icon_registry"
-    name=""
+    name="svg"
+    />
+
+<utility
+    component=".components.pixmap_registry"
+    name="pixmap"
     />
 
 
