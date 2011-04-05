@@ -323,7 +323,8 @@ class SVGImage(goocanvas.Image):
     def render_pattern(self, **kwargs):
         def convert_rsvg(resource):
             if type(resource) in [types.StringType, types.UnicodeType]:
-                return rsvg.Handle(data=resource_string(__name__, resource))
+                icon_registry=ZC.getUtility(IIconRegistry, 'svg')
+                return icon_registry.resource(resource)
             return resource
 
         width, height = self.kwargs['width'], self.kwargs['height']
@@ -490,7 +491,6 @@ class Canvas(View):
     #@+node:eugeneai.20110116171118.1482: *3* __init__
     def __init__(self, model = None):
         View.__init__(self, model=None)
-        self.icon_cache={}
         self.state=Ui()
         self.selected_module=None # module and its
         self.selected_item = None # corresponding icon
@@ -555,18 +555,11 @@ class Canvas(View):
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
     def init_resources(self):
         View.init_resources(self)
-        self.module_icon_background = rsvg.Handle(
-                data=resource_string(__name__,
-                      "ui/pics/background.svg"))
-        self.module_icon_selected = rsvg.Handle(
-                data=resource_string(__name__,
-                      "ui/pics/selected.svg"))
-        self.module_icon_toolboxed = rsvg.Handle(
-                data=resource_string(__name__,
-                      "ui/pics/toolboxed.svg"))
-        self.toolbox_background = rsvg.Handle(
-                data=resource_string(__name__,
-                      'ui/pics/tool-bkg.svg'))
+        icon_registry=ZC.getUtility(IIconRegistry, name='svg')
+        self.module_icon_background = icon_registry.resource("ui/pics/background.svg", name='background')
+        self.module_icon_selected = icon_registry.resource("ui/pics/selected.svg", name='selected')
+        self.module_icon_toolboxed = icon_registry.resource("ui/pics/toolboxed.svg", name='toolboxed')        
+        self.toolbox_background = self.module_icon_toolboxed = icon_registry.resource("ui/pics/tool-bkg.svg", name='tool-bkg')
 
     #@+node:eugeneai.20110116171118.1485: *3* _module
     def _module(self, module, selected=False):
@@ -848,7 +841,6 @@ class Canvas(View):
 
     def choose_module(self, event):
         name=ModuleChooseDialog(message='Choose a module')
-        print name
         return name
 
     #@+node:eugeneai.20110213211825.1656: *3* on_root_motion
@@ -1081,11 +1073,10 @@ class ModuleCanvasView(View):
         self.icon = None
         if self.parent_view:
             if self.model != None and self.model.__class__.icon:
-                self.icon = self.parent_view.icon_cache.get(self.model.__class__, None)
-                if self.icon == None:
-                    self.icon = rsvg.Handle(
-                        data=open(self.model.__class__.icon).read())
-                    self.parent_view.icon_cache[self.model.__class__]=self.icon
+                if self.model.__class__.icon:
+                    icon_registry=ZC.getUtility(IIconRegistry, name='svg')
+                    self.icon = icon_registry.resource(self.model.__class__.icon)
+                
 
     #@+node:eugeneai.20110116171118.1499: *3* render_on_canvas
     def render_on_canvas(self, canvas):
@@ -1213,48 +1204,54 @@ _mark554=object()
 
 class IconRegistry(object):
     implements(IIconRegistry)
-    def __init__(self):
-        self.icons={}
-        self.caches={}
+    def __init__(self, conv=None, attr=None):
+        self.icons = {}
+        self.names = {}
+        self.conv=(conv,)
+        self.attr=attr
 
-    def register(self, resource, name=None):
-        icon=self.load(resource, name)
-        self.icons[resource]=icon
+    def resource(self, r=None, name = None):
+        if r == None:
+            if name != None:
+                r = self.names[name]
+        if r in self.icons:
+            return self.icons[r]
+        
+        icon = self.load(r, name)
+        conv = self.conv[0]
+        if self.conv != None:
+            if self.attr:
+                kwargs={self.attr:icon}
+                icon = conv(**kwargs)
+            else:
+                icon = conv(icon)
+        self.icons[r] = icon
         if name:
-            self.names[name]=icon
+            self.names[name] = r
+        return icon
 
-    def put(self, cache, resource, value):
-        c = self.caches.setdefault(cache, {})
-        c[resource] = value
-        return value
-
-    def get(self, cache, resource, default=_mark554):
-        if cache in self.caches:
-            c = self.caches[cache]
-            if resource in c:
-                return c[resource]
-        if default==_mark554:
-            raise KeyError, 'cache or resource key unknown'
-
-        return default
-
-    def load(self, resource, name=None):
+    def load(self, r, name = None):
         ### split : etc..
         
-        if find(resource,':'):
-            mod, path= resource.split(":",1)
+        if r.find(':')!=-1:
+            mod, path = r.split(":",1)
         else:
-            mod=__name__
-            path=resource
+            mod  = __name__
+            path = r
 
         if os.path.isabs(path):
-            path=resource
-            mod=None
+            path = r
+            mod  = None
 
-        s = resource_string(mod, path)
+        if mod == None:
+            f=open(r)
+            s=f.read()
+            f.close()
+        else:
+            s = resource_string(mod, path)
         return s
 
-icon_registry=IconRegistry()
+icon_registry = IconRegistry(conv=rsvg.Handle, attr='data')
 
 #@-others
 #@-leo
