@@ -1259,8 +1259,21 @@ class IconRegistry(object):
             s = resource_string(mod, path)
         return s
 
+
+
 icon_registry = IconRegistry(conv=rsvg.Handle, attr='data')
-pixmap_registry = IconRegistry()
+
+def to_pixmap(svg=None):
+    w=h=32
+    s=cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
+    c=cairo.Context(s)
+    h=rsvg.Handle(data=svg)
+    h.render_cairo(c)
+    #pm=gtk.gdk.pixmap_create_from_data(None, s.get_data(), w, h, 1, 0)
+    pm=gtk.gdk.pixmap_create_from_data(None, s.get_data(), w, h, 1, 0)
+    return pm
+    
+pixmap_registry = IconRegistry(conv=to_pixmap, attr='svg')
 icon_registry.deps.append(pixmap_registry)
 
 #@-others
