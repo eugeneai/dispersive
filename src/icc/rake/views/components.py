@@ -1168,13 +1168,15 @@ class ModuleChooseDialogView(DialogView):
 
     def setup(self, message=""):
         self.module_registry=ZC.getUtility(module_is.IModuleRegistry)
+        pixbuf_registry=ZC.getUtility(IIconRegistry, name='pixbuf')
         cs=categories=self.ui.categories
         mr=self.module_registry
         for k, f in mr.modules.iteritems():
             name=k
             category=f.category
             title=f.title
-            pix=gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 32, 32)
+            #pix=gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 32, 32)
+            pix=pixbuf_registry.resource(f._callable.icon)
             it = cs.append([pix, name, title])
         if message:
             self.ui.title.set_markup("<b>"+message+"</b>")
@@ -1265,19 +1267,27 @@ class IconRegistry(object):
 
 icon_registry = IconRegistry(conv=rsvg.Handle, attr='data')
 
-def to_pixmap(svg=None):
-    bg=gtk.gdk.Color(0.0, 0.0, 0.0)
-    fg=gtk.gdk.Color(1.0, 1.0, 1.0)
+def to_pixbuf(svg=None):
+    fg=gtk.gdk.Color(0.0, 0.0, 0.0)
+    bg=gtk.gdk.Color(1.0, 1.0, 1.0)
     w=h=32
     s=cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
     c=cairo.Context(s)
     hn=rsvg.Handle(data=svg)
     hn.render_cairo(c)
-    pm=gtk.gdk.pixmap_create_from_data(None, s.get_data(), w, h, 32, bg, fg)
+    c.show_page()
+    #print type(s.get_data())
+    #pm=gtk.gdk.pixbuf_new_from_data(s.get_data(),gtk.gdk.COLORSPACE_RGB, True, 4, w, h, 4*w)
+    pm=gtk.gdk.pixbuf_new_from_data(s.get_data(),gtk.gdk.COLORSPACE_RGB, True, 8,
+                                    s.get_width(), s.get_height(), s.get_stride())
     return pm
+    #l = gtk.gdk.PixbufLoader()
+    #l.write(s) #.get_data())
+        
+    #return l.get_pixbuf()
     
-pixmap_registry = IconRegistry(conv=to_pixmap, attr='svg')
-icon_registry.deps.append(pixmap_registry)
+pixbuf_registry = IconRegistry(conv=to_pixbuf, attr='svg')
+icon_registry.deps.append(pixbuf_registry)
 
 #@-others
 #@-leo
