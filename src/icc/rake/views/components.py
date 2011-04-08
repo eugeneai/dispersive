@@ -556,10 +556,10 @@ class Canvas(View):
     def init_resources(self):
         View.init_resources(self)
         icon_registry=ZC.getUtility(IIconRegistry, name='svg')
-        self.module_icon_background = icon_registry.resource("ui/pics/background.svg", name='background')
-        self.module_icon_selected = icon_registry.resource("ui/pics/selected.svg", name='selected')
-        self.module_icon_toolboxed = icon_registry.resource("ui/pics/toolboxed.svg", name='toolboxed')        
-        self.toolbox_background = self.module_icon_toolboxed = icon_registry.resource("ui/pics/tool-bkg.svg", name='tool-bkg')
+        self.module_icon_background = icon_registry.resource("ui/pics/background.svg")
+        self.module_icon_selected = icon_registry.resource("ui/pics/selected.svg")
+        self.module_icon_toolboxed = icon_registry.resource("ui/pics/toolboxed.svg")        
+        self.toolbox_background = self.module_icon_toolboxed = icon_registry.resource("ui/pics/tool-bkg.svg")
 
     #@+node:eugeneai.20110116171118.1485: *3* _module
     def _module(self, module, selected=False):
@@ -1217,6 +1217,9 @@ class IconRegistry(object):
                 r = self.names[name]
         if r in self.icons:
             return self.icons[r]
+        if name == None:
+            name=os.path.splitext(os.path.basename(r))[0]
+            # print name
         return self.new_resource(r, name)
 
     def new_resource(self, r=None, name = None, icon=None):
@@ -1260,17 +1263,17 @@ class IconRegistry(object):
         return s
 
 
-
 icon_registry = IconRegistry(conv=rsvg.Handle, attr='data')
 
 def to_pixmap(svg=None):
+    bg=gtk.gdk.Color(0.0, 0.0, 0.0)
+    fg=gtk.gdk.Color(1.0, 1.0, 1.0)
     w=h=32
     s=cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
     c=cairo.Context(s)
-    h=rsvg.Handle(data=svg)
-    h.render_cairo(c)
-    #pm=gtk.gdk.pixmap_create_from_data(None, s.get_data(), w, h, 1, 0)
-    pm=gtk.gdk.pixmap_create_from_data(None, s.get_data(), w, h, 1, 0)
+    hn=rsvg.Handle(data=svg)
+    hn.render_cairo(c)
+    pm=gtk.gdk.pixmap_create_from_data(None, s.get_data(), w, h, 32, bg, fg)
     return pm
     
 pixmap_registry = IconRegistry(conv=to_pixmap, attr='svg')
