@@ -1083,17 +1083,6 @@ class ModuleCanvasView(View):
         """Render myself on a cairo canvas"""
         if self.icon:
             self.icon.render_cairo(canvas)
-        """
-        canvas.move_to(16, 38)
-        canvas.select_font_face ("Sans")
-        text = self.model.name
-        x_bearing, y_bearing, width, height, x_advance, y_advance = canvas.text_extents(text)
-        canvas.rel_move_to(-width/2., height)
-        canvas.set_source_rgb(0,0,0)
-        canvas.show_text(text)
-        canvas.stroke()
-        """
-
 
     #@-others
 #@+node:eugeneai.20110116171118.1500: ** class AdjustenmentView
@@ -1206,12 +1195,12 @@ _mark554=object()
 
 class IconRegistry(object):
     implements(IIconRegistry)
-    def __init__(self, conv=None, attr=None):
+    def __init__(self, conv=None, attr=None, parent=None):
         self.icons = {}
         self.names = {}
         self.conv=(conv,)
         self.attr=attr
-        self.deps=[] # Dependant registry
+        self.parent=parent
 
     def resource(self, r=None, name = None):
         if r == None:
@@ -1221,15 +1210,12 @@ class IconRegistry(object):
             return self.icons[r]
         if name == None:
             name=os.path.splitext(os.path.basename(r))[0]
-            # print name
         return self.new_resource(r, name)
 
     def new_resource(self, r=None, name = None, icon=None):
         if icon == None:
             icon = self.load(r, name)
             answer = self.new_resource(r, name, icon)
-            for dep in self.deps:
-                dep.new_resource(r, name, icon) # So we load the file only onece.
             return answer
         conv = self.conv[0]
         if self.conv[0] != None:
@@ -1244,6 +1230,9 @@ class IconRegistry(object):
         return icon
 
     def load(self, r, name = None):
+        if self.parent:
+            return self.parent.resource(r=r, name=name)
+        
         ### split : etc..
         
         if r.find(':')!=-1:
@@ -1267,20 +1256,18 @@ class IconRegistry(object):
 
 icon_registry = IconRegistry(conv=rsvg.Handle, attr='data')
 
-def to_pixbuf(svg=None):
+def to_pixbuf(handle=None):
     w=h=32
     s=cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
     c=cairo.Context(s)
-    hn=rsvg.Handle(data=svg)
-    #bg = icon_registry.resource(name='selected')
+    bg = icon_registry.resource(name='selected')
     bg.render_cairo(c)
-    hn.render_cairo(c)
+    handle.render_cairo(c)
     pm=gtk.gdk.pixbuf_new_from_data(s.get_data(),gtk.gdk.COLORSPACE_RGB, True, 8,
                                     s.get_width(), s.get_height(), s.get_stride())
     return pm
     
-pixbuf_registry = IconRegistry(conv=to_pixbuf, attr='svg')
-icon_registry.deps.append(pixbuf_registry)
+pixbuf_registry = IconRegistry(conv=to_pixbuf, attr='handle', parent=icon_registry)
 
 #@-others
 #@-leo
