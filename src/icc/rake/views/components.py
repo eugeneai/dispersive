@@ -1175,7 +1175,7 @@ class ModuleChooseDialogView(DialogView):
             name=k
             category=f.category
             title=f.title
-            #pix=gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 32, 32)
+            #bkg=pixbuf_registry.resource(name='selected')
             pix=pixbuf_registry.resource(f._callable.icon)
             it = cs.append([pix, name, title])
         if message:
@@ -1216,7 +1216,7 @@ class IconRegistry(object):
     def resource(self, r=None, name = None):
         if r == None:
             if name != None:
-                r = self.names[name]
+                return self.names[name]
         if r in self.icons:
             return self.icons[r]
         if name == None:
@@ -1240,7 +1240,7 @@ class IconRegistry(object):
                 icon = conv(icon)
         self.icons[r] = icon
         if name:
-            self.names[name] = r
+            self.names[name] = icon
         return icon
 
     def load(self, r, name = None):
@@ -1268,23 +1268,16 @@ class IconRegistry(object):
 icon_registry = IconRegistry(conv=rsvg.Handle, attr='data')
 
 def to_pixbuf(svg=None):
-    fg=gtk.gdk.Color(0.0, 0.0, 0.0)
-    bg=gtk.gdk.Color(1.0, 1.0, 1.0)
     w=h=32
     s=cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
     c=cairo.Context(s)
     hn=rsvg.Handle(data=svg)
+    #bg = icon_registry.resource(name='selected')
+    bg.render_cairo(c)
     hn.render_cairo(c)
-    c.show_page()
-    #print type(s.get_data())
-    #pm=gtk.gdk.pixbuf_new_from_data(s.get_data(),gtk.gdk.COLORSPACE_RGB, True, 4, w, h, 4*w)
     pm=gtk.gdk.pixbuf_new_from_data(s.get_data(),gtk.gdk.COLORSPACE_RGB, True, 8,
                                     s.get_width(), s.get_height(), s.get_stride())
     return pm
-    #l = gtk.gdk.PixbufLoader()
-    #l.write(s) #.get_data())
-        
-    #return l.get_pixbuf()
     
 pixbuf_registry = IconRegistry(conv=to_pixbuf, attr='svg')
 icon_registry.deps.append(pixbuf_registry)
