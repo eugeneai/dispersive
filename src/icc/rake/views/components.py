@@ -470,15 +470,15 @@ class PicItem(goocanvas.ItemSimple, goocanvas.Item):
 gobject.type_register(PicItem)
 #@+node:eugeneai.20110116171118.1481: ** class Canvas
 TBL_ACTIONS=[
-    ( 1,-1, "remove", 'ui/pics/close.svg'),
-    (-1, 1, "rename", 'ui/pics/name.svg'),
-    ( 1, 1, "info", 'ui/pics/info.svg'),
-    (-1,-1, "edit", 'ui/pics/edit.svg'),
+    ( 1,-1, "remove", 'ui/pics/close.svg', True),
+    (-1, 1, "rename", 'ui/pics/name.svg', True),
+    ( 1, 1, "info", 'ui/pics/info.svg', True),
+    (-1,-1, "edit", 'ui/pics/edit.svg', True),
 
-    ( 1, 0, "right", 'ui/pics/right.svg'),
-    (-1, 0, "left", 'ui/pics/right.svg'),
-    ( 0,-1, "up", 'ui/pics/down.svg'),
-    ( 0, 1, "down", 'ui/pics/down.svg'),
+    ( 1, 0, "right", 'ui/pics/right.svg', 'outputs'),
+    (-1, 0, "left", 'ui/pics/right.svg', 'inputs'),
+    ( 0,-1, "up", 'ui/pics/down.svg', False),
+    ( 0, 1, "down", 'ui/pics/down.svg', False),
     ]
 
 class Canvas(View):
@@ -677,15 +677,21 @@ class Canvas(View):
 
 
                 self.tmp_toolbox=[]
-                for (dx, dy, name, ui) in TBL_ACTIONS:
-                    px, py = 20*dx-7, 20*dy-7 # XXX monkey patch.
-                    tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=px, y=py)
-                    tool.item=item # Whose tool it is. 
-                    tool.name=name
-                    self.tmp_toolbox_group.add_child(tool, -1)
-                    self.tmp_toolbox.append(tool)
-                    tool.connect('button-press-event', self.on_tool_pressed_released)
-                    tool.connect('button-release-event', self.on_tool_pressed_released)
+                for (dx, dy, name, ui, cond) in TBL_ACTIONS:
+                    if type(cond) == types.StringType:
+                        if hasattr(module,cond):
+                            cond=getattr(module, cond)
+                        else:
+                            cond=False
+                    if cond:
+                        px, py = 20*dx-7, 20*dy-7 # XXX monkey patch.
+                        tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=px, y=py)
+                        tool.item=item # Whose tool it is. 
+                        tool.name=name
+                        self.tmp_toolbox_group.add_child(tool, -1)
+                        self.tmp_toolbox.append(tool)
+                        tool.connect('button-press-event', self.on_tool_pressed_released)
+                        tool.connect('button-release-event', self.on_tool_pressed_released)
 
                 item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
                 item.get_parent().raise_(None)
