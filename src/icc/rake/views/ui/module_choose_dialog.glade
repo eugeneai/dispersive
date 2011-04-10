@@ -2,7 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
-  <object class="GtkListStore" id="categories">
+  <object class="GtkTreeStore" id="categories">
     <columns>
       <!-- column-name icon -->
       <column type="GdkPixbuf"/>

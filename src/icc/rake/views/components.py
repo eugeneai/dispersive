@@ -1162,23 +1162,24 @@ class ModuleChooseDialogView(DialogView):
         DialogView.__init__(self, model=model, **kwargs )
 
     def setup(self, message=""):
-        def cat_cat(tree):
+        def cat_cat(parent, tree):
             for ck, c in tree.iteritems():
                 pix=pixbuf_registry.resource(c.icon)
-                it = cs.append([pix, c.name, c.title])
+                it = cs.append(parent, [pix, c.name, c.title])
+                cat_cat(it, c.cats)
                 
                 for k, f in c.modules.iteritems():
                     name=k
                     category=f.category
                     title=f.title
                     pix=pixbuf_registry.resource(f._callable.icon)
-                    it = cs.append([pix, name, title])
+                    _ = cs.append(it, [pix, name, title])
         
         self.module_registry=ZC.getUtility(module_is.IModuleRegistry)
         pixbuf_registry=ZC.getUtility(IIconRegistry, name='pixbuf')
         cs=categories=self.ui.categories
         mr=self.module_registry
-        cat_cat(mr.tree)
+        cat_cat(None, mr.tree)
         if message:
             self.ui.title.set_markup("<b>"+message+"</b>")
 
