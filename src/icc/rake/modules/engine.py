@@ -11,6 +11,7 @@ class ModuleRegistry(object):
     implements(IModuleRegistry)
     def __init__(self):
         self.categories=OrderedDict()
+        self.tree=OrderedDict()
         self.modules=OrderedDict()
 
 module_registry=ModuleRegistry()
@@ -27,28 +28,32 @@ class Factory(zope_factory.Factory):
 def registerModuleFactory(f):
     name=f._callable.name
     module_registry=getUtility(IModuleRegistry)
+    cat=module_registry.categories[f.category]
+    cat.modules[name]=f
     module_registry.modules[name]=f
-    c=module_registry.categories.setdefault(f.category, {})
-    c[name]=f
 
     # Taken from ZCA
     gsm = getGlobalSiteManager()
     gsm.registerUtility(f, IFactory, name)
 
-"""
-To use the factory, you may do it like this::
+class Category(object):
+    pass
 
-  >>> from zope.component import queryUtility
-  >>> queryUtility(IFactory, 'fakedb')() #doctest: +ELLIPSIS
-  <FakeDb object at ...>
-
-There is a shortcut to use factory::
-
-  >>> from zope.component import createObject
-  >>> createObject('fakedb') #doctest: +ELLIPSIS
-  <FakeDb object at ...>
-
-""" 
+def _registerCategory(name, title, icon, description, category):
+    m_r=getUtility(IModuleRegistry)
+    cat=Category()
+    cat.name=name
+    cat.icon=icon
+    cat.title=title
+    cat.description=description
+    cat.cats=OrderedDict()
+    cat.modules=OrderedDict()
+    m_r.categories[name]=cat
+    if category != None:
+        parent = m_r.categories[category]
+        parent.cats[name]=cat
+    else:
+        m_r.tree[name]=cat
 
 def registerModule(context, name, factory, title, func, src, lang, category, icon=None, description='', inputs='{}', outputs='{}'
                    ):
@@ -66,6 +71,13 @@ def registerModule(context, name, factory, title, func, src, lang, category, ico
                    callable=registerModuleFactory,
                    args=(f,)
                    )
+
+def registerCategory(context, name, title, icon, description='', category=None):
+    context.action(discriminator=('RegisterCategory', name),
+                   callable=_registerCategory,
+                   args=(name, title, icon, description, category)
+                   )
+
 
 def get_module_registry():
     return module_registry

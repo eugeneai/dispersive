@@ -1162,17 +1162,23 @@ class ModuleChooseDialogView(DialogView):
         DialogView.__init__(self, model=model, **kwargs )
 
     def setup(self, message=""):
+        def cat_cat(tree):
+            for ck, c in tree.iteritems():
+                pix=pixbuf_registry.resource(c.icon)
+                it = cs.append([pix, c.name, c.title])
+                
+                for k, f in c.modules.iteritems():
+                    name=k
+                    category=f.category
+                    title=f.title
+                    pix=pixbuf_registry.resource(f._callable.icon)
+                    it = cs.append([pix, name, title])
+        
         self.module_registry=ZC.getUtility(module_is.IModuleRegistry)
         pixbuf_registry=ZC.getUtility(IIconRegistry, name='pixbuf')
         cs=categories=self.ui.categories
         mr=self.module_registry
-        for k, f in mr.modules.iteritems():
-            name=k
-            category=f.category
-            title=f.title
-            #bkg=pixbuf_registry.resource(name='selected')
-            pix=pixbuf_registry.resource(f._callable.icon)
-            it = cs.append([pix, name, title])
+        cat_cat(mr.tree)
         if message:
             self.ui.title.set_markup("<b>"+message+"</b>")
 
@@ -1194,8 +1200,17 @@ class ModuleChooseDialogView(DialogView):
 
     def on_categories_view_cursor_changed(self, tree_view, _):
         name=self.get_selection(tree_view)
-        f=self.module_registry.modules[name]
-        self.ui.description.set_markup(f.description)
+        try:
+            f=self.module_registry.modules[name]
+            return self.ui.description.set_markup(f.description)
+        except KeyError:
+            pass
+        try:
+            c=self.module_registry.categories[name]
+            return self.ui.description.set_markup("<b>Category</b>:"+c.description)
+        except KeyError:
+            pass
+        
 
 _mark554=object()
 

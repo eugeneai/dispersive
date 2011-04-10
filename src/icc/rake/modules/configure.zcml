@@ -4,7 +4,7 @@
            >
 
   <meta:directive
-      name="register"
+      name="module"
       namespace="http://rake.irnok.net/rake"
       schema=".interfaces.IRegisterModule"
       handler=".engine.registerModule"
@@ -14,11 +14,43 @@
 
   </meta:directive>
 
+  <meta:directive
+      name="category"
+      namespace="http://rake.irnok.net/rake"
+      schema=".interfaces.IRegisterCategory"
+      handler=".engine.registerCategory"
+      >
+
+      Register a category in the global module registry
+
+  </meta:directive>
+
   <utility
       component='.engine.module_registry'
   />
 
-  <rake:register
+  <rake:category
+     name='view'
+     title='View and Plot'
+     description='View data and results. Print the views and include them in reports'
+     icon='views/ui/pics/view.svg'
+  />
+
+  <rake:category
+     name='regression'
+     title='Regression model'
+     description='Regression model construction, i.e., functions of one depended and some indepemdent bariables.'
+     icon='views/ui/pics/view.svg'
+  />
+
+  <rake:category
+     name='data_acquisition'
+     title='Acquire, load, query for data'
+     description='Acquire data from equipment, load data frames from files, or query databases.'
+     icon='views/ui/pics/view.svg'
+  />
+
+  <rake:module
       name="linear_model"
       title="Linear Model (Regression)"
       description="Linear model module (lm)"
@@ -32,7 +64,7 @@
       outputs="{'model':'class.lm'}"
   />
  
-  <rake:register
+  <rake:module
       name="frame_load"
       title="Data frame loading"
       description="Data frame loading module (read.frame)"
@@ -45,7 +77,7 @@
       outputs="{'data':'data.frame'}"
   />
  
-  <rake:register
+  <rake:module
       name="frame_view"
       title="Data frame View"
       description="View a Data frame"
@@ -58,7 +90,7 @@
       inputs="{'data':'data.frame'}"
   />
  
-  <rake:register
+  <rake:module
       name="plot"
       title="2D Plot anything"
       description="Plot any data as 2D plot (plot)"
@@ -71,25 +103,6 @@
       inputs="{'x':'', 'y':''}"
   />
  
-
-  <!--
-
-  <files:register 
-      path="test_simple.py"
-      title="How to create a simple directive"
-      >
-    Describes how to implement a simple directive
-  </files:register>
-
-  <files:register path="simple.zcml">
-    Shows the ZCML directives needed to register a simple directive.
-    
-    Also show some usage examples,
-  </files:register>
-
-  <files:register path="__init__.py" title="Make this a package" />
-   -->
-
 </configure>
 
   
