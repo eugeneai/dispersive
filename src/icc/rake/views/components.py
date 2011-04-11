@@ -904,7 +904,7 @@ class Canvas(View):
                         continue
                     if _i.__class__!=goocanvas.Image:
                         continue
-                    if hasattr(_i,'module'):
+                    if hasattr(_i,'module') and _i.module.inputs:
                         i=_i
                         break
 
