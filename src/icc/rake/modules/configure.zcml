@@ -40,14 +40,14 @@
      name='regression'
      title='Regression model'
      description='Regression model construction, i.e., functions of one depended and some indepemdent bariables.'
-     icon='views/ui/pics/view.svg'
+     icon='views/ui/pics/regression.svg'
   />
 
   <rake:category
      name='data_acquisition'
      title='Acquire, load, query for data'
      description='Acquire data from equipment, load data frames from files, or query databases.'
-     icon='views/ui/pics/view.svg'
+     icon='views/ui/pics/acquire.svg'
   />
 
   <rake:module
