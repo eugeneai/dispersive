@@ -834,7 +834,7 @@ class Canvas(View):
 
             else:
                 # There shoul be a dialog for module choice.
-                m_name = self.choose_module(event)
+                m_name = self.choose_module(event, 'inputs')
                 if m_name:
                     mt=self.create_module(m_name, event.x_root, event.y_root)
                 else:
@@ -844,9 +844,17 @@ class Canvas(View):
                 self.model.connect(self.selected_module, mt)
             self.selected_item.get_parent().raise_(None)
             self.remove_selection()
+        elif not self.selected_module:
+            m_name = self.choose_module(event, 'outputs')
+            if m_name:
+                mt=self.create_module(m_name, event.x_root, event.y_root)
+            else:
+                mt=None
+            
 
-    def choose_module(self, event):
-        name=ModuleChooseDialog(message='Choose a module')
+    def choose_module(self, event, kind):
+        name=ModuleChooseDialog(message='Choose a module',
+                                filter=lambda x: getattr(x, kind))
         return name
 
     #@+node:eugeneai.20110213211825.1656: *3* on_root_motion
@@ -1115,8 +1123,8 @@ class AdjustenmentView(View):
 
     #@-others
 
-def ModuleChooseDialog(message):
-    d=ModuleChooseDialogView(message=message)
+def ModuleChooseDialog(message, filter=None):
+    d=ModuleChooseDialogView(message=message, filter=filter)
     v=d.run()
     d.destroy()
     return v
@@ -1159,13 +1167,19 @@ class ModuleChooseDialogView(DialogView):
                     'categories_view', 'description']
 
     def __init__(self, model=None, **kwargs):
-        DialogView.__init__(self, model=model, **kwargs )
+        f=kwargs.pop('filter', None)
+        self.set_filter(f)
+        DialogView.__init__(self, model=model, **kwargs)
+        
+    def set_filter(self, filter):
+        self.filter=filter
 
     def setup(self, message=""):
+        fil = self.filter
         def cat_cat(parent, tree):
             for ck, c in tree.iteritems():
                 pix=pixbuf_registry.resource(c.icon)
-                it = cs.append(parent, [pix, c.name, c.title])
+                it = cs.append(parent, [pix, c.name, c.title, True])
                 cat_cat(it, c.cats)
                 
                 for k, f in c.modules.iteritems():
@@ -1173,7 +1187,11 @@ class ModuleChooseDialogView(DialogView):
                     category=f.category
                     title=f.title
                     pix=pixbuf_registry.resource(f._callable.icon)
-                    _ = cs.append(it, [pix, name, title])
+                    if fil:
+                        en = fil(f._callable)
+                    else:
+                        en = True
+                    _ = cs.append(it, [pix, name, title, en])
         
         self.module_registry=ZC.getUtility(module_is.IModuleRegistry)
         pixbuf_registry=ZC.getUtility(IIconRegistry, name='pixbuf')
