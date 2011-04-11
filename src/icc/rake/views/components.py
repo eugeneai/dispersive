@@ -1201,8 +1201,10 @@ class ModuleChooseDialogView(DialogView):
         if message:
             self.ui.title.set_markup("<b>"+message+"</b>")
 
-        self.add_buttons((gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                      gtk.STOCK_OK, gtk.RESPONSE_OK))
+        self.ui.button_cancel=self.ui.dialog.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT)
+        self.ui.button_ok=self.ui.dialog.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
+        ok=self.ui.button_ok
+        ok.set_sensitive(False)
 
     def get_value(self):
         return self.get_selection()
@@ -1219,17 +1221,21 @@ class ModuleChooseDialogView(DialogView):
 
     def on_categories_view_cursor_changed(self, tree_view, _):
         name=self.get_selection(tree_view)
+        enabled=self.get_selection(tree_view, column=3)
         try:
             f=self.module_registry.modules[name]
-            return self.ui.description.set_markup(f.description)
+            self.ui.description.set_markup(f.description)
+            self.ui.button_ok.set_sensitive(enabled)
+            return
         except KeyError:
             pass
         try:
             c=self.module_registry.categories[name]
-            return self.ui.description.set_markup("<b>Category</b>:"+c.description)
+            self.ui.description.set_markup("<b>Category</b>:"+c.description)
+            self.ui.button_ok.set_sensitive(False)
+            return
         except KeyError:
             pass
-        
 
 _mark554=object()
 
