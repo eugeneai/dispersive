@@ -44,6 +44,21 @@
   />
 
   <rake:category
+     name='clustering'
+     title='Clustering'
+     description='Clustering data.'
+     icon='views/ui/pics/clustering.svg'
+  />
+
+  <rake:category
+     name='hclustering'
+     title='Hierarchical clustering'
+     description='Clustering data with a hierarchical method.'
+     icon='views/ui/pics/hclustering.svg'
+     category='clustering'
+  />
+
+  <rake:category
      name='data_acquisition'
      title='Acquire, load, query for data'
      description='Acquire data from equipment, load data frames from files, or query databases.'
