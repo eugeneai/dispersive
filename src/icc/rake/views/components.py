@@ -1104,7 +1104,10 @@ class AdjustenmentView(View):
     implements(IAdjustenmentView)
 
     template = "ui/adjustenment_window.glade"
-    widget_names = ['vbox', 'main_window']
+    widget_names = ['vbox', 'main_window',
+                    'tree_inputs', 'tree_outputs',
+                    'listinputs', 'listoutputs',
+                    'title']
 
     #@+others
     #@+node:eugeneai.20110116171118.1501: *3* __init__
