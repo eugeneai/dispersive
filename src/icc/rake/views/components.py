@@ -517,16 +517,6 @@ class Canvas(View):
         #root.connect('enter-notify-event', self.on_root_enter_leave)
         #root.connect('leave-notify-event', self.on_root_enter_leave)
 
-        """
-        text=goocanvas.Text(text="Touch me, and I will rotate!",
-                       x=300, y=300,
-                       anchor=gtk.ANCHOR_CENTER,
-                       font="Sans 24", parent=root)
-        text.rotate(45, 300, 300)
-
-        text.connect('enter-notify-event', self.on_text_enter_notify_event)
-        """
-
         self.ui.vbox.add(canvas)
         self.set_model(model)
 
@@ -753,6 +743,20 @@ class Canvas(View):
         if event.type==gtk.gdk.ENTER_NOTIFY:
             state='selected'
         self.set_curve_state(fore_path, state)
+
+    def on_curve_press_release(self, item, target, event, fore_path):
+        #print "Enter:", item, target, event
+        if self.new_connection:
+            return
+        state=None
+        if event.type==gtk.gdk.BUTTON_RELEASE:
+            state='selected'
+            self.set_curve_state(fore_path, state)
+            d=InputDialog("test")
+            state=None
+            self.set_curve_state(fore_path, state)
+        
+        
     #@+node:eugeneai.20110123122541.1663: *3* on_tool_pressed_released
     def on_tool_pressed_released(self, item, target, event):
         if event.type == gtk.gdk.BUTTON_PRESS:
@@ -1018,6 +1022,8 @@ class Canvas(View):
         self.paths.append(f)
         f.connect('enter-notify-event', self.on_curve_enter_leave, f)
         f.connect('leave-notify-event', self.on_curve_enter_leave, f)
+        f.connect('button-press-event', self.on_curve_press_release, f)
+        f.connect('button-release-event', self.on_curve_press_release, f)
         root=self.ui.canvas.get_root_item()
         root.add_child(b,-1)
         root.add_child(f,-1)
