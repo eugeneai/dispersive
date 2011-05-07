@@ -1,0 +1,123 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:meta="http://namespaces.zope.org/meta"
+           xmlns:rake="http://rake.irnok.net/rake"
+           >
+
+  <meta:directive
+      name="module"
+      namespace="http://rake.irnok.net/rake"
+      schema=".interfaces.IRegisterModule"
+      handler=".engine.registerModule"
+      >
+
+      Register a module with the module registry
+
+  </meta:directive>
+
+  <meta:directive
+      name="category"
+      namespace="http://rake.irnok.net/rake"
+      schema=".interfaces.IRegisterCategory"
+      handler=".engine.registerCategory"
+      >
+
+      Register a category in the global module registry
+
+  </meta:directive>
+
+  <utility
+      component='.engine.module_registry'
+  />
+
+  <rake:category
+     name='view'
+     title='View and Plot'
+     description='View data and results. Print the views and include them in reports'
+     icon='views/ui/pics/view.svg'
+  />
+
+  <rake:category
+     name='regression'
+     title='Regression model'
+     description='Regression model construction, i.e., functions of one depended and some indepemdent bariables.'
+     icon='views/ui/pics/regression.svg'
+  />
+
+  <rake:category
+     name='clustering'
+     title='Clustering'
+     description='Clustering data.'
+     icon='views/ui/pics/clustering.svg'
+  />
+
+  <rake:category
+     name='hclustering'
+     title='Hierarchical clustering'
+     description='Clustering data with a hierarchical method.'
+     icon='views/ui/pics/hclustering.svg'
+     category='clustering'
+  />
+
+  <rake:category
+     name='data_acquisition'
+     title='Acquire, load, query for data'
+     description='Acquire data from equipment, load data frames from files, or query databases.'
+     icon='views/ui/pics/acquire.svg'
+  />
+
+  <rake:module
+      name="linear_model"
+      title="Linear Model (Regression)"
+      description="Linear model module (lm)"
+      icon="views/ui/pics/lm.svg"
+      factory=".models.components.LmModule"
+      src="R"
+      lang="R"
+      func="lm"
+      category="regression"
+      inputs="{'data':'data.frame'}"
+      outputs="{'model':'class.lm'}"
+  />
+ 
+  <rake:module
+      name="frame_load"
+      title="Data frame loading"
+      description="Data frame loading module (read.frame)"
+      icon="views/ui/pics/frame_open.svg"
+      factory=".models.components.FrameLoadModule"
+      src="R"
+      lang="R"
+      func="read.table"
+      category="data_acquisition"
+      outputs="{'data':'data.frame'}"
+  />
+ 
+  <rake:module
+      name="frame_view"
+      title="Data frame View"
+      description="View a Data frame"
+      icon="views/ui/pics/frame_view.svg"
+      factory=".models.components.FrameViewModule"
+      src=""
+      lang="Python"
+      func=""
+      category="view"
+      inputs="{'data':'data.frame'}"
+  />
+ 
+  <rake:module
+      name="plot"
+      title="2D Plot anything"
+      description="Plot any data as 2D plot (plot)"
+      icon="views/ui/pics/plot.svg"
+      factory=".models.components.PlotModule"
+      src="R"
+      lang="R"
+      func="plot"
+      category="view"
+      inputs="{'x':'', 'y':''}"
+  />
+ 
+</configure>
+
+  

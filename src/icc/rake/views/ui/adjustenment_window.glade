@@ -5,32 +5,52 @@
   <object class="GtkWindow" id="main_window">
     <property name="width_request">500</property>
     <property name="height_request">350</property>
-    <property name="can_focus">False</property>
     <child>
       <object class="GtkHBox" id="hbox1">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <child>
-          <object class="GtkFrame" id="frame1">
-            <property name="width_request">10</property>
+          <object class="GtkFrame" id="inputs">
+            <property name="width_request">30</property>
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="label_xalign">0</property>
             <property name="shadow_type">in</property>
             <child>
-              <placeholder/>
+              <object class="GtkTreeView" id="tree_inputs">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="model">listinputs</property>
+                <child>
+                  <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                    <property name="title">Name</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="treeviewcolumn2">
+                    <property name="title">Type</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+              </object>
             </child>
             <child type="label">
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Input</property>
+                <property name="label" translatable="yes">Inputs</property>
               </object>
             </child>
           </object>
           <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -38,25 +58,32 @@
           <object class="GtkVBox" id="vbox1">
             <property name="width_request">200</property>
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkLabel" id="title">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Dialog &lt;b&gt;title&lt;/b&gt;</property>
+                <property name="use_markup">True</property>
+                <property name="justify">center</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkVBox" id="vbox">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <child>
                   <placeholder/>
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
               <object class="GtkHButtonBox" id="hbuttonbox1">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="layout_style">end</property>
                 <child>
                   <placeholder/>
@@ -70,8 +97,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
-                    <signal name="clicked" handler="on_ok_button_clicked" swapped="no"/>
+                    <signal name="clicked" handler="on_ok_button_clicked"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -84,41 +110,79 @@
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="pack_type">end</property>
-                <property name="position">1</property>
+                <property name="position">0</property>
               </packing>
             </child>
           </object>
           <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
         <child>
-          <object class="GtkFrame" id="frame2">
-            <property name="width_request">10</property>
+          <object class="GtkFrame" id="outputs">
+            <property name="width_request">30</property>
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="label_xalign">0</property>
             <property name="shadow_type">in</property>
             <child>
-              <placeholder/>
+              <object class="GtkTreeView" id="tree_outputs">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="model">listoutputs</property>
+                <property name="headers_clickable">False</property>
+                <property name="search_column">0</property>
+                <child>
+                  <object class="GtkTreeViewColumn" id="treeviewcolumn3">
+                    <property name="title">Name</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext3"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="treeviewcolumn4">
+                    <property name="title">Type</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext4"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+              </object>
             </child>
             <child type="label">
               <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">output</property>
+                <property name="label" translatable="yes">Outputs</property>
               </object>
             </child>
           </object>
           <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
             <property name="position">2</property>
           </packing>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="listinputs">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name type -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="listoutputs">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name type -->
+      <column type="gchararray"/>
+    </columns>
   </object>
 </interface>

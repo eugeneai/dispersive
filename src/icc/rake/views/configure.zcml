@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf8'?>
 <!--@+leo-ver=5-thin-->
 <!--@+node:eugeneai.20110116171118.1503: * @file configure.zcml-->
 <!--@@language xml-->
@@ -25,6 +26,17 @@
     provides="icc.rake.views.interfaces.IAdjustenmentView"
     for="icc.rake.models.interfaces.IModule"
     />
+
+<utility
+    component=".components.icon_registry"
+    name="svg"
+    />
+
+<utility
+    component=".components.pixbuf_registry"
+    name="pixbuf"
+    />
+
 
 </configure>
 <!--@-leo-->

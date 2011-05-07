@@ -24,6 +24,7 @@ from pkg_resources import resource_stream, resource_string
 import icc.rake.models.components as mdl
 import icc.rake.models.interfaces as mdli
 import icc.rake.interfaces as ri
+import icc.rake.modules.interfaces as module_is
 import os
 
 import cairo, math
@@ -39,7 +40,7 @@ def sign(x):
     return 0
 
 #@+node:eugeneai.20110116171118.1455: ** class Ui
-class Ui:
+class Ui(object):
     pass
 
 #@+node:eugeneai.20110116171118.1456: ** InputDialog
@@ -322,7 +323,8 @@ class SVGImage(goocanvas.Image):
     def render_pattern(self, **kwargs):
         def convert_rsvg(resource):
             if type(resource) in [types.StringType, types.UnicodeType]:
-                return rsvg.Handle(data=resource_string(__name__, resource))
+                icon_registry=ZC.getUtility(IIconRegistry, 'svg')
+                return icon_registry.resource(resource)
             return resource
 
         width, height = self.kwargs['width'], self.kwargs['height']
@@ -468,15 +470,15 @@ class PicItem(goocanvas.ItemSimple, goocanvas.Item):
 gobject.type_register(PicItem)
 #@+node:eugeneai.20110116171118.1481: ** class Canvas
 TBL_ACTIONS=[
-    ( 1,-1, "remove", 'ui/pics/close.svg'),
-    (-1, 1, "rename", 'ui/pics/name.svg'),
-    ( 1, 1, "info", 'ui/pics/info.svg'),
-    (-1,-1, "edit", 'ui/pics/edit.svg'),
+    ( 1,-1, "remove", 'ui/pics/close.svg', True),
+    (-1, 1, "rename", 'ui/pics/name.svg', True),
+    ( 1, 1, "info", 'ui/pics/info.svg', True),
+    (-1,-1, "edit", 'ui/pics/edit.svg', True),
 
-    ( 1, 0, "right", 'ui/pics/right.svg'),
-    (-1, 0, "left", 'ui/pics/right.svg'),
-    ( 0,-1, "up", 'ui/pics/down.svg'),
-    ( 0, 1, "down", 'ui/pics/down.svg'),
+    ( 1, 0, "right", 'ui/pics/right.svg', 'outputs'),
+    (-1, 0, "left", 'ui/pics/right.svg', 'inputs'),
+    ( 0,-1, "up", 'ui/pics/down.svg', False),
+    ( 0, 1, "down", 'ui/pics/down.svg', False),
     ]
 
 class Canvas(View):
@@ -489,7 +491,6 @@ class Canvas(View):
     #@+node:eugeneai.20110116171118.1482: *3* __init__
     def __init__(self, model = None):
         View.__init__(self, model=None)
-        self.icon_cache={}
         self.state=Ui()
         self.selected_module=None # module and its
         self.selected_item = None # corresponding icon
@@ -554,18 +555,11 @@ class Canvas(View):
     #@+node:eugeneai.20110116171118.1484: *3* init_resources
     def init_resources(self):
         View.init_resources(self)
-        self.module_icon_background = rsvg.Handle(
-                data=resource_string(__name__,
-                      "ui/pics/background.svg"))
-        self.module_icon_selected = rsvg.Handle(
-                data=resource_string(__name__,
-                      "ui/pics/selected.svg"))
-        self.module_icon_toolboxed = rsvg.Handle(
-                data=resource_string(__name__,
-                      "ui/pics/toolboxed.svg"))
-        self.toolbox_background = rsvg.Handle(
-                data=resource_string(__name__,
-                      'ui/pics/tool-bkg.svg'))
+        icon_registry=ZC.getUtility(IIconRegistry, name='svg')
+        self.module_icon_background = icon_registry.resource("ui/pics/background.svg")
+        self.module_icon_selected = icon_registry.resource("ui/pics/selected.svg")
+        self.module_icon_toolboxed = icon_registry.resource("ui/pics/toolboxed.svg")        
+        self.toolbox_background = self.module_icon_toolboxed = icon_registry.resource("ui/pics/tool-bkg.svg")
 
     #@+node:eugeneai.20110116171118.1485: *3* _module
     def _module(self, module, selected=False):
@@ -574,7 +568,7 @@ class Canvas(View):
         pattern=self.draw_module_pattern(module, bheight=h, bwidth=w, fheight=32, fwidth=32, selected=selected)
 
         img = goocanvas.Image(x=-w/2., y=-h/2., width=w, height=h, pattern=pattern)
-        text = goocanvas.Text(text=module.name, x=0, y=22, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', )
+        text = goocanvas.Text(text=module.name, x=0, y=22, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', ) # XXX change name to title and edit both
         img.text = text
 
         return img, text
@@ -683,15 +677,21 @@ class Canvas(View):
 
 
                 self.tmp_toolbox=[]
-                for (dx, dy, name, ui) in TBL_ACTIONS:
-                    px, py = 20*dx-7, 20*dy-7 # XXX monkey patch.
-                    tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=px, y=py)
-                    tool.item=item # Whose tool it is. 
-                    tool.name=name
-                    self.tmp_toolbox_group.add_child(tool, -1)
-                    self.tmp_toolbox.append(tool)
-                    tool.connect('button-press-event', self.on_tool_pressed_released)
-                    tool.connect('button-release-event', self.on_tool_pressed_released)
+                for (dx, dy, name, ui, cond) in TBL_ACTIONS:
+                    if type(cond) == types.StringType:
+                        if hasattr(module,cond):
+                            cond=getattr(module, cond)
+                        else:
+                            cond=False
+                    if cond:
+                        px, py = 20*dx-7, 20*dy-7 # XXX monkey patch.
+                        tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=px, y=py)
+                        tool.item=item # Whose tool it is. 
+                        tool.name=name
+                        self.tmp_toolbox_group.add_child(tool, -1)
+                        self.tmp_toolbox.append(tool)
+                        tool.connect('button-press-event', self.on_tool_pressed_released)
+                        tool.connect('button-release-event', self.on_tool_pressed_released)
 
                 item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
                 item.get_parent().raise_(None)
@@ -822,6 +822,9 @@ class Canvas(View):
     #@+node:eugeneai.20110215120545.1660: *3* on_root_press_release
     def on_root_press_release(self, item, target, event):
         if self.new_connection:
+            self.new_connection.bkg_path.remove()
+            self.new_connection.remove()
+            self.new_connection=None # release the tracking process
             mt=None
             if self.connect_to:
                 mt=self.connect_to.module
@@ -831,20 +834,28 @@ class Canvas(View):
 
             else:
                 # There shoul be a dialog for module choice.
-                mt=self.create_module(mdl.LmModule(), event.x_root, event.y_root)
-                pass
-
-            self.create_connection(self.selected_module, mt)
-            self.model.connect(self.selected_module, mt)
-            self.new_connection.bkg_path.remove()
-            self.new_connection.remove()
-            self.new_connection=None # release the tracking process
+                m_name = self.choose_module(event, 'inputs')
+                if m_name:
+                    mt=self.create_module(m_name, event.x_root, event.y_root)
+                else:
+                    mt=None
+            if mt:
+                self.create_connection(self.selected_module, mt)
+                self.model.connect(self.selected_module, mt)
             self.selected_item.get_parent().raise_(None)
             self.remove_selection()
-        else:
-            self._dbm(event)
+        elif not self.selected_module:
+            m_name = self.choose_module(event, 'outputs')
+            if m_name:
+                mt=self.create_module(m_name, event.x_root, event.y_root)
+            else:
+                mt=None
+            
 
-
+    def choose_module(self, event, kind):
+        name=ModuleChooseDialog(message='Choose a module',
+                                filter=lambda x: getattr(x, kind))
+        return name
 
     #@+node:eugeneai.20110213211825.1656: *3* on_root_motion
     def on_root_motion(self, group, target, event):
@@ -893,7 +904,7 @@ class Canvas(View):
                         continue
                     if _i.__class__!=goocanvas.Image:
                         continue
-                    if hasattr(_i,'module'):
+                    if hasattr(_i,'module') and _i.module.inputs:
                         i=_i
                         break
 
@@ -1018,6 +1029,9 @@ class Canvas(View):
         from model.
         """
 
+        if type(module) in [types.UnicodeType, types.StringType]:
+            module = ZC.createObject(module)
+
         if module in self.model.modules: 
 
             if x == None or y == None and module in self.model.modules:
@@ -1055,8 +1069,6 @@ class Canvas(View):
     #@-others
 #@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
 class ModuleCanvasView(View):
-    module_resource='icc.rake.modules.views'
-
     #@+others
     #@+node:eugeneai.20110116171118.1496: *3* set_model
     def set_model(self, model):
@@ -1075,29 +1087,16 @@ class ModuleCanvasView(View):
         self.icon = None
         if self.parent_view:
             if self.model != None and self.model.__class__.icon:
-                self.icon = self.parent_view.icon_cache.get(self.model.__class__, None)
-                if self.icon == None:
-                    self.icon = rsvg.Handle(
-                        data=resource_string(self.__class__.module_resource,
-                             self.model.__class__.icon))
-                    self.parent_view.icon_cache[self.model.__class__]=self.icon
+                if self.model.__class__.icon:
+                    icon_registry=ZC.getUtility(IIconRegistry, name='svg')
+                    self.icon = icon_registry.resource(self.model.__class__.icon)
+                
 
     #@+node:eugeneai.20110116171118.1499: *3* render_on_canvas
     def render_on_canvas(self, canvas):
         """Render myself on a cairo canvas"""
         if self.icon:
             self.icon.render_cairo(canvas)
-        """
-        canvas.move_to(16, 38)
-        canvas.select_font_face ("Sans")
-        text = self.model.name
-        x_bearing, y_bearing, width, height, x_advance, y_advance = canvas.text_extents(text)
-        canvas.rel_move_to(-width/2., height)
-        canvas.set_source_rgb(0,0,0)
-        canvas.show_text(text)
-        canvas.stroke()
-        """
-
 
     #@-others
 #@+node:eugeneai.20110116171118.1500: ** class AdjustenmentView
@@ -1105,7 +1104,10 @@ class AdjustenmentView(View):
     implements(IAdjustenmentView)
 
     template = "ui/adjustenment_window.glade"
-    widget_names = ['vbox', 'main_window']
+    widget_names = ['vbox', 'main_window',
+                    'tree_inputs', 'tree_outputs',
+                    'listinputs', 'listoutputs',
+                    'title']
 
     #@+others
     #@+node:eugeneai.20110116171118.1501: *3* __init__
@@ -1123,5 +1125,198 @@ class AdjustenmentView(View):
         #self.parent_view.queue_draw()
 
     #@-others
+
+def ModuleChooseDialog(message, filter=None):
+    d=ModuleChooseDialogView(message=message, filter=filter)
+    v=d.run()
+    d.destroy()
+    return v
+
+class DialogView(View):
+    widget_names = ['dialog']
+    def __init__(self, model=None, buttons=(), **kwargs):
+        View.__init__(self, model=model)
+        self.ui.dialog_vbox=self.ui.dialog.vbox
+        kw={}
+        kw.update(kwargs)
+        self.setup(**kw)
+        self.add_buttons(buttons)
+
+    def setup(self, **kw):
+        pass
+   
+    def add_buttons(self, buttons=()):
+        self.ui.dialog.add_buttons(*buttons)
+
+    def run(self):
+        result = self.ui.dialog.run()
+        if result == gtk.RESPONSE_OK:
+            value = self.get_value()
+        else:
+            value = None
+        self.ui.dialog.destroy()
+        return value
+
+    def get_value(self):
+        raise RuntimeError, "should be implemented by subclass"
+
+    def destroy(self):
+        self.ui.dialog.destroy()
+
+class ModuleChooseDialogView(DialogView):
+    implements(IApplication)
+    template = "ui/module_choose_dialog.glade"
+    widget_names = ['dialog', 'vbox', 'title', 'categories',
+                    'categories_view', 'description']
+
+    def __init__(self, model=None, **kwargs):
+        f=kwargs.pop('filter', None)
+        self.set_filter(f)
+        DialogView.__init__(self, model=model, **kwargs)
+        
+    def set_filter(self, filter):
+        self.filter=filter
+
+    def setup(self, message=""):
+        fil = self.filter
+        def cat_cat(parent, tree):
+            for ck, c in tree.iteritems():
+                pix=pixbuf_registry.resource(c.icon)
+                it = cs.append(parent, [pix, c.name, c.title, True])
+                cat_cat(it, c.cats)
+                
+                for k, f in c.modules.iteritems():
+                    name=k
+                    category=f.category
+                    title=f.title
+                    pix=pixbuf_registry.resource(f._callable.icon)
+                    if fil:
+                        en = fil(f._callable)
+                    else:
+                        en = True
+                    _ = cs.append(it, [pix, name, title, en])
+        
+        self.module_registry=ZC.getUtility(module_is.IModuleRegistry)
+        pixbuf_registry=ZC.getUtility(IIconRegistry, name='pixbuf')
+        cs=categories=self.ui.categories
+        mr=self.module_registry
+        cat_cat(None, mr.tree)
+        if message:
+            self.ui.title.set_markup("<b>"+message+"</b>")
+
+        self.ui.button_cancel=self.ui.dialog.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT)
+        self.ui.button_ok=self.ui.dialog.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
+        ok=self.ui.button_ok
+        ok.set_sensitive(False)
+
+    def get_value(self):
+        return self.get_selection()
+
+    def get_selection(self, tv=None, column=1):
+        if tv == None:
+            tv=self.ui.categories_view
+        cm=self.ui.categories
+        sel=tv.get_selection()
+        m,i=sel.get_selected()
+        if i:
+            return cm.get_value(i, column)
+        return None
+
+    def on_categories_view_cursor_changed(self, tree_view, _):
+        name=self.get_selection(tree_view)
+        enabled=self.get_selection(tree_view, column=3)
+        try:
+            f=self.module_registry.modules[name]
+            self.ui.description.set_markup(f.description)
+            self.ui.button_ok.set_sensitive(enabled)
+            return
+        except KeyError:
+            pass
+        try:
+            c=self.module_registry.categories[name]
+            self.ui.description.set_markup("<b>Category</b>:"+c.description)
+            self.ui.button_ok.set_sensitive(False)
+            return
+        except KeyError:
+            pass
+
+_mark554=object()
+
+class IconRegistry(object):
+    implements(IIconRegistry)
+    def __init__(self, conv=None, attr=None, parent=None):
+        self.icons = {}
+        self.names = {}
+        self.conv=(conv,)
+        self.attr=attr
+        self.parent=parent
+
+    def resource(self, r=None, name = None):
+        if r == None:
+            if name != None:
+                return self.names[name]
+        if r in self.icons:
+            return self.icons[r]
+        if name == None:
+            name=os.path.splitext(os.path.basename(r))[0]
+        return self.new_resource(r, name)
+
+    def new_resource(self, r=None, name = None, icon=None):
+        if icon == None:
+            icon = self.load(r, name)
+            answer = self.new_resource(r, name, icon)
+            return answer
+        conv = self.conv[0]
+        if self.conv[0] != None:
+            if self.attr:
+                kwargs={self.attr:icon}
+                icon = conv(**kwargs)
+            else:
+                icon = conv(icon)
+        self.icons[r] = icon
+        if name:
+            self.names[name] = icon
+        return icon
+
+    def load(self, r, name = None):
+        if self.parent:
+            return self.parent.resource(r=r, name=name)
+        
+        ### split : etc..
+        
+        if r.find(':')!=-1:
+            mod, path = r.split(":",1)
+        else:
+            mod  = __name__
+            path = r
+
+        if os.path.isabs(path):
+            path = r
+            mod  = None
+
+        if mod == None:
+            f=open(r)
+            s=f.read()
+            f.close()
+        else:
+            s = resource_string(mod, path)
+        return s
+
+
+icon_registry = IconRegistry(conv=rsvg.Handle, attr='data')
+
+def to_pixbuf(handle=None):
+    w=h=32
+    s=cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
+    c=cairo.Context(s)
+    bg = icon_registry.resource(name='selected')
+    bg.render_cairo(c)
+    handle.render_cairo(c)
+    pm=gtk.gdk.pixbuf_new_from_data(s.get_data(),gtk.gdk.COLORSPACE_RGB, True, 8,
+                                    s.get_width(), s.get_height(), s.get_stride())
+    return pm
+    
+pixbuf_registry = IconRegistry(conv=to_pixbuf, attr='handle', parent=icon_registry)
+
 #@-others
 #@-leo

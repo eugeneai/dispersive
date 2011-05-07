@@ -7,11 +7,12 @@
 #!/usr/bin/python
 import os, os.path
 from zope.interface import implements
+from zope.component import createObject
 from icc.rake.models.interfaces import *
 try:
     from collections import OrderedDict
 except ImportError:
-    # For pythons < 2.7.0
+    # For python < 2.7.0
     OrderedDict=dict
 
 #@+node:eugeneai.20110116171118.1429: ** class Model
@@ -32,7 +33,7 @@ class Module:
     controls=OrderedDict()
     implementors=OrderedDict()
     name="<Module>"
-    icon=None # Shoul not be here
+    icon=None # Should not be here
     modified=False
 
 #@+node:eugeneai.20110116171118.1432: ** class Canvas
@@ -49,10 +50,10 @@ class Canvas:
         self.changed=True
 
         # test case
-        m1 = FrameLoadModule()
-        m2 = LmModule()
-        m3 = FrameViewModule()
-        mp = PlotModule()
+        m1 = createObject('frame_load')
+        m2 = createObject('linear_model')
+        m3 = createObject('frame_view')
+        mp = createObject('plot')
         self.place(m1, 70, 150)
         self.place(m2, 200, 30)
         self.place(m3, 500, 100)
@@ -61,6 +62,7 @@ class Canvas:
         self.connect(m1,m3)
         self.connect(m2,m3)
         self.connect(m2,mp)
+
 
 
     #@+node:eugeneai.20110116171118.1434: *3* find_module
@@ -129,33 +131,6 @@ class Canvas:
             self.updated()
 
     #@-others
-#@+node:eugeneai.20110116171118.1443: ** class FrameLoadModule
-class FrameLoadModule(Module):
-    outputs=OrderedDict(data = ('data.frame',))
-    icon='ui/pics/frame_open.svg'
-    name='Data Frame Loading' 
-
-#@+node:eugeneai.20110116171118.1444: ** class FrameViewModule
-class FrameViewModule(Module):
-    inputs=OrderedDict(data = ('data.frame',))
-    icon='ui/pics/frame_view.svg'
-    name='Data Frame Viewing'
-
-#@+node:eugeneai.20110116171118.1445: ** class LmModule
-class LmModule(Module):
-    inputs=OrderedDict(data = ('data.frame',))
-    outputs=OrderedDict(model = ('class.lm',))
-    icon='ui/pics/lm.svg'
-    name='Linear Regression'
-
-#@+node:eugeneai.20110116171118.1446: ** class PlotModule
-class PlotModule(Module):
-    inputs=OrderedDict(x = ('',), y=('',))
-    outputs=OrderedDict()
-    icon='ui/pics/plot.svg'
-    name='Plot (anything)'
-
-
 
 #@-others
 #@-leo
