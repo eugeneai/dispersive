@@ -262,32 +262,40 @@ nach=function(spectrum,x0, a,b){
 	h
 }
  
-rc0=nach(spectrum, 0, 0, 180)
+rc0=nach(spectrum, 0, 0, 200)
 rcFe = nach(spectrum,1500,1300,1800)
+rcCom = nach(spectrum, 3400, 2900, 3800)
 print(rc0)
 print (rcFe)
+print(rcCom)
 gaus = gauss_stru(rc0)
 gausFe = gauss_stru(rcFe)
+gausCom = gauss_stru(rcCom)
 #print(gausFe)
-#q(save='no')
+
 #rcFe = find_pike(spectrum, x0_gauss, x0, 1, a, b, eps=0.01, params=p)
 
-x <- c(rc0$x0, rcFe$x0)
+x <- c(0, 6.4)
+
 xsq=sqrt(x)
 print(xsq)
-y <- c(rc0$fwhm,rcFe$fwhm)
+#y <- c(rc0$fwhm,rcFe$fwhm)
+y <- c(0,rcFe$fwhm)
 print(y)
 mfwhm=lm(y~xsq)
 cmfwhm=coefficients(mfwhm)
-
+# v=tan(y)
+# print(v)
 
 t=cmfwhm[1]
 k=cmfwhm[2]
  print(cmfwhm) 
 fwhmRel=sqrt(17.375) * k + t
-
+fwhmZr=sqrt(15.774) * k + t
+fwhmCom=sqrt(16.95) * k + t
 SC = (rcFe$x0-rc0$x0) / (6.4-0)
 C0 = rc0$x0
+
 
 rcRel=list()
 rcRel$A=rc0$A/2.
@@ -295,16 +303,75 @@ rcRel$x0=C0 + 17.375 * SC # XXX
 rcRel$fwhm=fwhmRel
 
 gausRel=gauss_stru(rcRel)
-
 print(fwhmRel)
+
+rcZr=list()
+rcZr$A=rcFe$A
+rcZr$x0=C0 + 15.774 * SC
+rcZr$fwhm=fwhmZr
+gausZr=gauss_stru(rcZr)
+print(fwhmZr)
+ 
+ 
+ rcCom=list()
+ rcCom$A=rc0$A/2.7
+ rcCom$x0=C0 + 16.95 * SC
+ rcCom$fwhm=fwhmCom*6
+ gausCom=gauss_stru(rcCom)
+ 
+ z=(112/180)*pi
+ w=cos(z)
+ #dE=E0*Ec/m0*c^2*(1-cos(z))
+ print(w)
+LOG=T
+#if (LOG) {
+ #   spectrum=log(spectrum)
+ #   gaus=log(gaus)
+ #   gausFe=log(gausFe)
+ #   gausRel=log(gausRel)
+ #   gausZr=log(gausZr)
+ #   gausCom=log(gausCom)
+#}
 png("plot.png", width=1024, height=800)
 
+#plot(spectrum, type='l', col='magenta')
 plot(spectrum, type='l', col='black')
+grid(NA, 5, lwd = 2)
+
+#abline(h = 1e+05/2,col='gray')
+#abline(h = 1e+05,col='gray')
+#abline(h = 2e+05/2,col='gray')
+#abline(h = 2e+05,col='gray')
+#abline(h = 3e+05/2,col='gray')
+#abline(h = 3e+05,col='gray')
+#        abline(v = 250, col='gray')
+#        abline(v = 500, col='gray')
+#@        abline(v = 750, col='gray')
+ #       abline(v = 1000, col='gray')
+ #       abline(v = 1250, col='gray')
+ #       abline(v = 1500, col='gray')
+  #      abline(v = 1750, col='gray')
+  #      abline(v = 2000, col='gray')
+  #      abline(v = 2250, col='gray')
+  #      abline(v = 2500, col='gray')
+  #      abline(v = 2750, col='gray')
+  #      abline(v = 3000, col='gray')
+   #     abline(v = 3250, col='gray')
+#        abline(v = 3500, col='gray')
+ #       abline(v = 3750, col='gray')
+ #       abline(v = 4000, col='gray')
+  #      abline(v = 4250, col='gray')
+
 lines(gaus,type='l', col='red')
 lines(gausFe,type='l',col='green')
 lines(gausRel,type='l',col='blue')
 lines(fwhmRel, type='l', col='blue')
+lines(gausZr, type='l', col='gold')  
+lines(fwhmZr, type='l', col='gold')
+lines(gausCom, type='l', col='cyan')  
+lines(fwhmCom, type='l', col='cyan')
 line.xrf.mark(rc0$x, spectrum, col='black')
 line.xrf.mark(rcFe$x, spectrum, col='green')
-line.xrf.mark(17.375, spectrum, col='orange', scale='spectrum')
+line.xrf.mark(rcCom$x, spectrum, col='red')
+line.xrf.mark(rcZr$x, spectrum, col='magenta')
 dev.off()
