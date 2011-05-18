@@ -324,19 +324,19 @@ print(fwhmZr)
  #dE=E0*Ec/m0*c^2*(1-cos(z))
  print(w)
 LOG=T
-#if (LOG) {
- #   spectrum=log(spectrum)
- #   gaus=log(gaus)
- #   gausFe=log(gausFe)
- #   gausRel=log(gausRel)
- #   gausZr=log(gausZr)
- #   gausCom=log(gausCom)
-#}
+if (LOG) {
+    spectrum=log(spectrum)
+    gaus=log(gaus)
+    gausFe=log(gausFe)
+    gausRel=log(gausRel)
+    gausZr=log(gausZr)
+    gausCom=log(gausCom)
+}
 png("plot.png", width=1024, height=800)
 
 #plot(spectrum, type='l', col='magenta')
 plot(spectrum, type='l', col='black')
-grid(NA, 5, lwd = 2)
+grid(lwd = 2, col='black')
 
 #abline(h = 1e+05/2,col='gray')
 #abline(h = 1e+05,col='gray')
