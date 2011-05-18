@@ -17,7 +17,11 @@ src/icc/rake/models/__init__.py
 src/icc/rake/models/components.py
 src/icc/rake/models/interfaces.py
 src/icc/rake/modules/__init__.py
+src/icc/rake/modules/components.py
+src/icc/rake/modules/engine.py
+src/icc/rake/modules/interfaces.py
 src/icc/rake/modules/models/__init__.py
+src/icc/rake/modules/models/components.py
 src/icc/rake/modules/views/__init__.py
 src/icc/rake/views/__init__.py
 src/icc/rake/views/components.py

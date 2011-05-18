@@ -1,6 +1,6 @@
 source('global.R')
 
-STEP=FWHM/4.0/sc
+#STEP=FWHM/4.0/sc
 
 scaled.X=function (x0=0, sc=1) {
         s = chan.nos - x0
