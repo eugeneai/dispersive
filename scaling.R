@@ -132,9 +132,12 @@ find_pike1 = function (start_x0=97, spectrum, step=STEP, channels=3*FWHM/sc, eps
     }
     f
 }
+
+sq2pi=sqrt(2*pi)
+
 sim_gauss = function(x, x0, A, fwhm=FWHM) {
         sigma = (fwhm / 2.35482)
-        A * exp(-((x-x0)**2/(2*sigma**2)))
+        A * sq2pi * exp(-((x-x0)**2/(2*sigma**2)))
 };
 
 DEBUG = 5
@@ -156,7 +159,10 @@ gauss_stru=function(r){
    fwhm=r$fwhm
    sim_gauss(x0,X,A,fwhm)
 }
-
+Com=function(X, x0_star=97, E){
+      sig = (fwhm / 2.35482)
+      };
+            
 find_pike = function(spec, fun, x, A, xmin=1, xmax=NULL, eps, params=list()) {
     lspec=length(spec)
     if (is.null(xmax)) xmax=lspec
@@ -264,13 +270,13 @@ nach=function(spectrum,x0, a,b){
  
 rc0=nach(spectrum, 0, 0, 200)
 rcFe = nach(spectrum,1500,1300,1800)
-rcCom = nach(spectrum, 3400, 2900, 3800)
+rcCom = nach(spectrum, 3500, 3200, 3700)
 print(rc0)
 print (rcFe)
-print(rcCom)
+#print(rcCom)
 gaus = gauss_stru(rc0)
 gausFe = gauss_stru(rcFe)
-gausCom = gauss_stru(rcCom)
+#gausCom = gauss_stru(rcCom)
 #print(gausFe)
 
 #rcFe = find_pike(spectrum, x0_gauss, x0, 1, a, b, eps=0.01, params=p)
@@ -284,22 +290,22 @@ y <- c(0,rcFe$fwhm)
 print(y)
 mfwhm=lm(y~xsq)
 cmfwhm=coefficients(mfwhm)
-# v=tan(y)
-# print(v)
 
 t=cmfwhm[1]
 k=cmfwhm[2]
  print(cmfwhm) 
 fwhmRel=sqrt(17.375) * k + t
 fwhmZr=sqrt(15.774) * k + t
-fwhmCom=sqrt(16.95) * k + t
 SC = (rcFe$x0-rc0$x0) / (6.4-0)
+GAIN = 1/SC
+ZERO = - GAIN*rc0$x0
 C0 = rc0$x0
 
 
 rcRel=list()
-rcRel$A=rc0$A/2.
+rcRel$A=rc0$A/2.2
 rcRel$x0=C0 + 17.375 * SC # XXX
+fwhmRel = fwhmRel*1.4
 rcRel$fwhm=fwhmRel
 
 gausRel=gauss_stru(rcRel)
@@ -311,19 +317,53 @@ rcZr$x0=C0 + 15.774 * SC
 rcZr$fwhm=fwhmZr
 gausZr=gauss_stru(rcZr)
 print(fwhmZr)
- 
- 
- rcCom=list()
- rcCom$A=rc0$A/2.7
- rcCom$x0=C0 + 16.95 * SC
- rcCom$fwhm=fwhmCom*6
- gausCom=gauss_stru(rcCom)
- 
- z=(112/180)*pi
- w=cos(z)
- #dE=E0*Ec/m0*c^2*(1-cos(z))
- print(w)
-LOG=T
+
+q=pi/2
+m0=510.996
+E0=17.375
+ Ec=E0 #seq(15.0,17.375, by=0.1)
+ de=(E0*Ec/m0)*(1-cos(q))
+ #print(de)
+ #dE=max(de)
+ dE=de
+#Ecom=list()
+Ecom=E0-dE
+#fwhmCom=sqrt(Ecom) * k + t
+#print(Ecom)
+# rcCom=list()
+# rcCom$A=rc0$A/2.7
+# rcCom$x0=C0 + Ecom * SC
+# rcCom$fwhm=fwhmCom
+# gausCom=gauss_stru(rcCom)+gauss_stru(rcRel)
+
+Fa=1.1
+Fb=0.9
+ya=9
+yb=5
+fg=2.9
+#i=seq(97.0, 1500.0, by=10.0) 
+Com=GAIN * X + ZERO
+sig = (fwhmRel * GAIN / 2.35482) 
+dE=(Com-Ecom)
+
+Arel=rcRel$A*100
+
+sq2=sqrt(2)
+
+erfc <- function(x) {
+	2 * pnorm(x / sq2, lower=F)
+}
+
+plus=erfc((dE/(sq2*sig))+1/(sq2*ya))
+minus=erfc((-dE/(sq2*sig))+1/(sq2*yb))
+Ta=Arel*Fa*(GAIN/(2*ya*sig*exp(-1/(2*ya^2))))*plus*exp(dE/(ya*sig))
+Gc=Arel*(GAIN/(sq2pi*sig*fg))*exp(-0.5*((dE/(sig*fg))^2))
+#Gc1=sim_gauss(Com, Ecom, Arel, fwhm=fwhmRel * fg * GAIN)
+Tb=Arel*Fb*(GAIN/(2*yb*sig*exp(-1/(2*yb^2))))*minus*exp(-dE/(yb*sig))
+yi=(Gc+Ta+Tb)
+#print(yi)
+# print(Gc)
+LOG=F
 if (LOG) {
     spectrum=log(spectrum)
     gaus=log(gaus)
@@ -333,45 +373,30 @@ if (LOG) {
     gausCom=log(gausCom)
 }
 png("plot.png", width=1024, height=800)
-
-#plot(spectrum, type='l', col='magenta')
 plot(spectrum, type='l', col='black')
-grid(lwd = 2, col='black')
-
-#abline(h = 1e+05/2,col='gray')
-#abline(h = 1e+05,col='gray')
-#abline(h = 2e+05/2,col='gray')
-#abline(h = 2e+05,col='gray')
-#abline(h = 3e+05/2,col='gray')
-#abline(h = 3e+05,col='gray')
-#        abline(v = 250, col='gray')
-#        abline(v = 500, col='gray')
-#@        abline(v = 750, col='gray')
- #       abline(v = 1000, col='gray')
- #       abline(v = 1250, col='gray')
- #       abline(v = 1500, col='gray')
-  #      abline(v = 1750, col='gray')
-  #      abline(v = 2000, col='gray')
-  #      abline(v = 2250, col='gray')
-  #      abline(v = 2500, col='gray')
-  #      abline(v = 2750, col='gray')
-  #      abline(v = 3000, col='gray')
-   #     abline(v = 3250, col='gray')
-#        abline(v = 3500, col='gray')
- #       abline(v = 3750, col='gray')
- #       abline(v = 4000, col='gray')
-  #      abline(v = 4250, col='gray')
-
+grid(15, 15, lwd = 2)
+grid(lwd = 1, col='black')
 lines(gaus,type='l', col='red')
 lines(gausFe,type='l',col='green')
-lines(gausRel,type='l',col='blue')
-lines(fwhmRel, type='l', col='blue')
-lines(gausZr, type='l', col='gold')  
-lines(fwhmZr, type='l', col='gold')
-lines(gausCom, type='l', col='cyan')  
-lines(fwhmCom, type='l', col='cyan')
+#lines(gausRel,type='l',col='blue')
+#lines(fwhmRel, type='l', col='blue')
+lines(gausZr, type='l', col='blueviolet')  
+lines(fwhmZr, type='l', col='blueviolet') 
+#lines(yi, type='l', col='brown')
 line.xrf.mark(rc0$x, spectrum, col='black')
 line.xrf.mark(rcFe$x, spectrum, col='green')
-line.xrf.mark(rcCom$x, spectrum, col='red')
 line.xrf.mark(rcZr$x, spectrum, col='magenta')
+#line.xrf.mark(yi, spectrum, col='darkorchid')
+
+lines(x=X, Gc, col='green')
+lines(x=X, Tb, col='yellow')
+
+#plot(x=X, yi, type='l')
+#plot(x=X, Gc, type='l')
+lines(x=X, Gc, col='red')
+lines(x=X, Tb, col='blue')
+lines(x=X, Ta, col='green')
+lines(x=X, yi+gausRel, col='cyan')
+
+
 dev.off()
