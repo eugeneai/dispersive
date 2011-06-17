@@ -8,6 +8,9 @@ Nchan=4096
 
 cols=colors()
 chan.nos = c(0:(Nchan-1))
+
+X=0:(Nchan-1)
+
 Z = X * 0
 O = Z + 1
 
