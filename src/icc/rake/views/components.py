@@ -237,6 +237,9 @@ class Application(View):
         for pattern, name in self.FILE_PATTERNS:
             ffilter.add_pattern(pattern)
 
+        self.configuration.add_option('load_project_on_start', default=False, type='int', keys='startup')
+        self.configuration.USER_CONF.set('load_project_on_start', False, keys='startup')
+
         chooser.set_filter(ffilter)
         #print gtk.FileChooserDialog.__doc__
 

@@ -19,7 +19,7 @@ def main(package=None):
         package=__name__
     c=cfg.ConfigParser()
     config_file=resource_stream(package, "application.ini")
-    c.add_file(config_file)
+    main_conf=c.add_file(config_file)
     user_conf_opt=c.add_option('user_config_file', keys='app', default=None, type='string')
     user_config_file=os.path.expanduser(user_conf_opt.get())
     if user_config_file != None:
@@ -34,7 +34,8 @@ def main(package=None):
     gsm = ZC.getGlobalSiteManager()
     directlyProvides(c, IConfiguration)
     conf=c.add_option('conf', default='configuration')
-    c.user_conf=user_conf
+    c.USER_CONF=user_conf
+    c.MAIN_CONF=main_conf
     gsm.registerUtility(c)    
     gsm.registerUtility(c, name=conf.get())    
     xmlconfig(resource_stream(package, "configure.zcml"))
