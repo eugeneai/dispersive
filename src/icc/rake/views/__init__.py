@@ -6,6 +6,8 @@ def get_global_configuration():
 
 def get_user_config_option(name, default=None, **kwargs):
     c = get_global_configuration()
+    if c.USER_CONF == None:
+        return None
     kw={}
     kw.update(kwargs)
     if default!=None:
@@ -19,6 +21,8 @@ def get_user_config_option(name, default=None, **kwargs):
 
 def set_user_config_option(name, value, **kwargs):
     c = get_global_configuration()
+    if c.USER_CONF == None:
+        return None
     kw={}
     kw.update(kwargs)
     op = c.add_option(name, **kw)

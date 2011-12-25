@@ -163,6 +163,9 @@ class View(object):
     #@-others
 #@+node:eugeneai.20110116171118.1466: ** class Application
 class Application(View):
+    __gsignals__ = {
+        'startup_open': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+    }
     implements(IApplication)
     template = "ui/main_win_gtk.glade"
     widget_names = ['main_window', 'statusbar', 'toolbar',
@@ -180,10 +183,8 @@ class Application(View):
         opt=_conf.add_option('project_file_ext', default='*.prj:A project file', keys='app')
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split(';')]
 
-        if get_user_config_option('load_last_project', default=0, type='int', keys='startup'):
-            lo_f=get_user_config_option('last_project_file_name', default='', type='string', keys='startup').strip()
-            if lo_f:
-                pass
+        self.connect("startup_open", self.on_startup_open)
+
                 #put event to load project.
                 #self.open_project(lo_f)
 
@@ -229,6 +230,9 @@ class Application(View):
     #@+node:eugeneai.20110116171118.1473: *3* on_file_open
     def on_file_open(self, widget, data=None):
         return self.open_project()
+
+    def on_startup_open(self, widget, filename):
+        return self.open_project(filename)
 
     #@+node:eugeneai.20110116171118.1474: *3* get_open_filename
     def get_open_filename(self):

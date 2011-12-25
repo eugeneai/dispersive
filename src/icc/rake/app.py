@@ -11,6 +11,7 @@ import sys
 import cfgparse as cfg
 from icc.rake.interfaces import IConfiguration
 from zope.interface import directlyProvides
+from icc.rake.views import get_user_config_option
 import os.path
 
 #@+node:eugeneai.20110116171118.1425: ** main
@@ -43,6 +44,13 @@ def main(package=None):
     view=c.add_option('view', default='application')
     gsm.registerUtility(app)
     gsm.registerUtility(app, name=view.get())
+
+    #Open last project file if user has configured in their user config file.
+    if get_user_config_option('load_last_project', default=0, type='int', keys='startup'):
+        lp_fn=get_user_config_option('last_project_file_name', default='', type='string', keys='startup').strip()
+        if lp_fn:
+            app.emit("startup_open", lp_fn)
+
     rc = app.main()
     
     if user_conf: user_conf.write(user_config_file)
