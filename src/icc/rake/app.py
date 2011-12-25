@@ -22,8 +22,9 @@ def main(package=None):
     config_file=resource_stream(package, "application.ini")
     main_conf=c.add_file(config_file)
     user_conf_opt=c.add_option('user_config_file', keys='app', default=None, type='string')
-    user_config_file=os.path.expanduser(user_conf_opt.get())
+    user_config_file=user_conf_opt.get()
     if user_config_file != None:
+        user_config_file=os.path.expanduser(user_config_file)
         if os.path.exists(user_config_file):
             user_conf = c.add_file(user_config_file)
         else:

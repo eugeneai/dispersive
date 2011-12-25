@@ -499,13 +499,14 @@ TBL_ACTIONS=[
 
 class Canvas(View):
     implements(ICanvasView)
+    ZC.adapts(mdli.ICanvas, IApplication)
 
     template = "ui/canvas_view.glade"
     widget_names = ['vbox', 'main_frame']
 
     #@+others
     #@+node:eugeneai.20110116171118.1482: *3* __init__
-    def __init__(self, model = None):
+    def __init__(self, model = None, app=None):
         View.__init__(self, model=None)
         self.state=Ui()
         self.selected_module=None # module and its
