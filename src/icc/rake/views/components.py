@@ -180,10 +180,33 @@ class Application(View):
         _conf.parse()
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split(';')]
 
+        lo=self.get_user_option('load_last_project', default=0, type='int', keys='startup')
+        if lo:
+            lo_f=self.get_user_option('last_project_file_name', default='', type='string', keys='startup')
+
         # Should be the last one, it seems
         if 0:
             self.default_view()
             self.open_project(self, LOAD_FILE)
+
+    def get_user_option(self, name, default=None, **kwargs):
+        kw={}
+        kw.update(kwargs)
+        if default!=None:
+            kw['default']=None
+        op = self.configuration.add_option(name, **kw)
+        if default!=None and op.get()==None:
+            self.configuration.USER_CONF.set_option(name, default, keys=kw.get('keys', 'DEFAULT'))
+            return default
+        else:
+            return op.get()
+
+    def set_user_option(self, name, value, **kwargs):
+        kw={}
+        kw.update(kwargs)
+        op = self.configuration.add_option(name, **kw)
+        self.configuration.USER_CONF.set_option(name, value, keys=kw.get('keys', 'DEFAULT'))
+        return op
 
     #@+node:eugeneai.20110116171118.1468: *3* set_model
     def set_model(self, model = None):
@@ -203,7 +226,7 @@ class Application(View):
         self.insert_project_view(self.ui)
 
     #@+node:eugeneai.20110116171118.1471: *3* on_file_new
-    def on_file_new(self, widget, data=None):
+    def on_file_new(self, widget=None, data=None):
         # print "Created"
         # check wether data has been saved. YYY
         c=self.configuration
@@ -214,10 +237,15 @@ class Application(View):
     #@+node:eugeneai.20110116171118.1472: *3* open_project
     def open_project(self, filename=None):
         if filename is None:
-            filename = self.get_open_filename()
-        if filename:
-            self.model = mdl.Project(filename)
-            self.default_action()
+            filename_ = self.get_open_filename()
+        else:
+            filename_=filename
+        if filename_:
+            self.on_file_new()
+            #self.model.load_from(filename_)
+            #self.active_view.update()
+            if filename == None: # Loaded as result of user file dialog activity
+                self.set_user_option('last_project_file_name', filename_, type='string', keys='startup')
 
     #@+node:eugeneai.20110116171118.1473: *3* on_file_open
     def on_file_open(self, widget, data=None):
@@ -236,9 +264,6 @@ class Application(View):
         ffilter = gtk.FileFilter()
         for pattern, name in self.FILE_PATTERNS:
             ffilter.add_pattern(pattern)
-
-        self.configuration.add_option('load_project_on_start', default=False, type='int', keys='startup')
-        self.configuration.USER_CONF.set('load_project_on_start', False, keys='startup')
 
         chooser.set_filter(ffilter)
         #print gtk.FileChooserDialog.__doc__
