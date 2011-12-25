@@ -175,7 +175,12 @@ class Application(View):
         self.ui.window.show_all()
         self.active_view=None
 
-        # Shoul be the last one, it seems
+        _conf=self.configuration=ZC.getUtility(ri.IConfiguration) 
+        opt=_conf.add_option('project_file_ext', default='*.prj:A project file', keys='app')
+        _conf.parse()
+        self.FILE_PATTERNS=[e.split(':') for e in opt.get().split(';')]
+
+        # Should be the last one, it seems
         if 0:
             self.default_view()
             self.open_project(self, LOAD_FILE)
@@ -201,7 +206,7 @@ class Application(View):
     def on_file_new(self, widget, data=None):
         # print "Created"
         # check wether data has been saved. YYY
-        c=ZC.getUtility(ri.IConfiguration)
+        c=self.configuration
         factory_name=c.add_option('factory_name', default='main_model')
         self.set_model(ZC.createObject(factory_name.get()))
         self.insert_project_view(self.ui)
@@ -227,8 +232,9 @@ class Application(View):
                                         (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, 
                                          gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
+        
         ffilter = gtk.FileFilter()
-        for pattern, name in FILE_PATTERNS.iteritems():
+        for pattern, name in self.FILE_PATTERNS:
             ffilter.add_pattern(pattern)
 
         chooser.set_filter(ffilter)
