@@ -25,6 +25,7 @@ import icc.rake.models.components as mdl
 import icc.rake.models.interfaces as mdli
 import icc.rake.interfaces as ri
 import icc.rake.modules.interfaces as module_is
+from icc.rake.views import *
 import os
 
 import cairo, math
@@ -175,38 +176,16 @@ class Application(View):
         self.ui.window.show_all()
         self.active_view=None
 
-        _conf=self.configuration=ZC.getUtility(ri.IConfiguration) 
+        _conf=get_global_configuration()
         opt=_conf.add_option('project_file_ext', default='*.prj:A project file', keys='app')
-        _conf.parse()
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split(';')]
 
-        lo=self.get_user_option('load_last_project', default=0, type='int', keys='startup')
-        if lo:
-            lo_f=self.get_user_option('last_project_file_name', default='', type='string', keys='startup')
-
-        # Should be the last one, it seems
-        if 0:
-            self.default_view()
-            self.open_project(self, LOAD_FILE)
-
-    def get_user_option(self, name, default=None, **kwargs):
-        kw={}
-        kw.update(kwargs)
-        if default!=None:
-            kw['default']=None
-        op = self.configuration.add_option(name, **kw)
-        if default!=None and op.get()==None:
-            self.configuration.USER_CONF.set_option(name, default, keys=kw.get('keys', 'DEFAULT'))
-            return default
-        else:
-            return op.get()
-
-    def set_user_option(self, name, value, **kwargs):
-        kw={}
-        kw.update(kwargs)
-        op = self.configuration.add_option(name, **kw)
-        self.configuration.USER_CONF.set_option(name, value, keys=kw.get('keys', 'DEFAULT'))
-        return op
+        if get_user_config_option('load_last_project', default=0, type='int', keys='startup'):
+            lo_f=get_user_config_option('last_project_file_name', default='', type='string', keys='startup').strip()
+            if lo_f:
+                pass
+                #put event to load project.
+                #self.open_project(lo_f)
 
     #@+node:eugeneai.20110116171118.1468: *3* set_model
     def set_model(self, model = None):
@@ -229,7 +208,7 @@ class Application(View):
     def on_file_new(self, widget=None, data=None):
         # print "Created"
         # check wether data has been saved. YYY
-        c=self.configuration
+        c=get_global_configuration()
         factory_name=c.add_option('factory_name', default='main_model')
         self.set_model(ZC.createObject(factory_name.get()))
         self.insert_project_view(self.ui)
@@ -245,7 +224,7 @@ class Application(View):
             #self.model.load_from(filename_)
             #self.active_view.update()
             if filename == None: # Loaded as result of user file dialog activity
-                self.set_user_option('last_project_file_name', filename_, type='string', keys='startup')
+                set_user_config_option('last_project_file_name', filename_, type='string', keys='startup')
 
     #@+node:eugeneai.20110116171118.1473: *3* on_file_open
     def on_file_open(self, widget, data=None):
