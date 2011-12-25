@@ -249,7 +249,6 @@ class Application(View):
             ffilter.add_pattern(pattern)
 
         chooser.set_filter(ffilter)
-        #print gtk.FileChooserDialog.__doc__
 
         response = chooser.run()
         if response == gtk.RESPONSE_OK:
@@ -305,7 +304,7 @@ class Application(View):
     #    self.insert_active_view(view)
 
     def insert_project_view(self, ui):
-        view = IProjectView(self.model)
+        view = ZC.getMultiAdapter((self.model, self), IProjectView)
         self.insert_active_view(view)
 
     #@+node:eugeneai.20110116171118.1480: *3* main

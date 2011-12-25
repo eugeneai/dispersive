@@ -24,6 +24,7 @@ import icc.xray.models.components as mdl
 import icc.xray.models.interfaces as mdli
 import icc.rake.views.components as rakeviews
 import icc.rake.views.interfaces as rakeints
+from icc.xray.views.interfaces import *
 import os
 import subprocess as spp
 
@@ -470,15 +471,16 @@ class View(rakeviews.View):
 
 #@+node:eugeneai.20110116171118.1392: ** class PlottingView
 class PlottingView(View):
-    implements(IPlottingView)
+#    ZC.adapts(mdli.ISpectra, rakeints.IProjectView)
     ZC.adapts(mdli.ISpectra)
     #@+others
     #@+node:eugeneai.20110116171118.1393: *3* __init__
-    def __init__(self, model=None, label=None):
+    def __init__(self, model=None, parent=None):
         View.__init__(self, model)
         self.ui=rakeviews.Ui()   
-        self.ui.win=gtk.Frame(label=label)
+        self.ui.win=gtk.Frame()
         self.spectra = model
+        #parent_ui= ui = parent.ui #gsm().getUtility(rakeints.IApplication).ui
         parent_ui= ui = gsm().getUtility(rakeints.IApplication).ui
 
         local=rakeviews.Ui()
@@ -601,13 +603,16 @@ class ProjectView(View):
     widget_names = ["project_frame", 'hpaned', # "vpaned_left", "vpaned_right",
                     "project_tree_view", "main_vbox", "common_label",
                     "project_list_model", "project_tree_model"]
+    
+    ZC.adapts(mdli.IProject, rakeints.IApplication)
     #@+others
     #@+node:eugeneai.20110116171118.1400: *3* __init__
     def __init__(self, model=None, label=None):
         self.active_view = None
         View.__init__(self, model=model)
         self.ui.main_frame=self.ui.project_frame
-        self.active_view = IPlottingView(mdli.ISpectra(self.model))
+        # self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), self), IPlottingView)
+        self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), ), IPlottingView)
         self.connect('spectrum_clicked', self.active_view.on_spectrum_clicked)
         self.connect('spectra_clicked', self.active_view.on_spectra_clicked)
         self.connect('spectrum_clicked', self.on_spectrum_clicked)

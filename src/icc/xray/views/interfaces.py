@@ -9,6 +9,7 @@
 import zope.interface as ZI
 from icc.rake.views.interfaces import IView
 
+
 #@+node:eugeneai.20110116171118.1411: ** interface IPlottingView
 class IPlottingView(IView):
     pass

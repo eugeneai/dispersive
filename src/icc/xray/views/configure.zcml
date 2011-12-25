@@ -6,13 +6,11 @@
 <adapter
     factory=".components.PlottingView"
     provides="icc.xray.views.interfaces.IPlottingView"
-    for="icc.xray.models.interfaces.ISpectra"
     />
 
 <adapter
     factory=".components.ProjectView"
     provides="icc.rake.views.interfaces.IProjectView"
-    for="icc.xray.models.interfaces.IProject"
     />
 </configure>
 <!--@-leo-->
