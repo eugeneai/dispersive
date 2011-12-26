@@ -8,7 +8,7 @@
 
 import pygtk
 pygtk.require('2.0')
-import gtk, sys
+import gtk, gobject, sys
 
 if __name__=="__main__":
     sys.path.append("..")
@@ -228,11 +228,11 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
 
     #@+others
     #@+node:eugeneai.20110116171118.1374: *3* __init__
-    def __init__(self, canvas, view, main_ui, subplots=False):
+    def __init__(self, canvas, view, subplots=False):
         self.view = view
-        self.main_ui = main_ui
-        self.toolbar = main_ui.toolbar
-        self.statusbar = main_ui.statusbar
+        self.main_window = view.locate_widget('main_window')
+        self.toolbar = view.locate_widget('toolbar')
+        self.statusbar = view.locate_widget('statusbar')
         self.subplots = subplots
         #gtk.Toolbar.__init__(self)
         NavigationToolbar2.__init__(self, canvas)
@@ -258,8 +258,9 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
             self._widgets
         except AttributeError:
             self._widgets = []
-        self.toolbar.insert(widget, pos)
-        self._widgets.append(widget)
+        if self.toolbar:
+            self.toolbar.insert(widget, pos)
+            self._widgets.append(widget)
 
     #@+node:eugeneai.20110116171118.1378: *3* _init_toolbar2_4
     def _init_toolbar2_4(self):
@@ -308,7 +309,7 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
         #self.message = gtk.Label()
         #toolitem.add(self.message)
 
-        self.toolbar.show_all()
+        if self.toolbar: self.toolbar.show_all()
 
     #@+node:eugeneai.20110116171118.1379: *3* draw_rubberband
     def draw_rubberband(self, event, x0, y0, x1, y1):
@@ -345,7 +346,7 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
     def get_filechooser(self):
         return FileChooserDialog(
             title='Save the figure',
-            parent=self.main_ui.window,
+            parent=self.main_window,
             filetypes=self.canvas.get_supported_filetypes(),
             default_filetype=self.canvas.get_default_filetype())
 
@@ -530,7 +531,7 @@ class PlottingView(View):
         self.ui.canvas = canvas
         canvas.set_size_request(600, 400)
         vbox.pack_start(canvas, True, True)
-        toolbar_ = TXRFNavigationToolbar(canvas, self, parent_ui)
+        toolbar_ = TXRFNavigationToolbar(canvas, self)
         # vbox.pack_start(toolbar, False, False)
 
         self.ui.sb=ui.statusbar
@@ -599,6 +600,10 @@ class PlottingView(View):
 #gsm().registerUtility(pffactory, ZCI.IFactory, 'PlottingFrame')
 
 class ProjectView(View):
+    __gsignals__ = {
+        'spectrum-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
+        'spectra-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+    }
     template = "ui/project_frame.glade"
     widget_names = ["project_frame", 'hpaned', # "vpaned_left", "vpaned_right",
                     "project_tree_view", "main_vbox", "common_label",
@@ -613,10 +618,10 @@ class ProjectView(View):
         self.ui.main_frame=self.ui.project_frame
         # self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), self), IPlottingView)
         self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), ), IPlottingView)
-        self.connect('spectrum_clicked', self.active_view.on_spectrum_clicked)
-        self.connect('spectra_clicked', self.active_view.on_spectra_clicked)
-        self.connect('spectrum_clicked', self.on_spectrum_clicked)
-        self.connect('spectra_clicked', self.on_spectra_clicked)
+        self.connect('spectrum-clicked', self.active_view.on_spectrum_clicked)
+        self.connect('spectra-clicked', self.active_view.on_spectra_clicked)
+        self.connect('spectrum-clicked', self.on_spectrum_clicked)
+        self.connect('spectra-clicked', self.on_spectra_clicked)
         self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
@@ -721,15 +726,18 @@ class ProjectView(View):
         d = self.get_objects()
         if path == sp_it_path:
             #print "!!! WOW!"
-            self.emit('spectra_clicked')
+            self.emit('spectra-clicked')
         elif tm.get_path(it_parent)==sp_it_path:
             #print "Local!!", d
             for sp in d['spectra']:
                 if sp['path']==path:
                     break
-            self.emit('spectrum_clicked', sp) 
+            self.emit('spectrum-clicked', sp) 
 
 
     #@-others
+
+gobject.type_register(ProjectView)
+
 #@-others
 #@-leo

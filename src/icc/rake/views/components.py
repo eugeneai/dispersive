@@ -44,6 +44,11 @@ def sign(x):
 class Ui(object):
     pass
 
+class RetVal(Ui):
+    def __init__(self, value=None):
+        self.value=None
+    pass
+
 #@+node:eugeneai.20110116171118.1456: ** InputDialog
 def InputDialog(message, value='', field='Name:', secondary=''):
     "Obtained and adopted from http://ardoris.wordpress.com/2008/07/05/pygtk-text-entry-dialog/"
@@ -95,7 +100,11 @@ def ConfirmationDialog(message, secondary=''):
     return rc
 
 #@+node:eugeneai.20110116171118.1458: ** class View
-class View(object):
+class View(gobject.GObject):
+    __gsignals__ = {
+        'get-widget': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_BOOLEAN, 
+                       (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT,)),
+    }
     template = None
     widget_names = None
     resource = __name__
@@ -106,6 +115,7 @@ class View(object):
     #@+others
     #@+node:eugeneai.20110116171118.1459: *3* __init__
     def __init__(self, model = None):
+        gobject.GObject.__init__(self)
         self.ui=Ui()
         self.model=None
         self.parent_view=None
@@ -115,26 +125,27 @@ class View(object):
         self.set_model(model)
         self.init_resources()
         self.signals = {}
+        self.connect("get_widget", self.on_get_widget)
 
     #@+node:eugeneai.20110116171118.1460: *3* init_resources
     def init_resources(self):
         pass
 
     #@+node:eugeneai.20110116171118.1461: *3* connect
-    def connect(self, signal, method, user_data=None):
-        l = self.signals.setdefault(signal, [])
-        l.append((method, user_data))
+#    def connect(self, signal, method, user_data=None):
+#        l = self.signals.setdefault(signal, [])
+#        l.append((method, user_data))
 
     #@+node:eugeneai.20110116171118.1462: *3* emit
-    def emit(self, signal, arg=None):
-        d = self.signals.get(signal, [])
-        for method, user_data in d:
-            args = []
-            if arg is not None:
-                args.append(arg)
-            if user_data is not None:
-                args.append(user_data)
-            method(self, *args)
+#    def emit(self, signal, arg=None):
+#        d = self.signals.get(signal, [])
+#        for method, user_data in d:
+#            args = []
+#            if arg is not None:
+#                args.append(arg)
+#            if user_data is not None:
+#                args.append(user_data)
+#            method(self, *args)
 
     #@+node:eugeneai.20110116171118.1463: *3* set_model
     def set_model(self, model):
@@ -160,11 +171,34 @@ class View(object):
                         raise ValueError("widget '%s' not found in  template '%s'" % (name, template))
                     setattr(self.ui, name, widget)
 
+    def on_get_widget(self, widget, widget_name, ret_val):
+        """ Responds on subwidget signal emission like 
+        rv=RetVal()
+        self.emit('get-widget', 'main_window', rv)
+        print rv.value
+        """
+        print "Locate:", widget, widget_name, self
+        if widget_name in self.ui.__dict__:
+            print "Found"
+            w = self.ui.get(widget_name)
+            ret_val.vslue = w
+            return 1 # Stop event 
+        else:
+            print "Not Found"
+            return 0
+
+    def locate_widget(self, widget_name):
+        rv=RetVal()
+        self.emit('get-widget', widget_name, rv)
+        return rv.value
+
+gobject.type_register(View)
+
     #@-others
 #@+node:eugeneai.20110116171118.1466: ** class Application
 class Application(View):
     __gsignals__ = {
-        'startup_open': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+        'startup-open': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,)),
     }
     implements(IApplication)
     template = "ui/main_win_gtk.glade"
@@ -313,6 +347,8 @@ class Application(View):
 
     #@-others
     run = main
+
+gobject.type_register(Application)
 
 #@+node:eugeneai.20110117171340.1635: ** Pictogramm machinery
 #@+node:eugeneai.20110123122541.1648: *3* class SVGImage
