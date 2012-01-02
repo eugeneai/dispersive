@@ -114,11 +114,11 @@ class View(gobject.GObject):
 
     #@+others
     #@+node:eugeneai.20110116171118.1459: *3* __init__
-    def __init__(self, model = None):
+    def __init__(self, model = None, parent=None):
         gobject.GObject.__init__(self)
         self.ui=Ui()
         self.model=None
-        self.parent_view=None
+        self.parent_view=parent
         if self.__class__.template != None:
             self.load_ui(self.__class__.template,
                          self.__class__.widget_names)
@@ -191,11 +191,10 @@ class View(gobject.GObject):
         try:
             return self.ui.getattr(widget_name)
         except AttributeError:
-            return None
-        for name in self.ui.__dict__:
-            w=self.ui.get(name)
-            
-            
+            pass
+
+        if self.parent_view != None:
+            return self.parent_view.locate_widget(widget_name)
         
         #rv=RetVal()
         #self.emit('get-widget', widget_name, rv)
@@ -216,8 +215,8 @@ class Application(View):
 
     #@+others
     #@+node:eugeneai.20110116171118.1467: *3* __init__
-    def __init__(self, model = None):
-        View.__init__(self, model=model)
+    def __init__(self, model = None, parent=None):
+        View.__init__(self, model=model, parent=parent)
         self.ui.window=self.ui.main_window
         self.ui.window.show_all()
         self.active_view=None
@@ -348,6 +347,7 @@ class Application(View):
 
     def insert_project_view(self, ui):
         view = ZC.getMultiAdapter((self.model, self), IProjectView)
+        view.set_parent(self)
         self.insert_active_view(view)
 
     #@+node:eugeneai.20110116171118.1480: *3* main
@@ -551,8 +551,8 @@ class Canvas(View):
 
     #@+others
     #@+node:eugeneai.20110116171118.1482: *3* __init__
-    def __init__(self, model = None, app=None):
-        View.__init__(self, model=None)
+    def __init__(self, model = None, app=None, parent=None):
+        View.__init__(self, model=None, parent=parent)
         self.state=Ui()
         self.selected_module=None # module and its
         self.selected_item = None # corresponding icon
@@ -1179,8 +1179,8 @@ class AdjustenmentView(View):
 
     #@+others
     #@+node:eugeneai.20110116171118.1501: *3* __init__
-    def __init__(self, model):
-        View.__init__(self, model)
+    def __init__(self, model, parent=None):
+        View.__init__(self, model, parent=parent)
         self.ui.main_window.set_title(self.model.name)
         self.ui.main_window.show_all()
 
@@ -1203,7 +1203,7 @@ def ModuleChooseDialog(message, filter=None):
 class DialogView(View):
     widget_names = ['dialog']
     def __init__(self, model=None, buttons=(), **kwargs):
-        View.__init__(self, model=model)
+        View.__init__(self, model=model, parent=kwargs.get('parent', None))
         self.ui.dialog_vbox=self.ui.dialog.vbox
         kw={}
         kw.update(kwargs)
