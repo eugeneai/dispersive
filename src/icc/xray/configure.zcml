@@ -9,8 +9,8 @@
 <include package="icc.rake" />
 
 <!-- Initialize components of XRAY explore application -->
-<include package="xray.models" />
-<include package="xray.views" />
+<include package="icc.xray.models" />
+<include package="icc.xray.views" />
 
 </configure>
 

@@ -167,6 +167,7 @@ class View(gobject.GObject):
             if widget_names:
                 for name in widget_names:
                     widget = builder.get_object(name)
+                    widget.set_name(name)
                     if widget is None:
                         raise ValueError("widget '%s' not found in  template '%s'" % (name, template))
                     setattr(self.ui, name, widget)
@@ -179,18 +180,26 @@ class View(gobject.GObject):
         """
         print "Locate:", widget, widget_name, self
         if widget_name in self.ui.__dict__:
-            print "Found"
             w = self.ui.get(widget_name)
-            ret_val.vslue = w
+            ret_val.value = w
             return 1 # Stop event 
         else:
-            print "Not Found"
             return 0
 
     def locate_widget(self, widget_name):
-        rv=RetVal()
-        self.emit('get-widget', widget_name, rv)
-        return rv.value
+        lookup_set=set()
+        try:
+            return self.ui.getattr(widget_name)
+        except AttributeError:
+            return None
+        for name in self.ui.__dict__:
+            w=self.ui.get(name)
+            
+            
+        
+        #rv=RetVal()
+        #self.emit('get-widget', widget_name, rv)
+        #return rv.value
 
 gobject.type_register(View)
 
