@@ -472,8 +472,7 @@ class View(rakeviews.View):
 
 #@+node:eugeneai.20110116171118.1392: ** class PlottingView
 class PlottingView(View):
-#    ZC.adapts(mdli.ISpectra, rakeints.IProjectView)
-    ZC.adapts(mdli.ISpectra)
+    ZC.adapts(mdli.ISpectra, rakeints.IView)
     #@+others
     #@+node:eugeneai.20110116171118.1393: *3* __init__
     def __init__(self, model=None, parent=None):
@@ -609,16 +608,14 @@ class ProjectView(View):
                     "project_tree_view", "main_vbox", "common_label",
                     "project_list_model", "project_tree_model"]
     
-    ZC.adapts(mdli.IProject, rakeints.IApplication)
+    ZC.adapts(mdli.IProject, rakeints.IView)
     #@+others
     #@+node:eugeneai.20110116171118.1400: *3* __init__
     def __init__(self, model=None, label=None, parent=None):
         self.active_view = None
         View.__init__(self, model=model, parent=parent)
         self.ui.main_frame=self.ui.project_frame
-        # self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), self), IPlottingView)
-        self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), ), IPlottingView)
-        self.active_view.set_parent(self)
+        self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), self), IPlottingView)
         self.connect('spectrum-clicked', self.active_view.on_spectrum_clicked)
         self.connect('spectra-clicked', self.active_view.on_spectra_clicked)
         self.connect('spectrum-clicked', self.on_spectrum_clicked)
