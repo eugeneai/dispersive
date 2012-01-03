@@ -110,7 +110,7 @@ class View(gobject.GObject):
     resource = __name__
     main_widget_name = 'main_frame'
     #implements(IView)
-    ZC.adapts(mdli.IModel)
+    ZC.adapts(mdli.IModel, IView)
 
     #@+others
     #@+node:eugeneai.20110116171118.1459: *3* __init__
@@ -212,6 +212,8 @@ class Application(View):
     template = "ui/main_win_gtk.glade"
     widget_names = ['main_window', 'statusbar', 'toolbar',
              "main_vbox"]
+
+    ZC.adapts(,)
 
     #@+others
     #@+node:eugeneai.20110116171118.1467: *3* __init__
@@ -544,7 +546,7 @@ TBL_ACTIONS=[
 
 class Canvas(View):
     implements(ICanvasView)
-    ZC.adapts(mdli.ICanvas, IApplication)
+    ZC.adapts(mdli.ICanvas, IView)
 
     template = "ui/canvas_view.glade"
     widget_names = ['vbox', 'main_frame']
@@ -1137,6 +1139,7 @@ class Canvas(View):
     #@-others
 #@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
 class ModuleCanvasView(View):
+    ZC.adapts(mdli.IModule, IView)
     #@+others
     #@+node:eugeneai.20110116171118.1496: *3* set_model
     def set_model(self, model):
@@ -1171,6 +1174,7 @@ class ModuleCanvasView(View):
 class AdjustenmentView(View):
     implements(IAdjustenmentView)
 
+    ZC.adapts(mdli.IModule, IView)
     template = "ui/adjustenment_window.glade"
     widget_names = ['vbox', 'main_window',
                     'tree_inputs', 'tree_outputs',

@@ -17,14 +17,11 @@
 <adapter
     factory=".components.ModuleCanvasView"
     provides="icc.rake.views.interfaces.IModuleCanvasView"
-    for="icc.rake.models.interfaces.IModule"
     />
 
 <adapter
     factory=".components.AdjustenmentView"
-    provides="icc.rake.views.interfaces.IAdjustenmentView"
-    for="icc.rake.models.interfaces.IModule"
-    />
+    provides="icc.rake.views.interfaces.IAdjustenmentView"     />
 
 <utility
     component=".components.icon_registry"

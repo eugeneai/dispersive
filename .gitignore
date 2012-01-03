@@ -3,6 +3,7 @@
 *.eps
 *.ps
 *.pdf
+*.py[co]
 temp.R
 build/
 dist
