@@ -187,11 +187,11 @@ class View(gobject.GObject):
             return 0
 
     def locate_widget(self, widget_name):
+        ui = self.ui
         try:
-            return self.ui.getattr(widget_name)
+            return getattr(ui,widget_name)
         except AttributeError:
             pass
-        print "Not foind in ", self,  widget_name
         if self.parent_view != None:
             return self.parent_view.locate_widget(widget_name)
         
@@ -346,7 +346,6 @@ class Application(View):
 
     def insert_project_view(self, ui):
         view = ZC.getMultiAdapter((self.model, self), IProjectView)
-        view.set_parent(self)
         self.insert_active_view(view)
 
     #@+node:eugeneai.20110116171118.1480: *3* main
