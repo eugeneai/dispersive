@@ -187,12 +187,11 @@ class View(gobject.GObject):
             return 0
 
     def locate_widget(self, widget_name):
-        lookup_set=set()
         try:
             return self.ui.getattr(widget_name)
         except AttributeError:
             pass
-
+        print "Not foind in ", self,  widget_name
         if self.parent_view != None:
             return self.parent_view.locate_widget(widget_name)
         
@@ -212,8 +211,6 @@ class Application(View):
     template = "ui/main_win_gtk.glade"
     widget_names = ['main_window', 'statusbar', 'toolbar',
              "main_vbox"]
-
-    ZC.adapts(,)
 
     #@+others
     #@+node:eugeneai.20110116171118.1467: *3* __init__

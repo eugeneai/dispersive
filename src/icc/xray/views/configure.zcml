@@ -5,12 +5,10 @@
 
 <adapter
     factory=".components.PlottingView"
-    provides="icc.xray.views.interfaces.IPlottingView"
     />
 
 <adapter
     factory=".components.ProjectView"
-    provides="icc.rake.views.interfaces.IProjectView"
     />
 </configure>
 <!--@-leo-->

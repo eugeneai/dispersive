@@ -472,6 +472,7 @@ class View(rakeviews.View):
 
 #@+node:eugeneai.20110116171118.1392: ** class PlottingView
 class PlottingView(View):
+    implements(IPlottingView)
     ZC.adapts(mdli.ISpectra, rakeints.IView)
     #@+others
     #@+node:eugeneai.20110116171118.1393: *3* __init__
@@ -607,7 +608,7 @@ class ProjectView(View):
     widget_names = ["project_frame", 'hpaned', # "vpaned_left", "vpaned_right",
                     "project_tree_view", "main_vbox", "common_label",
                     "project_list_model", "project_tree_model"]
-    
+    implements(rakeints.IProjectView)
     ZC.adapts(mdli.IProject, rakeints.IView)
     #@+others
     #@+node:eugeneai.20110116171118.1400: *3* __init__
