@@ -612,7 +612,7 @@ class ProjectView(View):
     ZC.adapts(mdli.IProject, rakeints.IView)
     #@+others
     #@+node:eugeneai.20110116171118.1400: *3* __init__
-    def __init__(self, model=None, label=None, parent=None):
+    def __init__(self, model=None, parent=None):
         self.active_view = None
         View.__init__(self, model=model, parent=parent)
         self.ui.main_frame=self.ui.project_frame
