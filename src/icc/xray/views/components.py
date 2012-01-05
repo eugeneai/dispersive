@@ -53,7 +53,7 @@ if DEBUG>2:
     LOAD_FILE="test.rtx"
 
 if os.name!='nt':
-    #EPS_CMD="evince" 
+    #EPS_CMD="evince"
     EPS_CMD="xdg-open" # YYY Needs to be corrected
 else:
     #EPS_CMD="C:\\Program Files\\Ghostgum\\gsview\\gsview32.exe"
@@ -340,7 +340,7 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
 
     #@+node:eugeneai.20110116171118.1380: *3* set_message
     def set_message(self, s):
-        pass 
+        pass
 
     #@+node:eugeneai.20110116171118.1381: *3* get_filechooser
     def get_filechooser(self):
@@ -478,7 +478,7 @@ class PlottingView(View):
     #@+node:eugeneai.20110116171118.1393: *3* __init__
     def __init__(self, model=None, parent=None):
         View.__init__(self, model, parent=parent)
-        self.ui=rakeviews.Ui()   
+        self.ui=rakeviews.Ui()
         self.ui.win=gtk.Frame()
         self.spectra = model
         #parent_ui= ui = parent.ui #gsm().getUtility(rakeints.IApplication).ui
@@ -542,7 +542,7 @@ class PlottingView(View):
         # self.ui.check_buttons = widgets.CheckButtons(ax, ['1']*20, [True]*20)
 
     #@+node:eugeneai.20110116171118.1394: *3* on_click
-    def on_click(self, event, data=None): 
+    def on_click(self, event, data=None):
         local = self.local
         if local.msg_id is not None:
             self.ui.sb.remove_message(local.ctx_id, local.msg_id)
@@ -637,7 +637,7 @@ class ProjectView(View):
                 d = {"creator":'', 'comment':'',
                      'spectra':[]}
                 # skip cache !!!
-        return d            
+        return d
 
     #@+node:eugeneai.20110116171118.1402: *3* set_model
     def set_model(self, model=None):
@@ -708,7 +708,7 @@ class ProjectView(View):
         if any_vis:
             self.set_pb(path, self.ui.pb_spectrum)
         else:
-            self.set_pb(path, self.ui.pb_empty)            
+            self.set_pb(path, self.ui.pb_empty)
 
 
     #@+node:eugeneai.20110116171118.1407: *3* on_row_activated
@@ -731,12 +731,16 @@ class ProjectView(View):
             for sp in d['spectra']:
                 if sp['path']==path:
                     break
-            self.emit('spectrum-clicked', sp) 
+            self.emit('spectrum-clicked', sp)
 
 
     #@-others
 
 gobject.type_register(ProjectView)
+
+if __name__=="__main__":
+    import icc.icc_xray_app
+    icc.icc_xray_app.main()
 
 #@-others
 #@-leo
