@@ -26,7 +26,7 @@ import icc.rake.models.interfaces as mdli
 import icc.rake.interfaces as ri
 import icc.rake.modules.interfaces as module_is
 from icc.rake.views import *
-import os
+import os, os.path
 
 import cairo, math
 import rsvg
@@ -292,7 +292,7 @@ class Application(View):
         if filename is None:
             filename_ = self.get_filename()
         else:
-            filename_=filename
+            filename_=self.normalize_file_ext(filename)
         if filename_:
             self.on_file_new()
             #self.model.load_from(filename_)
@@ -357,12 +357,20 @@ class Application(View):
             ffilter.add_pattern("*"+pattern)
 
         chooser.set_filter(ffilter)
-
         response = chooser.run()
         if response == gtk.RESPONSE_OK:
             filename = chooser.get_filename()
         chooser.destroy()
-        # print "File:", filename
+
+        return self.normalize_file_ext(filename)
+
+    def normalize_file_ext(self, filename):
+
+        def_file_ext=self.FILE_PATTERNS[0][0]
+
+        (_,ext) = os.path.splitext(filename)
+        if not ext:
+            filename+=def_file_ext
         return filename
 
     #@+node:eugeneai.20110116171118.1475: *3* error_message
