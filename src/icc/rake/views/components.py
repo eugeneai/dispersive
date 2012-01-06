@@ -120,7 +120,7 @@ class View(gtk.Object):
         gtk.Object.__init__(self)
         self.ui=Ui()
         self.model=None
-        self.parent_view=parent
+        self.set_parent(parent)
         self.model_state=Ui()
         # model_state stores metadata about model.
         self.set_model_unmodified() # Is the model modified and to be saved on closing.
@@ -161,7 +161,15 @@ class View(gtk.Object):
     #@+node:eugeneai.20110116171118.1464: *3* set_parent
     def set_parent(self, view):
         """Set parent view. Used for some reason"""
+        try:
+            self.parent_view
+        except AttributeError:
+            return
+        if self.parent_view:
+            pass
+            #disconnect
         self.parent_view=view
+        view.connect('destroy-view', self.on_parent_destroy)
 
     def is_model_modified(self):
         return self.model_state.modified
@@ -232,6 +240,9 @@ class View(gtk.Object):
     def get_main_frame(self):
         main_widget_name = self.__class__.main_widget_name
         return getattr(self.ui, main_widget_name)
+
+    def on_parent_destroy(self, parent):
+        self.destroy()
 
 gobject.type_register(View)
 
