@@ -243,13 +243,13 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
     def on_destroy(self, widget, data=None):
         # print self._widgets
         for w in self._widgets:
-            if w:
+            if w and self.toolbar:
                 self.toolbar.remove(w)
         self.view=None
 
     #@+node:eugeneai.20110116171118.1376: *3* _init_toolbar
     def _init_toolbar(self):
-        self.set_style(gtk.TOOLBAR_ICONS)
+        self.toolbar.set_style(gtk.TOOLBAR_ICONS)
         self._init_toolbar2_4()
 
     #@+node:eugeneai.20110116171118.1377: *3* insert
