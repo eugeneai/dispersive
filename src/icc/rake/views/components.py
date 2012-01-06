@@ -218,7 +218,14 @@ class View(gobject.GObject):
         self.ui=None
 
     def remove_from(self, box):
-        box.remove(self.ui.main_frame)
+        box.remove(self.get_main_frame())
+
+    def insert_into(self, box):
+        box.pack_start(self.get_main_frame(), True, True)
+
+    def get_main_frame(self):
+        main_widget_name = self.__class__.main_widget_name
+        return getattr(self.ui, main_widget_name)
 
 gobject.type_register(View)
 
@@ -279,7 +286,6 @@ class Application(View):
         factory_name=c.add_option('factory_name', default='main_model')
         self.set_model(ZC.createObject(factory_name.get()))
         self.insert_project_view(self.ui)
-        self.ui.ac_close.set_sensitive(True)
 
     #@+node:eugeneai.20110116171118.1472: *3* open_project
     def open_project(self, filename=None):
@@ -395,9 +401,10 @@ class Application(View):
     #@+node:eugeneai.20110116171118.1478: *3* insert_active_view
     def insert_active_view(self, view):
         self.remove_active_view()
+
         self.active_view = view
-        main_widget_name = view.__class__.main_widget_name
-        self.ui.main_vbox.pack_start(getattr(view.ui, main_widget_name), True, True)
+        self.active_view.insert_into(self.ui.main_vbox)
+        self.ui.ac_close.set_sensitive(True)
         view.ui.main_frame.show_all()
 
     #@+node:eugeneai.20110116171118.1479: *3* insert_project_view
