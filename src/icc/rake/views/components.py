@@ -100,10 +100,12 @@ def ConfirmationDialog(message, secondary=''):
     return rc
 
 #@+node:eugeneai.20110116171118.1458: ** class View
-class View(gobject.GObject):
+class View(gtk.Object):
     __gsignals__ = {
         'get-widget': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_BOOLEAN,
                        (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT,)),
+        'destroy-view': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                       (gobject.TYPE_PYOBJECT,)),
     }
     template = None
     widget_names = None
@@ -115,7 +117,7 @@ class View(gobject.GObject):
     #@+others
     #@+node:eugeneai.20110116171118.1459: *3* __init__
     def __init__(self, model = None, parent=None):
-        gobject.GObject.__init__(self)
+        gtk.Object.__init__(self)
         self.ui=Ui()
         self.model=None
         self.parent_view=parent
@@ -216,8 +218,10 @@ class View(gobject.GObject):
         #return rv.value
 
     def destroy(self):
-        self.ui.main_frame.destroy()
+        self.emit('destroy-view', self)
+        self.get_main_frame().destroy()
         self.ui=None
+        gtk.Object.destroy(self)
 
     def remove_from(self, box):
         box.remove(self.get_main_frame())
