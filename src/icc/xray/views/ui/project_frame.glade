@@ -11,11 +11,12 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <child>
-          <object class="GtkHPaned" id="hpaned">
+          <object class="GtkHPaned" id="paned_top">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="position">200</property>
             <property name="position_set">True</property>
+            <signal name="move-handle" handler="on_paned_handle_move" swapped="no"/>
             <child>
               <object class="GtkScrolledWindow" id="scrolledwindow3">
                 <property name="width_request">200</property>
@@ -126,9 +127,10 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHPaned" id="hpaned1">
+          <object class="GtkHPaned" id="paned_bottom">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <signal name="move-handle" handler="on_paned_handle_move" swapped="no"/>
             <child>
               <object class="GtkScrolledWindow" id="scrolledwindow2">
                 <property name="width_request">200</property>

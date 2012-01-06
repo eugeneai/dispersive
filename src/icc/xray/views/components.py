@@ -605,9 +605,9 @@ class ProjectView(View):
         'spectra-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
     }
     template = "ui/project_frame.glade"
-    widget_names = ["project_frame", 'hpaned', # "vpaned_left", "vpaned_right",
+    widget_names = ["project_frame",
                     "project_tree_view", "main_vbox", "common_label",
-                    "project_list_model", "project_tree_model"]
+                    "project_list_model", "project_tree_model", "paned_top", "paned_bottom"]
     implements(rakeints.IProjectView)
     ZC.adapts(mdli.IProject, rakeints.IView)
     #@+others
@@ -622,6 +622,7 @@ class ProjectView(View):
         self.connect('spectrum-clicked', self.on_spectrum_clicked)
         self.connect('spectra-clicked', self.on_spectra_clicked)
         self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
+        self.ui.hpaned_list=[self.ui.paned_top, self.ui.paned_bottom]
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
     def get_objects(self):
@@ -733,6 +734,10 @@ class ProjectView(View):
                     break
             self.emit('spectrum-clicked', sp)
 
+    #Horizontal paned synchronisation.
+
+    def on_paned_handle_move(self, widget, data=None):
+        print "Data handle", widget, data
 
     #@-others
 
