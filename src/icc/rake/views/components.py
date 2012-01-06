@@ -253,7 +253,7 @@ class Application(View):
         self.filename=None
 
         _conf=get_global_configuration()
-        opt=_conf.add_option('project_file_ext', default='*.prj:A project file', keys='app')
+        opt=_conf.add_option('project_file_ext', default='.prj:A project file', keys='app')
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split(';')]
 
         self.connect("startup_open", self.on_startup_open)
@@ -354,7 +354,7 @@ class Application(View):
 
         ffilter = gtk.FileFilter()
         for pattern, name in self.FILE_PATTERNS:
-            ffilter.add_pattern(pattern)
+            ffilter.add_pattern("*"+pattern)
 
         chooser.set_filter(ffilter)
 
