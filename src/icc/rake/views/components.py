@@ -181,9 +181,11 @@ class View(gobject.GObject):
             if widget_names:
                 for name in widget_names:
                     widget = builder.get_object(name)
-                    widget.set_name(name)
                     if widget is None:
                         raise ValueError("widget '%s' not found in  template '%s'" % (name, template))
+                    else:
+                        widget.set_name(name)
+
                     setattr(self.ui, name, widget)
 
     def on_get_widget(self, widget, widget_name, ret_val):
