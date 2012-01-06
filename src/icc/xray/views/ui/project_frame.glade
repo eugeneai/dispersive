@@ -16,7 +16,7 @@
             <property name="can_focus">True</property>
             <property name="position">200</property>
             <property name="position_set">True</property>
-            <signal name="move-handle" handler="on_paned_handle_move" swapped="no"/>
+            <signal name="notify" handler="on_paned_notify" swapped="no"/>
             <child>
               <object class="GtkScrolledWindow" id="scrolledwindow3">
                 <property name="width_request">200</property>
@@ -130,7 +130,7 @@
           <object class="GtkHPaned" id="paned_bottom">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <signal name="move-handle" handler="on_paned_handle_move" swapped="no"/>
+            <signal name="notify" handler="on_paned_notify" swapped="no"/>
             <child>
               <object class="GtkScrolledWindow" id="scrolledwindow2">
                 <property name="width_request">200</property>
@@ -189,6 +189,9 @@
                         <property name="search_column">0</property>
                         <property name="enable_grid_lines">both</property>
                         <property name="enable_tree_lines">True</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="treeview-selection2"/>
+                        </child>
                         <child>
                           <object class="GtkTreeViewColumn" id="no_column">
                             <property name="title">No</property>

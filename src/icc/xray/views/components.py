@@ -736,8 +736,10 @@ class ProjectView(View):
 
     #Horizontal paned synchronisation.
 
-    def on_paned_handle_move(self, widget, data=None):
-        print "Data handle", widget, data
+    def on_paned_notify(self, paned, spec, data=None):
+        if spec.name=='position':
+            pos=paned.get_property('position')
+            [p.set_position(pos) for p in self.ui.hpaned_list if p!=paned] # recursion breaks due to position property: it can be unchanged.
 
     #@-others
 
