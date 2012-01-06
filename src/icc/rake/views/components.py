@@ -102,7 +102,7 @@ def ConfirmationDialog(message, secondary=''):
 #@+node:eugeneai.20110116171118.1458: ** class View
 class View(gobject.GObject):
     __gsignals__ = {
-        'get-widget': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_BOOLEAN, 
+        'get-widget': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_BOOLEAN,
                        (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT,)),
     }
     template = None
@@ -119,6 +119,9 @@ class View(gobject.GObject):
         self.ui=Ui()
         self.model=None
         self.parent_view=parent
+        self.model_state=Ui()
+        # model_state stores metadata about model.
+        self.set_model_unmodified() # Is the model modified and to be saved on closing.
         if self.__class__.template != None:
             self.load_ui(self.__class__.template,
                          self.__class__.widget_names)
@@ -158,6 +161,17 @@ class View(gobject.GObject):
         """Set parent view. Used for some reason"""
         self.parent_view=view
 
+    def is_model_modified(self):
+        return self.model_state.modified
+
+    def set_model_modified(self):
+        self.model_state.modified=True
+        return self.is_model_modified()
+
+    def set_model_unmodified(self):
+        self.model_state.modified=False
+        return self.is_model_modified()
+
     #@+node:eugeneai.20110116171118.1465: *3* load_ui
     def load_ui(self, template, widget_names = None):
         if template:
@@ -173,7 +187,7 @@ class View(gobject.GObject):
                     setattr(self.ui, name, widget)
 
     def on_get_widget(self, widget, widget_name, ret_val):
-        """ Responds on subwidget signal emission like 
+        """ Responds on subwidget signal emission like
         rv=RetVal()
         self.emit('get-widget', 'main_window', rv)
         print rv.value
@@ -182,7 +196,7 @@ class View(gobject.GObject):
         if widget_name in self.ui.__dict__:
             w = self.ui.get(widget_name)
             ret_val.value = w
-            return 1 # Stop event 
+            return 1 # Stop event
         else:
             return 0
 
@@ -194,10 +208,17 @@ class View(gobject.GObject):
             pass
         if self.parent_view != None:
             return self.parent_view.locate_widget(widget_name)
-        
+
         #rv=RetVal()
         #self.emit('get-widget', widget_name, rv)
         #return rv.value
+
+    def destroy(self):
+        self.ui.main_frame.destroy()
+        self.ui=None
+
+    def remove_from(self, box):
+        box.remove(self.ui.main_frame)
 
 gobject.type_register(View)
 
@@ -210,7 +231,7 @@ class Application(View):
     implements(IApplication)
     template = "ui/main_win_gtk.glade"
     widget_names = ['main_window', 'statusbar', 'toolbar',
-             "main_vbox"]
+             "main_vbox", 'ac_close', 'ac_save']
 
     #@+others
     #@+node:eugeneai.20110116171118.1467: *3* __init__
@@ -218,7 +239,11 @@ class Application(View):
         View.__init__(self, model=model, parent=parent)
         self.ui.window=self.ui.main_window
         self.ui.window.show_all()
+
         self.active_view=None
+        self.remove_active_view()
+
+        self.filename=None
 
         _conf=get_global_configuration()
         opt=_conf.add_option('project_file_ext', default='*.prj:A project file', keys='app')
@@ -231,7 +256,7 @@ class Application(View):
 
     #@+node:eugeneai.20110116171118.1468: *3* set_model
     def set_model(self, model = None):
-        # There shoul be event created to force model creation
+        # There should be event created to force model creation
         #if model is None:
         #    model = mdl.Project()
         return View.set_model(self, model)
@@ -243,7 +268,7 @@ class Application(View):
     #@+node:eugeneai.20110116171118.1470: *3* default_view
     m_quit_activate_cb=main_window_delete_event_cb
 
-    def default_view(self):             
+    def default_view(self):
         self.insert_project_view(self.ui)
 
     #@+node:eugeneai.20110116171118.1471: *3* on_file_new
@@ -254,11 +279,12 @@ class Application(View):
         factory_name=c.add_option('factory_name', default='main_model')
         self.set_model(ZC.createObject(factory_name.get()))
         self.insert_project_view(self.ui)
+        self.ui.ac_close.set_sensitive(True)
 
     #@+node:eugeneai.20110116171118.1472: *3* open_project
     def open_project(self, filename=None):
         if filename is None:
-            filename_ = self.get_open_filename()
+            filename_ = self.get_filename()
         else:
             filename_=filename
         if filename_:
@@ -267,6 +293,9 @@ class Application(View):
             #self.active_view.update()
             if filename == None: # Loaded as result of user file dialog activity
                 set_user_config_option('last_project_file_name', filename_, type='string', keys='startup')
+            self.filename=filename_
+        else:
+            self.filename=None
 
     #@+node:eugeneai.20110116171118.1473: *3* on_file_open
     def on_file_open(self, widget, data=None):
@@ -275,16 +304,48 @@ class Application(View):
     def on_startup_open(self, widget, filename):
         return self.open_project(filename)
 
-    #@+node:eugeneai.20110116171118.1474: *3* get_open_filename
-    def get_open_filename(self):
+    def on_file_close(self, widget, data=None):
+        if self.active_view:
+            active_view=self.active_view
+            if active_view.is_model_modified():
+                # ask user to save project
+                pass
+        self.remove_active_view()
+
+
+    def on_file_save(self, widget, data=None):
+        if self.filename:
+            filename_=self.filename
+        else:
+            filename_=None
+        if not filename_:
+            filename_=self.get_filename(save=True)
+
+        if not filename_:
+            return # user rejected to write data
+
+        print "Saving the data of the project to file '%s'" % filename_
+        self.filename=filename_
+
+
+    #@+node:eugeneai.20110116171118.1474: *3* get_filename
+    def get_filename(self, save=False):
+        if save:
+            msg="Save the project..."
+            ac = gtk.FILE_CHOOSER_ACTION_SAVE
+            icon = gtk.STOCK_SAVE
+        else:
+            msg="Open a project..."
+            ac = gtk.FILE_CHOOSER_ACTION_OPEN
+            icon = gtk.STOCK_OPEN
 
         filename = None
-        chooser = gtk.FileChooserDialog("Open Project...", self.ui.window,
-                                        gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, 
-                                         gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = gtk.FileChooserDialog(msg, self.ui.window,
+                                        ac,
+                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                         icon, gtk.RESPONSE_OK))
 
-        
+
         ffilter = gtk.FileFilter()
         for pattern, name in self.FILE_PATTERNS:
             ffilter.add_pattern(pattern)
@@ -323,17 +384,17 @@ class Application(View):
 
     #@+node:eugeneai.20110116171118.1477: *3* remove_active_view
     def remove_active_view(self):
-        if self.active_view is None:
-            return
-        main_widget = self.active_view.ui.main_frame
-        self.ui.main_vbox.remove(main_widget)
-        main_widget.destroy()
-        self.active_wiew=None
+        if self.active_view != None:
+            av = self.active_view
+            av.remove_from(self.ui.main_vbox)
+            av.destroy()
+            self.active_view=None
+        for ac in [self.ui.ac_save, self.ui.ac_close]:
+            ac.set_sensitive(False)
 
     #@+node:eugeneai.20110116171118.1478: *3* insert_active_view
     def insert_active_view(self, view):
-        if self.active_view:
-            self.remove_active_view()
+        self.remove_active_view()
         self.active_view = view
         main_widget_name = view.__class__.main_widget_name
         self.ui.main_vbox.pack_start(getattr(view.ui, main_widget_name), True, True)
@@ -608,7 +669,7 @@ class Canvas(View):
         icon_registry=ZC.getUtility(IIconRegistry, name='svg')
         self.module_icon_background = icon_registry.resource("ui/pics/background.svg")
         self.module_icon_selected = icon_registry.resource("ui/pics/selected.svg")
-        self.module_icon_toolboxed = icon_registry.resource("ui/pics/toolboxed.svg")        
+        self.module_icon_toolboxed = icon_registry.resource("ui/pics/toolboxed.svg")
         self.toolbox_background = self.module_icon_toolboxed = icon_registry.resource("ui/pics/tool-bkg.svg")
 
     #@+node:eugeneai.20110116171118.1485: *3* _module
@@ -736,7 +797,7 @@ class Canvas(View):
                     if cond:
                         px, py = 20*dx-7, 20*dy-7 # XXX monkey patch.
                         tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=px, y=py)
-                        tool.item=item # Whose tool it is. 
+                        tool.item=item # Whose tool it is.
                         tool.name=name
                         self.tmp_toolbox_group.add_child(tool, -1)
                         self.tmp_toolbox.append(tool)
@@ -815,8 +876,8 @@ class Canvas(View):
             d=InputDialog("test")
             state=None
             self.set_curve_state(fore_path, state)
-        
-        
+
+
     #@+node:eugeneai.20110123122541.1663: *3* on_tool_pressed_released
     def on_tool_pressed_released(self, item, target, event):
         if event.type == gtk.gdk.BUTTON_PRESS:
@@ -914,7 +975,7 @@ class Canvas(View):
                 mt=self.create_module(m_name, event.x_root, event.y_root)
             else:
                 mt=None
-            
+
 
     def choose_module(self, event, kind):
         name=ModuleChooseDialog(message='Choose a module',
@@ -972,7 +1033,7 @@ class Canvas(View):
                         i=_i
                         break
 
-            if i:   
+            if i:
                 self.connect_to=i
                 i.set_property('pattern', self.draw_module_pattern(item.module, selected = True))
                 mx,my = self.get_position(i.module)
@@ -1049,7 +1110,7 @@ class Canvas(View):
         name = InputDialog(
                 message='Enter the block <b>indetifier</b> (name)',
                 value=module.name,
-                field='Name:', 
+                field='Name:',
                 secondary='It could be used for Your convenience as a comment.')
         module.modified = module.modified or name != module.name
         module.name = name
@@ -1062,9 +1123,9 @@ class Canvas(View):
             bkg_stroke_color='white'
         elif state=='on_move':
             #stroke_color= 'white'
-            #bkg_stroke_color= 'brown'            
+            #bkg_stroke_color= 'brown'
             stroke_color= 'green'
-            bkg_stroke_color= 'black'            
+            bkg_stroke_color= 'black'
         elif state=='selected':
             stroke_color='yellow'
             bkg_stroke_color='brown'
@@ -1091,14 +1152,14 @@ class Canvas(View):
     #@+node:eugeneai.20110217131909.1661: *3* create_module
 
     def create_module(self, module, x=None, y=None):
-        """x=y=None means that the coordinates are taken 
+        """x=y=None means that the coordinates are taken
         from model.
         """
 
         if type(module) in [types.UnicodeType, types.StringType]:
             module = ZC.createObject(module)
 
-        if module in self.model.modules: 
+        if module in self.model.modules:
 
             if x == None or y == None and module in self.model.modules:
                 x,y = self.get_position(module)
@@ -1157,7 +1218,7 @@ class ModuleCanvasView(View):
                 if self.model.__class__.icon:
                     icon_registry=ZC.getUtility(IIconRegistry, name='svg')
                     self.icon = icon_registry.resource(self.model.__class__.icon)
-                
+
 
     #@+node:eugeneai.20110116171118.1499: *3* render_on_canvas
     def render_on_canvas(self, canvas):
@@ -1212,7 +1273,7 @@ class DialogView(View):
 
     def setup(self, **kw):
         pass
-   
+
     def add_buttons(self, buttons=()):
         self.ui.dialog.add_buttons(*buttons)
 
@@ -1241,7 +1302,7 @@ class ModuleChooseDialogView(DialogView):
         f=kwargs.pop('filter', None)
         self.set_filter(f)
         DialogView.__init__(self, model=model, **kwargs)
-        
+
     def set_filter(self, filter):
         self.filter=filter
 
@@ -1252,7 +1313,7 @@ class ModuleChooseDialogView(DialogView):
                 pix=pixbuf_registry.resource(c.icon)
                 it = cs.append(parent, [pix, c.name, c.title, True])
                 cat_cat(it, c.cats)
-                
+
                 for k, f in c.modules.iteritems():
                     name=k
                     category=f.category
@@ -1263,7 +1324,7 @@ class ModuleChooseDialogView(DialogView):
                     else:
                         en = True
                     _ = cs.append(it, [pix, name, title, en])
-        
+
         self.module_registry=ZC.getUtility(module_is.IModuleRegistry)
         pixbuf_registry=ZC.getUtility(IIconRegistry, name='pixbuf')
         cs=categories=self.ui.categories
@@ -1349,9 +1410,9 @@ class IconRegistry(object):
     def load(self, r, name = None):
         if self.parent:
             return self.parent.resource(r=r, name=name)
-        
+
         ### split : etc..
-        
+
         if r.find(':')!=-1:
             mod, path = r.split(":",1)
         else:
@@ -1383,7 +1444,7 @@ def to_pixbuf(handle=None):
     pm=gtk.gdk.pixbuf_new_from_data(s.get_data(),gtk.gdk.COLORSPACE_RGB, True, 8,
                                     s.get_width(), s.get_height(), s.get_stride())
     return pm
-    
+
 pixbuf_registry = IconRegistry(conv=to_pixbuf, attr='handle', parent=icon_registry)
 
 #@-others

@@ -7,6 +7,7 @@
     <property name="tooltip" translatable="yes">Close the current project</property>
     <property name="stock_id">gtk-close</property>
     <property name="icon_name">window-close</property>
+    <signal name="activate" handler="on_file_close" swapped="no"/>
   </object>
   <object class="GtkAction" id="ac_new">
     <property name="label" translatable="yes">Create New Project</property>
@@ -32,6 +33,7 @@
     <property name="tooltip" translatable="yes">Save the current project state</property>
     <property name="stock_id">gtk-save</property>
     <property name="icon_name">document-save</property>
+    <signal name="activate" handler="on_file_save" swapped="no"/>
   </object>
   <object class="GtkWindow" id="main_window">
     <property name="can_focus">False</property>
@@ -89,6 +91,7 @@
                         <property name="can_focus">False</property>
                         <property name="related_action">ac_save</property>
                         <property name="use_action_appearance">False</property>
+                        <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
                     </child>
