@@ -2,6 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <object class="GtkActionGroup" id="ag_spectra">
+    <property name="name">Spectra</property>
     <child>
       <object class="GtkAction" id="ac_load">
         <property name="label" translatable="yes">Load Spectra</property>
