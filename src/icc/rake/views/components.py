@@ -162,14 +162,15 @@ class View(gtk.Object):
     def set_parent(self, view):
         """Set parent view. Used for some reason"""
         try:
-            self.parent_view
+            if self.parent_view:
+                pass
+                #disconnect
         except AttributeError:
-            return
-        if self.parent_view:
             pass
-            #disconnect
-        self.parent_view=view
-        view.connect('destroy-view', self.on_parent_destroy)
+
+        if IView.providedBy(view):
+            self.parent_view=view
+            view.connect('destroy-view', self.on_parent_destroy)
 
     def is_model_modified(self):
         return self.model_state.modified
