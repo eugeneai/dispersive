@@ -130,7 +130,8 @@ class View(gtk.Object):
         self.set_model(model)
         self.init_resources()
         self.signals = {}
-        self.connect("get_widget", self.on_get_widget)
+        self.connect("get-widget", self.on_get_widget)
+        self.connect("destroy-view", self.do_destroy_view)
 
     #@+node:eugeneai.20110116171118.1460: *3* init_resources
     def init_resources(self):
@@ -213,6 +214,9 @@ class View(gtk.Object):
         else:
             return 0
 
+    def do_destroy_view(self, self_widget, data=None):
+        pass
+
     def locate_widget(self, widget_name):
         ui = self.ui
         try:
@@ -242,8 +246,51 @@ class View(gtk.Object):
         main_widget_name = self.__class__.main_widget_name
         return getattr(self.ui, main_widget_name)
 
-    def on_parent_destroy(self, parent):
+    def on_parent_destroy(self, parent, data=None):
         self.destroy()
+
+    def add_actions_to_menu(self, a_group, label=None, before=None):
+        if label == None:
+            label = a_group.get_name()
+
+        # find the position of 'before'
+
+        mb = self.locate_widget('menubar')
+        if mb == None:
+            return
+
+        mi = gtk.MenuItem(label=label)
+        mi_name=a_group.get_name()+"_menu"
+        mi.set_name(mi_name)
+        setattr(self.ui, mi_name, mi)
+
+        children = mb.get_children()
+        l = len(children)
+        if before == None:
+            mb.insert(mi, l-1)
+        else:
+            for ch, num in enumerate(children):
+                if ch == before:
+                    mb.insert(mi, num)
+                    break
+            else:
+                mi.destroy()
+                delattr(self.ui, mi_name)
+                return
+        mb.show_all()
+        return mi
+
+    def del_action_from_menu(self, a_group):
+        mb = self.locate_widget('menubar')
+        mi_name=a_group.get_name()+"_menu"
+        try:
+            mi = getattr(self.ui, mi_name)
+            delattr(self.ui, mi_name)
+        except AttributeError:
+            return
+        mb.remove(mi)
+        mb.show_all()
+
 
 gobject.type_register(View)
 
@@ -255,8 +302,9 @@ class Application(View):
     }
     implements(IApplication)
     template = "ui/main_win_gtk.glade"
-    widget_names = ['main_window', 'statusbar', 'toolbar',
-             "main_vbox", 'ac_close', 'ac_save']
+    widget_names = ['main_window', 'statusbar', 'toolbar', 'menubar',
+             "main_vbox", 'ac_close', 'ac_save',
+                    "menu_file", "menu_edit", "menu_view", "menu_help"]
 
     #@+others
     #@+node:eugeneai.20110116171118.1467: *3* __init__
