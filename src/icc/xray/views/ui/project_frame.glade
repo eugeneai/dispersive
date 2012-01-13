@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.24"/>
+  <object class="GtkActionGroup" id="ag_spectra">
+    <child>
+      <object class="GtkAction" id="ac_load">
+        <property name="label" translatable="yes">Load Spectra</property>
+        <property name="short_label" translatable="yes">Load Spectra</property>
+        <property name="tooltip" translatable="yes">Load spectra from a file.</property>
+        <property name="stock_id">gtk-add</property>
+        <property name="icon_name">list-add</property>
+        <property name="always_show_image">True</property>
+        <signal name="activate" handler="on_spectra_load" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="ac_close">
+        <property name="label" translatable="yes">Close Spectra</property>
+        <property name="short_label" translatable="yes">Close Spectra</property>
+        <property name="tooltip" translatable="yes">Close spectral data file and tear it of from the project</property>
+        <property name="stock_id">gtk-remove</property>
+        <property name="icon_name">list-remove</property>
+        <property name="always_show_image">True</property>
+        <signal name="activate" handler="on_spectra_close" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_export">
+        <property name="label" translatable="yes">ac_export</property>
+        <property name="short_label" translatable="yes">Export Spectra</property>
+        <property name="tooltip" translatable="yes">If this action is on, then the generated spectral data will be saved on each calculation.</property>
+        <property name="stock_id">gtk-convert</property>
+        <property name="icon_name">emblem-downloads</property>
+        <property name="always_show_image">True</property>
+        <signal name="toggled" handler="on_spectra_export" swapped="no"/>
+      </object>
+    </child>
+  </object>
   <object class="GtkFrame" id="project_frame">
     <property name="visible">True</property>
     <property name="can_focus">False</property>

@@ -607,7 +607,8 @@ class ProjectView(View):
     template = "ui/project_frame.glade"
     widget_names = ["project_frame",
                     "project_tree_view", "main_vbox", "common_label",
-                    "project_list_model", "project_tree_model", "paned_top", "paned_bottom"]
+                    "project_list_model", "project_tree_model", "paned_top", "paned_bottom",
+                    "ag_spectra"]
     implements(rakeints.IProjectView)
     ZC.adapts(mdli.IProject, rakeints.IView)
     #@+others
@@ -740,6 +741,15 @@ class ProjectView(View):
         if spec.name=='position':
             pos=paned.get_property('position')
             [p.set_position(pos) for p in self.ui.hpaned_list if p!=paned] # recursion breaks due to position property: it can be unchanged.
+
+    def on_spectra_close(self, widget, data=None):
+        print "On spectra close", widget, data
+
+    def on_spectra_export(self, widget, data=None):
+        print "On spectra export", widget, data
+
+    def on_spectra_open(self, widget, data=None):
+        print "On spectra open", widget, data
 
     #@-others
 
