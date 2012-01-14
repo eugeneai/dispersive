@@ -10,6 +10,7 @@
         <property name="tooltip" translatable="yes">Load spectra from a file.</property>
         <property name="stock_id">gtk-add</property>
         <property name="icon_name">list-add</property>
+        <property name="is_important">True</property>
         <property name="always_show_image">True</property>
         <signal name="activate" handler="on_spectra_load" swapped="no"/>
       </object>
@@ -32,6 +33,7 @@
         <property name="tooltip" translatable="yes">If this action is on, then the generated spectral data will be saved on each calculation.</property>
         <property name="stock_id">gtk-convert</property>
         <property name="icon_name">emblem-downloads</property>
+        <property name="is_important">True</property>
         <property name="always_show_image">True</property>
         <signal name="toggled" handler="on_spectra_export" swapped="no"/>
       </object>

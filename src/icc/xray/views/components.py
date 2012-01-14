@@ -624,10 +624,13 @@ class ProjectView(View):
         self.connect('spectra-clicked', self.on_spectra_clicked)
         self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
         self.ui.hpaned_list=[self.ui.paned_top, self.ui.paned_bottom]
+
         self.add_actions_to_menu(self.ui.ag_spectra, label='Spectra')
+        self.ui.tb_widgets=self.add_actions_to_toolbar(self.ui.ag_spectra)
 
     def do_destroy_view(self, self_widget, data=None):
-        self.del_action_from_menu(self.ui.ag_spectra)
+        self.del_actions_from_menu(self.ui.ag_spectra)
+        self.del_actions_from_toolbar(self.ui.ag_spectra, self.ui.tb_widgets)
 
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
