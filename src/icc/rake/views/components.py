@@ -262,6 +262,10 @@ class View(gtk.Object):
         mi = gtk.MenuItem(label=label)
         mi_name=a_group.get_name()+"_menu"
         mi.set_name(mi_name)
+
+        #Create menu
+
+
         setattr(self.ui, mi_name, mi)
 
         children = mb.get_children()
@@ -277,7 +281,7 @@ class View(gtk.Object):
                 mi.destroy()
                 delattr(self.ui, mi_name)
                 return
-        mb.show_all()
+        mi.show()
         return mi
 
     def del_action_from_menu(self, a_group):
@@ -288,8 +292,8 @@ class View(gtk.Object):
             delattr(self.ui, mi_name)
         except AttributeError:
             return
+        mi.hide()
         mb.remove(mi)
-        mb.show_all()
 
 
 gobject.type_register(View)
