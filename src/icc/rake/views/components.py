@@ -287,7 +287,7 @@ class View(gtk.Object):
         mi.show()
         return mi
 
-    def del_action_from_menu(self, a_group):
+    def del_actions_from_menu(self, a_group):
         mb = self.locate_widget('menubar')
         mi_name=a_group.get_name()+"_menu"
         try:
@@ -297,6 +297,50 @@ class View(gtk.Object):
             return
         mi.hide()
         mb.remove(mi)
+
+    def add_actions_to_toolbar(self, a_group, separator=True, important=True):
+        """Adds actions of the action group a_group to toolbar.
+        If separator is True, a SeparatorToolItem wisget also added before the tool buttons.
+        If important is True, then noimportand actions will not be added to the toolbar."""
+
+        tb = self.locate_widget('toolbar')
+        if tb == None:
+            return
+
+        acs = a_group.list_actions()
+        if len(acs) == 0:
+            return
+
+        widgets = []
+
+        if separator:
+            separator = gtk.SeparatorToolItem()
+            tb.insert(separator, -1)
+            widgets.append(separator)
+            separator.show()
+
+        for a in a_group.list_actions():
+            if not important or a.get_is_important():
+                ti = a.create_tool_item()
+                tb.insert(ti, -1)
+                widgets.append(ti)
+                ti.show()
+            else:
+                print a, 'did not created', a.get_is_important()
+
+        return widgets
+
+    def del_actions_from_toolbar(self, a_group, widgets):
+        tb = self.locate_widget('toolbar')
+        if tb == None:
+            return
+
+        for w in widgets:
+            w.hide()
+            tb.remove(w)
+
+        return []
+
 
 
 gobject.type_register(View)
