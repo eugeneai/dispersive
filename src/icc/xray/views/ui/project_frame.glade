@@ -5,8 +5,8 @@
     <property name="name">Spectra</property>
     <child>
       <object class="GtkAction" id="ac_load">
-        <property name="label" translatable="yes">Load Spectra</property>
-        <property name="short_label" translatable="yes">Load Spectra</property>
+        <property name="label" translatable="yes">Load specrum</property>
+        <property name="short_label" translatable="yes">Load spectrum</property>
         <property name="tooltip" translatable="yes">Load spectra from a file.</property>
         <property name="stock_id">gtk-add</property>
         <property name="icon_name">list-add</property>
@@ -16,8 +16,8 @@
     </child>
     <child>
       <object class="GtkAction" id="ac_close">
-        <property name="label" translatable="yes">Close Spectra</property>
-        <property name="short_label" translatable="yes">Close Spectra</property>
+        <property name="label" translatable="yes">Close spectrum</property>
+        <property name="short_label" translatable="yes">Close pectrum</property>
         <property name="tooltip" translatable="yes">Close spectral data file and tear it of from the project</property>
         <property name="stock_id">gtk-remove</property>
         <property name="icon_name">list-remove</property>
@@ -27,8 +27,8 @@
     </child>
     <child>
       <object class="GtkToggleAction" id="ac_export">
-        <property name="label" translatable="yes">ac_export</property>
-        <property name="short_label" translatable="yes">Export Spectra</property>
+        <property name="label" translatable="yes">Export spectrum</property>
+        <property name="short_label" translatable="yes">Export Spectrum</property>
         <property name="tooltip" translatable="yes">If this action is on, then the generated spectral data will be saved on each calculation.</property>
         <property name="stock_id">gtk-convert</property>
         <property name="icon_name">emblem-downloads</property>
