@@ -264,7 +264,10 @@ class View(gtk.Object):
         mi.set_name(mi_name)
 
         #Create menu
-
+        m=gtk.Menu()
+        mi.set_submenu(m)
+        for a in a_group.list_actions():
+            m.append(a.create_menu_item())
 
         setattr(self.ui, mi_name, mi)
 
