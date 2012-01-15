@@ -341,6 +341,51 @@ class View(gtk.Object):
 
         return []
 
+    def get_filename(self, patterns, save=False, open_msg="Open file...", save_msg="Save file..."):
+        if save:
+            msg = save_msg
+            # msg="Save the project..."
+            ac = gtk.FILE_CHOOSER_ACTION_SAVE
+            icon = gtk.STOCK_SAVE
+        else:
+            msg = open_msg
+            # msg="Open a project..."
+            ac = gtk.FILE_CHOOSER_ACTION_OPEN
+            icon = gtk.STOCK_OPEN
+
+        filename = None
+        chooser = gtk.FileChooserDialog(msg, self.ui.window,
+                                        ac,
+                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                         icon, gtk.RESPONSE_OK))
+
+
+        ffilter = gtk.FileFilter()
+        # for pattern, name in self.FILE_PATTERNS:
+        for pattern, name in patterns:
+            ffilter.add_pattern("*"+pattern)
+
+        chooser.set_filter(ffilter)
+        response = chooser.run()
+        if response == gtk.RESPONSE_OK:
+            filename = chooser.get_filename()
+        chooser.destroy()
+
+        if filename != None:
+            return self.normalize_file_ext(filename, patterns)
+        else:
+            return None
+
+    def normalize_file_ext(self, filename, patterns):
+
+        # def_file_ext=self.FILE_PATTERNS[0][0]
+        def_file_ext=patterns[0][0]
+
+        (_,ext) = os.path.splitext(filename)
+        if not ext:
+            filename+=def_file_ext
+        return filename
+
 
 
 gobject.type_register(View)
@@ -407,9 +452,9 @@ class Application(View):
     #@+node:eugeneai.20110116171118.1472: *3* open_project
     def open_project(self, filename=None):
         if filename is None:
-            filename_ = self.get_filename()
+            filename_ = self.get_filename(patterns=self.FILE_PATTERNS, open_msg="Open a project ...", save_msg="Save the project ...")
         else:
-            filename_=self.normalize_file_ext(filename)
+            filename_=self.normalize_file_ext(filename, self.FILE_PATTERNS)
         if filename_:
             self.on_file_new()
             #self.model.load_from(filename_)
@@ -450,45 +495,6 @@ class Application(View):
         print "Saving the data of the project to file '%s'" % filename_
         self.filename=filename_
 
-
-    #@+node:eugeneai.20110116171118.1474: *3* get_filename
-    def get_filename(self, save=False):
-        if save:
-            msg="Save the project..."
-            ac = gtk.FILE_CHOOSER_ACTION_SAVE
-            icon = gtk.STOCK_SAVE
-        else:
-            msg="Open a project..."
-            ac = gtk.FILE_CHOOSER_ACTION_OPEN
-            icon = gtk.STOCK_OPEN
-
-        filename = None
-        chooser = gtk.FileChooserDialog(msg, self.ui.window,
-                                        ac,
-                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                         icon, gtk.RESPONSE_OK))
-
-
-        ffilter = gtk.FileFilter()
-        for pattern, name in self.FILE_PATTERNS:
-            ffilter.add_pattern("*"+pattern)
-
-        chooser.set_filter(ffilter)
-        response = chooser.run()
-        if response == gtk.RESPONSE_OK:
-            filename = chooser.get_filename()
-        chooser.destroy()
-
-        return self.normalize_file_ext(filename)
-
-    def normalize_file_ext(self, filename):
-
-        def_file_ext=self.FILE_PATTERNS[0][0]
-
-        (_,ext) = os.path.splitext(filename)
-        if not ext:
-            filename+=def_file_ext
-        return filename
 
     #@+node:eugeneai.20110116171118.1475: *3* error_message
     def error_message(self, message):
