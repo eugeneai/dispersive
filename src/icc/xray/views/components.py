@@ -621,7 +621,7 @@ class ProjectView(View):
 
         _conf=get_global_configuration()
         opt=_conf.add_option('spectra_file_ext', default='.*:All Files', keys='app')
-        self.FILE_PATTERNS=[e.split(':') for e in opt.get().split(';')]
+        self.FILE_PATTERNS=[e.split(':') for e in opt.get().split('|')]
 
         self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), self), IPlottingView)
         self.connect('spectrum-clicked', self.active_view.on_spectrum_clicked)
@@ -762,8 +762,8 @@ class ProjectView(View):
         print "On spectra export", widget, data
 
     def on_spectra_load(self, widget, data=None):
-        file_name = self.get_filename(self.FILE_PATTERNS, open_msg="Load spectra ...")
-        print "On spectra open", widget, data
+        file_name = self.get_filename(self.FILE_PATTERNS, open_msg="Load spectra ...", filter_name='Spectra Files')
+        print "On spectra open", widget, data, filename
 
     #@-others
 

@@ -341,7 +341,8 @@ class View(gtk.Object):
 
         return []
 
-    def get_filename(self, patterns, save=False, open_msg="Open file...", save_msg="Save file..."):
+    def get_filename(self, patterns, save=False, open_msg="Open file...", save_msg="Save file...",
+            filter_name='Project Files'):
         if save:
             msg = save_msg
             # msg="Save the project..."
@@ -358,13 +359,23 @@ class View(gtk.Object):
             ac,
             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                 icon, gtk.RESPONSE_OK))
+        chooser.set_default_response(gtk.RESPONSE_OK)
+        chooser.set_current_folder('.')
+
+
 
         ffilter = gtk.FileFilter()
-
+        ffilter.set_name(filter_name)
         for pattern, name in patterns:
-            ffilter.add_pattern("*"+pattern)
+            p="*"+pattern
+            ffilter.add_pattern(p)
+        chooser.add_filter(ffilter)
 
-        chooser.set_filter(ffilter)
+        ffilter = gtk.FileFilter()
+        ffilter.set_name("All Files")
+        ffilter.add_pattern("*")
+        chooser.add_filter(ffilter)
+
         response = chooser.run()
         if response == gtk.RESPONSE_OK:
             filename = chooser.get_filename()
@@ -415,7 +426,7 @@ class Application(View):
 
         _conf=get_global_configuration()
         opt=_conf.add_option('project_file_ext', default='.prj:A project file', keys='app')
-        self.FILE_PATTERNS=[e.split(':') for e in opt.get().split(';')]
+        self.FILE_PATTERNS=[e.split(':') for e in opt.get().split('|')]
 
         self.connect("startup_open", self.on_startup_open)
 
