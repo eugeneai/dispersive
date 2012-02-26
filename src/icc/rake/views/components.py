@@ -354,14 +354,13 @@ class View(gtk.Object):
             icon = gtk.STOCK_OPEN
 
         filename = None
-        chooser = gtk.FileChooserDialog(msg, self.ui.window,
-                                        ac,
-                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                         icon, gtk.RESPONSE_OK))
-
+        chooser = gtk.FileChooserDialog(msg, self.locate_widget('main_window'),
+            ac,
+            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                icon, gtk.RESPONSE_OK))
 
         ffilter = gtk.FileFilter()
-        # for pattern, name in self.FILE_PATTERNS:
+
         for pattern, name in patterns:
             ffilter.add_pattern("*"+pattern)
 

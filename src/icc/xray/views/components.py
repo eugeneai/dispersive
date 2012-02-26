@@ -19,6 +19,7 @@ import zope.component as ZC
 import zope.component.interfaces as ZCI
 from zope.component.factory import Factory
 from pkg_resources import resource_stream, resource_string
+from icc.rake.views import get_global_configuration
 
 import icc.xray.models.components as mdl
 import icc.xray.models.interfaces as mdli
@@ -617,6 +618,11 @@ class ProjectView(View):
         self.active_view = None
         View.__init__(self, model=model, parent=parent)
         self.ui.main_frame=self.ui.project_frame
+
+        _conf=get_global_configuration()
+        opt=_conf.add_option('spectra_file_ext', default='.*:All Files', keys='app')
+        self.FILE_PATTERNS=[e.split(':') for e in opt.get().split(';')]
+
         self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), self), IPlottingView)
         self.connect('spectrum-clicked', self.active_view.on_spectrum_clicked)
         self.connect('spectra-clicked', self.active_view.on_spectra_clicked)
@@ -631,7 +637,6 @@ class ProjectView(View):
     def do_destroy_view(self, self_widget, data=None):
         self.del_actions_from_menu(self.ui.ag_spectra)
         self.del_actions_from_toolbar(self.ui.ag_spectra, self.ui.tb_widgets)
-
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
     def get_objects(self):
@@ -757,6 +762,7 @@ class ProjectView(View):
         print "On spectra export", widget, data
 
     def on_spectra_load(self, widget, data=None):
+        file_name = self.get_filename(self.FILE_PATTERNS, open_msg="Load spectra ...")
         print "On spectra open", widget, data
 
     #@-others
