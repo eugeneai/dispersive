@@ -141,7 +141,7 @@ class Project(object):
     #@+others
     #@+node:eugeneai.20110116171118.1349: *3* __init__
     def __init__(self, source=None, scale=None): # scale here is not of use!! YYY
-        self.source = source
+        self.set_source(source)
         if scale is None:
             self.set_scale(scale_none)
         else:
@@ -199,6 +199,12 @@ class Project(object):
         d['spectra']=[{'name':spectrum} for spectrum in spectra]
         return d
 
+    def set_source(self, source):
+        self.source=source
+        self.xml=None
+        if self.source:
+            self.load_xml()
+
     #@-others
 #@+node:eugeneai.20110116171118.1356: ** class SpectraOfProject
 class SpectraOfProject(Spectra):
@@ -217,27 +223,34 @@ class SpectraOfProject(Spectra):
 
     #@+node:eugeneai.20110116171118.1359: *3* get_spectra
     def get_spectra(self, project = None):
+        self.project.spectra=[]
         def _c(x):
             return int(x)
 
+        print "HERE1"
         if project is None:
             project = self.project
 
+        print "HERE2"
         if project is None:
             return []
 
         # print self.source
+        print "HERE3"
         try:
             xml = project.get_xml()
         except ValueError:
-            self.spectra = []
-            return
+            return []
+        print "HERE"
         spectra = xml.xpath('//Channels/text()')
         spectra = [map(_c, sp.split(',')) for sp in spectra]
         names = xml.xpath('//Channels/../@Name')
         spectra = [{"spectrum": sp, "label":nm} for sp, nm in zip(spectra, names)]
-        self.spectra = spectra
+        #self.spectra = spectra
+        self.project.spectra=spectra
         return spectra
+
+    spectra = property(get_spectra)
 
     #@-others
 #@+node:eugeneai.20110116171118.1360: ** test0

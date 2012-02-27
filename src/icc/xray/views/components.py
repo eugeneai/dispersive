@@ -481,7 +481,7 @@ class PlottingView(View):
         View.__init__(self, model, parent=parent)
         self.ui=rakeviews.Ui()
         self.ui.win=gtk.Frame()
-        self.spectra = model
+
         #parent_ui= ui = parent.ui #gsm().getUtility(rakeints.IApplication).ui
         parent_ui= ui = gsm().getUtility(rakeints.IApplication).ui
 
@@ -499,16 +499,39 @@ class PlottingView(View):
         ax = fig.add_subplot(111)
         self.ui.ax = ax
 
-        if not self.spectra or not self.spectra.spectra:
+        canvas = FigureCanvas(fig)  # a gtk.DrawingArea
+        self.ui.canvas = canvas
+        canvas.set_size_request(600, 400)
+        vbox.pack_start(canvas, True, True)
+        toolbar_ = TXRFNavigationToolbar(canvas, self)
+        # vbox.pack_start(toolbar, False, False)
+
+        self.ui.sb=ui.statusbar
+        local.msg_id=None
+        local.ctx_id=self.ui.sb.get_context_id("plotting")
+
+        self.ui.cid = canvas.mpl_connect('button_press_event', self.on_click)
+        # self.ui.check_buttons = widgets.CheckButtons(ax, ['1']*20, [True]*20)
+        self.invalidate_model(model)
+
+    def on_model_changed(self, model):
+        try:
+            ax=self.ui.ax
+            fig=self.ui.fig
+        except AttributeError:
+            return
+        if not self.model or not self.model.spectra:
+            print "STUB:"
             t = arange(0.0,3.0,0.01)
             s = sin(2*pi*t)
-            ax.plot(t,s)
+            pl=ax.plot(t,s)
         else:
-            for i, spec in enumerate(self.spectra.spectra):
+            print "SPECTRA:"
+            for i, spec in enumerate(self.model.spectra):
                 spectrum = spec['spectrum']
                 sp_len = len(spectrum)
                 X = arange(sp_len)
-                kevs = self.spectra.scale.to_keV(X)
+                kevs = self.model.scale.to_keV(X)
                 spec.setdefault('aa', True)
                 spec.setdefault('linewidth', 1)
                 spec.setdefault('alpha',1.0)
@@ -528,20 +551,6 @@ class PlottingView(View):
             #ax.legend()
             ax.minorticks_on()
 
-        canvas = FigureCanvas(fig)  # a gtk.DrawingArea
-        self.ui.canvas = canvas
-        canvas.set_size_request(600, 400)
-        vbox.pack_start(canvas, True, True)
-        toolbar_ = TXRFNavigationToolbar(canvas, self)
-        # vbox.pack_start(toolbar, False, False)
-
-        self.ui.sb=ui.statusbar
-        local.msg_id=None
-        local.ctx_id=self.ui.sb.get_context_id("plotting")
-
-        self.ui.cid = canvas.mpl_connect('button_press_event', self.on_click)
-        # self.ui.check_buttons = widgets.CheckButtons(ax, ['1']*20, [True]*20)
-
     #@+node:eugeneai.20110116171118.1394: *3* on_click
     def on_click(self, event, data=None):
         local = self.local
@@ -559,11 +568,11 @@ class PlottingView(View):
     def on_spectra_clicked(self, project_view):
         #print "Spectra_clicked!!"
         any_vis = False
-        for sp in self.spectra.spectra:
+        for sp in self.model.spectra:
             alpha = sp.setdefault('alpha',1.0)
             if alpha>0.1:
                 any_vis = True
-        [self._set(sp, not any_vis) for sp in self.spectra.spectra]
+        [self._set(sp, not any_vis) for sp in self.model.spectra]
         self.ui.canvas.draw()
 
     #@+node:eugeneai.20110116171118.1396: *3* on_spectrum_clicked
@@ -571,7 +580,9 @@ class PlottingView(View):
         #print "Spectrum selected:", spectrum_data
         path = spectrum_data['path']
         index = path[-1]
-        spec = self.spectra.spectra[index]
+        s=self.model.spectra
+        print index, s, self.model.__class__
+        spec = s[index]
         spec['path'] = path
         if spec['label'] != spectrum_data['name']:
             print "Warning: name difference!!"
@@ -582,6 +593,7 @@ class PlottingView(View):
 
     #@+node:eugeneai.20110116171118.1397: *3* _toggle
     def _toggle(self, spec):
+        print "Spec:", spec
         line = spec['line2D']
         newalpha = 1.0 - spec.get('alpha', 1.0)
         line.set(alpha=newalpha)
@@ -658,7 +670,8 @@ class ProjectView(View):
     def set_model(self, model=None):
         View.set_model(self, model=model)
         if self.active_view:
-            self.active_view.set_model(self.model)
+            self.active_view.set_model(mdli.ISpectra(self.model))
+            self.active_view.invalidate_model(self.active_view.model)
 
         try:
             t = self.ui.project_tree_model
@@ -709,7 +722,7 @@ class ProjectView(View):
         any_vis = False
         sd = self.get_objects()['spectra']
         t = self.ui.project_tree_model
-        for i, sp in enumerate(self.active_view.spectra.spectra):
+        for i, sp in enumerate(self.active_view.model.spectra):
             alpha = sp.setdefault('alpha', 1.0)
             path = sp.setdefault('path', sd[i].get('path', None))
             if path is None:
@@ -763,7 +776,14 @@ class ProjectView(View):
 
     def on_spectra_load(self, widget, data=None):
         file_name = self.get_filename(self.FILE_PATTERNS, open_msg="Load spectra ...", filter_name='Spectra Files')
-        print "On spectra open", widget, data, filename
+        if file_name != None:
+            self.load_spectra(file_name)
+
+    def load_spectra(self, file_name):
+        self.model.set_source(file_name)
+        self.set_model(self.model)
+        self.active_view.canvas.draw()
+        print 'need to be refreshed'
 
     #@-others
 

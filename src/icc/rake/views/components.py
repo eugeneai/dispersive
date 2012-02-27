@@ -159,6 +159,12 @@ class View(gtk.Object):
             self.model=model
             # some update needed???
 
+    def on_model_changed(self, model):
+        pass
+
+    def invalidate_model(self, model):
+        self.on_model_changed(model)
+
     #@+node:eugeneai.20110116171118.1464: *3* set_parent
     def set_parent(self, view):
         """Set parent view. Used for some reason"""
