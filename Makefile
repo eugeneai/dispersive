@@ -1,4 +1,4 @@
-.PHONY: all test xray rake edit
+.PHONY: all test xray rake edit activate
 
 all: test
 
@@ -12,3 +12,6 @@ rake:
 
 edit:
 	scite &
+
+activate:
+	. ./python/bin/activate
