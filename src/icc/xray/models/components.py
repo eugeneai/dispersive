@@ -13,6 +13,7 @@ import os, os.path
 from zope.interface import implements
 from icc.xray.models.interfaces import *
 import cStringIO as StringIO
+from collections import OrderedDict
 
 DEBUG = True
 
@@ -69,7 +70,7 @@ class Spectra(object):
     implements(ISpectra)
     #@+others
     #@+node:eugeneai.20110116171118.1343: *3* __init__
-    def __init__(self, spectra=None):
+    def __init__(self, spectra=None, name=None):
         """Paramter spectra is a list the following structure:
         (channel_array, showing notation).
         """
@@ -77,6 +78,7 @@ class Spectra(object):
             spectra = []
         self.spectra = spectra
         self.scale = scale_none
+        self.name=name
 
     #@+node:eugeneai.20110116171118.1344: *3* set_scale
     def set_scale(self, scale):
@@ -133,49 +135,46 @@ class Spectra(object):
 
 
     #@-others
-#@+node:eugeneai.20110116171118.1348: ** class Project
-class Project(object):
-    implements(IProject)
-    """Set of spectra with the same Energy axis scale (x-axis)
-    """
-    #@+others
-    #@+node:eugeneai.20110116171118.1349: *3* __init__
-    def __init__(self, source=None, scale=None): # scale here is not of use!! YYY
-        self.set_source(source)
+
+class Spectrum(object):
+    def __init__(self, channels=None, name=None):
+        self.channels=channels
+        self.name=name
+
+class SpectralData(object):
+    def __init__(self, name, data=[], filename=None, scale=None):
+        self.name=name
+        self.data=data
+        self.filename=filename
+
         if scale is None:
             self.set_scale(scale_none)
         else:
             self.set_scale(scale)
 
-        self.xml=self.spectra=None
+        self.xml=None
 
-    #@+node:eugeneai.20110116171118.1350: *3* load_xml
     def load_xml(self):
-        if self.source:
-            if self.source.lstrip().startswith('<?'):
-                self.load(StringIO.StringIO(self.source))
+        if self.data:
+            if type(self.data) in [type(''), type(u'')]:
+                return self.load(StringIO.StringIO(self.data))
             else:
-                self.load(open(self.source))
-            return
+                return self.load(open(self.source))
         raise ValueError("wrong xml")
 
-    #@+node:eugeneai.20110116171118.1351: *3* load
     def load(self, source):
         self.xml = etree.parse(source)
 
-    #@+node:eugeneai.20110116171118.1352: *3* get_xml
     def get_xml(self):
         if self.xml is not None:
             return self.xml
         self.load_xml()
         return self.xml
 
-    #@+node:eugeneai.20110116171118.1353: *3* set_scale
     def set_scale(self, scale):
         self.scale=scale
 
-    #@+node:eugeneai.20110116171118.1354: *3* get_header
-    def get_header(self):
+    def get_meta(self):
         try:
             creator = self.get_xml().xpath("//Creator/text()")[0]
         except IndexError:
@@ -184,26 +183,79 @@ class Project(object):
             comment = self.get_xml().xpath("//Comment/text()")[0]
         except IndexError:
             comment = ''
-        return {'creator':creator, 'comment':comment}
+        self.creator=creator
+        self.comment=comment
+        return self
 
-    #@+node:eugeneai.20110116171118.1355: *3* get_objects
-    def get_objects(self):
-        d = self.get_header()
+    def __call__(self):
+        d = self.get_meta()
         xml = self.get_xml()
         try:
             o_root = xml.xpath("//ClassInstance[@Type='TRTBase']")[0]
         except IndexError:
             o_root = xml
-        spectra = o_root.xpath("//ClassInstance[@Type='TRTSpectrum']/@Name")
-        d['root']=o_root
-        d['spectra']=[{'name':spectrum} for spectrum in spectra]
-        return d
+        spectra = o_root.xpath("//ClassInstance[@Type='TRTSpectrum']")
+        nsp=[]
+        for s in spectra:
+            sname=s.get('Name')
+            channels=eval("["+s.xpath("/Channels/text()")+"]")
+            sp=Spectrum(channels,name)
+            nsp.append(sp)
+        self.data=nsp
+        return self
 
-    def set_source(self, source):
-        self.source=source
-        self.xml=None
-        if self.source:
-            self.load_xml()
+#@+node:eugeneai.20110116171118.1348: ** class Project
+class Project(object):
+    implements(IProject)
+    """Project demotes a set of files with spectral data,
+        the files are processed the same way.
+    """
+    #@+others
+    #@+node:eugeneai.20110116171118.1349: *3* __init__
+    def __init__(self, spectral_data=OrderedDict(), scale=None): # scale here is not of use!! YYY
+        self.spectral_data=OrderedDict(spectral_data)
+
+    def set_scale(self, scale):
+        """Set this scale to all the files
+        """
+        for sd in self.spectral_data.items():
+            sd.set_scale(scale)
+
+    def add_spectral_data_source(self, filename, name=None):
+        if name==None:
+            name=os.path.split(filename)[-1] # Just filename and extension
+        sd=SpectralData(filename=filename,
+            name=name)
+        self.spectral_data[filename]=sd
+        return sd
+
+    def save(self, filename):
+        project=etree.Element("XRF_Project")
+        files=etree.SubElement(project, "files")
+        for name,sd in self.spectral_data.iteritems():
+            file=etree.SubElement(files, "file", filename=name, name=sd.name)
+            scale=etree.SubElement(file, "scale", zero=str(sd.scale._zero), scale=str(sd.scale._scale))
+        o=open(filename,'w')
+        o.write(etree.tostring(project, pretty_print=True))
+        o.close()
+
+    def load(self, filename):
+        self.spectral_data=OrderedDict()
+        i=open(filename)
+        project=etree.parse(i)
+        files=project.xpath("/XRF_Project/files/file")
+        for file in files:
+            scale=file.xpath("//scale")[0]
+            z=int(scale.get('zero'))
+            s=int(scale.get('scale'))
+            fname=file.get('filename')
+            name=file.get('name')
+            sc=Scale(zero=z, scale=s)
+            # Check the coincidence with scale_none
+            sp=self.add_spectral_data_source(name=name, filename=filename)
+            sp.set_scale(sc)
+
+        i.close()
 
     #@-others
 #@+node:eugeneai.20110116171118.1356: ** class SpectraOfProject
@@ -218,7 +270,7 @@ class SpectraOfProject(Spectra):
     def set_project(self, project):
         self.project = project
         self.get_spectra(self.project)
-        self.scale = project.scale
+        #self.scale = project.scale
         return project
 
     #@+node:eugeneai.20110116171118.1359: *3* get_spectra
@@ -237,6 +289,7 @@ class SpectraOfProject(Spectra):
 
         # print self.source
         print "HERE3"
+        return []
         try:
             xml = project.get_xml()
         except ValueError:

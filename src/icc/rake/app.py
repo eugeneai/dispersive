@@ -38,8 +38,8 @@ def main(package=None):
     conf=c.add_option('conf', default='configuration')
     c.USER_CONF=user_conf
     c.MAIN_CONF=main_conf
-    gsm.registerUtility(c)    
-    gsm.registerUtility(c, name=conf.get())    
+    gsm.registerUtility(c)
+    gsm.registerUtility(c, name=conf.get())
     xmlconfig(resource_stream(package, "configure.zcml"))
     app=ZC.createObject("Application")
     view=c.add_option('view', default='application')
@@ -50,10 +50,10 @@ def main(package=None):
     if get_user_config_option('load_last_project', default=0, type='int', keys='startup'):
         lp_fn=get_user_config_option('last_project_file_name', default='', type='string', keys='startup').strip()
         if lp_fn:
-            app.emit("startup_open", lp_fn)
+            app.emit("startup-open", lp_fn)
 
     rc = app.main()
-    
+
     if user_conf: user_conf.write(user_config_file)
 
     return rc

@@ -106,6 +106,7 @@ class View(gtk.Object):
                        (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT,)),
         'destroy-view': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                        (gobject.TYPE_PYOBJECT,)),
+        'model-changed': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
     }
     template = None
     widget_names = None
@@ -132,6 +133,7 @@ class View(gtk.Object):
         self.signals = {}
         self.connect("get-widget", self.on_get_widget)
         self.connect("destroy-view", self.do_destroy_view)
+        self.connect("model-changed", self.do_model_changed)
 
     #@+node:eugeneai.20110116171118.1460: *3* init_resources
     def init_resources(self):
@@ -161,6 +163,9 @@ class View(gtk.Object):
 
     def on_model_changed(self, model):
         pass
+
+    def do_model_changed(self, sender, model):
+        self.on_model_changed(model)
 
     def invalidate_model(self, model):
         self.on_model_changed(model)
@@ -411,6 +416,8 @@ gobject.type_register(View)
 class Application(View):
     __gsignals__ = {
         'startup-open': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,)),
+        'project-open': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_BOOLEAN, (gobject.TYPE_STRING,)),
+        'project-save': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_BOOLEAN, (gobject.TYPE_STRING,)),
     }
     implements(IApplication)
     template = "ui/main_win_gtk.glade"
@@ -434,10 +441,14 @@ class Application(View):
         opt=_conf.add_option('project_file_ext', default='.prj:A project file', keys='app')
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split('|')]
 
-        self.connect("startup_open", self.on_startup_open)
+        self.connect("startup-open", self.on_startup_open)
+        self.connect("model-changed", self.on_model_changed_)
 
                 #put event to load project.
                 #self.open_project(lo_f)
+
+    def on_model_changed_(self, view, model):
+        self.ui.ac_save.set_sensitive(True)
 
     #@+node:eugeneai.20110116171118.1468: *3* set_model
     def set_model(self, model = None):
@@ -464,6 +475,7 @@ class Application(View):
         factory_name=c.add_option('factory_name', default='main_model')
         self.set_model(ZC.createObject(factory_name.get()))
         self.insert_project_view(self.ui)
+        self.ui.ac_save.set_sensitive(True)
 
     #@+node:eugeneai.20110116171118.1472: *3* open_project
     def open_project(self, filename=None):
@@ -473,6 +485,8 @@ class Application(View):
             filename_=self.normalize_file_ext(filename, self.FILE_PATTERNS)
         if filename_:
             self.on_file_new()
+            success=self.emit("project-open", filename_)
+            self.ui.ac_save.set_sensitive(not success)
             #self.model.load_from(filename_)
             #self.active_view.update()
             if filename == None: # Loaded as result of user file dialog activity
@@ -509,6 +523,8 @@ class Application(View):
             return # user rejected to write data
 
         print "Saving the data of the project to file '%s'" % filename_
+        success=self.emit("project-save", filename_)
+        self.ui.ac_save.set_sensitive(not success)
         self.filename=filename_
 
 
@@ -551,6 +567,7 @@ class Application(View):
 
         self.active_view = view
         self.active_view.insert_into(self.ui.main_vbox)
+        view.connect('model-changed', self.on_model_changed_)
         self.ui.ac_close.set_sensitive(True)
         view.ui.main_frame.show_all()
 

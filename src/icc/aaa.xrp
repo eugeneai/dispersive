@@ -1,0 +1,10 @@
+<XRF_Project>
+  <files>
+    <file name="G-2.spx" filename="/home/eugeneai/Development/codes/dispersive/src/icc/aaa.xrp">
+      <scale zero="0" scale="1"/>
+    </file>
+    <file name="QLO-1.spx" filename="/home/eugeneai/Development/codes/dispersive/data/Coumpton/QLO-1.spx">
+      <scale zero="0" scale="1"/>
+    </file>
+  </files>
+</XRF_Project>

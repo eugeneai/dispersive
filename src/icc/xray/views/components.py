@@ -646,9 +646,25 @@ class ProjectView(View):
         self.add_actions_to_menu(self.ui.ag_spectra, label='Spectra')
         self.ui.tb_widgets=self.add_actions_to_toolbar(self.ui.ag_spectra)
 
+        parent.connect('project-open', self.on_file_open)
+        parent.connect('project-save', self.on_file_save)
+
     def do_destroy_view(self, self_widget, data=None):
         self.del_actions_from_menu(self.ui.ag_spectra)
         self.del_actions_from_toolbar(self.ui.ag_spectra, self.ui.tb_widgets)
+
+    def on_file_open(self, app, filename, data=None):
+        print "Opening file", filename
+        try:
+            self.model.load(filename)
+        except OSError:
+            return False
+        return True
+
+    def on_file_save(self, app, filename, data=None):
+        print "Saving file", filename
+        self.model.save(filename)
+        return True
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
     def get_objects(self):
@@ -657,6 +673,7 @@ class ProjectView(View):
             return d
         except AttributeError:
             try:
+                int('df')
                 d = self.model.get_objects()
                 self._obj_cache = d
             except ValueError, exc:
@@ -780,8 +797,9 @@ class ProjectView(View):
             self.load_spectra(file_name)
 
     def load_spectra(self, file_name):
-        self.model.set_source(file_name)
+        self.model.add_spectral_data_source(file_name)
         self.set_model(self.model)
+        self.emit('model-changed', self.model)
         self.active_view.canvas.draw()
         print 'need to be refreshed'
 
