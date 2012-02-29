@@ -9,5 +9,8 @@
     <file name="GA.spx" filename="/home/eugeneai/Development/codes/dispersive/data/Coumpton/GA.spx">
       <scale zero="0" scale="1"/>
     </file>
+    <file name="Phosporite_susp_sol_carriers15.05.10.rtx" filename="/home/eugeneai/Development/codes/dispersive/data/Test/Phosporite_susp_sol_carriers15.05.10.rtx">
+      <scale zero="0" scale="1"/>
+    </file>
   </files>
 </XRF_Project>
