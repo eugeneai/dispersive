@@ -502,6 +502,7 @@ class PlottingView(View):
     #@+node:eugeneai.20110116171118.1393: *3* __init__
     def __init__(self, model=None, parent=None):
         View.__init__(self, model, parent=parent)
+        self.set_axis_labels()
         self.ui=rakeviews.Ui()
         self.ui.win=gtk.Frame()
 
@@ -537,12 +538,21 @@ class PlottingView(View):
         # self.ui.check_buttons = widgets.CheckButtons(ax, ['1']*20, [True]*20)
         self.invalidate_model(model)
 
+    def set_axis_labels(self, x='', y=''):
+        self.axis=rakeviews.Ui()
+        self.axis.x_lab=x
+        self.axis.y_lab=y
+        self.invalidate_model(self.model)
+        #self.ui.canvas.draw()
+
     def on_model_changed(self, model):
         try:
             ax=self.ui.ax
             fig=self.ui.fig
         except AttributeError:
             return
+        ax.set_ylabel(self.axis.x_lab)
+        ax.set_xlabel(self.axis.y_lab) #k$e$V
         if not self.model or not self.model.spectra:
             print "STUB:"
             t = arange(0.0,3.0,0.01)
@@ -564,8 +574,6 @@ class PlottingView(View):
                 pl, = ax.plot(kevs, spectrum, **kwargs)
                 spec['line2D'] = pl
 
-            ax.set_ylabel('Counts')
-            ax.set_xlabel('k$e$V')
             #ax.set_title('Spectra plot')
             ax.set_xlim(kevs[0],kevs[-1])
             # ax.set_yscale('log')
