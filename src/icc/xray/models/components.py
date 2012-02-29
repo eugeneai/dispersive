@@ -227,6 +227,7 @@ class Project(object):
         sd=SpectralData(filename=filename,
             name=name)
         self.spectral_data[filename]=sd
+        print filename,sd
         return sd
 
     def save(self, filename):
@@ -252,7 +253,7 @@ class Project(object):
             name=file.get('name')
             sc=Scale(zero=z, scale=s)
             # Check the coincidence with scale_none
-            sp=self.add_spectral_data_source(name=name, filename=filename)
+            sp=self.add_spectral_data_source(name=name, filename=fname)
             sp.set_scale(sc)
 
         i.close()
