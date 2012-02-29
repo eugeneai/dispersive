@@ -6,5 +6,8 @@
     <file name="QLO-1.spx" filename="/home/eugeneai/Development/codes/dispersive/data/Coumpton/QLO-1.spx">
       <scale zero="0" scale="1"/>
     </file>
+    <file name="GA.spx" filename="/home/eugeneai/Development/codes/dispersive/data/Coumpton/GA.spx">
+      <scale zero="0" scale="1"/>
+    </file>
   </files>
 </XRF_Project>
