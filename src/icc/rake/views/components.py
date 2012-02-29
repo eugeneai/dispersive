@@ -377,6 +377,7 @@ class View(gtk.Object):
 
         ffilter = gtk.FileFilter()
         ffilter.set_name(filter_name)
+        print "Patterns:", patterns
         for pattern, name in patterns:
             p="*"+pattern
             ffilter.add_pattern(p)

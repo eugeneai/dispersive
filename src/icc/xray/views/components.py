@@ -637,8 +637,10 @@ class PlottingView(View):
 
 class ProjectView(View):
     __gsignals__ = {
-        'spectrum-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
-        'spectra-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+        'spectrum-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+            (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT)), # filename and spectrum choosen
+        'file-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+            (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT)), # filename and all its spectra
     }
     template = "ui/project_frame.glade"
     widget_names = ["project_frame",
@@ -659,10 +661,10 @@ class ProjectView(View):
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split('|')]
 
         self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), self), IPlottingView)
-        self.connect('spectrum-clicked', self.active_view.on_spectrum_clicked)
-        self.connect('spectra-clicked', self.active_view.on_spectra_clicked)
+        #self.connect('spectrum-clicked', self.active_view.on_spectrum_clicked)
+        #self.connect('file-clicked', self.active_view.on_spectra_clicked)
         self.connect('spectrum-clicked', self.on_spectrum_clicked)
-        self.connect('spectra-clicked', self.on_spectra_clicked)
+        self.connect('file-clicked', self.on_file_clicked)
         self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
         self.ui.hpaned_list=[self.ui.paned_top, self.ui.paned_bottom]
 
@@ -758,11 +760,13 @@ class ProjectView(View):
         tm.set_value(it, 1, pb)
 
     #@+node:eugeneai.20110116171118.1404: *3* on_spectra_clicked
-    def on_spectra_clicked(self, widget, user_data=None):
+    def on_file_clicked(self, widget, filename, sp, user_data=None):
+        print "File:", filename, sp
         self._renew_vis_project_tree()
 
     #@+node:eugeneai.20110116171118.1405: *3* on_spectrum_clicked
-    def on_spectrum_clicked(self, widget, spec, user_data=None):
+    def on_spectrum_clicked(self, widget, filename, spec, user_data=None):
+        print "Spectrum:", filename, spec
         self._renew_vis_project_tree()
 
     #@+node:eugeneai.20110116171118.1406: *3* _renew_vis_project_tree
@@ -789,25 +793,19 @@ class ProjectView(View):
 
     #@+node:eugeneai.20110116171118.1407: *3* on_row_activated
     def on_row_activated(self, tree_view, path, column, data=None):
-        #print tree_view, path, column, data
-        tm = self.ui.project_tree_model
-        it = tm.get_iter(path)
-        sp_it = self.spectra_it
-        sp_it_path = tm.get_path(sp_it)
-        it_parent = self.ui.project_tree_model.iter_parent(it)
-        if it_parent is None:
-            # clicked root node
+        #print 'Clicked:', tree_view, path, column, data
+        lp=len(path)
+        if lp==1:
+            # root clicked
             return
-        d = self.get_objects()
-        if path == sp_it_path:
-            #print "!!! WOW!"
-            self.emit('spectra-clicked')
-        elif tm.get_path(it_parent)==sp_it_path:
-            #print "Local!!", d
-            for sp in d['spectra']:
-                if sp['path']==path:
-                    break
-            self.emit('spectrum-clicked', sp)
+        file_no=path[1]-1 # Minus info node
+        filename, sp=self.model.spectral_data.items()[file_no]
+        if lp==2:
+            #file clicked
+            self.emit('file-clicked', filename, sp)
+            return
+        else:
+            self.emit('spectrum-clicked', filename, sp.data[path[-1]])
 
     #Horizontal paned synchronisation.
 
