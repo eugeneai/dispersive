@@ -740,6 +740,8 @@ class ProjectView(View):
         print self.model.spectral_data
         for name, sd in self.model.spectral_data.iteritems():
            f = t.append(root, (sd.name, pf, False, False, pn))
+           for sp in sd().data:
+               s = t.append(f, (sp.name, pc, False, False, ps))
         """
         self.spectra_it = spectra
         for sp in d['spectra']:

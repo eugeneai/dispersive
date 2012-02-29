@@ -155,12 +155,10 @@ class SpectralData(object):
         self.xml=None
 
     def load_xml(self):
-        if self.data:
-            if type(self.data) in [type(''), type(u'')]:
-                return self.load(StringIO.StringIO(self.data))
-            else:
-                return self.load(open(self.source))
-        raise ValueError("wrong xml")
+        if type(self.data) in [type(''), type(u'')]:
+            return self.load(StringIO.StringIO(self.data))
+        else:
+            return self.load(open(self.filename))
 
     def load(self, source):
         self.xml = etree.parse(source)
@@ -198,8 +196,8 @@ class SpectralData(object):
         nsp=[]
         for s in spectra:
             sname=s.get('Name')
-            channels=eval("["+s.xpath("/Channels/text()")+"]")
-            sp=Spectrum(channels,name)
+            channels=eval("["+s.xpath("Channels/text()")[0]+"]")
+            sp=Spectrum(channels,sname)
             nsp.append(sp)
         self.data=nsp
         return self
