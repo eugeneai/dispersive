@@ -75,14 +75,37 @@ XPM_META = [
   "   ......       ",
   "   .XXX.X.      ",
   "   .XXX.XX.     ",
-  "   .XXX.XXX.    ",
   "   .XXX.....    ",
   "   .XXXXXXX.    ",
+  "   .XXX.XXX.    ",
+  "   .XXX.XXX.    ",
+  "   .XXX.XXX.    ",
+  "   .XXX.XXX.    ",
   "   .XXXXXXX.    ",
+  "   .XXX.XXX.    ",
   "   .XXXXXXX.    ",
+  "   .........    ",
+  "                ",
+  "                "
+  ]
+
+XPM_FILE = [
+  "16 16 3 1",
+  "       c None",
+  ".      c #000000000000",
+  "X      c #FFFFFFFFFFFF",
+  "                ",
+  "   ......       ",
+  "   .XXX.X.      ",
+  "   .XXX.XX.     ",
+  "   .XXX.....    ",
   "   .XXXXXXX.    ",
-  "   .XXXXXXX.    ",
-  "   .XXXXXXX.    ",
+  "   .X.....X.    ",
+  "   .X.XXXXX.    ",
+  "   .X.XXXXX.    ",
+  "   .X...XXX.    ",
+  "   .X.XXXXX.    ",
+  "   .X.XXXXX.    ",
   "   .XXXXXXX.    ",
   "   .........    ",
   "                ",
@@ -659,6 +682,7 @@ class ProjectView(View):
             self.model.load(filename)
         except OSError:
             return False
+        self.set_model(self.model)
         return True
 
     def on_file_save(self, app, filename, data=None):
@@ -686,9 +710,9 @@ class ProjectView(View):
     #@+node:eugeneai.20110116171118.1402: *3* set_model
     def set_model(self, model=None):
         View.set_model(self, model=model)
-        if self.active_view:
-            self.active_view.set_model(mdli.ISpectra(self.model))
-            self.active_view.invalidate_model(self.active_view.model)
+        #if self.active_view:
+        #    self.active_view.set_model(mdli.ISpectra(self.model))
+        #    self.active_view.invalidate_model(self.active_view.model)
 
         try:
             t = self.ui.project_tree_model
@@ -703,20 +727,25 @@ class ProjectView(View):
         pc = gtk.gdk.pixbuf_new_from_xpm_data(XPM_SPECTRUM)
         ps = gtk.gdk.pixbuf_new_from_xpm_data(XPM_STYLE)
         pn = gtk.gdk.pixbuf_new_from_xpm_data(XPM_NONE)
+        pf = gtk.gdk.pixbuf_new_from_xpm_data(XPM_FILE)
         self.ui.pb_project = pb
         self.ui.pb_meta = pm
+        self.ui.pb_file = pf
         self.ui.pb_spectrum = pc
         self.ui.pb_empty = gtk.gdk.pixbuf_new_from_xpm_data(XPM_EMPTY)
         self.ui.pb_none = pn
         self.ui.ps_style= ps
         root = t.append(None, ('Project', pb, False, False, pn))
-        meta = t.append(root, ('Meta', pm, False, False, pn))
-        spectra = t.append(root, ('Spectra', pc, False, False, pn))
+        meta = t.append(root, ('Info', pm, False, False, pn))
+        print self.model.spectral_data
+        for name, sd in self.model.spectral_data.iteritems():
+           f = t.append(root, (sd.name, pf, False, False, pn))
+        """
         self.spectra_it = spectra
         for sp in d['spectra']:
             sp_it = t.append(spectra, (sp['name'], pc, False, False, ps))
             sp['path']=t.get_path(sp_it)
-
+        """
         self.ui.project_tree_view.expand_all()
 
 
