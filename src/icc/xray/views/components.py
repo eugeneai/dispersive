@@ -545,7 +545,6 @@ class PlottingView(View):
         #self.ui.canvas.draw()
 
     def on_model_changed(self, model):
-        print "On MCH------"
         if not hasattr(self.ui,'fig'):
             return
         fig = self.ui.fig
@@ -556,28 +555,34 @@ class PlottingView(View):
         ax.set_ylabel(self.axis.x_lab)
         ax.set_xlabel(self.axis.y_lab) #k$e$V
         if not model:
-            print "STUB:"
             t = arange(0.0,3.0,0.01)
             s = sin(2*pi*t)
             pl=ax.plot(t,s)
         else:
-            print "SPECTRA:", model
-            for i, spec in enumerate(model):
+            if model.__class__==mdl.SpectralData:
+                m=model.data
+            else:
+                m=model
+
+            for i, spec in enumerate(m):
                 spectrum = spec.channels
                 sp_len = len(spectrum)
                 X = arange(sp_len)
                 #kevs = self.model.scale.to_keV(X)
-                spec.setdefault('aa', True)
-                spec.setdefault('linewidth', 1)
-                spec.setdefault('alpha',1.0)
+                ssp={}
+                ssp.setdefault('aa', True)
+                ssp.setdefault('linewidth', 1)
+                ssp.setdefault('alpha',1.0)
                 kwargs = {}
-                kwargs.update(spec)
-                del kwargs['spectrum']
-                pl, = ax.plot(kevs, spectrum, **kwargs)
-                spec['line2D'] = pl
+                kwargs.update(ssp)
+                #del kwargs['spectrum']
+                #pl, = ax.plot(kevs, spectrum, **kwargs)
+                pl, = ax.plot(X, spectrum, **kwargs)
+                #spec['line2D'] = pl
 
-            #ax.set_title('Spectra plot')
-            ax.set_xlim(kevs[0],kevs[-1])
+            ax.set_title('Spectra plot')
+            #ax.set_xlim(kevs[0],kevs[-1])
+            ax.set_xlim(X[0],X[-1])
             # ax.set_yscale('log')
             ax.ticklabel_format(style='sci', scilimits=(3,0), axis='y')
             ax.grid(b=True, aa=False, alpha=0.3)
@@ -615,7 +620,6 @@ class PlottingView(View):
         path = spectrum_data['path']
         index = path[-1]
         s=self.model.spectra
-        print index, s, self.model.__class__
         spec = s[index]
         spec['path'] = path
         if spec['label'] != spectrum_data['name']:
@@ -627,7 +631,6 @@ class PlottingView(View):
 
     #@+node:eugeneai.20110116171118.1397: *3* _toggle
     def _toggle(self, spec):
-        print "Spec:", spec
         line = spec['line2D']
         newalpha = 1.0 - spec.get('alpha', 1.0)
         line.set(alpha=newalpha)
@@ -690,7 +693,6 @@ class ProjectView(View):
         self.del_actions_from_toolbar(self.ui.ag_spectra, self.ui.tb_widgets)
 
     def on_file_open(self, app, filename, data=None):
-        print "Opening file", filename
         try:
             self.model.load(filename)
         except OSError:
@@ -699,7 +701,6 @@ class ProjectView(View):
         return True
 
     def on_file_save(self, app, filename, data=None):
-        print "Saving file", filename
         self.model.save(filename)
         return True
 
@@ -772,13 +773,11 @@ class ProjectView(View):
 
     #@+node:eugeneai.20110116171118.1404: *3* on_spectra_clicked
     def on_file_clicked(self, widget, filename, sp, user_data=None):
-        print "File:", filename, sp
         self.active_view.set_model(sp)
         self.active_view.invalidate_model(sp)
 
     #@+node:eugeneai.20110116171118.1405: *3* on_spectrum_clicked
     def on_spectrum_clicked(self, widget, filename, spec, user_data=None):
-        print "Spectrum:", filename, spec
         self.active_view.set_model([spec])
         self.active_view.invalidate_model([spec])
 
@@ -847,7 +846,6 @@ class ProjectView(View):
         self.set_model(self.model)
         self.emit('model-changed', self.model)
         self.active_view.canvas.draw()
-        print 'need to be refreshed'
 
     #@-others
 

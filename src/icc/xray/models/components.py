@@ -225,7 +225,6 @@ class Project(object):
         sd=SpectralData(filename=filename,
             name=name)
         self.spectral_data[filename]=sd
-        print filename,sd
         return sd
 
     def save(self, filename):
@@ -278,22 +277,18 @@ class SpectraOfProject(Spectra):
         def _c(x):
             return int(x)
 
-        print "HERE1"
         if project is None:
             project = self.project
 
-        print "HERE2"
         if project is None:
             return []
 
         # print self.source
-        print "HERE3"
         return []
         try:
             xml = project.get_xml()
         except ValueError:
             return []
-        print "HERE"
         spectra = xml.xpath('//Channels/text()')
         spectra = [map(_c, sp.split(',')) for sp in spectra]
         names = xml.xpath('//Channels/../@Name')
