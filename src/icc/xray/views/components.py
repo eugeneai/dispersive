@@ -497,10 +497,11 @@ class View(rakeviews.View):
 #@+node:eugeneai.20110116171118.1392: ** class PlottingView
 class PlottingView(View):
     implements(IPlottingView)
-    ZC.adapts(mdli.ISpectra, rakeints.IView)
+    #ZC.adapts(mdli.ISpectra, rakeints.IView)
+    ZC.adapts(rakeints.IView)
     #@+others
     #@+node:eugeneai.20110116171118.1393: *3* __init__
-    def __init__(self, model=None, parent=None):
+    def __init__(self, parent=None, model=None):
         View.__init__(self, model, parent=parent)
         self.set_axis_labels()
         self.ui=rakeviews.Ui()
@@ -670,7 +671,7 @@ class ProjectView(View):
         opt=_conf.add_option('spectra_file_ext', default='.*:All Files', keys='app')
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split('|')]
 
-        self.active_view = ZC.getMultiAdapter((mdli.ISpectra(self.model), self), IPlottingView)
+        self.active_view = ZC.getMultiAdapter((self,), IPlottingView)
         #self.connect('spectrum-clicked', self.active_view.on_spectrum_clicked)
         #self.connect('file-clicked', self.active_view.on_spectra_clicked)
         self.connect('spectrum-clicked', self.on_spectrum_clicked)
