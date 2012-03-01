@@ -518,10 +518,8 @@ class PlottingView(View):
         vbox = gtk.VBox()
         win.add(vbox)
 
-        fig = Figure(figsize=(5,4), dpi=100)
+        fig = Figure(figsize=(5,4), dpi=120)
         self.ui.fig = fig
-        ax = fig.add_subplot(111)
-        self.ui.ax = ax
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         self.ui.canvas = canvas
@@ -546,25 +544,28 @@ class PlottingView(View):
         #self.ui.canvas.draw()
 
     def on_model_changed(self, model):
-        try:
-            ax=self.ui.ax
-            fig=self.ui.fig
-        except AttributeError:
+        print "On MCH------"
+        if not hasattr(self.ui,'fig'):
             return
+        fig = self.ui.fig
+        fig.clear()
+        ax = fig.add_subplot(111)
+        self.ui.ax = ax
+
         ax.set_ylabel(self.axis.x_lab)
         ax.set_xlabel(self.axis.y_lab) #k$e$V
-        if not self.model or not self.model.spectra:
+        if not model:
             print "STUB:"
             t = arange(0.0,3.0,0.01)
             s = sin(2*pi*t)
             pl=ax.plot(t,s)
         else:
-            print "SPECTRA:"
-            for i, spec in enumerate(self.model.spectra):
-                spectrum = spec['spectrum']
+            print "SPECTRA:", model
+            for i, spec in enumerate(model):
+                spectrum = spec.channels
                 sp_len = len(spectrum)
                 X = arange(sp_len)
-                kevs = self.model.scale.to_keV(X)
+                #kevs = self.model.scale.to_keV(X)
                 spec.setdefault('aa', True)
                 spec.setdefault('linewidth', 1)
                 spec.setdefault('alpha',1.0)
@@ -581,6 +582,7 @@ class PlottingView(View):
             ax.grid(b=True, aa=False, alpha=0.3)
             #ax.legend()
             ax.minorticks_on()
+        self.ui.canvas.draw()
 
     #@+node:eugeneai.20110116171118.1394: *3* on_click
     def on_click(self, event, data=None):
@@ -770,33 +772,39 @@ class ProjectView(View):
     #@+node:eugeneai.20110116171118.1404: *3* on_spectra_clicked
     def on_file_clicked(self, widget, filename, sp, user_data=None):
         print "File:", filename, sp
-        self._renew_vis_project_tree()
+        self.active_view.set_model(sp)
+        self.active_view.invalidate_model(sp)
 
     #@+node:eugeneai.20110116171118.1405: *3* on_spectrum_clicked
     def on_spectrum_clicked(self, widget, filename, spec, user_data=None):
         print "Spectrum:", filename, spec
-        self._renew_vis_project_tree()
+        self.active_view.set_model([spec])
+        self.active_view.invalidate_model([spec])
 
     #@+node:eugeneai.20110116171118.1406: *3* _renew_vis_project_tree
-    def _renew_vis_project_tree(self):
+    def _renew_vis_project_tree(self,spec=None):
+        if spec == None:
+            pass
         any_vis = False
-        sd = self.get_objects()['spectra']
-        t = self.ui.project_tree_model
-        for i, sp in enumerate(self.active_view.model.spectra):
-            alpha = sp.setdefault('alpha', 1.0)
-            path = sp.setdefault('path', sd[i].get('path', None))
-            if path is None:
-                continue
-            if alpha>0.1:
-                self.set_pb(path, self.ui.pb_spectrum)
-                any_vis = True
-            else:
-                self.set_pb(path, self.ui.pb_empty)
-        path = t.get_path(self.spectra_it)
-        if any_vis:
-            self.set_pb(path, self.ui.pb_spectrum)
-        else:
-            self.set_pb(path, self.ui.pb_empty)
+        channels=spec.channels
+        name=spec.name
+        #~ sd = self.get_objects()['spectra']
+        #~ t = self.ui.project_tree_model
+        #~ for i, sp in enumerate(self.active_view.model.spectra):
+            #~ alpha = sp.setdefault('alpha', 1.0)
+            #~ path = sp.setdefault('path', sd[i].get('path', None))
+            #~ if path is None:
+                #~ continue
+            #~ if alpha>0.1:
+                #~ self.set_pb(path, self.ui.pb_spectrum)
+                #~ any_vis = True
+            #~ else:
+                #~ self.set_pb(path, self.ui.pb_empty)
+        #~ path = t.get_path(self.spectra_it)
+        #~ if any_vis:
+            #~ self.set_pb(path, self.ui.pb_spectrum)
+        #~ else:
+            #~ self.set_pb(path, self.ui.pb_empty)
 
 
     #@+node:eugeneai.20110116171118.1407: *3* on_row_activated
