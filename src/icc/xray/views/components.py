@@ -652,7 +652,7 @@ class PlottingView(View):
 class ProjectView(View):
     __gsignals__ = {
         'spectrum-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-            (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT)), # filename and spectrum choosen
+            (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT)), # filename and spectrum choosen
         'file-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
             (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT)), # filename and all its spectra
     }
@@ -775,11 +775,27 @@ class ProjectView(View):
     def on_file_clicked(self, widget, filename, sp, user_data=None):
         self.active_view.set_model(sp)
         self.active_view.invalidate_model(sp)
+        self.set_element_list()
 
     #@+node:eugeneai.20110116171118.1405: *3* on_spectrum_clicked
-    def on_spectrum_clicked(self, widget, filename, spec, user_data=None):
+    def on_spectrum_clicked(self, widget, filename, spec, sp_and_no, user_data=None):
         self.active_view.set_model([spec])
         self.active_view.invalidate_model([spec])
+        self.set_element_list(spec, sp_and_no)
+
+    def set_element_list(self, spec=None, sp_and_no=None):
+        elems=self.ui.project_list_model
+        elems.clear()
+        if not spec:
+            return
+        (sp, spec_no) = sp_and_no
+
+        for el in spec.elements.values():
+            row=(int(el.Atom), 'Xx', el.XLine,
+                -1, int(el.Cycles), float(el.NetIntens), float(el.Background),
+                float(el.Sigma),
+                float(el.Chi), float(el.MassPercent), -1, -1)
+            elems.append(row)
 
     #@+node:eugeneai.20110116171118.1406: *3* _renew_vis_project_tree
     def _renew_vis_project_tree(self,spec=None):
@@ -821,7 +837,8 @@ class ProjectView(View):
             self.emit('file-clicked', filename, sp)
             return
         else:
-            self.emit('spectrum-clicked', filename, sp.data[path[-1]])
+            spec_no=path[-1]
+            self.emit('spectrum-clicked', filename, sp.data[spec_no], (sp, spec_no))
 
     #Horizontal paned synchronisation.
 

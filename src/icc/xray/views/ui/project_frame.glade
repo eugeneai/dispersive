@@ -39,6 +39,64 @@
       </object>
     </child>
   </object>
+  <object class="GtkListStore" id="project_list_model">
+    <columns>
+      <!-- column-name no -->
+      <column type="gint"/>
+      <!-- column-name element -->
+      <column type="gchararray"/>
+      <!-- column-name line -->
+      <column type="gchararray"/>
+      <!-- column-name energy -->
+      <column type="gfloat"/>
+      <!-- column-name cycles -->
+      <column type="gint"/>
+      <!-- column-name net -->
+      <column type="gfloat"/>
+      <!-- column-name background -->
+      <column type="gfloat"/>
+      <!-- column-name sigma -->
+      <column type="gfloat"/>
+      <!-- column-name chi -->
+      <column type="gfloat"/>
+      <!-- column-name concentration -->
+      <column type="gfloat"/>
+      <!-- column-name conc_sigma -->
+      <column type="gfloat"/>
+      <!-- column-name lld -->
+      <column type="gfloat"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">1</col>
+        <col id="1" translatable="yes">Nb</col>
+        <col id="2" translatable="yes">Ka1</col>
+        <col id="3" translatable="yes">14.5</col>
+        <col id="4">500</col>
+        <col id="5" translatable="yes">1</col>
+        <col id="6" translatable="yes">57740</col>
+        <col id="7">340</col>
+        <col id="8">0.75999999046325684</col>
+        <col id="9">200.33999633789062</col>
+        <col id="10">445</col>
+        <col id="11">10</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkTreeStore" id="project_tree_model">
+    <columns>
+      <!-- column-name node -->
+      <column type="gchararray"/>
+      <!-- column-name icon -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name active -->
+      <column type="gboolean"/>
+      <!-- column-name enabled -->
+      <column type="gboolean"/>
+      <!-- column-name color -->
+      <column type="GdkPixbuf"/>
+    </columns>
+  </object>
   <object class="GtkFrame" id="project_frame">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -277,6 +335,7 @@
                         <child>
                           <object class="GtkTreeViewColumn" id="cycles_column">
                             <property name="title">Cycl.</property>
+                            <property name="alignment">1</property>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext6"/>
                               <attributes>
@@ -288,6 +347,7 @@
                         <child>
                           <object class="GtkTreeViewColumn" id="net_column">
                             <property name="title">Net</property>
+                            <property name="alignment">1</property>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext7"/>
                               <attributes>
@@ -299,6 +359,7 @@
                         <child>
                           <object class="GtkTreeViewColumn" id="background_column">
                             <property name="title">Backgr.</property>
+                            <property name="alignment">1</property>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext8"/>
                               <attributes>
@@ -310,6 +371,7 @@
                         <child>
                           <object class="GtkTreeViewColumn" id="sigma_column">
                             <property name="title">Sigma</property>
+                            <property name="alignment">1</property>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext9"/>
                               <attributes>
@@ -321,6 +383,7 @@
                         <child>
                           <object class="GtkTreeViewColumn" id="chi_column">
                             <property name="title">Chi</property>
+                            <property name="alignment">1</property>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext10"/>
                               <attributes>
@@ -332,6 +395,7 @@
                         <child>
                           <object class="GtkTreeViewColumn" id="concentration_column">
                             <property name="title">Conc./ppm</property>
+                            <property name="alignment">1</property>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext11"/>
                               <attributes>
@@ -343,6 +407,7 @@
                         <child>
                           <object class="GtkTreeViewColumn" id="conc_sigma_column">
                             <property name="title">SigmaC/ppm</property>
+                            <property name="alignment">1</property>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext12"/>
                               <attributes>
@@ -354,6 +419,7 @@
                         <child>
                           <object class="GtkTreeViewColumn" id="lld_column">
                             <property name="title">LLD/ppm</property>
+                            <property name="alignment">1</property>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext13"/>
                               <attributes>
@@ -383,63 +449,5 @@
     <child type="label_item">
       <placeholder/>
     </child>
-  </object>
-  <object class="GtkListStore" id="project_list_model">
-    <columns>
-      <!-- column-name no -->
-      <column type="gint"/>
-      <!-- column-name element -->
-      <column type="gchararray"/>
-      <!-- column-name line -->
-      <column type="gchararray"/>
-      <!-- column-name energy -->
-      <column type="gfloat"/>
-      <!-- column-name cycles -->
-      <column type="gint"/>
-      <!-- column-name net -->
-      <column type="gfloat"/>
-      <!-- column-name background -->
-      <column type="gfloat"/>
-      <!-- column-name sigma -->
-      <column type="gfloat"/>
-      <!-- column-name chi -->
-      <column type="gfloat"/>
-      <!-- column-name concentration -->
-      <column type="gfloat"/>
-      <!-- column-name conc_sigma -->
-      <column type="gfloat"/>
-      <!-- column-name lld -->
-      <column type="gfloat"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0">1</col>
-        <col id="1" translatable="yes">Nb</col>
-        <col id="2" translatable="yes">Ka1</col>
-        <col id="3" translatable="yes">14.5</col>
-        <col id="4">500</col>
-        <col id="5" translatable="yes">1</col>
-        <col id="6" translatable="yes">57740</col>
-        <col id="7">340</col>
-        <col id="8">0.75999999046325684</col>
-        <col id="9">200.33999633789062</col>
-        <col id="10">445</col>
-        <col id="11">10</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkTreeStore" id="project_tree_model">
-    <columns>
-      <!-- column-name node -->
-      <column type="gchararray"/>
-      <!-- column-name icon -->
-      <column type="GdkPixbuf"/>
-      <!-- column-name active -->
-      <column type="gboolean"/>
-      <!-- column-name enabled -->
-      <column type="gboolean"/>
-      <!-- column-name color -->
-      <column type="GdkPixbuf"/>
-    </columns>
   </object>
 </interface>
