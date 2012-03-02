@@ -1,3 +1,3 @@
 @echo off
 cd src\icc
-c:\Python27\pythonw icc_rake_app.py
+c:\Python27\python icc_xray_app.py

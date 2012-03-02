@@ -557,7 +557,7 @@ class PlottingView(View):
             print "STUB:"
             t = arange(0.0,3.0,0.01)
             s = sin(2*pi*t)
-            pl=ax.plot(t,s)
+            pl=ax.plot(t,s, aa=True, linewidth=0.5, alpha=0.5)
         else:
             print "SPECTRA:"
             for i, spec in enumerate(self.model.spectra):
