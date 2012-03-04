@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="yes"?>
+<TRTElementInformationList>
+  <RTHeader/>
+  <ClassInstance Type="TRTElementInformationList" Name="Elements">
+    <TRTPSEElementList/>
+    <Date>22.12.2011</Date>
+    <Time>12:37:3</Time>
+    <ClassInstance Type="TRTSpectrumRegionList" Name="Regions">
+      <ChildClassInstances>
+        <ClassInstance Type="TRTSpectrumRegion" Name="Zr">
+          <Element>40</Element>
+          <Line>KA</Line>
+          <Energy>1.57375877E1</Energy>
+          <Width>3.19412979E-1</Width>
+          <ProcWidth>8.7E-1</ProcWidth>
+          <Description>Zr-KA</Description>
+          <Color>16776960</Color>
+        </ClassInstance>
+        <ClassInstance Type="TRTSpectrumRegion" Name="Mn">
+          <Element>25</Element>
+          <Line>KA</Line>
+          <Energy>5.894671396</Energy>
+          <Width>2.174228882E-1</Width>
+          <ProcWidth>8.7E-1</ProcWidth>
+          <Description>Mn-KA</Description>
+          <Color>65535</Color>
+        </ClassInstance>
+        <ClassInstance Type="TRTSpectrumRegion" Name="Mo">
+          <Element>42</Element>
+          <Line>LA</Line>
+          <Energy>2.291732796</Energy>
+          <Width>1.650184958E-1</Width>
+          <ProcWidth>8.7E-1</ProcWidth>
+          <Description>Mo-LA</Description>
+          <Color>32767</Color>
+        </ClassInstance>
+        <ClassInstance Type="TRTSpectrumRegion" Name="Nb">
+          <Element>41</Element>
+          <Line>KA</Line>
+          <Energy>1.65743381E1</Energy>
+          <Width>6.464930608E-1</Width>
+          <ProcWidth>1</ProcWidth>
+          <Description>Nb-KA</Description>
+          <Color>16711935</Color>
+        </ClassInstance>
+        <ClassInstance Type="TRTSpectrumRegion" Name="Al">
+          <Element>13</Element>
+          <Line>K</Line>
+          <Energy>1.48715398</Energy>
+          <Width>2.568002448E-1</Width>
+          <ProcWidth>9.9E-1</ProcWidth>
+          <Description>Al-K</Description>
+          <Color>8388352</Color>
+        </ClassInstance>
+      </ChildClassInstances>
+    </ClassInstance>
+    <ClassInstance Type="TRTHardwareInputChannelList" Name="HWInputs"/>
+    <ChildClassInstances>
+      <ClassInstance Type="TRTPSEElement" Name="Rb">
+        <Element>37</Element>
+        <Color>255</Color>
+        <AutomaticMode>1</AutomaticMode>
+      </ClassInstance>
+      <ClassInstance Type="TRTPSEElement" Name="Sr">
+        <Element>38</Element>
+        <Color>65280</Color>
+        <AutomaticMode>1</AutomaticMode>
+      </ClassInstance>
+      <ClassInstance Type="TRTPSEElement" Name="Zr">
+        <Element>40</Element>
+        <Color>16776960</Color>
+        <AllLines>0</AllLines>
+        <IncludeLine>1</IncludeLine>
+        <Lines>KA1,KA2,KB1,KB2,KB3,KB5,LA1,LA2,LB1,LB2,LB3,LB4,LB6,LE,LG1,LG2,LG3,LG5,LL,MZ2</Lines>
+        <Text>KA1,LA1,MZ2</Text>
+      </ClassInstance>
+      <ClassInstance Type="TRTPSEElement" Name="Mn">
+        <Element>25</Element>
+        <Color>65535</Color>
+        <AllLines>0</AllLines>
+        <IncludeLine>1</IncludeLine>
+        <Lines>KA1,KA2,KB1,KB3,KB5,LA1,LA2,LB1,LB3,LB4,LE,LL</Lines>
+        <Text>KA1,LA1</Text>
+      </ClassInstance>
+      <ClassInstance Type="TRTPSEElement" Name="Mo">
+        <Element>42</Element>
+        <Color>32767</Color>
+        <AllLines>0</AllLines>
+        <IncludeLine>1</IncludeLine>
+        <Lines>KA1,KA2,KB1,KB2,KB3,KB5,LA1,LA2,LB1,LB2,LB3,LB4,LB6,LE,LG1,LG2,LG3,LG5,LL,MZ2</Lines>
+        <Text>KA1,LA1,MZ2</Text>
+      </ClassInstance>
+      <ClassInstance Type="TRTPSEElement" Name="Nb">
+        <Element>41</Element>
+        <Color>16711935</Color>
+        <AllLines>0</AllLines>
+        <IncludeLine>1</IncludeLine>
+        <Lines>KA1,KA2,KB1,KB2,KB3,KB5,LA1,LA2,LB1,LB2,LB3,LB4,LB6,LE,LG1,LG2,LG3,LG5,LL,MZ2</Lines>
+        <Text>KA1,LA1,MZ2</Text>
+      </ClassInstance>
+      <ClassInstance Type="TRTPSEElement" Name="Y">
+        <Element>39</Element>
+        <Color>16711680</Color>
+        <AllLines>0</AllLines>
+        <IncludeLine>1</IncludeLine>
+        <Lines>KA1,KA2,KB1,KB2,KB3,KB5,LA1,LA2,LB1,LB3,LB4,LB6,LE,LG2,LG3,LG5,LL,MZ2</Lines>
+        <Text>KA1,LA1</Text>
+      </ClassInstance>
+      <ClassInstance Type="TRTPSEElement" Name="Al">
+        <Element>13</Element>
+        <Color>8388352</Color>
+        <AllLines>0</AllLines>
+        <IncludeLine>1</IncludeLine>
+        <Lines>KA1,KA2,KB1,KB3,LB3,LB4,LE,LL</Lines>
+        <Text>KA1</Text>
+      </ClassInstance>
+    </ChildClassInstances>
+  </ClassInstance>
+</TRTElementInformationList>

@@ -136,10 +136,16 @@ class Spectra(object):
 
     #@-others
 
+class Stub:
+    pass
+
 class Spectrum(object):
-    def __init__(self, channels=None, name=None):
+    def __init__(self, channels=None, name=None, elements=None):
         self.channels=channels
         self.name=name
+        if elements == None:
+            elements=OrderedDict()
+        self.elements=elements
 
 class SpectralData(object):
     def __init__(self, name, data=[], filename=None, scale=None):
@@ -197,7 +203,13 @@ class SpectralData(object):
         for s in spectra:
             sname=s.get('Name')
             channels=eval("["+s.xpath("Channels/text()")[0]+"]")
-            sp=Spectrum(channels,sname)
+            els=OrderedDict()
+            for result in s.xpath("ClassInstance[@Type='TRTResult']/Result"):
+                rc=Stub()
+                for a in result.iter():
+                    setattr(rc, a.tag, a.text.replace(',','.'))
+                els[rc.Atom]=rc
+            sp=Spectrum(channels,sname,elements=els)
             nsp.append(sp)
         self.data=nsp
         return self
@@ -225,7 +237,6 @@ class Project(object):
         sd=SpectralData(filename=filename,
             name=name)
         self.spectral_data[filename]=sd
-        print filename,sd
         return sd
 
     def save(self, filename):
@@ -278,22 +289,18 @@ class SpectraOfProject(Spectra):
         def _c(x):
             return int(x)
 
-        print "HERE1"
         if project is None:
             project = self.project
 
-        print "HERE2"
         if project is None:
             return []
 
         # print self.source
-        print "HERE3"
         return []
         try:
             xml = project.get_xml()
         except ValueError:
             return []
-        print "HERE"
         spectra = xml.xpath('//Channels/text()')
         spectra = [map(_c, sp.split(',')) for sp in spectra]
         names = xml.xpath('//Channels/../@Name')
