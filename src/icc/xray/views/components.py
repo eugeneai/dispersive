@@ -660,7 +660,7 @@ class ProjectView(View):
     widget_names = ["project_frame",
                     "project_tree_view", "main_vbox", "common_label",
                     "project_list_model", "project_tree_model", "paned_top", "paned_bottom",
-                    "ag_spectra"]
+                    "ag_spectra", "ag_process"]
     implements(rakeints.IProjectView)
     ZC.adapts(mdli.IProject, rakeints.IView)
     #@+others

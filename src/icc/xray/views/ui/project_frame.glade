@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.24"/>
+  <object class="GtkActionGroup" id="ag_process">
+    <child>
+      <object class="GtkAction" id="ac_scaling">
+        <property name="label" translatable="yes">Scaling</property>
+        <property name="short_label" translatable="yes">Scaling</property>
+        <property name="tooltip" translatable="yes">Relate the channels to their keV</property>
+        <property name="stock_id">gtk-color-picker</property>
+        <property name="always_show_image">True</property>
+      </object>
+      <accelerator key="s" modifiers="GDK_MOD1_MASK"/>
+    </child>
+    <child>
+      <object class="GtkAction" id="ac_coupton">
+        <property name="label" translatable="yes">Coumpton</property>
+        <property name="short_label" translatable="yes">Coumpton</property>
+        <property name="tooltip" translatable="yes">Approximate Coumton and Relaigh pikes.</property>
+        <property name="stock_id">gtk-jump-to</property>
+        <property name="always_show_image">True</property>
+      </object>
+      <accelerator key="c" modifiers="GDK_MOD1_MASK"/>
+    </child>
+    <child>
+      <object class="GtkAction" id="ac_ferrum">
+        <property name="label" translatable="yes">Ferrum</property>
+        <property name="short_label" translatable="yes">Ferrum</property>
+        <property name="tooltip" translatable="yes">Differentiate ferrum of various valency.</property>
+        <property name="stock_id">gtk-execute</property>
+        <property name="always_show_image">True</property>
+      </object>
+      <accelerator key="f" modifiers="GDK_MOD1_MASK"/>
+    </child>
+  </object>
   <object class="GtkActionGroup" id="ag_spectra">
     <property name="name">Spectra</property>
     <child>
