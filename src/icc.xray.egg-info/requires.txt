@@ -2,4 +2,5 @@ distribute
 zope.component [zcml]
 cfgparse
 numpy
+scipy
 lxml

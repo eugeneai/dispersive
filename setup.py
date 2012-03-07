@@ -21,6 +21,7 @@ setup(
                     "zope.component [zcml]",
                     "cfgparse",
                     "numpy",
+                    "scipy",
                     "lxml",
                     #"matplotlib",
                     #"rsvg",
@@ -37,9 +38,9 @@ setup(
     license = "GNU GPL",
     keywords = "xray pygtk analysis tool application",
     url = "http://xray.irnok.net/",
-    long_description = """ Dispersive (working name) ia a package of components for 
+    long_description = """ Dispersive (working name) ia a package of components for
       Dispersive X-Ray Fluorescence spectra analysis.  All explorations
-      will be organized as projects.  The package will able to load 
+      will be organized as projects.  The package will able to load
       various proprietrary data formats from various sources.""",
     # platform = "Os Independent.",
     # could also include long_description, download_url, classifiers, etc.
