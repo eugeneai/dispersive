@@ -518,7 +518,7 @@ class Application(View):
         else:
             filename_=None
         if not filename_:
-            filename_=self.get_filename(save=True)
+            filename_=self.get_filename(patterns=self.FILE_PATTERNS, save=True)
 
         if not filename_:
             return # user rejected to write data

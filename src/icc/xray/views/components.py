@@ -660,7 +660,7 @@ class ProjectView(View):
     widget_names = ["project_frame",
                     "project_tree_view", "main_vbox", "common_label",
                     "project_list_model", "project_tree_model", "paned_top", "paned_bottom",
-                    "ag_spectra"]
+                    "ag_spectra", "ag_process"]
     implements(rakeints.IProjectView)
     ZC.adapts(mdli.IProject, rakeints.IView)
     #@+others
@@ -669,6 +669,7 @@ class ProjectView(View):
         self.active_view = None
         View.__init__(self, model=model, parent=parent)
         self.ui.main_frame=self.ui.project_frame
+        self.active_fpath=None # active filename and path as a tuple or None
 
         _conf=get_global_configuration()
         opt=_conf.add_option('spectra_file_ext', default='.*:All Files', keys='app')
@@ -687,6 +688,9 @@ class ProjectView(View):
 
         parent.connect('project-open', self.on_file_open)
         parent.connect('project-save', self.on_file_save)
+
+        self.project_tree_selection = self.ui.project_tree_view.get_selection()
+        self.project_tree_selection.connect('changed',self.on_project_tree_selection_changed)
 
     def do_destroy_view(self, self_widget, data=None):
         self.del_actions_from_menu(self.ui.ag_spectra)
@@ -824,6 +828,21 @@ class ProjectView(View):
 
 
     #@+node:eugeneai.20110116171118.1407: *3* on_row_activated
+
+    def interp_path(self, path):
+        lp=len(path)
+        if lp==1:
+            return ('root',)
+        if path[1]==0:
+            return ('info',)
+        file_no=path[1]-1 # Minus info node
+        filename, sp=self.model.spectral_data.items()[file_no]
+        if lp==2:
+            return ('file', filename, sp)
+        else:
+            spec_no=path[-1]
+            return ('spectrum', filename, sp.data[spec_no], (sp, spec_no))
+
     def on_row_activated(self, tree_view, path, column, data=None):
         #print 'Clicked:', tree_view, path, column, data
         lp=len(path)
@@ -840,6 +859,13 @@ class ProjectView(View):
             spec_no=path[-1]
             self.emit('spectrum-clicked', filename, sp.data[spec_no], (sp, spec_no))
 
+    def on_project_tree_selection_changed(self, selection):
+        pm, it = selection.get_selected()
+        path = pm.get_path(it)
+        rc=self.interp_path(path)
+        self.active_fpath=(rc, path)
+        print "Selection", self.active_fpath
+
     #Horizontal paned synchronisation.
 
     def on_paned_notify(self, paned, spec, data=None):
@@ -848,7 +874,18 @@ class ProjectView(View):
             [p.set_position(pos) for p in self.ui.hpaned_list if p!=paned] # recursion breaks due to position property: it can be unchanged.
 
     def on_spectra_close(self, widget, data=None):
-        print "On spectra close", widget, data
+        if self.active_fpath == None:
+            return
+        rc,path=self.active_fpath
+        print rc
+        if rc[0]=='file':
+            del self.model.spectral_data[rc[1]]
+            pm=self.ui.project_tree_model
+            pm.remove(pm.get_iter(path))
+            self.set_model(self.model)
+            self.emit('model-changed', self.model)
+            #self.active_view.canvas.draw()
+            print "removed"
 
     def on_spectra_export(self, widget, data=None):
         print "On spectra export", widget, data
@@ -862,7 +899,7 @@ class ProjectView(View):
         self.model.add_spectral_data_source(file_name)
         self.set_model(self.model)
         self.emit('model-changed', self.model)
-        self.active_view.canvas.draw()
+        #self.active_view.canvas.draw()
 
     #@-others
 
