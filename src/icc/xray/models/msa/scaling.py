@@ -237,29 +237,28 @@ def test1():
     x=np.arange(xl)
     w=150
     c= 300
-    xmin=c-w
-    if xmin<0:
-        xmin=0
-    xmax=c+w
-    if xmax>=xl:
-        xmax=xl-1
-    xw=x[xmin:xmax]
-    yw=y[xmin:xmax]
-    rw=xmax-xmin
     def of(X):
         x0,A, fwhm, ya, yb=X
+        xmin=int(x0-w)
+        if xmin<0:
+            xmin=0
+        xmax=int(x0+w)
+        if xmax>=xl:
+            xmax=xl-1
+        xw=np.arange(rw)
+        yw=y[xmin:xmax]
+        rw=xmax-xmin
         dy=(yb-ya)/(rw)
-        return gauss(xw, x0-c, A, fwhm)+ya+xw*dy
-    def mof(X):
-        return sum((yw-of(X))**2)
+        _=yw-(gauss(xw, x0-xmin, A, fwhm)+ya+xw*dy)
+        return sum(_**2)
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
     X0=np.array([c, np.max(y), 100, 0,0], dtype=float)
     p.plot(x,y)
-    p.plot(xw,of(X0))
+    #p.plot(xw,of(X0))
     print "X0:",X0
-    Xopt=op.fmin(mof, X0, xtol=1e-8)
+    Xopt=op.fmin(of, X0, xtol=1e-8)
     print "Opt:", Xopt
-    p.plot(xw+xmin,of(Xopt))
+    #p.plot(xw+xmin,of(Xopt))
     p.show()
 
 
