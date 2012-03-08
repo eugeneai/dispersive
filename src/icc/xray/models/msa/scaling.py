@@ -235,9 +235,7 @@ def test1():
     y=np.array(channels)
     xl=len(y)
     x=np.arange(xl)
-    w=150
-    c= 300
-    def of(X):
+    def of(X, w):
         x0,A, fwhm, ya, yb=X
         xmin=int(x0-w)
         if xmin<0:
@@ -245,20 +243,30 @@ def test1():
         xmax=int(x0+w)
         if xmax>=xl:
             xmax=xl-1
-        xw=np.arange(rw)
+        xw=x[xmin:xmax]
         yw=y[xmin:xmax]
         rw=xmax-xmin
         dy=(yb-ya)/(rw)
-        _=yw-(gauss(xw, x0-xmin, A, fwhm)+ya+xw*dy)
-        return sum(_**2)
+        _=gauss(xw, x0, A, fwhm)+ya+(xw-xmin)*dy
+        return xw,yw,_
+    def fopt(X, w):
+        xw,yw,_=of(X, w)
+        return sum((yw-_)**2)
+    def recog(center, A=100, fwhm=100, xtol=1e-8, width=100):
+        X0=np.array([center, A, fwhm, 0,0], dtype=float)
+        xw,yw,fy=of(X0, width)
+        p.plot(xw,fy)
+        #print "X0:",X0
+        Xopt=op.fmin(fopt, X0, args=(width,), xtol=xtol)
+        xw,yw,fy=of(Xopt, width)
+        p.plot(xw,fy)
+        return Xopt
+
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
-    X0=np.array([c, np.max(y), 100, 0,0], dtype=float)
     p.plot(x,y)
-    #p.plot(xw,of(X0))
-    print "X0:",X0
-    Xopt=op.fmin(of, X0, xtol=1e-8)
-    print "Opt:", Xopt
-    #p.plot(xw+xmin,of(Xopt))
+    recog(70)
+    #recog(1370)
+    #recog(3676)
     p.show()
 
 
