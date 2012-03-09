@@ -254,26 +254,28 @@ def test1():
     def fopt(X, xw, yw):
         _=of(X, xw)
         return sum((yw-_)**2)
-    def recog(center, A=None, fwhm=10, xtol=1e-8, width=None):
+    def recog(x0, A=None, fwhm=10, xtol=1e-8, width=None):
         if width == None:
             width=fwhm
         hw=width/2.
-        xmin,xmax=cut(center, hw)
+        xmin,xmax=cut(x0, hw)
         if A == None:
             A=max(y[xmin:xmax])
             print A
-        X0=np.array([center, A, fwhm, 0,0], dtype=float)
+        X0=np.array([x0, A, fwhm, 0,0], dtype=float)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
         fy=of(X0, xw)
-        p.plot(xw,fy)
+        #p.plot(xw,fy)
         #print "X0:",X0
         Xopt=op.fmin(fopt, X0, args=(xw,yw), xtol=xtol, maxiter=10000, maxfun=10000)
-        fy=of(Xopt, xw)
         print "Xopt:",Xopt
-        p.plot(xw,fy)
+        #p.plot(xw,fy)
         x0, A, fwhm, b, k =Xopt
-        p.plot(xw,(xw-x0)*k+b)
+        #p.plot(xw,(xw-x0)*k+b)
+        nxw=np.arange(xw[0], xw[-1], 0.25)
+        fy=of(Xopt, nxw)
+        p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
         return Xopt
 
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
