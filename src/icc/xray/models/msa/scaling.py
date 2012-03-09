@@ -235,38 +235,54 @@ def test1():
     y=np.array(channels)
     xl=len(y)
     x=np.arange(xl)
-    def of(X, w):
-        x0,A, fwhm, ya, yb=X
-        xmin=int(x0-w)
+    fwhm_mult=2.5
+    def cut(x0,hw):
+        ix0=math.floor(x0+0.5)
+        ihw=math.floor(hw+0.5)
+        xmin=math.floor(ix0-ihw)
         if xmin<0:
             xmin=0
-        xmax=int(x0+w)
+        xmax=math.floor(ix0+ihw)
         if xmax>=xl:
             xmax=xl-1
+        return xmin,xmax
+
+    def of(X, xw):
+        x0,A, fwhm=X
+        _=gauss(xw, x0, A, fwhm)
+        return _
+    def fopt(X, xw, yw):
+        _=of(X, xw)
+        return sum((yw-_)**2)
+    def recog(center, A=None, fwhm=10, xtol=1e-8, width=None):
+        if width == None:
+            width=fwhm
+        hw=width/2.
+        xmin,xmax=cut(center, hw)
+        if A == None:
+            A=max(y[xmin:xmax])
+            print A
+        X0=np.array([center, A, fwhm], dtype=float)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
-        rw=xmax-xmin
-        dy=(yb-ya)/(rw)
-        _=gauss(xw, x0, A, fwhm)+ya+(xw-xmin)*dy
-        return xw,yw,_
-    def fopt(X, w):
-        xw,yw,_=of(X, w)
-        return sum((yw-_)**2)
-    def recog(center, A=100, fwhm=100, xtol=1e-8, width=100):
-        X0=np.array([center, A, fwhm, 0,0], dtype=float)
-        xw,yw,fy=of(X0, width)
+        fy=of(X0, xw)
         p.plot(xw,fy)
         #print "X0:",X0
-        Xopt=op.fmin(fopt, X0, args=(width,), xtol=xtol)
-        xw,yw,fy=of(Xopt, width)
+        Xopt=op.fmin(fopt, X0, args=(xw,yw), xtol=xtol, maxiter=10000, maxfun=10000)
+        fy=of(Xopt, xw)
+        print "Xopt:",Xopt
         p.plot(xw,fy)
         return Xopt
 
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
     p.plot(x,y)
-    recog(70)
-    #recog(1370)
-    #recog(3676)
+    x00, _, fwhm_0= recog(80, width=len(x)/50)
+    print "FWHM0:", fwhm_0
+    #fwhm_0=100
+    w=10*fwhm_0/2.
+    recog(1370, fwhm=fwhm_0, width=w)
+    recog(1000, fwhm=fwhm_0, width=w)
+    recog(2920, fwhm=fwhm_0, width=w)
     p.show()
 
 
