@@ -274,16 +274,16 @@ def test1():
         return Xopt
 
     def ofp(X, xw):
-        x0,A, fwhm, a0, a1, a2 =X
+        x0,A, fwhm, a0, a1 =X
         dxw=(xw-x0)
-        _=gauss(xw, x0, A, fwhm)+a0+a1*dxw+a2*dxw**2
+        _=gauss(xw, x0, A, fwhm)+a0+a1*dxw
         return _
 
     def r_line_zr(x0, A=None, fwhm=None, xtol=1e-8, width=None, plot=False):
 
         def fopt(X, x0, fwhm, xw, yw):
-            A, a0, a1, a2 = X
-            X=[x0, A, fwhm, a0, a1, a2]
+            A, a0, a1 = X
+            X=[x0, A, fwhm, a0, a1]
             _=ofp(X, xw)
             return sum((yw-_)**2)
 
@@ -296,17 +296,17 @@ def test1():
         if A == None:
             A=max(y[xmin:xmax])
             print A
-        X0=[A, 0,0,0]
+        X0=[A, 0,0]
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
         Xopt=op.fmin(fopt, X0, args=(x0, fwhm, xw,yw), xtol=xtol, maxiter=10000, maxfun=10000)
-        A, a0, a1, a2 =Xopt
+        A, a0, a1 =Xopt
         nxw=np.arange(xw[0], xw[-1], 0.25)
-        Xopt=[x0, A, fwhm, a0, a1, a2]
+        Xopt=[x0, A, fwhm, a0, a1]
         fy=ofp(Xopt, nxw)
         if plot:
             dnxw=nxw-x0
-            p.fill_between(nxw,fy,a0+a1*dnxw+a2*dnxw**2, color=(0.7,0.3,0), alpha=0.5)
+            p.fill_between(nxw,fy,a0+a1*dnxw, color=(0.7,0.3,0), alpha=0.5)
         return Xopt
 
 
@@ -345,8 +345,8 @@ def test1():
 
     #r_line(1821, fwhm=fwhm_0, width=w, plot=True)
     print "fwhm:", fwhm_zr, k
-    r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*2, plot=True)
-    r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*2, plot=True)
+    r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*1.1, plot=True)
+    r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*1.1, plot=True)
     p.show()
 
 
