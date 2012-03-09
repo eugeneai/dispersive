@@ -248,8 +248,8 @@ def test1():
         return xmin,xmax
 
     def of(X, xw):
-        x0,A, fwhm=X
-        _=gauss(xw, x0, A, fwhm)
+        x0,A, fwhm,b,k =X
+        _=gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
         return _
     def fopt(X, xw, yw):
         _=of(X, xw)
@@ -262,7 +262,7 @@ def test1():
         if A == None:
             A=max(y[xmin:xmax])
             print A
-        X0=np.array([center, A, fwhm], dtype=float)
+        X0=np.array([center, A, fwhm, 0,0], dtype=float)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
         fy=of(X0, xw)
@@ -272,17 +272,20 @@ def test1():
         fy=of(Xopt, xw)
         print "Xopt:",Xopt
         p.plot(xw,fy)
+        x0, A, fwhm, b, k =Xopt
+        p.plot(xw,(xw-x0)*k+b)
         return Xopt
 
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
     p.plot(x,y)
-    x00, _, fwhm_0= recog(80, width=len(x)/50)
+    x00, _, fwhm_0, b0, k0= recog(80, width=len(x)/50)
     print "FWHM0:", fwhm_0
     #fwhm_0=100
-    w=10*fwhm_0/2.
+    w=15*fwhm_0/2.
     recog(1370, fwhm=fwhm_0, width=w)
     recog(1000, fwhm=fwhm_0, width=w)
     recog(2920, fwhm=fwhm_0, width=w)
+    recog(1821, fwhm=fwhm_0, width=w)
     p.show()
 
 
