@@ -330,6 +330,7 @@ def test1():
     k = op.leastsq(ffwhm, [1], args=np.array([e_0, e_fe]))
 
     fwhm_zr=k[0]*math.sqrt(e_zr)
+    fwhm_mo=k[0]*math.sqrt(e_mo)
 
     #X=r_line(2920, fwhm=fwhm_0, width=w)
     #fwhm_X=math.sqrt((X[0]-b_fwhm)/k_fwhm)
@@ -338,6 +339,7 @@ def test1():
     #r_line(1821, fwhm=fwhm_0, width=w, plot=True)
     print "fwhm:", fwhm_zr, k
     r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*2, plot=True)
+    r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*2, plot=True)
     p.show()
 
 
