@@ -277,15 +277,28 @@ def test1():
         return Xopt
 
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
+    e_fe= 6.4
+    e_0=0.0086
+    e_mo=17.41
+    e_zr=15.774
     p.plot(x,y)
     x00, _, fwhm_0, b0, k0= recog(80, width=len(x)/50)
     print "FWHM0:", fwhm_0
     #fwhm_0=100
     w=15*fwhm_0/2.
-    recog(1370, fwhm=fwhm_0, width=w)
+    #x0_fe, _, fwhm_fe, b_fe, k_fe = recog(1370, fwhm=fwhm_0, width=w) # Fe
+    x0_fe, _, fwhm_fe, b_fe, k_fe = recog(1350, fwhm=fwhm_0, width=w) # Fe
+    s_k=(e_fe-e_0)/(x0_fe-x00)
+    s_b=e_fe - (s_k*x0_fe)
+    print "Scale:", s_k, s_b
+    x0_mo=(e_mo-s_b)/s_k
+    x0_zr=(e_zr-s_b)/s_k
     recog(1000, fwhm=fwhm_0, width=w)
     recog(2920, fwhm=fwhm_0, width=w)
     recog(1821, fwhm=fwhm_0, width=w)
+    #recog(3255, fwhm=fwhm_0, width=w/2.)
+    recog(x0_mo, fwhm=fwhm_0, width=w)
+    recog(x0_zr, fwhm=fwhm_0, width=w)
     p.show()
 
 
