@@ -251,10 +251,10 @@ def test1():
         x0,A, fwhm,b,k =X
         _=gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
         return _
-    def fopt(X, xw, yw):
-        _=of(X, xw)
-        return sum((yw-_)**2)
-    def recog(x0, A=None, fwhm=10, xtol=1e-8, width=None):
+    def r_line(x0, A=None, fwhm=10, xtol=1e-8, width=None, plot=False):
+        def fopt(X, xw, yw):
+            _=of(X, xw)
+            return sum((yw-_)**2)
         if width == None:
             width=fwhm
         hw=width/2.
@@ -265,18 +265,43 @@ def test1():
         X0=np.array([x0, A, fwhm, 0,0], dtype=float)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
-        fy=of(X0, xw)
-        #p.plot(xw,fy)
-        #print "X0:",X0
         Xopt=op.fmin(fopt, X0, args=(xw,yw), xtol=xtol, maxiter=10000, maxfun=10000)
-        print "Xopt:",Xopt
-        #p.plot(xw,fy)
         x0, A, fwhm, b, k =Xopt
-        #p.plot(xw,(xw-x0)*k+b)
         nxw=np.arange(xw[0], xw[-1], 0.25)
         fy=of(Xopt, nxw)
-        p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
+        if plot:
+            p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
         return Xopt
+
+    def r_line_zr(x0, A=None, fwhm=None, xtol=1e-8, width=None, plot=False):
+
+        def fopt(X, x0, fwhm, xw, yw):
+            A, b, k = X
+            X=[x0, A, fwhm, b, k]
+            _=of(X, xw)
+            return sum((yw-_)**2)
+
+        if fwhm==None:
+            raise ValueError, "fwhm should be defined"
+        if width == None:
+            width=fwhm
+        hw=width/2.
+        xmin,xmax=cut(x0, hw)
+        if A == None:
+            A=max(y[xmin:xmax])
+            print A
+        X0=[A, 0,0]
+        xw=x[xmin:xmax]
+        yw=y[xmin:xmax]
+        Xopt=op.fmin(fopt, X0, args=(x0, fwhm, xw,yw), xtol=xtol, maxiter=10000, maxfun=10000)
+        A, b, k =Xopt
+        nxw=np.arange(xw[0], xw[-1], 0.25)
+        Xopt=[x0, A, fwhm, b, k]
+        fy=of(Xopt, nxw)
+        if plot:
+            p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
+        return Xopt
+
 
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
     e_fe= 6.4
@@ -284,23 +309,35 @@ def test1():
     e_mo=17.41
     e_zr=15.774
     p.plot(x,y)
-    x00, _, fwhm_0, b0, k0= recog(80, width=len(x)/50)
+    x00, _, fwhm_0, b0, k0= r_line(80, width=len(x)/50, plot=True)
     print "FWHM0:", fwhm_0
     #fwhm_0=100
     w=15*fwhm_0/2.
     #x0_fe, _, fwhm_fe, b_fe, k_fe = recog(1370, fwhm=fwhm_0, width=w) # Fe
-    x0_fe, _, fwhm_fe, b_fe, k_fe = recog(1350, fwhm=fwhm_0, width=w) # Fe
+    x0_fe, _, fwhm_fe, b_fe, k_fe = r_line(1350, fwhm=fwhm_0, width=w, plot=True) # Fe
     s_k=(e_fe-e_0)/(x0_fe-x00)
     s_b=e_fe - (s_k*x0_fe)
     print "Scale:", s_k, s_b
     x0_mo=(e_mo-s_b)/s_k
     x0_zr=(e_zr-s_b)/s_k
-    recog(1000, fwhm=fwhm_0, width=w)
-    recog(2920, fwhm=fwhm_0, width=w)
-    recog(1821, fwhm=fwhm_0, width=w)
+    r_line(1000, fwhm=fwhm_0, width=w, plot=True)
     #recog(3255, fwhm=fwhm_0, width=w/2.)
-    recog(x0_mo, fwhm=fwhm_0, width=w)
-    recog(x0_zr, fwhm=fwhm_0, width=w)
+    #recog(x0_mo, fwhm=fwhm_0, width=w, plot=True)
+    _y=np.array([fwhm_0, fwhm_fe])
+    def ffwhm(k, x):
+        return _y-np.sqrt(x)*k
+
+    k = op.leastsq(ffwhm, [1], args=np.array([e_0, e_fe]))
+
+    fwhm_zr=k[0]*math.sqrt(e_zr)
+
+    #X=r_line(2920, fwhm=fwhm_0, width=w)
+    #fwhm_X=math.sqrt((X[0]-b_fwhm)/k_fwhm)
+    #r_line_fix(X[0], fwhm=fwhm_zr, width=w, plot=True)
+
+    #r_line(1821, fwhm=fwhm_0, width=w, plot=True)
+    print "fwhm:", fwhm_zr, k
+    r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*2, plot=True)
     p.show()
 
 
