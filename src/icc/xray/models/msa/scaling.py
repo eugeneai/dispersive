@@ -312,9 +312,9 @@ def test1():
 
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
     e_fe= 6.4
-    e_0=0.0086
-    e_mo=17.41
-    e_zr=15.774
+    e_0 = 0.0086
+    e_mo= 17.41
+    e_zr= 15.774
     p.plot(x,y)
     x00, _, fwhm_0, b0, k0= r_line(80, width=len(x)/50, plot=True)
     print "FWHM0:", fwhm_0
@@ -331,6 +331,7 @@ def test1():
     #recog(3255, fwhm=fwhm_0, width=w/2.)
     #recog(x0_mo, fwhm=fwhm_0, width=w, plot=True)
     _y=np.array([fwhm_0, fwhm_fe])
+
     def ffwhm(k, x):
         return _y-np.sqrt(x)*k
 
@@ -345,10 +346,24 @@ def test1():
 
     #r_line(1821, fwhm=fwhm_0, width=w, plot=True)
     print "fwhm:", fwhm_zr, k
+
+    gain=1/s_k
+
+    def Gc(E, E0, fwhm, fg):
+        sigma = fwhm/fwhm_coef
+        _1=sigma*fg
+        _ = (sqrt_2pi*_1)
+        _ = 1/_
+        dE=E-E0
+        _x= -((dE/_1)**2)/2.
+        return _*np.exp(_x)
+
+
     r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*1.1, plot=True)
     r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*1.1, plot=True)
+    #p.show()
+    p.plot(x, 6000000*Gc(x,x0_mo, fwhm=fwhm_mo, fg=2.))
     p.show()
-
 
 
 if __name__=='__main__':
