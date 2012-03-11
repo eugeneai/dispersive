@@ -407,8 +407,9 @@ def test1():
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2))
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2, mult=-1))
 
-    [fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton, fwhm_mo, xmin=3155, xmax=3700)
-    p.plot(x, cou_approx(x, x0_coumpton, fwhm_mo, fg, fa, fb, ga, gb))
+    Xopt=[fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton, fwhm_mo, xmin=3155, xmax=3700)
+    p.plot(x, cou_approx(x, x0_coumpton, fwhm_mo, fg, fa, fb, ga, gb)) # Need a common amplitude
+    print Xopt
     p.show()
 
 
