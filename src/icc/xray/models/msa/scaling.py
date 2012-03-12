@@ -1,10 +1,12 @@
 import numpy as np
 import scipy.optimize as op
+import scipy.special as fn
 import pylab as p
 import math
 
-fwhm_coef=2*math.sqrt(2*math.log(2))
-sqrt_2pi=math.sqrt(2*math.pi)
+fwhm_coef=2.*math.sqrt(2.*math.log(2.))
+sqrt_2pi=math.sqrt(2.*math.pi)
+sqrt_2 = math.sqrt(2.)
 
 def gauss(x, x0, A, fwhm):
     sigma = fwhm/fwhm_coef
@@ -261,7 +263,7 @@ def test1():
         xmin,xmax=cut(x0, hw)
         if A == None:
             A=max(y[xmin:xmax])
-            print A
+            #print A
         X0=np.array([x0, A, fwhm, 0,0], dtype=float)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
@@ -295,7 +297,7 @@ def test1():
         xmin,xmax=cut(x0, hw)
         if A == None:
             A=max(y[xmin:xmax])
-            print A
+            #print A
         X0=[A, 0,0]
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
@@ -325,8 +327,10 @@ def test1():
     s_k=(e_fe-e_0)/(x0_fe-x00)
     s_b=e_fe - (s_k*x0_fe)
     print "Scale:", s_k, s_b
-    x0_mo=(e_mo-s_b)/s_k
-    x0_zr=(e_zr-s_b)/s_k
+    def to_chan(e):
+        return (e-s_b)/s_k
+    x0_mo=to_chan(e_mo)
+    x0_zr=to_chan(e_zr)
     r_line(1000, fwhm=fwhm_0, width=w, plot=True)
     #recog(3255, fwhm=fwhm_0, width=w/2.)
     #recog(x0_mo, fwhm=fwhm_0, width=w, plot=True)
@@ -358,11 +362,54 @@ def test1():
         _x= -((dE/_1)**2)/2.
         return _*np.exp(_x)
 
+    def T(E, E0, fwhm, g, mult=1.):
+        sigma = fwhm/fwhm_coef
+        dE=E-E0
+        _ef=math.exp(-1/(2*g**2))
+        _0=g*sigma
+        _1=2*_0*_ef
+        _exp1=np.exp(mult*dE/_0)/_1
+        _x=mult*dE/(sqrt_2*sigma)+1./(sqrt_2*g)
+        return _exp1*fn.erfc(_x)
+
+    def cou_approx(E, E0, fwhm, fg, fa, fb, ga, gb):
+        #print (E, E0, fwhm, fg, fa, fb, ga, gb)
+        return Gc(E, E0, fwhm, fg)+fa*T(E, E0, fwhm, ga)+fb*T(E, E0, fwhm, gb, mult=-1)
+
+    def cou_opt(X,  Ew, E0, fwhm, yw):
+        #print X
+        fg, fa, fb, ga, gb = X
+        return sum((cou_approx(Ew, E0, fwhm, fg, fa, fb, ga, gb)-yw)**2)
+
+    def cou_fmin(E, E0, fwhm, X0=None, xtol=1e-3, xmin=0, xmax=None):
+        if X0 == None:
+            X0 = [1., 1., 1., 1., 1.]
+        if xmax == None:
+            xmax=len(E)
+        Ew=E[xmin:xmax]
+        yw=y[xmin:xmax]
+        return op.fmin(cou_opt, X0, args=(Ew, E0, fwhm, yw), xtol=xtol, maxiter=10000, maxfun=10000)
 
     r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*1.1, plot=True)
     r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*1.1, plot=True)
     #p.show()
-    p.plot(x, 6000000*Gc(x,x0_mo, fwhm=fwhm_mo, fg=2.))
+    #Coumpton Pike
+    angle=90-2 #(degrees)
+    rangle=angle*math.pi/180
+    m0=510.996
+    E0=e_mo
+    Ec=E0 #seq(15.0,17.415, by=0.1)
+    DE=(E0*Ec/m0)*(1-math.cos(rangle))
+    print "DE:", DE
+
+    x0_coumpton=to_chan(e_mo-DE)
+    #p.plot(x, 6000000*Gc(x,x0_coumpton, fwhm=fwhm_mo, fg=2.))
+    #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2))
+    #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2, mult=-1))
+
+    Xopt=[fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton, fwhm_mo, xmin=3155, xmax=3700)
+    p.plot(x, cou_approx(x, x0_coumpton, fwhm_mo, fg, fa, fb, ga, gb)) # Need a common amplitude
+    print Xopt
     p.show()
 
 
