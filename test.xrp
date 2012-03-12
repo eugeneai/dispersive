@@ -1,6 +1,12 @@
 <XRF_Project>
   <files>
-    <file name="GA.spx" filename="/home/eugeneai/Development/codes/dispersive/data/Coumpton/GA.spx">
+    <file name="G-2.spx" filename="C:\dispersive\data\Coumpton\G-2.spx">
+      <scale zero="0" scale="1"/>
+    </file>
+    <file name="GA.spx" filename="C:\dispersive\data\Coumpton\GA.spx">
+      <scale zero="0" scale="1"/>
+    </file>
+    <file name="QLO-1.spx" filename="C:\dispersive\data\Coumpton\QLO-1.spx">
       <scale zero="0" scale="1"/>
     </file>
   </files>

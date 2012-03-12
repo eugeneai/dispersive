@@ -1,4 +1,5 @@
 setup.py
+src/icc/icc_xray_app.py
 src/icc/__init__.py
 src/icc/icc_rake_app.py
 src/icc/icc_xray_app.py
@@ -30,6 +31,10 @@ src/icc/xray/__init__.py
 src/icc/xray/models/__init__.py
 src/icc/xray/models/components.py
 src/icc/xray/models/interfaces.py
+src/icc/xray/models/msa/__init__.py
+src/icc/xray/models/msa/scaling.py
+src/icc/xray/models/msa/tests.py
+src/icc/xray/models/msa/tests2.py
 src/icc/xray/views/__init__.py
 src/icc/xray/views/components.py
 src/icc/xray/views/interfaces.py
