@@ -372,19 +372,19 @@ def test1():
         _x=mult*dE/(sqrt_2*sigma)+1./(sqrt_2*g)
         return _exp1*fn.erfc(_x)
 
-    def cou_approx(A, E, E0, fwhm, fg, fa, fb, ga, gb, A_mo, x0_mo):
+    def cou_approx(A, E, E0, fwhm, fg, fa, fb, ga, gb, A_mo, x0_mo, bkg):
         #print (E, E0, fwhm, fg, fa, fb, ga, gb)
         _ = Gc(E, E0, fwhm, fg)+fa*T(E, E0, fwhm, ga)+fb*T(E, E0, fwhm, gb, mult=-1)
-        return A*_ + gauss(E, x0_mo, A_mo, fwhm)
+        return A*_ + gauss(E, x0_mo, A_mo, fwhm)+bkg
 
     def cou_opt(X,  Ew, E0, fwhm, yw, x0_mo):
         #print X
-        A, fg, fa, fb, ga, gb, A_mo = X
-        return sum((cou_approx(A, Ew, E0, fwhm, fg, fa, fb, ga, gb, A_mo, x0_mo)-yw)**2)
+        A, fg, fa, fb, ga, gb, A_mo, bkg = X
+        return sum((cou_approx(A, Ew, E0, fwhm, fg, fa, fb, ga, gb, A_mo, x0_mo, bkg)-yw)**2)
 
     def cou_fmin(E, E0, fwhm, A_mo, x0_mo, X0=None, xtol=1e-3, xmin=0, xmax=None):
         if X0 == None:
-            X0 = [1., 2.5, 1., 1., 8., 4., A_mo]
+            X0 = [1., 2.5, 1., 1., 8., 4., A_mo, 0.]
         if xmax == None:
             xmax=len(E)
         Ew=E[xmin:xmax]
@@ -408,12 +408,13 @@ def test1():
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2))
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2, mult=-1))
 
-    Xopt=[A, fg, fa, fb, ga, gb, A_mo_p]=cou_fmin(x, x0_coumpton,
-        fwhm_mo, A_mo,x0_mo, xmin=3155, xmax=3700)
-    p.plot(x, cou_approx(A, x, x0_coumpton, fwhm_mo,
-        fg, fa, fb, ga, gb, A_mo_p,x0_mo)) # Need a common amplitude
-    p.plot(x, cou_approx(2.3e6, x, x0_coumpton, fwhm_mo,
-        2.0, 1, 1, 10, 9, 0.,x0_mo)) # Need a common amplitude
+    xmin,xmax=3200,3674
+    Xopt=[A, fg, fa, fb, ga, gb, A_mo_p, bkg]=cou_fmin(x, x0_coumpton,
+        fwhm_mo, A_mo,x0_mo, xmin=xmin, xmax=xmax)
+    p.plot(x[xmin:xmax], cou_approx(A, x[xmin:xmax], x0_coumpton, fwhm_mo,
+        fg, fa, fb, ga, gb, A_mo_p,x0_mo, bkg)) # Need a common amplitude
+    #p.plot(x, cou_approx(2.3e6, x, x0_coumpton, fwhm_mo,
+    #    2.0, 1, 1, 10, 9, 0.,x0_mo)) # Need a common amplitude
     print Xopt
     p.show()
 
