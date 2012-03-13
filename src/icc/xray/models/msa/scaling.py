@@ -377,19 +377,19 @@ def test1():
         _ = Gc(E, E0, fwhm, fg)+fa*T(E, E0, fwhm, ga)+fb*T(E, E0, fwhm, gb, mult=-1)
         return A*_ + gauss(E, x0_mo, A_mo, fwhm)
 
-    def cou_opt(X,  Ew, E0, fwhm, yw, x0_mo):
+    def cou_opt(X,  Ew, E0, fwhm, yw, A_mo, x0_mo):
         #print X
-        A, fg, fa, fb, ga, gb, A_mo = X
+        A, fg, fa, fb, ga, gb = X
         return sum((cou_approx(A, Ew, E0, fwhm, fg, fa, fb, ga, gb, A_mo, x0_mo)-yw)**2)
 
     def cou_fmin(E, E0, fwhm, A_mo, x0_mo, X0=None, xtol=1e-3, xmin=0, xmax=None):
         if X0 == None:
-            X0 = [1., 1., 1., 1., 1., 1., A_mo]
+            X0 = [1., 2.5, 1., 1., 8., 4.]
         if xmax == None:
             xmax=len(E)
         Ew=E[xmin:xmax]
         yw=y[xmin:xmax]
-        return op.fmin(cou_opt, X0, args=(Ew, E0, fwhm, yw, x0_mo), xtol=xtol, maxiter=10000, maxfun=10000)
+        return op.fmin(cou_opt, X0, args=(Ew, E0, fwhm, yw, A_mo, x0_mo), xtol=xtol, maxiter=10000, maxfun=10000)
 
     r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*1.1, plot=True)
     _, A_mo, _,_,_ = r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*1.1, plot=True)
@@ -408,10 +408,11 @@ def test1():
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2))
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2, mult=-1))
 
-    Xopt=[A, fg, fa, fb, ga, gb, A_mo_p]=cou_fmin(x, x0_coumpton,
-        fwhm_mo, A_mo,x0_mo, xmin=3155, xmax=3700)
+    AA_mo=A_mo
+    Xopt=[A, fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton,
+        fwhm_mo, AA_mo,x0_mo, xmin=3155, xmax=3700)
     p.plot(x, cou_approx(A, x, x0_coumpton, fwhm_mo,
-        fg, fa, fb, ga, gb, A_mo_p,x0_mo)) # Need a common amplitude
+        fg, fa, fb, ga, gb, AA_mo,x0_mo)) # Need a common amplitude
     print Xopt
     p.show()
 
