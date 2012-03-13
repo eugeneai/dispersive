@@ -384,7 +384,7 @@ def test1():
 
     def cou_fmin(E, E0, fwhm, A_mo, x0_mo, X0=None, xtol=1e-3, xmin=0, xmax=None):
         if X0 == None:
-            X0 = [1., 1., 1., 1., 1., 1., A_mo]
+            X0 = [1., 2.5, 1., 1., 8., 4., A_mo]
         if xmax == None:
             xmax=len(E)
         Ew=E[xmin:xmax]
@@ -412,6 +412,8 @@ def test1():
         fwhm_mo, A_mo,x0_mo, xmin=3155, xmax=3700)
     p.plot(x, cou_approx(A, x, x0_coumpton, fwhm_mo,
         fg, fa, fb, ga, gb, A_mo_p,x0_mo)) # Need a common amplitude
+    p.plot(x, cou_approx(2.3e6, x, x0_coumpton, fwhm_mo,
+        2.0, 1, 1, 10, 9, 0.,x0_mo)) # Need a common amplitude
     print Xopt
     p.show()
 
