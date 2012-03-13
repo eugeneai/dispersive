@@ -372,18 +372,19 @@ def test1():
         _x=mult*dE/(sqrt_2*sigma)+1./(sqrt_2*g)
         return _exp1*fn.erfc(_x)
 
-    def cou_approx(E, E0, fwhm, fg, fa, fb, ga, gb):
+    def cou_approx(A, E, E0, fwhm, fg, fa, fb, ga, gb):
         #print (E, E0, fwhm, fg, fa, fb, ga, gb)
-        return Gc(E, E0, fwhm, fg)+fa*T(E, E0, fwhm, ga)+fb*T(E, E0, fwhm, gb, mult=-1)
+        _ = Gc(E, E0, fwhm, fg)+fa*T(E, E0, fwhm, ga)+fb*T(E, E0, fwhm, gb, mult=-1)
+        return A*_
 
     def cou_opt(X,  Ew, E0, fwhm, yw):
         #print X
-        fg, fa, fb, ga, gb = X
-        return sum((cou_approx(Ew, E0, fwhm, fg, fa, fb, ga, gb)-yw)**2)
+        A, fg, fa, fb, ga, gb = X
+        return sum((cou_approx(A, Ew, E0, fwhm, fg, fa, fb, ga, gb)-yw)**2)
 
     def cou_fmin(E, E0, fwhm, X0=None, xtol=1e-3, xmin=0, xmax=None):
         if X0 == None:
-            X0 = [1., 1., 1., 1., 1.]
+            X0 = [1., 1., 1., 1., 1., 1.]
         if xmax == None:
             xmax=len(E)
         Ew=E[xmin:xmax]
@@ -407,8 +408,8 @@ def test1():
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2))
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2, mult=-1))
 
-    Xopt=[fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton, fwhm_mo, xmin=3155, xmax=3700)
-    p.plot(x, cou_approx(x, x0_coumpton, fwhm_mo, fg, fa, fb, ga, gb)) # Need a common amplitude
+    Xopt=[A, fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton, fwhm_mo, xmin=3155, xmax=3700)
+    p.plot(x, cou_approx(A, x, x0_coumpton, fwhm_mo, fg, fa, fb, ga, gb)) # Need a common amplitude
     print Xopt
     p.show()
 
