@@ -394,8 +394,31 @@ def test1():
         yw=y[xmin:xmax]
         return op.fmin(cou_opt, X0, args=(Ew, E0, fwhm, yw), xtol=xtol, maxiter=10000, maxfun=10000)
 
+    def cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg,    x_mo, fwhm_mo, xw):
+        _  = 0.0
+        _ += gauss(xw, x_mo, A_mo, fwhm_mo)
+        _ += gauss(xw, x_cou, A_cou, fwhm_cou)
+        _ += bkg
+        return _
+
+    def cou_sim_opt(X, x_mo, fwhm_mo, xw, yw):
+        A_mo, x_cou, A_cou, fwhm_cou, bkg = X
+        _ = cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg,  x_mo, fwhm_mo, xw)
+        _ = sum((_-yw)**2)
+        return _
+
+    def cou_sim_fmin(X, x_mo, fwhm_mo, xmin=0, xmax=None, xtol=1e-8):
+        if xmax == None:
+            xmax=len(E)
+        xw=x[xmin:xmax]
+        yw=y[xmin:xmax]
+        return op.fmin(cou_sim_opt, X, args=(x_mo, fwhm_mo, xw, yw),
+            xtol=xtol, maxiter=10000, maxfun=10000)
+
+
     r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*1.1, plot=True)
     Xtry = _, A_mo, _,a0,a1 = r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*1.1, plot=True)
+    print "Releigh pike:", Xtry
     #p.show()
     #Coumpton Pike
     angle=90-2 #(degrees)
@@ -411,21 +434,28 @@ def test1():
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2))
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2, mult=-1))
 
-    xmin,xmax=3314,3674
+    xmin,xmax=3150,3700
 
+    """
     y1=y+0.
     Xtry[-1]=Xtry[-2]=0.
     y1[3514:3640]=y1[3514:3640]-ofp(Xtry, x[3514:3640])
     y2,y=y,y1
     p.plot(x, y)
+    """
 
-    Xopt=[A, fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton,
-        fwhm_mo, xmin=xmin, xmax=xmax)
-    p.plot(x[xmin:xmax], cou_approx(A, x[xmin:xmax], x0_coumpton, fwhm_mo,
-        fg, fa, fb, ga, gb)+ofp(Xtry, x[xmin:xmax])) # Need a common amplitude
+    #Xopt=[A, fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton,
+    #    fwhm_mo, xmin=xmin, xmax=xmax)
+    #p.plot(x[xmin:xmax], cou_approx(A, x[xmin:xmax], x0_coumpton, fwhm_mo,
+    #    fg, fa, fb, ga, gb)+ofp(Xtry, x[xmin:xmax])) # Need a common amplitude
     #p.plot(x, cou_approx(2.3e6, x, x0_coumpton, fwhm_mo,
     #    2.0, 1, 1, 10, 9, 0.,x0_mo)) # Need a common amplitude
-    print Xopt
+    Xopt_cou=[A_mo, x0_cou, A_cou, fwhm_co, bkg_cou]=cou_sim_fmin([A_mo, x0_coumpton, A_mo, fwhm_mo*2.5, 0.],
+        x0_mo, fwhm_mo, xmin=xmin, xmax=xmax)
+    print "Coumpton group:", Xopt_cou
+    p.plot(x[xmin:xmax], cou_sim(A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, x0_mo, fwhm_mo, x[xmin:xmax])) # Need a common amplitude
+
+
     p.show()
 
 
