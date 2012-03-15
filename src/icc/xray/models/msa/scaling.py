@@ -306,9 +306,11 @@ def test1():
         nxw=np.arange(xw[0], xw[-1], 0.25)
         Xopt=[x0, A, fwhm, a0, a1]
         fy=ofp(Xopt, nxw)
+        ffy=ofp([x0,A,fwhm,0.,0.], nxw)
         if plot:
             dnxw=nxw-x0
             p.fill_between(nxw,fy,a0+a1*dnxw, color=(0.7,0.3,0), alpha=0.5)
+            p.plot(nxw,ffy, color=(0.7,0.0,0.3), alpha=0.5)
         return Xopt
 
 
@@ -318,6 +320,7 @@ def test1():
     e_mo= 17.41
     e_zr= 15.774
     p.plot(x,y)
+    p.plot(x,x*0.)
     x00, _, fwhm_0, b0, k0= r_line(80, width=len(x)/50, plot=True)
     print "FWHM0:", fwhm_0
     #fwhm_0=100
@@ -453,8 +456,15 @@ def test1():
     Xopt_cou=[A_mo, x0_cou, A_cou, fwhm_co, bkg_cou]=cou_sim_fmin([A_mo, x0_coumpton, A_mo, fwhm_mo*2.5, 0.],
         x0_mo, fwhm_mo, xmin=xmin, xmax=xmax)
     print "Coumpton group:", Xopt_cou
-    p.plot(x[xmin:xmax], cou_sim(A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, x0_mo, fwhm_mo, x[xmin:xmax])) # Need a common amplitude
+    _cs=cou_sim(A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, x0_mo, fwhm_mo, x[xmin:xmax])
+    p.plot(x[xmin:xmax], _cs) # Need a common amplitude
 
+    y1=y+0.
+    Xtry[-1]=Xtry[-2]=0.
+    y1[xmin:xmax]=y1[xmin:xmax]-_cs+bkg_cou
+    y2,y=y,y1
+    p.plot(x, y)
+    r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*1.1, plot=True)
 
     p.show()
 
