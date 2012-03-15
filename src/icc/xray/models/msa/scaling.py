@@ -372,24 +372,24 @@ def test1():
         _x=mult*dE/(sqrt_2*sigma)+1./(sqrt_2*g)
         return _exp1*fn.erfc(_x)
 
-    def cou_approx(A, E, E0, fwhm, fg, fa, fb, ga, gb, A_mo, x0_mo, a0, a1):
+    def cou_approx(A, E, E0, fwhm, fg, fa, fb, ga, gb):
         #print (E, E0, fwhm, fg, fa, fb, ga, gb)
         _ = Gc(E, E0, fwhm, fg)+fa*T(E, E0, fwhm, ga)+fb*T(E, E0, fwhm, gb, mult=-1)
-        return A*_ + ofp([x0_mo, A_mo, fwhm, a0, a1], E)
+        return A*_ #+ ofp([x0_mo, A_mo, fwhm, a0, a1], E)
 
-    def cou_opt(X,  Ew, E0, fwhm, yw, A_mo, x0_mo, a0, a1):
+    def cou_opt(X,  Ew, E0, fwhm, yw):
         #print X
         A, fg, fa, fb, ga, gb = X
-        return sum((cou_approx(A, Ew, E0, fwhm, fg, fa, fb, ga, gb, A_mo, x0_mo, a0, a1)-yw)**2)
+        return sum((cou_approx(A, Ew, E0, fwhm, fg, fa, fb, ga, gb)-yw)**2)
 
-    def cou_fmin(E, E0, fwhm, A_mo, x0_mo, a0, a1, X0=None, xtol=1e-3, xmin=0, xmax=None):
+    def cou_fmin(E, E0, fwhm, X0=None, xtol=1e-3, xmin=0, xmax=None):
         if X0 == None:
-            X0 = [1., 2.5, 1., 1., 8., 4.]
+            X0 = [1., 1, 1., 1., 1, 1]
         if xmax == None:
             xmax=len(E)
         Ew=E[xmin:xmax]
         yw=y[xmin:xmax]
-        return op.fmin(cou_opt, X0, args=(Ew, E0, fwhm, yw, A_mo, x0_mo, a0, a1), xtol=xtol, maxiter=10000, maxfun=10000)
+        return op.fmin(cou_opt, X0, args=(Ew, E0, fwhm, yw), xtol=xtol, maxiter=10000, maxfun=10000)
 
     r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*1.1, plot=True)
     Xtry = _, A_mo, _,a0,a1 = r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*1.1, plot=True)
@@ -417,9 +417,9 @@ def test1():
     p.plot(x, y)
 
     Xopt=[A, fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton,
-        fwhm_mo, A_mo*0, x0_mo, a0*0, a1*0, xmin=xmin, xmax=xmax)
+        fwhm_mo, xmin=xmin, xmax=xmax)
     p.plot(x[xmin:xmax], cou_approx(A, x[xmin:xmax], x0_coumpton, fwhm_mo,
-        fg, fa, fb, ga, gb, A_mo*0,x0_mo, a0*0, a1*0)) # Need a common amplitude
+        fg, fa, fb, ga, gb)) # Need a common amplitude
     #p.plot(x, cou_approx(2.3e6, x, x0_coumpton, fwhm_mo,
     #    2.0, 1, 1, 10, 9, 0.,x0_mo)) # Need a common amplitude
     print Xopt
