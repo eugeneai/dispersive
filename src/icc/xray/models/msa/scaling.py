@@ -374,7 +374,10 @@ def test1():
 
     def cou_approx(A, E, E0, fwhm, fg, fa, fb, ga, gb):
         #print (E, E0, fwhm, fg, fa, fb, ga, gb)
-        _ = Gc(E, E0, fwhm, fg)+fa*T(E, E0, fwhm, ga)+fb*T(E, E0, fwhm, gb, mult=-1)
+        _  = 0.0
+        _ += Gc(E, E0, fwhm, fg)
+        #_ += fa*T(E, E0, fwhm, ga)
+        #_ += fb*T(E, E0, fwhm, gb, mult=-1)
         return A*_ #+ ofp([x0_mo, A_mo, fwhm, a0, a1], E)
 
     def cou_opt(X,  Ew, E0, fwhm, yw):
@@ -408,7 +411,7 @@ def test1():
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2))
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2, mult=-1))
 
-    xmin,xmax=3200,3674
+    xmin,xmax=3314,3674
 
     y1=y+0.
     Xtry[-1]=Xtry[-2]=0.
@@ -419,7 +422,7 @@ def test1():
     Xopt=[A, fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton,
         fwhm_mo, xmin=xmin, xmax=xmax)
     p.plot(x[xmin:xmax], cou_approx(A, x[xmin:xmax], x0_coumpton, fwhm_mo,
-        fg, fa, fb, ga, gb)) # Need a common amplitude
+        fg, fa, fb, ga, gb)+ofp(Xtry, x[xmin:xmax])) # Need a common amplitude
     #p.plot(x, cou_approx(2.3e6, x, x0_coumpton, fwhm_mo,
     #    2.0, 1, 1, 10, 9, 0.,x0_mo)) # Need a common amplitude
     print Xopt
