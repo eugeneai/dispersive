@@ -306,11 +306,11 @@ def test1():
         nxw=np.arange(xw[0], xw[-1], 0.25)
         Xopt=[x0, A, fwhm, a0, a1]
         fy=ofp(Xopt, nxw)
-        ffy=ofp([x0,A,fwhm,0.,0.], nxw)
+        ffy=ofp([x0,A,fwhm,a0,0.], x)
         if plot:
             dnxw=nxw-x0
             p.fill_between(nxw,fy,a0+a1*dnxw, color=(0.7,0.3,0), alpha=0.5)
-            p.plot(nxw,ffy, color=(0.7,0.0,0.3), alpha=0.5)
+            p.plot(x,ffy, color=(0.7,0.0,0.3), alpha=0.5)
         return Xopt
 
 
@@ -427,17 +427,21 @@ def test1():
     angle=90-2 #(degrees)
     rangle=angle*math.pi/180
     m0=510.996
-    E0=e_mo
-    Ec=E0 #seq(15.0,17.415, by=0.1)
-    DE=(E0*Ec/m0)*(1-math.cos(rangle))
-    print "DE:", DE
+    #E0=e_mo
+    #Ec=E0 #seq(15.0,17.415, by=0.1)
+    #DE=(E0*Ec/m0)*(1-math.cos(rangle))
+    #print "DE:", DE
 
-    x0_coumpton=to_chan(e_mo-DE)
+    E=e_mo
+    E_prime=E/(1+(1-math.cos(rangle))*E/m0)
+
+    #x0_coumpton=to_chan(e_mo-DE)
+    x0_coumpton=to_chan(E_prime)
     #p.plot(x, 6000000*Gc(x,x0_coumpton, fwhm=fwhm_mo, fg=2.))
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2))
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2, mult=-1))
 
-    xmin,xmax=3150,3700
+    xmin,xmax=3339,3622
 
     """
     y1=y+0.
@@ -455,6 +459,8 @@ def test1():
     #    2.0, 1, 1, 10, 9, 0.,x0_mo)) # Need a common amplitude
     Xopt_cou=[A_mo, x0_cou, A_cou, fwhm_co, bkg_cou]=cou_sim_fmin([A_mo, x0_coumpton, A_mo, fwhm_mo*2.5, 0.],
         x0_mo, fwhm_mo, xmin=xmin, xmax=xmax)
+    xmin-=300
+    xmax+=300
     print "Coumpton group:", Xopt_cou
     _cs=cou_sim(A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, x0_mo, fwhm_mo, x[xmin:xmax])
     p.plot(x[xmin:xmax], _cs) # Need a common amplitude
