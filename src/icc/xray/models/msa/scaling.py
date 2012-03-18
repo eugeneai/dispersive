@@ -104,18 +104,7 @@ def test1():
 
 
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
-    x=np.arange(-20., 20., 0.01)
-    a3=1.
-    x_mo=0
-    shift=10.
-    b=300.
-    for s in range(5):
-        shift = (s+1)*2
-        #p.plot(x, -a3*(arccot(b/(x_mo-shift-x))-0.3*arccot(b/(x_mo+shift-x))))
-        p.plot(x, (a3/shift)*((arccot(x_mo-shift-x))-arccot(5*(x_mo+shift-x))))
 
-    p.show()
-    return
     e_fe= 6.4
     e_0 = 0.0086
     e_mo= 17.41
@@ -198,18 +187,19 @@ def test1():
         yw=y[xmin:xmax]
         return op.fmin(cou_opt, X0, args=(Ew, E0, fwhm, yw), xtol=xtol, maxiter=10000, maxfun=10000)
 
-    def cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg,  shift, c2, a3, b, x_mo, fwhm_mo, xw):
+    def cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg,  shift, c2, a3, b, c, x_mo, fwhm_mo, xw):
         _  = 0.0
         _ += gauss(xw, x_mo, A_mo, fwhm_mo)
-        _ += gauss(xw, x_cou, A_cou, fwhm_cou)
+        _ += gauss(xw, x_cou-shift, A_cou, fwhm_cou)
         _ += gauss(xw, x_cou+shift, c2*A_cou, fwhm_cou)
-        _ += a3*(arccot(b/(x_mo-xw))+arccot(b/(x_mo+shift-xw)))
+        #_ += a3*(arccot(b/(x_mo-xw))+arccot(b/(x_mo+shift-xw)))
+        _ += a3*arccot(-shift*b-(xw-x_cou))-c*arccot(shift*b-(xw-x_cou))
         _ += bkg
         return _
 
     def cou_sim_opt(X, fwhm_mo, xw, yw):
-        A_mo, x_cou, A_cou, fwhm_cou, bkg, shift, c2, a3, b, x_mo = X
-        _ = cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg, shift, c2, a3, b,  x_mo, fwhm_mo, xw)
+        A_mo, x_cou, A_cou, fwhm_cou, bkg, shift, c2, a3, b, c, x_mo = X
+        _ = cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg, shift, c2, a3, b, c, x_mo, fwhm_mo, xw)
         _ = sum((_-yw)**2)
         return _
 
@@ -260,13 +250,13 @@ def test1():
     #    fg, fa, fb, ga, gb)+ofp(Xtry, x[xmin:xmax])) # Need a common amplitude
     #p.plot(x, cou_approx(2.3e6, x, x0_coumpton, fwhm_mo,
     #    2.0, 1, 1, 10, 9, 0.,x0_mo)) # Need a common amplitude
-    Xopt_cou=[A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, shift, c2, a3, b, x0_mo]=cou_sim_fmin(
-        [A_mo, x0_coumpton, A_mo, fwhm_mo*2.5, 0., 1., 1., 1., 1., x0_mo],
+    Xopt_cou=[A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, shift, c2, a3, b, c, x0_mo]=cou_sim_fmin(
+        [A_mo, x0_coumpton, A_mo, fwhm_mo*2.5, 0., 1., 1., 1., 1., 1., x0_mo],
             x0_mo, fwhm_mo, xmin=xmin, xmax=xmax)
     xmin-=300
     xmax+=300
     print "Coumpton group:", Xopt_cou
-    _cs=cou_sim(A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, shift, c2, a3, b, x0_mo, fwhm_mo, x[xmin:xmax])
+    _cs=cou_sim(A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, shift, c2, a3, b, c, x0_mo, fwhm_mo, x[xmin:xmax])
     p.plot(x[xmin:xmax], _cs) # Need a common amplitude
 
     y1=y+0.
