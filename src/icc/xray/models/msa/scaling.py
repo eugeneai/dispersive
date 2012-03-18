@@ -104,14 +104,15 @@ def test1():
 
 
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
-    x=np.arange(-2000., 2000., 0.1)
+    x=np.arange(-20., 20., 0.01)
     a3=1.
     x_mo=0
     shift=10.
     b=300.
-    for s in range(10):
-        shift = s*100
-        p.plot(x, abs(a3*(np.arctan(b/(x_mo-shift-x))-np.arctan(b/(x_mo+shift-x)))))
+    for s in range(5):
+        shift = (s+1)*2
+        #p.plot(x, -a3*(arccot(b/(x_mo-shift-x))-0.3*arccot(b/(x_mo+shift-x))))
+        p.plot(x, (a3/shift)*((arccot(x_mo-shift-x))-arccot(5*(x_mo+shift-x))))
 
     p.show()
     return
