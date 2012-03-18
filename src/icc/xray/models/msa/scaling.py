@@ -104,7 +104,17 @@ def test1():
 
 
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
+    x=np.arange(-2000., 2000., 0.1)
+    a3=1.
+    x_mo=0
+    shift=10.
+    b=300.
+    for s in range(10):
+        shift = s*100
+        p.plot(x, abs(a3*(np.arctan(b/(x_mo-shift-x))-np.arctan(b/(x_mo+shift-x)))))
 
+    p.show()
+    return
     e_fe= 6.4
     e_0 = 0.0086
     e_mo= 17.41
@@ -196,8 +206,8 @@ def test1():
         _ += bkg
         return _
 
-    def cou_sim_opt(X, x_mo, fwhm_mo, xw, yw):
-        A_mo, x_cou, A_cou, fwhm_cou, bkg, shift, c2, a3, b = X
+    def cou_sim_opt(X, fwhm_mo, xw, yw):
+        A_mo, x_cou, A_cou, fwhm_cou, bkg, shift, c2, a3, b, x_mo = X
         _ = cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg, shift, c2, a3, b,  x_mo, fwhm_mo, xw)
         _ = sum((_-yw)**2)
         return _
@@ -207,7 +217,7 @@ def test1():
             xmax=len(E)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
-        return op.fmin(cou_sim_opt, X, args=(x_mo, fwhm_mo, xw, yw),
+        return op.fmin(cou_sim_opt, X, args=(fwhm_mo, xw, yw),
             xtol=xtol, maxiter=10000, maxfun=10000)
 
 
@@ -249,8 +259,8 @@ def test1():
     #    fg, fa, fb, ga, gb)+ofp(Xtry, x[xmin:xmax])) # Need a common amplitude
     #p.plot(x, cou_approx(2.3e6, x, x0_coumpton, fwhm_mo,
     #    2.0, 1, 1, 10, 9, 0.,x0_mo)) # Need a common amplitude
-    Xopt_cou=[A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, shift, c2, a3, b]=cou_sim_fmin(
-        [A_mo, x0_coumpton, A_mo, fwhm_mo*2.5, 0., 1., 1., 1., 1.],
+    Xopt_cou=[A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, shift, c2, a3, b, x0_mo]=cou_sim_fmin(
+        [A_mo, x0_coumpton, A_mo, fwhm_mo*2.5, 0., 1., 1., 1., 1., x0_mo],
             x0_mo, fwhm_mo, xmin=xmin, xmax=xmax)
     xmin-=300
     xmax+=300
