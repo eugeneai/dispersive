@@ -105,6 +105,30 @@ def test1():
 
 #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
 
+    x=np.arange(-100., 100., 1)
+    xmin,xmax=-100-31,100+32
+    x1=x[xmin:xmax]
+    par1 = 100.- x1*x1/10.
+    par2 = - x*x/100.
+    print x1, par1
+    x+=len(x)/2
+    p.plot(x, np.zeros(len(x)))
+    #p.plot(x1, par1)
+    #p.plot(x, par2)
+    par=par2+0.
+    par[xmin:xmax]+=par1
+    par+=50
+    for i in range(len(par)):
+        if par[i]<0:
+            par[i]=0
+    p.plot(x, par)
+    y=par
+
+    Xopt=r_line(100, A=10, width=40, plot=True)
+
+    p.show()
+
+    return
     e_fe= 6.4
     e_0 = 0.0086
     e_mo= 17.41
