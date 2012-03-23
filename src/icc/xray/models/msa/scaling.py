@@ -306,9 +306,11 @@ def test1():
         nxw=np.arange(xw[0], xw[-1], 0.25)
         Xopt=[x0, A, fwhm, a0, a1]
         fy=ofp(Xopt, nxw)
+        ffy=ofp([x0,A,fwhm,0.,0.], nxw)
         if plot:
             dnxw=nxw-x0
             p.fill_between(nxw,fy,a0+a1*dnxw, color=(0.7,0.3,0), alpha=0.5)
+            p.plot(nxw,ffy, color=(0.7,0.0,0.3), alpha=0.5)
         return Xopt
 
 
@@ -318,6 +320,7 @@ def test1():
     e_mo= 17.41
     e_zr= 15.774
     p.plot(x,y)
+    p.plot(x,x*0.)
     x00, _, fwhm_0, b0, k0= r_line(80, width=len(x)/50, plot=True)
     print "FWHM0:", fwhm_0
     #fwhm_0=100
@@ -372,26 +375,53 @@ def test1():
         _x=mult*dE/(sqrt_2*sigma)+1./(sqrt_2*g)
         return _exp1*fn.erfc(_x)
 
-    def cou_approx(E, E0, fwhm, fg, fa, fb, ga, gb):
+    def cou_approx(A, E, E0, fwhm, fg, fa, fb, ga, gb):
         #print (E, E0, fwhm, fg, fa, fb, ga, gb)
-        return Gc(E, E0, fwhm, fg)+fa*T(E, E0, fwhm, ga)+fb*T(E, E0, fwhm, gb, mult=-1)
+        _  = 0.0
+        _ += Gc(E, E0, fwhm, fg)
+        #_ += fa*T(E, E0, fwhm, ga)
+        #_ += fb*T(E, E0, fwhm, gb, mult=-1)
+        return A*_ #+ ofp([x0_mo, A_mo, fwhm, a0, a1], E)
 
     def cou_opt(X,  Ew, E0, fwhm, yw):
         #print X
-        fg, fa, fb, ga, gb = X
-        return sum((cou_approx(Ew, E0, fwhm, fg, fa, fb, ga, gb)-yw)**2)
+        A, fg, fa, fb, ga, gb = X
+        return sum((cou_approx(A, Ew, E0, fwhm, fg, fa, fb, ga, gb)-yw)**2)
 
     def cou_fmin(E, E0, fwhm, X0=None, xtol=1e-3, xmin=0, xmax=None):
         if X0 == None:
-            X0 = [1., 1., 1., 1., 1.]
+            X0 = [1., 1, 1., 1., 1, 1]
         if xmax == None:
             xmax=len(E)
         Ew=E[xmin:xmax]
         yw=y[xmin:xmax]
         return op.fmin(cou_opt, X0, args=(Ew, E0, fwhm, yw), xtol=xtol, maxiter=10000, maxfun=10000)
 
+    def cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg,    x_mo, fwhm_mo, xw):
+        _  = 0.0
+        _ += gauss(xw, x_mo, A_mo, fwhm_mo)
+        _ += gauss(xw, x_cou, A_cou, fwhm_cou)
+        _ += bkg
+        return _
+
+    def cou_sim_opt(X, x_mo, fwhm_mo, xw, yw):
+        A_mo, x_cou, A_cou, fwhm_cou, bkg = X
+        _ = cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg,  x_mo, fwhm_mo, xw)
+        _ = sum((_-yw)**2)
+        return _
+
+    def cou_sim_fmin(X, x_mo, fwhm_mo, xmin=0, xmax=None, xtol=1e-8):
+        if xmax == None:
+            xmax=len(E)
+        xw=x[xmin:xmax]
+        yw=y[xmin:xmax]
+        return op.fmin(cou_sim_opt, X, args=(x_mo, fwhm_mo, xw, yw),
+            xtol=xtol, maxiter=10000, maxfun=10000)
+
+
     r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*1.1, plot=True)
-    r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*1.1, plot=True)
+    Xtry = _, A_mo, _,a0,a1 = r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*1.1, plot=True)
+    print "Releigh pike:", Xtry
     #p.show()
     #Coumpton Pike
     angle=90-2 #(degrees)
@@ -407,9 +437,35 @@ def test1():
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2))
     #p.plot(x, 3000000*T(x,x0_coumpton, fwhm=fwhm_mo, g=2, mult=-1))
 
-    Xopt=[fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton, fwhm_mo, xmin=3155, xmax=3700)
-    p.plot(x, cou_approx(x, x0_coumpton, fwhm_mo, fg, fa, fb, ga, gb)) # Need a common amplitude
-    print Xopt
+    xmin,xmax=3150,3700
+
+    """
+    y1=y+0.
+    Xtry[-1]=Xtry[-2]=0.
+    y1[3514:3640]=y1[3514:3640]-ofp(Xtry, x[3514:3640])
+    y2,y=y,y1
+    p.plot(x, y)
+    """
+
+    #Xopt=[A, fg, fa, fb, ga, gb]=cou_fmin(x, x0_coumpton,
+    #    fwhm_mo, xmin=xmin, xmax=xmax)
+    #p.plot(x[xmin:xmax], cou_approx(A, x[xmin:xmax], x0_coumpton, fwhm_mo,
+    #    fg, fa, fb, ga, gb)+ofp(Xtry, x[xmin:xmax])) # Need a common amplitude
+    #p.plot(x, cou_approx(2.3e6, x, x0_coumpton, fwhm_mo,
+    #    2.0, 1, 1, 10, 9, 0.,x0_mo)) # Need a common amplitude
+    Xopt_cou=[A_mo, x0_cou, A_cou, fwhm_co, bkg_cou]=cou_sim_fmin([A_mo, x0_coumpton, A_mo, fwhm_mo*2.5, 0.],
+        x0_mo, fwhm_mo, xmin=xmin, xmax=xmax)
+    print "Coumpton group:", Xopt_cou
+    _cs=cou_sim(A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, x0_mo, fwhm_mo, x[xmin:xmax])
+    p.plot(x[xmin:xmax], _cs) # Need a common amplitude
+
+    y1=y+0.
+    Xtry[-1]=Xtry[-2]=0.
+    y1[xmin:xmax]=y1[xmin:xmax]-_cs+bkg_cou
+    y2,y=y,y1
+    p.plot(x, y)
+    r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*1.1, plot=True)
+
     p.show()
 
 
