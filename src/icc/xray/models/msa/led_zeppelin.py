@@ -12,7 +12,7 @@ spectrum=channels
 
 cou_start,cou_stop=3000, len(spectrum)
 
-y = spectrum[3000:]
+y = spectrum[cou_start:]
 x = np.arange(len(y))
 tck = inter.splrep(x, y, s=1e7)
 one=np.zeros(len(y))+1.
@@ -21,7 +21,7 @@ w=np.zeros(len(y))+1.
 w[215:303]=0.
 w[36:131]=0.
 
-tck2 = inter.splrep(x, y, w=w, s=1e7)
+tck2 = inter.splrep(x, y, w=w, s=5e7)
 
 #x2 = np.linspace(x[0], x[-1], 10*len(y))
 x2 = np.linspace(x[0], x[-1], len(y))
@@ -32,9 +32,9 @@ yc=y-y3
 bkg=y[0]-yc[0]
 #p.plot(x,yc+bkg, x, y)
 nc=np.array(spectrum)
-nc[3000:]=yc+bkg
+nc[cou_start:]=yc+bkg
 xx=np.arange(len(spectrum))
-p.plot(xx,spectrum, xx,nc)
+p.plot(xx,spectrum, xx,nc, x2+cou_start, y3)
 ou=np.around(nc)
 s=''
 for i in xx:
