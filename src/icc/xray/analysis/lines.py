@@ -5,7 +5,7 @@ import csv
 
 DEBUG=False
 
-fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2nd, Bkg_2nd, LLD, ULD"
+fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_2th, LLD, ULD"
 
 Line=namedtuple('Line', fields)
 
@@ -22,22 +22,35 @@ class Lines(object):
         self.connect()
 
     def convert_csv(self,filename, debug = DEBUG):
+        def _f(x):
+            if x=='':
+                return None
+            if x.find(';')!=-1:
+                return None
+            try:
+                return float(x.replace(',','.').replace('*',''))
+            except ValueError, e:
+                print "Error:", e
+                return x
         reader=csv.reader(open(filename), delimiter=';')
         db_name=os.path.splitext(filename)[0]+'.sqlite3'
         conn=self.connect(dbname=db_name)
+        conn.create_function("float", 1, _f)
         reader.next() # skip first row of fiels names
         cur = conn.cursor()
         cur.execute('DROP TABLE IF EXISTS lines ;')
         self.create_db(conn)
         for row in map(Line._make, reader):
-            params=['?'] * len(row)
-            params=', '.join(params)
+            #params=['?'] * len(row)
+            #params=', '.join(params)
+            params='?, ?, ?, float(?), ?, ?, ?, ?, ?, float(?), ?, ?, float(?), float(?), ?, ?'
             cmd="""
                 INSERT INTO lines (%s)
                 VALUES
                 (%s);
             """ % (fields, params)
             cur.execute(cmd, row)
+        #print cmd
         conn.commit()
         cur = conn.cursor()
         cur.execute('''SELECT %s from lines;''' % fields)
@@ -78,14 +91,21 @@ class Lines(object):
                 Collimator REAL,
                 Crystal TEXT NULL,
                 Detector TEXT NULL,
-                Peak_2nd REAL NULL,
-                Bkg_2nd TEXT NULL,
+                Peak_2th REAL NULL,
+                Bkg_2th TEXT NULL,
                 LLD REAL NULL,
                 ULD REAL NULL
         );
         ''')
 
-
+    def fetch_all(self, sql, params=None):
+        cur=self.db.cursor()
+        sql='''SELECT %s from lines;''' % fields+" where "+sql+';'
+        rows=cur.execute(sql,params)
+        for row in map(Line._make, cur):
+                yield row
 
 if __name__=='__main__':
     lines=Lines('/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
+    for l in lines.fetch_all('Z=40'):
+        print l
