@@ -3,7 +3,9 @@ from collections import namedtuple
 import os, os.path
 import csv
 
-Line=namedtuple('Line', "Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2nd, Bkg_2nd, LLD, ULD")
+fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2nd, Bkg_2nd, LLD, ULD"
+
+Line=namedtuple('Line', fields)
 
 class Lines(object):
     def __init__(self, csv=None, dbname=None):
@@ -29,22 +31,16 @@ class Lines(object):
             params=['?'] * len(row)
             params=', '.join(params)
             cmd="""
-                INSERT INTO lines (Z, Line_Name, Comment, line_keV,
-                tube_KV, Filter, Ref_Sample,
-                Ref_Line, Calib, Collimator, Crystal, Detector,
-                Peak_2nd, Bkg_2nd, LLD, ULD)
+                INSERT INTO lines (%s)
                 VALUES
                 (%s);
-            """ % params
+            """ % (fields, params)
             cur.execute(cmd, row)
             # print row
         # cur.execute("COMMIT;")
         conn.commit()
         cur = conn.cursor()
-        cur.execute('''SELECT Z, Line_Name, Comment, line_keV,
-                tube_KV, Filter, Ref_Sample,
-                Ref_Line, Calib, Collimator, Crystal, Detector,
-                Peak_2nd, Bkg_2nd, LLD, ULD from lines;''')
+        cur.execute('''SELECT %s from lines;''' % fields)
         for row in map(Line._make, cur):
             print row
 
