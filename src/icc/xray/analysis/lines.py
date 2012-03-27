@@ -3,7 +3,7 @@ from collections import namedtuple
 import os, os.path
 import csv
 
-Line=namedtuple('Line', "Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_2th, LLD, ULD")
+Line=namedtuple('Line', "Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2nd, Bkg_2nd, LLD, ULD")
 
 class Lines(object):
     def __init__(self, csv=None, dbname=None):
@@ -32,7 +32,7 @@ class Lines(object):
                 INSERT INTO lines (Z, Line_Name, Comment, line_keV,
                 tube_KV, Filter, Ref_Sample,
                 Ref_Line, Calib, Collimator, Crystal, Detector,
-                Peak_2th, Bkg_2th, LLD, ULD)
+                Peak_2nd, Bkg_2nd, LLD, ULD)
                 VALUES
                 (%s);
             """ % params
@@ -44,7 +44,7 @@ class Lines(object):
         cur.execute('''SELECT Z, Line_Name, Comment, line_keV,
                 tube_KV, Filter, Ref_Sample,
                 Ref_Line, Calib, Collimator, Crystal, Detector,
-                Peak_2th, Bkg_2th, LLD, ULD from lines;''')
+                Peak_2nd, Bkg_2nd, LLD, ULD from lines;''')
         for row in map(Line._make, cur):
             print row
 
@@ -81,8 +81,8 @@ class Lines(object):
                 Collimator REAL,
                 Crystal TEXT NULL,
                 Detector TEXT NULL,
-                Peak_2th REAL NULL,
-                Bkg_2th TEXT NULL,
+                Peak_2nd REAL NULL,
+                Bkg_2nd TEXT NULL,
                 LLD REAL NULL,
                 ULD REAL NULL
         );
