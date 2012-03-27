@@ -1,0 +1,1227 @@
+"Z";"Line Name";"Comment";"line keV";"tube KV";"Filter";"Ref Sample";"Ref Line";"Calib.";"Collimator";"Crystal";"Detector";"2Th-Peak";"2Th-Bkg";"LLD";"ULD"
+47;"Ag KA1-ALT-Min";;22,16;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";22,658;;50;150
+47;"Ag KA1-ALT-Min";"noFil";22,16;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Min/NoFil";"C,D,*";0,23;"LiF220";"Sci.";22,658;;50;150
+47;"Ag KA1-ALT-Tr";;22,16;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";22,658;;60;140
+47;"Ag KA1-ALT-Tr";"noFil";22,16;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Tr/NoFil";"C,D";0,23;"LiF220";"Sci.";22,658;;60;140
+47;"Ag KA1-HR-Min";;22,16;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";15,981;;50;150
+47;"Ag KA1-HR-Min";"NoFil";22,16;60;;"QuantExpress-SQ3";"Cd KA1-HR-Min/NoFil";"C,D";0,23;"LiF200";"Sci.";15,981;;50;150
+47;"Ag KA1-HR-Tr";;22,16;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";15,981;;60;140
+47;"Ag KA1-HR-Tr";"NoFil";22,16;60;;"QuantExpress-SQ3";"Cd KA1-HR-Tr/NoFil";"C,D";0,23;"LiF200";"Sci.";15,981;;60;140
+47;"Ag KA1-HS-Min";;22,16;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";15,981;;50;150
+47;"Ag KA1-HS-Min";"NoFil";22,16;60;;"QuantExpress-SQ3";"Cd KA1-HS-Min/NoFil";"C,D";0,46;"LiF200";"Sci.";15,981;;50;150
+47;"Ag KA1-HS-Tr";;22,16;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";15,981;;60;140
+47;"Ag KA1-HS-Tr";"NoFil";22,16;60;;"QuantExpress-SQ3";"Cd KA1-HS-Tr/NoFil";"C,D";0,46;"LiF200";"Sci.";15,981;;60;140
+47;"Ag KA1-Maj";;22,16;50;;"QuantExpress-SQ3";"Cd KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";15,981;;35;300
+47;"Ag KB1-Min";;24,94;60;;"QuantExpress-SQ2";"Sb KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";14,192;;50;150
+47;"Ag KB1-Tr";;24,94;60;;"QuantExpress-SQ2";"Sb KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";14,192;;60;140
+47;"Ag LA1-HR-Min";;2,984;50;;"QuantExpress-SQ3";"K  KA1-HR-Min/PET";"C,D,*";0,23;"PET";"Gas";56,712;;50;150
+47;"Ag LA1-HR-Tr";;2,984;50;;"QuantExpress-SQ3";"K  KA1-HR-Tr/PET";"C,D,*";0,23;"PET";"Gas";56,712;;60;140
+47;"Ag LA1-HS-Min";;2,984;50;;"QuantExpress-SQ3";"K  KA1-HS-Min/PET";"C,D,*";0,46;"PET";"Gas";56,712;;50;150
+47;"Ag LA1-HS-Tr";;2,984;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr/PET";"C,D,*";0,46;"PET";"Gas";56,712;;60;140
+13;"Al KA1-ALT-Min";;1,487;30;;"QuantExpress-SQ3";"Mg KA1-HR-Min";"C,D";0,23;"XS-55";"Gas";17,316;;40;160
+13;"Al KA1-ALT-Tr";;1,487;30;;"QuantExpress-SQ3";"Mg KA1-HR-Tr";"C,D";0,23;"XS-55";"Gas";17,316;;50;150
+13;"Al KA1-HR-Min";;1,487;30;;"QuantExpress-SQ1";"Al KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";"144,615*";;50;150
+13;"Al KA1-HR-Min";"L";1,487;30;;"QuantExpress-SQ1";"Al KA1-HR-Min/L";"*";0,23;"PET";"Gas";"144,600*";143,447;60;145
+13;"Al KA1-HR-Tr";;1,487;30;;"QuantExpress-SQ1";"Al KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";"144,608*";;60;140
+13;"Al KA1-HR-Tr";"QE";1,487;30;;;;;0,23;"PET";"Gas";144,624;124,999;60;140
+13;"Al KA1-HS-Min";;1,487;30;;"QuantExpress-SQ1";"Al KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";"144,661*";;50;150
+13;"Al KA1-HS-Min";"veg";1,487;30;;"QuantExpress-SQ1";"Al KA1-HS-Min/veg";"C,*";0,46;"PET";"Gas";"144,661*";147,447;59,17;139,2
+13;"Al KA1-HS-Tr";;1,487;30;;"QuantExpress-SQ1";"Al KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";144,624;;60;140
+13;"Al KA1-Maj";;1,487;30;;"QuantExpress-SQ1";"Al KA1-Maj";"C,D,*";0,23;"PET";"Gas";144,624;;35;300
+13;"Al KA1-Maj";"granit";1,487;30;;"QuantExpress-SQ1";"Al KA1-Maj/granit";;0,23;"PET";"Gas";"144,672*";146,65;60;140,8
+13;"Al KA1-Maj";"granit new";1,487;30;;"QuantExpress-SQ1";"Al KA1-Maj";"C,D";0,23;"PET";"Gas";144,624;;35;300
+13;"Al KA1-Maj";"Oxid_IZK";1,487;30;;"QuantExpress-SQ1";"Al KA1-Maj/Oxid_IZK";;0,23;"PET";"Gas";144,624;146,398;60;140,8
+13;"Al KA1";"Cu-Al-Check";1,487;30;;"DC_Cu-Al-Check-Al";"Al KA1/Cu-Al-Check";;0,23;"XS-55";"Gas";17,316;;30;300
+13;"Al KA1";"S8-Check";1,487;30;;"DC_S8-Check-STG";"Al KA1/S8-Check";"D-";0,46;"PET";"Gas";"144,655*";;40;170
+13;"Al KB1-HR-Tr";"El";1,556;30;;"QuantExpress-SQ1";"Al KA1-HR-Tr";"C,D";0,23;"PET";"Gas";131,09;;60;140
+13;"Al KB1-HR-Tr";"Ox";1,552;30;;"QuantExpress-SQ1";"Al KA1-HR-Tr";"C,D";0,23;"PET";"Gas";131,739;;60;140
+33;"As KA1-ALT-Min";;10,54;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";48,772;;50;150
+33;"As KA1-ALT-Tr";;10,54;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";48,772;;60;140
+33;"As KA1-HR-Min";;10,54;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";33,969;;50;150
+33;"As KA1-HR-Min";"Cu alloy";10,54;50;;;;"*";0,23;"LiF200";"Sci.";"33,998*";;50;150
+33;"As KA1-HR-Tr";;10,54;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";33,969;;60;140
+33;"As KA1-HR-Tr";"Cu";10,54;50;;;;"*";0,23;"LiF200";"Sci.";33,969;;60;140
+33;"As KA1-HS-Min";;10,54;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";33,969;;50;150
+33;"As KA1-HS-Min";"Ca_Nd_karb";10,54;50;"Al 500um";"Rekal-MSAN-1";"As KA1-HS-Min/Ca_Nd_karb";"D-";0,17;"LiF200";"Sci.";"33,996*";;62,92;142,1
+33;"As KA1-HS-Min";"L";10,54;50;"Al 800um";;;"*";0,17;"LiF200";"Sci.";"33,996*";34,6;62,92;142,1
+33;"As KA1-HS-Min";"L/BF";10,54;50;"Al 500um";;;"*";0,17;"LiF200";"Sci.";"33,996*";;62,92;142,1
+33;"As KA1-HS-Min";"T";10,54;50;;;;"*";0,17;"LiF200";"Sci.";"34,001*";33,598;60,83;144,2
+33;"As KA1-HS-Tr";;10,54;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";33,969;;60;140
+33;"As KB1-ALT-Min";;11,73;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";43,585;;50;150
+33;"As KB1-ALT-Tr";;11,73;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";43,585;;60;140
+33;"As KB1-ALT-Tr";"L";11,73;50;"Al 800um";;;"*";0,17;"LiF220";"Sci.";"43,597*";44,054;64,17;137,9
+33;"As KB1-HR-Min";;11,73;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";30,457;;50;150
+33;"As KB1-HR-Min";"geo";11,73;50;;"QuantExpress-SQ2";"As KB1-HR-Min/geo";"*";0,23;"LiF200";"Sci.";"30,462*";30,979;64,17;139,2
+33;"As KB1-HR-Tr";;11,73;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";30,457;;60;140
+33;"As KB1-HS-Min";;11,73;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";30,457;;50;150
+33;"As KB1-HS-Tr";;11,73;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";30,457;;60;140
+33;"As KB1";"GEO-QUANT";11,73;60;;"DC_AusMon";"As KB1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"43,573*";"36,598; 41,217; 44,853";40;160
+33;"As LA1-HR";;1,282;30;;"QuantExpress-SQ3";"Mg KA1-HR-Tr";"C,D";0,23;"XS-55";"Gas";20,068;;50;150
+33;"As LA1-HS";;1,282;30;;"QuantExpress-SQ3";"Mg KA1-HS-Tr";"C,D";0,46;"XS-55";"Gas";20,068;;50;150
+79;"Au LA1-ALT-Min";;9,705;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";53,306;;50;150
+79;"Au LA1-ALT-Tr";;9,705;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";53,306;;60;140
+79;"Au LA1-HR-Min";;9,705;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";37,009;;50;150
+79;"Au LA1-HR-Tr";;9,705;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";37,009;;60;140
+79;"Au LA1-HS-Min";;9,705;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";37,009;;50;150
+79;"Au LA1-HS-Tr";;9,705;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";37,009;;60;140
+79;"Au LA1-Maj";;9,705;50;;"QuantExpress-SQ2";"Pb LA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";37,009;;35;300
+79;"Au LB1-ALT-Min";;11,44;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";44,731;;50;150
+79;"Au LB1-ALT-Tr";;11,44;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";44,731;;60;140
+79;"Au LB1-HR-Min";;11,44;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";31,236;;50;150
+79;"Au LB1-HR-Tr";;11,44;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";31,236;;60;140
+79;"Au LB1-HS-Min";;11,44;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";31,236;;50;150
+79;"Au LB1-HS-Tr";;11,44;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";31,236;;60;140
+79;"Au MA1,2-HR-Min";;2,121;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";83,847;;50;150
+79;"Au MA1,2-HR-Tr";;2,121;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";83,847;;60;140
+79;"Au MA1,2-HS-Min";;2,121;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";83,847;;50;150
+79;"Au MA1,2-HS-Tr";;2,121;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";83,847;;60;140
+56;"Ba KA1-ALT-Min";;32,19;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"15,557*";;50;150
+56;"Ba KA1-ALT-Tr";;32,19;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";15,545;;60;140
+56;"Ba KA1-HR-Min";;32,19;60;;"QuantExpress-SQ1";"Ba KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";"11,032*";;50;150
+56;"Ba KA1-HR-Tr";;32,19;60;;"QuantExpress-SQ1";"Ba KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";10,986;;60;140
+56;"Ba LA1-HR-Min";;4,464;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";87,237;;50;150
+56;"Ba LA1-HR-Min";"L";4,464;50;;"Rekal-MSAN-1";"Ba LA1-HR-Min/L";"D-,*";0,23;"LiF200";"Gas";"87,172*";87,903;77,92;127,9
+56;"Ba LA1-HR-Tr";;4,464;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";87,237;;60;140
+56;"Ba LA1-HS-Min";;4,464;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";87,237;;50;150
+56;"Ba LA1-HS-Tr";;4,464;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";87,237;;60;140
+56;"Ba LA1";"GEO-QUANT";4,464;50;;"DC_AusMon, DC_Herasil";"Ba LA1/GEO-QUANT";"D-";0,23;"LiF200";"Gas";"87,197*";"80,640; 89,088";49,58;150
+56;"Ba LB1-HR-Min";;4,828;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";79,263;;50;150
+56;"Ba LB1-HR-Tr";;4,828;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";79,263;;60;140
+56;"Ba LB1-HS-Min";;4,828;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";79,263;;50;150
+56;"Ba LB1-HS-Tr";;4,828;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";79,263;;60;140
+83;"Bi LA1-ALT-Min";;10,83;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";47,389;;50;150
+83;"Bi LA1-ALT-Tr";;10,83;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";47,389;;60;140
+83;"Bi LA1-HR-Min";;10,83;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";33,037;;50;150
+83;"Bi LA1-HR-Tr";;10,83;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";33,037;;60;140
+83;"Bi LA1-HS-Min";;10,83;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";33,037;;50;150
+83;"Bi LA1-HS-Tr";;10,83;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";33,037;;60;140
+83;"Bi LB1-ALT-Min";;13,03;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";39,045;;50;150
+83;"Bi LB1-ALT-Tr";;13,03;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";39,045;;60;140
+83;"Bi LB1-HR-Min";;13,03;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";27,354;;50;150
+83;"Bi LB1-HR-Tr";;13,03;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";27,354;;60;140
+83;"Bi LB1-HS-Min";;13,03;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";27,354;;50;150
+83;"Bi LB1-HS-Tr";;13,03;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";27,354;;60;140
+83;"Bi MA1,2-HR-Min";;2,42;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";71,686;;50;150
+83;"Bi MA1,2-HR-Tr";;2,42;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";71,686;;60;140
+83;"Bi MA1,2-HS-Min";;2,42;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";71,686;;50;150
+83;"Bi MA1,2-HS-Tr";;2,42;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";71,686;;60;140
+83;"Bi MB1-HR-Min";;2,526;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";68,261;;50;150
+83;"Bi MB1-HR-Tr";;2,526;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";68,261;;60;140
+83;"Bi MB1-HS-Min";;2,526;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";68,261;;50;150
+83;"Bi MB1-HS-Tr";;2,526;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";68,261;;60;140
+35;"Br KA1-ALT-Min";;11,92;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";42,825;;50;150
+35;"Br KA1-ALT-Min";"QE";11,92;60;;;;;0,23;"LiF220";"Sci.";42,825;"9,999; 109,999";50;150
+35;"Br KA1-ALT-Tr";;11,92;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";42,825;;60;140
+35;"Br KA1-ALT-Tr";"QE";11,92;60;;;;;0,23;"LiF220";"Sci.";42,825;"9,999; 109,999";60;140
+35;"Br KA1-HR-Min";;11,92;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";29,939;;50;150
+35;"Br KA1-HR-Min";"QE";11,92;60;;;;;0,23;"LiF200";"Sci.";29,939;"10,199; 71,399";50;150
+35;"Br KA1-HR-Tr";;11,92;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";29,939;;60;140
+35;"Br KA1-HR-Tr";"QE";11,92;60;;;;;0,23;"LiF200";"Sci.";29,939;"10,199; 71,399";60;140
+35;"Br KA1-HS-Min";;11,92;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";29,939;;50;150
+35;"Br KA1-HS-Min";"QE";11,92;60;;;;;0,46;"LiF200";"Sci.";29,939;"10,199; 71,399";50;150
+35;"Br KA1-HS-Tr";;11,92;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";29,939;;60;140
+35;"Br KA1-HS-Tr";"BF";11,92;40;"Al 800um";"QuantExpress-SQ2";"Br KA1-HS-Tr/BF";"*";0,17;"LiF220";"Sci.";"42,880*";;64,17;130,8
+35;"Br KA1-HS-Tr";"QE";11,92;60;;;;;0,46;"LiF200";"Sci.";29,939;"10,199; 71,399";60;140
+35;"Br KB1-HR-Min";;13,29;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";26,8;;50;150
+35;"Br KB1-HR-Tr";;13,29;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";26,8;;60;140
+35;"Br LA1-HR";;1,48;30;;"QuantExpress-SQ1";"Al KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";146,286;;60;140
+35;"Br LA1-HS";;1,48;30;;"QuantExpress-SQ1";"Al KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";146,286;;60;140
+35;"Br LB1-HR";;1,526;30;;"QuantExpress-SQ1";"Al KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";136,331;;60;140
+35;"Br LB1-HS";;1,526;30;;"QuantExpress-SQ1";"Al KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";136,331;;60;140
+6;"C  KA1";;0,277;30;;"QuantExpress-GRA";"C  KA1";"C,D";0,46;"XS-55";"Gas";"104,817*";;40;160
+6;"C  KA1-ALT";;0,277;30;;"QuantExpress-GRA";"C  KA1-ALT";"C,D,*";1;"XS-C";"Gas";"43,796*";;40;160
+6;"C  KA1";"L";0,277;30;;"QuantExpress-GRA";"C  KA1/L";;0,46;"XS-C";"Gas";"43,816*";39,497;30,83;182,9
+20;"Ca KA1-ALT-Min";;3,692;30;;;;;0,46;"PET";"Gas";45,159;;50;150
+20;"Ca KA1-ALT-Tr";;3,692;30;;;;;0,46;"PET";"Gas";45,159;;60;140
+20;"Ca KA1-HR-Min";;3,692;50;;"QuantExpress-SQ2";"Ca KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";"113,070*";;50;150
+20;"Ca KA1-HR-Min";"BF";3,692;40;;"QuantExpress-SQ2";"Ca KA1-HR-Min/L";"*";0,23;"LiF200";"Gas";"113,092*";;64,17;130,8
+20;"Ca KA1-HR-Min";"L";3,692;40;;"QuantExpress-SQ2";"Ca KA1-HR-Min/L";"*";0,23;"LiF200";"Gas";"113,092*";114,21;64,17;130,8
+20;"Ca KA1-HR-Tr";;3,692;50;;"QuantExpress-SQ2";"Ca KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";113,017;;60;140
+20;"Ca KA1-HR-Tr";"Ca_Nd_karb";3,692;50;;"QuantExpress-SQ2";"Ca KA1-HR-Tr";"C,D";0,23;"LiF200";"Gas";113,017;;60;140
+20;"Ca KA1-HR-Tr";"Sn_IZK";3,692;50;;"QuantExpress-SQ2";"Ca KA1-HR-Tr";"C,D";0,23;"LiF200";"Gas";113,017;;60;140
+20;"Ca KA1-HS-Min";;3,692;50;;"QuantExpress-SQ2";"Ca KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";113,017;;50;150
+20;"Ca KA1-HS-Min";"Ca_Nd_karb";3,692;50;;"Rekal-MSAN-1";"Ca KA1-HS-Min/Ca_Nd_karb";"C,D";0,46;"LiF200";"Gas";"113,134*";;50;150
+20;"Ca KA1-HS-Min";"granit";3,692;40;;;;;0,23;"LiF200";"Gas";"113,128*";114,08;67,92;129,2
+20;"Ca KA1-HS-Min";"granit new";3,692;50;;"QuantExpress-SQ2";"Ca KA1-HS-Min";"C,D";0,46;"LiF200";"Gas";113,017;;50;150
+20;"Ca KA1-HS-Tr";;3,692;50;;"QuantExpress-SQ2";"Ca KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";113,017;;60;140
+20;"Ca KA1-Maj";;3,692;50;;"QuantExpress-SQ2";"Ca KA1-Maj";"C,D,*";0,23;"LiF200";"Gas";113,017;;35;300
+20;"Ca KA1-Maj";"Ca_Nd_karb";3,692;50;;"Rekal-CDO-3";"Ca KA1-Maj/Ca_Nd_karb";"C,D";0,23;"LiF200";"Gas";"113,100*";;35;300
+20;"Ca KA1-Maj";"Oxid_IZK";3,692;40;;;;;0,23;"LiF200";"Gas";"113,019*";114;67,08;127,1
+20;"Ca KA1";"S8-Check";3,692;40;"Al 12um";"DC_S8-Check-STG";"Ca KA1/S8-Check";"D-";0,46;"LiF200";"Gas";"113,126*";;40;250
+20;"Ca KB1-HR-Min";;4,013;50;;"QuantExpress-SQ2";"Ca KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";100,223;;50;150
+20;"Ca KB1-HR-Tr";;4,013;50;;"QuantExpress-SQ2";"Ca KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";100,223;;60;140
+20;"Ca KB1-HS-Min";;4,013;50;;"QuantExpress-SQ2";"Ca KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";100,223;;50;150
+20;"Ca KB1-HS-Tr";;4,013;50;;"QuantExpress-SQ2";"Ca KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";100,223;;60;140
+20;"Ca KB1-Maj";;4,013;50;;"QuantExpress-SQ2";"Ca KA1-Maj";"C,D,*";0,23;"LiF200";"Gas";100,223;;35;300
+20;"Ca KB1";"GEO-QUANT";4,013;50;;"DC_AusMon";"Ca KB1/GEO-QUANT";"D-";0,23;"LiF200";"Gas";"100,204*";"94,838; 105,555";50;150
+48;"Cd KA1-ALT-Min";;23,17;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"21,655*";;50;150
+48;"Cd KA1-ALT-Min";"NoFil";23,17;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Min/NoFil";"C,D";0,23;"LiF220";"Sci.";21,657;;50;150
+48;"Cd KA1-ALT-Tr";;23,17;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";21,657;;60;140
+48;"Cd KA1-ALT-Tr";"NoFil";23,17;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Tr/NoFil";"C,D";0,23;"LiF220";"Sci.";21,657;;60;140
+48;"Cd KA1-HR-Min";;23,17;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";15,281;;50;150
+48;"Cd KA1-HR-Min";"NoFil";23,17;60;;"QuantExpress-SQ3";"Cd KA1-HR-Min/NoFil";"C,D";0,23;"LiF200";"Sci.";15,281;;50;150
+48;"Cd KA1-HR-Tr";;23,17;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";15,281;;60;140
+48;"Cd KA1-HR-Tr";"NoFil";23,17;60;;"QuantExpress-SQ3";"Cd KA1-HR-Tr/NoFil";"C,D";0,23;"LiF200";"Sci.";15,281;;60;140
+48;"Cd KA1-HS-Min";;23,17;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";15,281;;50;150
+48;"Cd KA1-HS-Min";"NoFil";23,17;60;;"QuantExpress-SQ3";"Cd KA1-HS-Min/NoFil";"C,D";0,46;"LiF200";"Sci.";15,281;;50;150
+48;"Cd KA1-HS-Tr";;23,17;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";15,281;;60;140
+48;"Cd KA1-HS-Tr";"NoFil";23,17;60;;"QuantExpress-SQ3";"Cd KA1-HS-Tr/NoFil";"C,D";0,46;"LiF200";"Sci.";15,281;;60;140
+48;"Cd KA1-Maj";;23,17;50;;"QuantExpress-SQ3";"Cd KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";15,281;;35;300
+48;"Cd LA1-HR-Min";;3,133;50;;"QuantExpress-SQ3";"K  KA1-HR-Min/PET";"C,D,*";0,23;"PET";"Gas";53,793;;50;150
+48;"Cd LA1-HR-Tr";;3,133;50;;"QuantExpress-SQ3";"K  KA1-HR-Tr/PET";"C,D,*";0,23;"PET";"Gas";53,793;;60;140
+48;"Cd LA1-HS-Min";;3,133;50;;"QuantExpress-SQ3";"K  KA1-HS-Min/PET";"C,D,*";0,46;"PET";"Gas";53,793;;50;150
+48;"Cd LA1-HS-Tr";;3,133;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr/PET";"C,D,*";0,46;"PET";"Gas";53,793;;60;140
+48;"Cd LB1-HR-Min";;3,316;50;;"QuantExpress-SQ3";"K  KA1-HR-Min/PET";"C,D,*";0,23;"PET";"Gas";50,609;;50;150
+48;"Cd LB1-HR-Tr";;3,316;50;;"QuantExpress-SQ3";"K  KA1-HR-Tr/PET";"C,D,*";0,23;"PET";"Gas";50,609;;60;140
+48;"Cd LB1-HS-Min";;3,316;50;;"QuantExpress-SQ3";"K  KA1-HS-Min/PET";"C,D,*";0,46;"PET";"Gas";50,609;;50;150
+48;"Cd LB1-HS-Tr";;3,316;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr/PET";"C,D,*";0,46;"PET";"Gas";50,609;;60;140
+58;"Ce KA1-ALT-Min";;34,72;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";14,408;;50;150
+58;"Ce KA1-ALT-Tr";;34,72;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";14,408;;60;140
+58;"Ce KA1-HR-Min";;34,72;60;;"QuantExpress-SQ1";"Ba KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";10,185;;50;150
+58;"Ce KA1-HR-Tr";;34,72;60;;"QuantExpress-SQ1";"Ba KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";10,185;;60;140
+58;"Ce LA1-HR-Min";;4,839;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";79,037;;50;150
+58;"Ce LA1-HR-Tr";;4,839;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";79,037;;60;140
+58;"Ce LA1-HR-Tr";"Ca_Nd_karb";4,839;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D";0,23;"LiF200";"Gas";79,037;;60;140
+58;"Ce LA1-HS-Min";;4,839;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";79,037;;50;150
+58;"Ce LA1-HS-Tr";;4,839;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";79,037;;60;140
+58;"Ce LA1";"GEO-QUANT";4,839;50;;"DC_AusMon, DC_Herasil";"Ce LA1/GEO-QUANT";"D-";0,23;"LiF220";"Gas";"128,201*";"126,094; 132,000";60;160
+58;"Ce LB1-ALT-Min";;5,261;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";111,64;;50;150
+58;"Ce LB1-ALT-Tr";;5,261;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";111,64;;60;140
+58;"Ce LB1-ALT-Tr";"Ca_Nd_karb";5,261;50;;"Rekal-MSAN-1";"Ce LB1-ALT-Tr/Ca_Nd_karb";"D-";0,17;"LiF200";"Sci.";71,65;"71,000; 72,930";60;140
+58;"Ce LB1-HR-Min";;5,261;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";71,65;;50;150
+58;"Ce LB1-HR-Min";"L";5,261;50;;;;"*";0,17;"LiF200";"Sci.";"71,640*";"71,000; 72,930";52,92;150
+58;"Ce LB1-HR-Tr";;5,261;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";71,65;;60;140
+58;"Ce LB1-HS-Min";;5,261;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";71,65;;50;150
+58;"Ce LB1-HS-Tr";;5,261;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";71,65;;60;140
+17;"Cl KA1-HR-Min";;2,622;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";65,419;;50;150
+17;"Cl KA1-HR-Tr";;2,622;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";65,419;;60;140
+17;"Cl KA1-HS-Min";;2,622;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";65,419;;50;150
+17;"Cl KA1-HS-Tr";;2,622;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";65,419;;60;140
+27;"Co KA1-ALT-Min";;6,931;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";77,819;;50;150
+27;"Co KA1-ALT-Tr";;6,931;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";77,819;;60;140
+27;"Co KA1-ALT-Tr";"Ca_Nd_karb";6,931;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";77,819;;60;140
+27;"Co KA1-HR-Min";;6,931;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";52,765;;50;150
+27;"Co KA1-HR-Tr";;6,931;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";52,765;;60;140
+27;"Co KA1-HS-Min";;6,931;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";52,765;;50;150
+27;"Co KA1-HS-Min";"L";6,931;50;"Al 200um";"Rekal-MSAN-1";"Co KA1-HS-Min/L";"D-,*";0,17;"LiF220";"Sci.";"77,848*";78,856;57,08;145
+27;"Co KA1-HS-Tr";;6,931;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";52,765;;60;140
+27;"Co KA1-Maj";;6,931;50;;"QuantExpress-SQ2";"Co KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";52,765;;35;300
+27;"Co KA1";"GEO-QUANT";6,931;60;;"DC_AusMon";"Co KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"77,891*";"73,528; 90,680";30;165
+27;"Co KB1-ALT-Min";;7,648;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";69,39;;50;150
+27;"Co KB1-ALT-Tr";;7,648;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";69,39;;60;140
+27;"Co KB1-HR-Min";;7,648;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";47,495;;50;150
+27;"Co KB1-HR-Tr";;7,648;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";47,495;;60;140
+27;"Co KB1-Maj";;7,648;50;;"QuantExpress-SQ2";"Co KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";47,495;;35;300
+27;"Co LA1-HR";;0,776;30;;"QuantExpress-SQ2";"Na KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";33,288;;50;150
+27;"Co LA1-HS";;0,776;30;;"QuantExpress-SQ2";"Na KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";33,288;;50;150
+24;"Cr KA1-ALT-Min";;5,415;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";106,991;;50;150
+24;"Cr KA1-ALT-Tr";;5,415;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";106,991;;60;140
+24;"Cr KA1-ALT-Tr";"Ca_Nd_karb";5,415;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";106,991;;60;140
+24;"Cr KA1-HR-Min";;5,415;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";69,319;;50;150
+24;"Cr KA1-HR-Min";"L";5,415;50;"Al 200um";"Rekal-MSAN-1";"Cr KA1-HR-Min/L";"D-,*";0,23;"LiF200";"Sci.";"69,392*";68,485;50;150
+24;"Cr KA1-HR-Tr";;5,415;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";69,319;;60;140
+24;"Cr KA1-HS-Min";;5,415;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";69,319;;50;150
+24;"Cr KA1-HS-Min";"L";5,415;50;"Al 200um";;;"*";0,23;"LiF200";"Sci.";"69,388*";68,687;50;145
+24;"Cr KA1-HS-Tr";;5,415;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";69,319;;60;140
+24;"Cr KA1-Maj";;5,415;50;;"QuantExpress-SQ1";"Mn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";69,319;;35;300
+24;"Cr KA1";"GEO-QUANT";5,415;50;"Al 100um";"DC_AusMon, DC_Herasil";"Cr KA1/GEO-QUANT";"D-";0,23;"LiF220";"Gas";"107,116*";"98,158; 110,182";60;160
+24;"Cr KB1-ALT-Min";;5,946;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";94,125;;50;150
+24;"Cr KB1-ALT-Tr";;5,946;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";94,125;;60;140
+24;"Cr KB1-HR-Min";;5,946;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";62,389;;50;150
+24;"Cr KB1-HR-Tr";;5,946;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";62,389;;60;140
+24;"Cr KB1-HS-Min";;5,946;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";62,389;;50;150
+24;"Cr KB1-HS-Tr";;5,946;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";62,389;;60;140
+24;"Cr KB1-Maj";;5,946;50;;"QuantExpress-SQ1";"Mn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";62,389;;35;300
+24;"Cr LA1-HR";;0,573;30;;"QuantExpress-SQ1";"O  KA1-HR";"C,D,*";0,23;"XS-55";"Gas";45,523;;50;150
+24;"Cr LA1-HS";;0,573;30;;"QuantExpress-SQ1";"O  KA1-HS";"C,D,*";0,46;"XS-55";"Gas";45,523;;50;150
+55;"Cs KA1-ALT-Min";;30,97;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";16,162;;50;150
+55;"Cs KA1-ALT-Tr";;30,97;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";16,162;;60;140
+55;"Cs KA1-HR-Min";;30,97;60;;"QuantExpress-SQ1";"Ba KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";11,42;;50;150
+55;"Cs KA1-HR-Tr";;30,97;60;;"QuantExpress-SQ1";"Ba KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";11,42;;60;140
+55;"Cs KB1-ALT-Min";;34,96;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";14,309;;50;150
+55;"Cs KB1-ALT-Tr";;34,96;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";14,309;;60;140
+55;"Cs KB1-HR-Min";;34,96;60;;"QuantExpress-SQ1";"Ba KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";10,116;;50;150
+55;"Cs KB1-HR-Tr";;34,96;60;;"QuantExpress-SQ1";"Ba KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";10,116;;60;140
+55;"Cs LA1-HR-Min";;4,287;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";91,825;;50;150
+55;"Cs LA1-HR-Tr";;4,287;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";91,825;;60;140
+55;"Cs LA1-HS-Min";;4,287;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";91,825;;50;150
+55;"Cs LA1-HS-Tr";;4,287;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";91,825;;60;140
+55;"Cs LA1";"GEO-QUANT";4,287;50;;"DC_AusMon, DC_Herasil";"Cs LA1/GEO-QUANT";"D-";0,23;"LiF200";"Gas";"91,821*";"89,088; 94,838";50,42;150
+55;"Cs LB1-HR-Min";;4,619;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";83,617;;50;150
+55;"Cs LB1-HR-Tr";;4,619;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";83,617;;60;140
+55;"Cs LB1-HS-Min";;4,619;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";83,617;;50;150
+55;"Cs LB1-HS-Tr";;4,619;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";83,617;;60;140
+29;"Cu KA1-ALT-Min";;8,048;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";65,49;;50;150
+29;"Cu KA1-ALT-Tr";;8,048;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";65,49;;60;140
+29;"Cu KA1-ALT-Tr";"Ca_Nd_karb";8,048;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";65,49;;60;140
+29;"Cu KA1-HR-Min";;8,048;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";44,999;;50;150
+29;"Cu KA1-HR-Min";"T";8,048;50;"Al 500um";;;"*";0,23;"LiF200";"Sci.";"45,039*";45,708;50;150
+29;"Cu KA1-HR-Tr";;8,048;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";44,999;;60;140
+29;"Cu KA1-HS-Min";;8,048;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";44,999;;50;150
+29;"Cu KA1-HS-Min";"L";8,048;50;"Al 200um";;;"*";0,17;"LiF200";"Sci.";"45,037*";45,539;55,83;150
+29;"Cu KA1-HS-Tr";;8,048;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";44,999;;60;140
+29;"Cu KA1-HS-Tr";"Ca_Nd_karb";8,048;50;;"Rekal-MSAN-1";"Cu KA1-HS-Tr/Ca_Nd_karb";"D-";0,46;"LiF200";"Sci.";"45,041*";45,733;60;140,8
+29;"Cu KA1-Maj";;8,048;50;;"QuantExpress-SQ1";"Zn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";44,999;;35;300
+29;"Cu KA1";"GEO-QUANT";8,048;60;"Al 500um";"DC_AusMon, DC_Herasil";"Cu KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"65,551*";"64,088; 66,302";30;160
+29;"Cu KB1-ALT-Min";;8,904;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";58,535;;50;150
+29;"Cu KB1-ALT-Tr";;8,904;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";58,535;;60;140
+29;"Cu KB1-ALT";"Cu-Al-Check";8,904;40;;"DC_Cu-Al-Check-Cu";"Cu KB1-ALT/Cu-Al-Check";;0,23;"LiF200";"Sci.";40,472;;30;300
+29;"Cu KB1-HR-Min";;8,904;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";40,472;;50;150
+29;"Cu KB1-HR-Tr";;8,904;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";40,472;;60;140
+29;"Cu KB1-HS-Tr";;8,904;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";40,472;;60;140
+29;"Cu KB1-Maj";;8,904;50;;"QuantExpress-SQ1";"Zn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";40,472;;35;300
+29;"Cu KB1";"Cu-Al-Check";8,904;40;;"DC_Cu-Al-Check-Cu";"Cu KB1/Cu-Al-Check";;0,23;"LiF200";"Gas";40,472;;30;300
+29;"Cu LA1-HR";;0,9302;30;;"QuantExpress-SQ2";"Na KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";27,696;;50;150
+29;"Cu LA1-HS";;0,9302;30;;"QuantExpress-SQ2";"Na KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";27,696;;50;150
+66;"Dy LA1-ALT-Min";;6,491;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";84,229;;50;150
+66;"Dy LA1-ALT-Tr";;6,491;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";84,229;;60;140
+66;"Dy LA1-HR-Min";;6,491;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";56,646;;50;150
+66;"Dy LA1-HR-Tr";;6,491;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";56,646;;60;140
+66;"Dy LA1-HS-Min";;6,491;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";56,646;;50;150
+66;"Dy LA1-HS-Tr";;6,491;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";56,646;;60;140
+66;"Dy LB1-ALT-Min";;7,246;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";73,844;;50;150
+66;"Dy LB1-ALT-Tr";;7,246;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";73,844;;60;140
+66;"Dy LB1-HR-Min";;7,246;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";50,302;;50;150
+66;"Dy LB1-HR-Tr";;7,246;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";50,302;;60;140
+66;"Dy LB1-HS-Min";;7,246;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";50,302;;50;150
+66;"Dy LB1-HS-Tr";;7,246;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";50,302;;60;140
+68;"Er LA1-ALT-Min";;6,948;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";77,594;;50;150
+68;"Er LA1-ALT-Tr";;6,948;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";77,594;;60;140
+68;"Er LA1-HR-Min";;6,948;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";52,627;;50;150
+68;"Er LA1-HR-Tr";;6,948;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";52,627;;60;140
+68;"Er LA1-HS-Min";;6,948;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";52,627;;50;150
+68;"Er LA1-HS-Tr";;6,948;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";52,627;;60;140
+68;"Er LB1-ALT-Min";;7,81;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";67,754;;50;150
+68;"Er LB1-ALT-Tr";;7,81;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";67,754;;60;140
+68;"Er LB1-HR-Min";;7,81;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";46,452;;50;150
+68;"Er LB1-HR-Tr";;7,81;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";46,452;;60;140
+68;"Er LB1-HS-Min";;7,81;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";46,452;;50;150
+63;"Eu LA1-ALT-Min";;5,845;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";96,26;;50;150
+63;"Eu LA1-ALT-Tr";;5,845;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";96,26;;60;140
+63;"Eu LA1-HR-Min";;5,845;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";63,584;;50;150
+63;"Eu LA1-HR-Tr";;5,845;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";63,584;;60;140
+63;"Eu LA1-HS-Min";;5,845;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";63,584;;50;150
+63;"Eu LA1-HS-Tr";;5,845;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";63,584;;60;140
+63;"Eu LB1-ALT-Min";;6,453;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";84,843;;50;150
+63;"Eu LB1-ALT-Tr";;6,453;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";84,843;;60;140
+63;"Eu LB1-HR-Min";;6,453;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";57,012;;50;150
+63;"Eu LB1-HR-Tr";;6,453;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";57,012;;60;140
+63;"Eu LB1-HS-Min";;6,453;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";57,012;;50;150
+63;"Eu LB1-HS-Tr";;6,453;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";57,012;;60;140
+9;"F  KA1-HR";;0,677;30;;"QuantExpress-SQ3";"F  KA1-HR";"C,D,*";0,23;"XS-55";"Gas";"38,280*";;50;150
+9;"F  KA1-HR";"al";0,677;30;;"QuantExpress-SQ3";"F  KA1-HR";"C,D,*";0,23;"XS-55";"Gas";"38,279*";39,558;50;150
+9;"F  KA1-HS";;0,677;30;;"QuantExpress-SQ3";"F  KA1-HS";"C,D,*";0,46;"XS-55";"Gas";"38,268*";;50;150
+9;"F  KA1-HS";"L";0,677;30;;"QuantExpress-SQ3";"F  KA1-HS/L";"*";0,46;"XS-C";"Gas";"17,515*";19,699;55,83;149,2
+26;"Fe KA1-ALT-Min";;6,404;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";85,643;;50;150
+26;"Fe KA1-ALT-Min";"Ca_Nd_karb";6,404;60;;"Rekal-MSAN-1";"Fe KA1-ALT-Min/Ca_Nd_karb";"C,D";0,23;"LiF220";"Sci.";"85,722*";;50;150
+26;"Fe KA1-ALT-Min";"granit";6,404;50;;;;;0,23;"LiF220";"Sci.";"85,740*";86,642;44,17;160
+26;"Fe KA1-ALT-Min";"granit new";6,404;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D";0,23;"LiF220";"Sci.";85,643;;50;150
+26;"Fe KA1-ALT-Tr";;6,404;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";85,643;;60;140
+26;"Fe KA1-ALT-Tr";"Ca_Nd_karb";6,404;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";85,643;;60;140
+26;"Fe KA1-ALT-Tr";"Sn_IZK";6,404;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";85,643;;60;140
+26;"Fe KA1-HR-Min";;6,404;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";57,486;;50;150
+26;"Fe KA1-HR-Min";"Ga IZK";6,404;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D";0,23;"LiF200";"Sci.";57,486;;50;150
+26;"Fe KA1-HR-Min";"L";6,404;40;;;;"*";0,23;"LiF200";"Sci.";"57,542*";;50;150
+26;"Fe KA1-HR-Min";"veg";6,404;50;;;;"*";0,23;"LiF200";"Sci.";"57,536*";58,346;50;150
+26;"Fe KA1-HR-Tr";;6,404;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";57,486;;60;140
+26;"Fe KA1-HR-Tr";"L";6,404;40;;"QuantExpress-SQ2";"Fe KA1-HR-Tr/L";"*";0,23;"LiF200";"Sci.";"57,533*";58,275;52,08;144,2
+26;"Fe KA1-HS-Min";;6,404;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";57,486;;50;150
+26;"Fe KA1-HS-Tr";;6,404;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";57,486;;60;140
+26;"Fe KA1-Maj";;6,404;50;;"QuantExpress-SQ2";"Co KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";57,486;;35;300
+26;"Fe KA1-Maj";"Oxid_IZK";6,404;40;;;;;0,23;"LiF200";"Sci.";"57,502*";58,114;37,92;169,2
+26;"Fe KA1";"S8-Check";6,404;50;"Al 100um";"DC_S8-Check-STG";"Fe KA1/S8-Check";"D-";0,46;"LiF200";"Sci.";"57,545*";;40;160,4
+26;"Fe KB1-ALT-Min";;7,057;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";76,177;;50;150
+26;"Fe KB1-ALT-Tr";;7,057;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";76,177;;60;140
+26;"Fe KB1-HR-Min";;7,057;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";51,752;;50;150
+26;"Fe KB1-HR-Tr";;7,057;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";51,752;;60;140
+26;"Fe KB1-HS-Min";;7,057;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";51,752;;50;150
+26;"Fe KB1-HS-Tr";;7,057;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";51,752;;60;140
+26;"Fe KB1-Maj";;7,057;50;;"QuantExpress-SQ2";"Co KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";51,752;;35;300
+26;"Fe KB1";"GEO-QUANT";7,059;60;;"DC_AusMon, DC_Herasil";"Fe KB1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"76,199*";74,12;30;165
+26;"Fe LA1-HR";;0,705;30;;"QuantExpress-SQ3";"F  KA1-HR";"C,D,*";0,23;"XS-55";"Gas";36,723;;50;150
+26;"Fe LA1-HR";"cvm";0,705;30;;;;"*";0,23;"XS-55";"Gas";"36,717*";;50;150
+26;"Fe LA1-HS";;0,705;30;;"QuantExpress-SQ3";"F  KA1-HS";"C,D,*";0,46;"XS-55";"Gas";36,723;;50;150
+31;"Ga KA1-ALT-Min";;9,252;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";56,137;;50;150
+31;"Ga KA1-ALT-Tr";;9,252;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";56,137;;60;140
+31;"Ga KA1-ALT-Tr";"Ca_Nd_karb";9,252;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";56,137;;60;140
+31;"Ga KA1-HR-Min";;9,252;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";38,889;;50;150
+31;"Ga KA1-HR-Min";"FON";9,252;50;"Al 200um";"Rekal-MSAN-1";"Ga KA1-HR-Min/FON";"D-,*";0,23;"LiF200";"Sci.";"39,824*";;50;150
+31;"Ga KA1-HR-Min";"T";9,252;50;"Al 500um";"Rekal-MSAN-1";"Ga KA1-HR-Min/T";"D-,*";0,17;"LiF200";"Sci.";"38,903*";39,4;50;150
+31;"Ga KA1-HR-Tr";;9,252;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";38,889;;60;140
+31;"Ga KA1-HS-Min";;9,252;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";38,889;;50;150
+31;"Ga KA1-HS-Tr";;9,252;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";38,889;;60;140
+31;"Ga KA1";"GEO-QUANT";9,252;60;;"DC_AusMon";"Ga KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"56,183*";"51,263; 57,164; 61,771";30;160
+31;"Ga KB1-ALT-Min";;10,26;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";34,923;;50;150
+31;"Ga KB1-ALT-Tr";;10,26;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";34,923;;60;140
+31;"Ga KB1-HR-Min";;10,26;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";50,19;;50;150
+31;"Ga KB1-HR-Tr";;10,26;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";50,19;;60;140
+31;"Ga LA1-HR";;1,098;30;;"QuantExpress-SQ2";"Na KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";23,434;;50;150
+31;"Ga LA1-HS";;1,098;30;;"QuantExpress-SQ2";"Na KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";23,434;;50;150
+64;"Gd LA1-ALT-Min";;6,056;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";91,899;;50;150
+64;"Gd LA1-ALT-Tr";;6,056;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";91,899;;60;140
+64;"Gd LA1-HR-Min";;6,056;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";61,126;;50;150
+64;"Gd LA1-HR-Tr";;6,056;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";61,126;;60;140
+64;"Gd LA1-HS-Min";;6,056;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";61,126;;50;150
+64;"Gd LA1-HS-Tr";;6,056;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";61,126;;60;140
+64;"Gd LB1-ALT-Min";;6,709;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";80,905;;50;150
+64;"Gd LB1-ALT-Tr";;6,709;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";80,905;;60;140
+64;"Gd LB1-HR-Min";;6,709;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";54,648;;50;150
+64;"Gd LB1-HR-Tr";;6,709;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";54,648;;60;140
+64;"Gd LB1-HS-Min";;6,709;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";54,648;;50;150
+64;"Gd LB1-HS-Tr";;6,709;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";54,648;;60;140
+64;"Gd MA1-HR";;1,19;30;;"QuantExpress-SQ3";"Mg KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";21,614;;50;150
+64;"Gd MA1-HS";;1,19;30;;"QuantExpress-SQ3";"Mg KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";21,614;;50;150
+32;"Ge KA1-ALT-Min";;9,887;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";52,249;;50;150
+32;"Ge KA1-ALT-Tr";;9,887;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";52,249;;60;140
+32;"Ge KA1-HR-Min";;9,887;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";36,303;;50;150
+32;"Ge KA1-HR-Tr";;9,887;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";36,303;;60;140
+32;"Ge KA1-HS-Min";;9,887;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";36,303;;50;150
+32;"Ge KA1-HS-Tr";;9,887;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";36,303;;60;140
+32;"Ge KB1-ALT-Min";;10,98;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";46,707;;50;150
+32;"Ge KB1-HR-Min";;10,98;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";32,575;;50;150
+32;"Ge KB1-HR-Tr";;10,98;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";32,575;;60;140
+32;"Ge KB1-Tr";;10,98;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";46,707;;60;140
+32;"Ge LA1-HR";;1,188;30;;"QuantExpress-SQ3";"Mg KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";21,653;;50;150
+32;"Ge LA1-HS";;1,188;30;;"QuantExpress-SQ3";"Mg KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";21,653;;50;150
+72;"Hf LA1-ALT-Min";;7,899;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";66,889;;50;150
+72;"Hf LA1-ALT-Tr";;7,899;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";66,889;;60;140
+72;"Hf LA1-HR-Min";;7,899;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";45,898;;50;150
+72;"Hf LA1-HR-Tr";;7,899;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";45,898;;60;140
+72;"Hf LA1-HS-Min";;7,899;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";45,898;;50;150
+72;"Hf LA1-HS-Tr";;7,899;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";45,898;;60;140
+72;"Hf LB1-ALT-Min";;9,021;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";57,707;;50;150
+72;"Hf LB1-ALT-Tr";;9,021;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";57,707;;60;140
+72;"Hf LB1-HR-Min";;9,021;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";39,926;;50;150
+72;"Hf LB1-HR-Tr";;9,021;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";39,926;;60;140
+72;"Hf LB1-HS-Min";;9,021;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";39,926;;50;150
+72;"Hf LB1-HS-Tr";;9,021;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";39,926;;60;140
+72;"Hf MA1-HR-Min";;1,644;30;;"QuantExpress-SQ1";"Al KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";119,031;;50;150
+72;"Hf MA1-HR-Tr";;1,644;30;;"QuantExpress-SQ1";"Al KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";119,031;;60;140
+72;"Hf MA1-HS-Min";;1,644;30;;"QuantExpress-SQ1";"Al KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";119,031;;50;150
+72;"Hf MA1-HS-Tr";;1,644;30;;"QuantExpress-SQ1";"Al KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";119,031;;60;140
+80;"Hg LA1-ALT-Min";;9,978;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";51,736;;50;150
+80;"Hg LA1-HR-Min";;9,978;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";35,96;;50;150
+80;"Hg LA1-HR-Tr";;9,978;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";35,96;;60;140
+80;"Hg LA1-HS-Min";;9,978;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";35,96;;50;150
+80;"Hg LA1-HS-Tr";;9,978;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";35,96;;60;140
+80;"Hg LB1-ALT-Min";;11,82;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";43,217;;50;150
+80;"Hg LB1-ALT-Tr";;11,82;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";43,217;;60;140
+80;"Hg LB1-HR-Min";;11,82;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";30,206;;50;150
+80;"Hg LB1-HR-Tr";;11,82;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";30,206;;60;140
+80;"Hg LB1-HR-Tr";"FON";11,82;50;"Al 500um";;;"*";0,17;"LiF200";"Sci.";"29,001*";;60;140
+80;"Hg LB1-HR-Tr";"UTh";11,82;50;"Al 500um";;;"*";0,17;"LiF200";"Sci.";"29,001*";;60;140
+80;"Hg LB1-HS-Min";;11,82;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";30,206;;50;150
+80;"Hg LB1-HS-Tr";;11,82;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";30,206;;60;140
+80;"Hg MA1-HR-Min";;2,192;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";80,557;;50;150
+80;"Hg MA1-HR-Tr";;2,192;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";80,557;;60;140
+80;"Hg MA1-HS-Min";;2,192;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";80,557;;50;150
+67;"Ho LA1-ALT-Min";;6,719;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";80,757;;50;150
+67;"Ho LA1-ALT-Tr";;6,719;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";80,757;;60;140
+67;"Ho LA1-HR-Min";;6,719;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";54,558;;50;150
+67;"Ho LA1-HR-Tr";;6,719;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";54,558;;60;140
+67;"Ho LA1-HS-Min";;6,719;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";54,558;;50;150
+67;"Ho LA1-HS-Tr";;6,719;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";54,558;;60;140
+67;"Ho LB1-ALT-Min";;7,524;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";70,697;;50;150
+67;"Ho LB1-ALT-Tr";;7,524;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";70,697;;60;140
+67;"Ho LB1-HR-Min";;7,524;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";48,323;;50;150
+67;"Ho LB1-HR-Tr";;7,524;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";48,323;;60;140
+67;"Ho LB1-HS-Min";;7,524;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";48,323;;50;150
+67;"Ho LB1-HS-Tr";;7,524;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";48,323;;60;140
+67;"Ho MA1-HR";;1,353;30;;"QuantExpress-SQ3";"Mg KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";19,015;;50;150
+67;"Ho MA1-HS";;1,353;30;;"QuantExpress-SQ3";"Mg KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";19,015;;50;150
+53;"I  KA1-ALT-Min";;28,61;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";17,505;;50;150
+53;"I  KA1-ALT-Tr";;28,61;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";17,505;;60;140
+53;"I  KA1-HR-Min";;28,61;60;;"QuantExpress-SQ2";"Sb KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";12,365;;50;150
+53;"I  KA1-HR-Tr";;28,61;60;;"QuantExpress-SQ2";"Sb KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";12,365;;60;140
+53;"I  KA1-HS-Min";;28,61;60;;"QuantExpress-SQ2";"Sb KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";12,365;;50;150
+53;"I  KA1-HS-Tr";;28,61;60;;"QuantExpress-SQ2";"Sb KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";12,365;;60;140
+53;"I  KB1-ALT-Min";;32,27;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";15,509;;50;150
+53;"I  KB1-ALT-Tr";;32,27;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";15,509;;60;140
+53;"I  KB1-HR-Min";;32,27;60;;"QuantExpress-SQ2";"Sb KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";10,96;;50;150
+53;"I  KB1-HR-Tr";;32,27;60;;"QuantExpress-SQ2";"Sb KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";10,96;;60;140
+53;"I  LA1-HR-Min";;3,938;50;;"QuantExpress-SQ2";"Ca KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";102,877;;50;150
+53;"I  LA1-HR-Tr";;3,938;50;;"QuantExpress-SQ2";"Ca KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";102,877;;60;140
+53;"I  LA1-HS-Min";;3,938;50;;"QuantExpress-SQ2";"Ca KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";102,877;;50;150
+53;"I  LA1-HS-Tr";;3,938;50;;"QuantExpress-SQ2";"Ca KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";102,877;;60;140
+53;"I  LB1-HR-Min";;4,22;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";93,709;;50;150
+53;"I  LB1-HR-Tr";;4,22;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";93,709;;60;140
+53;"I  LB1-HS-Min";;4,22;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";93,709;;50;150
+53;"I  LB1-HS-Tr";;4,22;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";93,709;;60;140
+49;"In KA1-ALT-Min";;24,21;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";20,72;;50;150
+49;"In KA1-ALT-Min";"noFil";24,21;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Min/NoFil";"C,D";0,23;"LiF220";"Sci.";20,72;;50;150
+49;"In KA1-ALT-Tr";;24,21;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";20,72;;60;140
+49;"In KA1-ALT-Tr";"noFil";24,21;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Tr/NoFil";"C,D";0,23;"LiF220";"Sci.";20,72;;60;140
+49;"In KA1-HR-Min";;24,21;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";14,623;;50;150
+49;"In KA1-HR-Min";"noFil";24,21;60;;"QuantExpress-SQ3";"Cd KA1-HR-Min/NoFil";"C,D";0,23;"LiF200";"Sci.";14,623;;50;150
+49;"In KA1-HR-Tr";;24,21;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";14,623;;60;140
+49;"In KA1-HR-Tr";"noFil";24,21;60;;"QuantExpress-SQ3";"Cd KA1-HR-Tr/NoFil";"C,D";0,23;"LiF200";"Sci.";14,623;;60;140
+49;"In KA1-HS-Min";;24,21;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";14,623;;50;150
+49;"In KA1-HS-Min";"noFil";24,21;60;;"QuantExpress-SQ3";"Cd KA1-HS-Min/NoFil";"C,D";0,46;"LiF200";"Sci.";14,623;;50;150
+49;"In KA1-HS-Tr";;24,21;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";14,623;;60;140
+49;"In KA1-HS-Tr";"noFil";24,21;60;;"QuantExpress-SQ3";"Cd KA1-HS-Tr/NoFil";"C,D";0,46;"LiF200";"Sci.";14,623;;60;140
+49;"In KB1-ALT-Min";;27,26;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Min/NoFil";"C,D,*";0,23;"LiF220";"Sci.";18,381;;50;150
+49;"In KB1-ALT-Tr";;27,26;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Tr/NoFil";"C,D,*";0,23;"LiF220";"Sci.";18,381;;60;140
+49;"In KB1-HR-Min";;27,26;60;;"QuantExpress-SQ3";"Cd KA1-HR-Min/NoFil";"C,D,*";0,23;"LiF200";"Sci.";12,981;;50;150
+49;"In KB1-HR-Tr";;27,26;60;;"QuantExpress-SQ3";"Cd KA1-HR-Tr/NoFil";"C,D,*";0,23;"LiF200";"Sci.";12,981;;60;140
+49;"In LA1-HR-Min";;3,285;50;;"QuantExpress-SQ3";"K  KA1-HR-Min/PET";"C,D,*";0,23;"PET";"Gas";51,115;;50;150
+49;"In LA1-HR-Tr";;3,285;50;;"QuantExpress-SQ3";"K  KA1-HR-Tr/PET";"C,D,*";0,23;"PET";"Gas";51,115;;60;140
+49;"In LA1-HS-Min";;3,285;50;;"QuantExpress-SQ3";"K  KA1-HS-Min/PET";"C,D,*";0,46;"PET";"Gas";51,115;;50;150
+49;"In LA1-HS-Tr";;3,285;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr/PET";"C,D,*";0,46;"PET";"Gas";51,115;;60;140
+77;"Ir LA1-ALT-Min";;9,175;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";56,649;;50;150
+77;"Ir LA1-ALT-Tr";;9,175;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";56,649;;60;140
+77;"Ir LA1-HR-Min";;9,175;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";39,228;;50;150
+77;"Ir LA1-HR-Tr";;9,175;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";39,228;;60;140
+77;"Ir LA1-HS-Min";;9,175;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";39,228;;50;150
+77;"Ir LA1-HS-Tr";;9,175;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";39,228;;60;140
+77;"Ir LB1-ALT-Min";;10,71;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";47,988;;50;150
+77;"Ir LB1-HR-Min";;10,71;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";33,44;;50;150
+77;"Ir LB1-HR-Tr";;10,71;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";33,44;;60;140
+77;"Ir LB1-HS-Min";;10,71;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";33,44;;50;150
+77;"Ir LB1-HS-Tr";;10,71;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";33,44;;60;140
+77;"Ir MA1,2-HR-Min";;1,978;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";91,499;;50;150
+77;"Ir MA1,2-HR-Tr";;1,978;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";91,499;;60;140
+77;"Ir MA1,2-HS-Min";;1,978;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";91,499;;50;150
+77;"Ir MA1,2-HS-Tr";;1,978;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";91,499;;60;140
+19;"K  KA1-HR-Min";;3,314;50;;"QuantExpress-SQ3";"K  KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";"136,607*";;50;150
+19;"K  KA1-HR-Min";"L";3,314;40;;"QuantExpress-SQ3";"K  KA1-HR-Min/L";"*";0,23;"LiF200";"Gas";"136,622*";135,667;69,17;130
+19;"K  KA1-HR-Min";"PET";3,314;50;;"QuantExpress-SQ3";"K  KA1-HR-Min/PET";"C,D";0,23;"PET";"Gas";50,645;;50;150
+19;"K  KA1-HR-Min";"PET-QE";3,314;50;;;;;0,23;"PET";"Gas";50,645;"42,999; 57,999";50;150
+19;"K  KA1-HR-Tr";;3,314;50;;"QuantExpress-SQ3";"K  KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";136,527;;60;140
+19;"K  KA1-HR-Tr";"PET";3,314;50;;"QuantExpress-SQ3";"K  KA1-HR-Tr/PET";"C,D";0,23;"PET";"Gas";50,645;;60;140
+19;"K  KA1-HR-Tr";"PET-QE";3,314;50;;;;;0,23;"PET";"Gas";50,645;"42,999; 57,999";60;140
+19;"K  KA1-HS-Min";;3,314;50;;"QuantExpress-SQ3";"K  KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";136,527;;50;150
+19;"K  KA1-HS-Min";"granit";3,314;50;;;;;0,23;"LiF200";"Gas";"136,718*";135,53;65,83;135
+19;"K  KA1-HS-Min";"granit new";3,314;50;;"QuantExpress-SQ3";"K  KA1-HS-Min";"C,D";0,46;"LiF200";"Gas";136,527;;50;150
+19;"K  KA1-HS-Min";"Oxid_IZK";3,314;40;;;;;0,46;"LiF200";"Gas";136,527;138,056;72,92;130
+19;"K  KA1-HS-Min";"PET";3,314;50;;"QuantExpress-SQ3";"K  KA1-HS-Min/PET";"C,D";0,46;"PET";"Gas";50,645;;50;150
+19;"K  KA1-HS-Min";"PET-QE";3,314;50;;;;;0,46;"PET";"Gas";50,645;"42,999; 57,999";50;150
+19;"K  KA1-HS-Tr";;3,314;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";136,527;;60;140
+19;"K  KA1-HS-Tr";"PET";3,314;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr/PET";"C,D";0,46;"PET";"Gas";50,645;;60;140
+19;"K  KA1-HS-Tr";"PET-QE";3,314;50;;;;;0,46;"PET";"Gas";50,645;"42,999; 57,999";60;140
+19;"K  KA1-Maj";;3,314;50;;"QuantExpress-SQ3";"K  KA1-Maj";"C,D,*";0,23;"LiF200";"Gas";136,527;;35;300
+19;"K  KB1-HR-Min";;3,589;50;;"QuantExpress-SQ3";"K  KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";118,125;;50;150
+19;"K  KB1-HR-Tr";;3,589;50;;"QuantExpress-SQ3";"K  KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";118,125;;60;140
+19;"K  KB1-HS-Min";;3,589;50;;"QuantExpress-SQ3";"K  KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";118,125;;50;150
+19;"K  KB1-HS-Tr";;3,589;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";118,125;;60;140
+19;"K  KB1-Maj";;3,589;50;;"QuantExpress-SQ3";"K  KA1-Maj";"C,D,*";0,23;"LiF200";"Gas";118,125;;35;300
+57;"La KA1-ALT-Min";;33,44;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";14,962;;50;150
+57;"La KA1-ALT-Tr";;33,44;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";14,962;;60;140
+57;"La KA1-HR-Min";;33,44;60;;"QuantExpress-SQ1";"Ba KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";10,575;;50;150
+57;"La KA1-HR-Tr";;33,44;60;;"QuantExpress-SQ1";"Ba KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";10,575;;60;140
+57;"La KB1-ALT-Min";;37,8;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";13,228;;50;150
+57;"La KB1-ALT-Tr";;37,8;60;;"QuantExpress-SQ1";"Ba KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";13,228;;60;140
+57;"La KB1-HR-Min";;37,8;60;;"QuantExpress-SQ1";"Ba KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";9,353;;50;150
+57;"La KB1-HR-Tr";;37,8;60;;"QuantExpress-SQ1";"Ba KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";9,353;;60;140
+57;"La LA1-HR-Min";;4,648;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";82,973;;50;150
+57;"La LA1-HR-Tr";;4,648;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";82,973;;60;140
+57;"La LA1-HR-Tr";"Ca_Nd_karb";4,648;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D";0,23;"LiF200";"Gas";82,973;;60;140
+57;"La LA1-HS-Min";;4,648;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";82,973;;50;150
+57;"La LA1-HS-Min";"L";4,648;50;;"Rekal-MSAN-1";"La LA1-HS-Min/L";"D-,*";0,23;"LiF200";"Gas";"82,946*";"82,400; 83,850";74,17;127,1
+57;"La LA1-HS-Tr";;4,648;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";82,973;;60;140
+57;"La LA1";"GEO-QUANT";4,648;50;;"DC_AusMon, DC_Herasil";"La LA1/GEO-QUANT";"D-";0,23;"LiF200";"Gas";"82,916*";"80,640; 89,088";59,58;160
+57;"La LB1-HR-Min";;5,044;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";75,253;;50;150
+57;"La LB1-HR-Tr";;5,044;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";75,253;;60;140
+57;"La LB1-HS-Min";;5,044;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";75,253;;50;150
+57;"La LB1-HS-Tr";;5,044;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";75,253;;60;140
+12;"Mg KA1-HR-Min";;1,253;30;;"QuantExpress-SQ3";"Mg KA1-HR-Min";"C,D,*";0,23;"XS-55";"Gas";"20,499*";;40;160
+12;"Mg KA1-HR-Min";"L";1,253;30;;"QuantExpress-SQ3";"Mg KA1-HR-Min/L";"*";0,23;"XS-55";"Gas";"20,535*";22,492;55,83;149,2
+12;"Mg KA1-HR-Min";"Oxid_IZK";1,253;30;;"QuantExpress-SQ3";"Mg KA1-HR-Min/Oxid_IZK";;0,23;"XS-55";"Gas";20,531;21,531;62,92;145,8
+12;"Mg KA1-HR-Min";"QE";1,253;30;;;;;0,23;"XS-55";"Gas";20,531;"14,864; 74,211";40;160
+12;"Mg KA1-HR-Tr";;1,253;30;;"QuantExpress-SQ3";"Mg KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";20,531;;50;150
+12;"Mg KA1-HR-Tr";"QE";1,253;30;;;;;0,23;"XS-55";"Gas";20,531;"14,864; 74,211";50;150
+12;"Mg KA1-HS-Min";;1,253;30;;"QuantExpress-SQ3";"Mg KA1-HS-Min";"C,D,*";0,46;"XS-55";"Gas";20,531;;40;160
+12;"Mg KA1-HS-Min";"granit";1,253;30;;"QuantExpress-SQ3";"Mg KA1-HS-Min/granit";"C";0,46;"XS-55";"Gas";"20,548*";22,57;62,92;147,9
+12;"Mg KA1-HS-Min";"granit new";1,253;30;;"QuantExpress-SQ3";"Mg KA1-HS-Min";"C,D";0,46;"XS-55";"Gas";20,531;;40;160
+12;"Mg KA1-HS-Min";"QE";1,253;30;;;;;0,46;"XS-55";"Gas";20,531;"14,864; 74,211";40;160
+12;"Mg KA1-HS-Min";"veg";1,253;30;;"QuantExpress-SQ3";"Mg KA1-HS-Min/veg";"C,*";0,46;"XS-55";"Gas";20,531;"19,018; 21,869";59,17;152,9
+12;"Mg KA1-HS-Tr";;1,253;30;;"QuantExpress-SQ3";"Mg KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";20,531;;50;150
+12;"Mg KA1-HS-Tr";"QE";1,253;30;;;;;0,46;"XS-55";"Gas";20,531;"14,864; 74,211";50;150
+25;"Mn KA1-ALT-Min";;5,899;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"95,180*";;50;150
+25;"Mn KA1-ALT-Tr";;5,899;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";95,105;;60;140
+25;"Mn KA1-ALT-Tr";"Ca_Nd_karb";5,899;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";95,105;;60;140
+25;"Mn KA1-HR-Min";;5,899;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";"62,970*";;50;150
+25;"Mn KA1-HR-Min";"Ca_Nd_karb";5,899;50;;"Rekal-MSAN-1";"Mn KA1-HR-Min/Ca_Nd_karb";"D-";0,23;"LiF200";"Sci.";"62,988*";63,66;50;150
+25;"Mn KA1-HR-Tr";;5,899;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";62,939;;60;140
+25;"Mn KA1-HR-Tr";"L";5,899;50;;"QuantExpress-SQ1";"Mn KA1-HR-Tr/L";"*";0,23;"LiF200";"Sci.";"62,998*";63,657;49,17;157,1
+25;"Mn KA1-HS-Min";;5,899;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";62,939;;50;150
+25;"Mn KA1-HS-Min";"granit";5,899;60;;;;;0,23;"LiF200";"Sci.";"63,028*";63,817;54,17;150
+25;"Mn KA1-HS-Min";"granit new";5,899;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D";0,46;"LiF200";"Sci.";62,939;;50;150
+25;"Mn KA1-HS-Min";"Oxid_IZK";5,899;40;;;;;0,46;"LiF200";"Sci.";62,939;64;50;155,8
+25;"Mn KA1-HS-Tr";;5,899;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";62,939;;60;140
+25;"Mn KA1-Maj";;5,899;50;;"QuantExpress-SQ1";"Mn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";62,939;;35;300
+25;"Mn KA1";"GEO-QUANT";5,899;60;;"DC_AusMon";"Mn KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"95,188*";"93,006; 98,158";30;165
+25;"Mn KB1-ALT-Min";;6,489;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";84,267;;50;150
+25;"Mn KB1-ALT-Tr";;6,489;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";84,267;;60;140
+25;"Mn KB1-HR-Min";;6,489;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";56,669;;50;150
+25;"Mn KB1-HR-Tr";;6,489;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";56,669;;60;140
+25;"Mn KB1-HS-Tr";;6,489;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";56,669;;60;140
+25;"Mn LA1-HR";;0,6371;30;;"QuantExpress-SQ3";"F  KA1-HR";"C,D,*";0,23;"XS-55";"Gas";40,768;;50;150
+25;"Mn LA1-HS";;0,6371;30;;"QuantExpress-SQ3";"F  KA1-HS";"C,D,*";0,46;"XS-55";"Gas";40,768;;50;150
+42;"Mo KA1-ALT-Min";;17,48;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";28,845;;50;150
+42;"Mo KA1-ALT-Tr";;17,48;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";28,845;;60;140
+42;"Mo KA1-HR-Min";;17,48;60;;"QuantExpress-SQ1";"Mo KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";20,302;;50;150
+42;"Mo KA1-HR-Min";"T";17,48;50;;"QuantExpress-SQ1";"Mo KA1-HR-Min/T";"*";0,17;"LiF220";"Sci.";"28,873*";"28,340; 29,370";62,08;140,8
+42;"Mo KA1-HR-Tr";;17,48;60;;"QuantExpress-SQ1";"Mo KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";20,302;;60;140
+42;"Mo KA1-HS-Min";;17,48;60;;"QuantExpress-SQ1";"Mo KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";20,302;;50;150
+42;"Mo KA1-HS-Tr";;17,48;60;;"QuantExpress-SQ1";"Mo KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";20,302;;60;140
+42;"Mo KA1-Maj";;17,48;50;;"QuantExpress-SQ1";"Mo KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";20,302;;35;300
+42;"Mo KA1";"GEO-QUANT";17,48;60;;"DC_AusMon";"Mo KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"28,873*";"28,230; 29,842; 32,874";40;160
+42;"Mo KB1-ALT-Min";;19,61;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";25,657;;50;150
+42;"Mo KB1-ALT-Tr";;19,61;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";25,657;;60;140
+42;"Mo KB1-HR-Min";;19,61;60;;"QuantExpress-SQ1";"Mo KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";18,079;;50;150
+42;"Mo KB1-HR-Tr";;19,61;60;;"QuantExpress-SQ1";"Mo KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";18,079;;60;140
+42;"Mo KB1-HS-Tr";;19,61;60;;"QuantExpress-SQ1";"Mo KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";18,079;;60;140
+42;"Mo KB1-Maj";;19,61;50;;"QuantExpress-SQ1";"Mo KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";18,079;;35;300
+42;"Mo LA1-HR-Min";;2,294;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";76,305;;50;150
+42;"Mo LA1-HR-Tr";;2,294;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";76,305;;60;140
+42;"Mo LA1-HS-Min";;2,294;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";76,305;;50;150
+42;"Mo LA1-HS-Tr";;2,294;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";76,305;;60;140
+42;"Mo LB1-HR-Min";;2,394;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";72,583;;50;150
+42;"Mo LB1-HR-Tr";;2,394;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";72,583;;60;140
+42;"Mo LB1-HS-Min";;2,394;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";72,583;;50;150
+42;"Mo LB1-HS-Tr";;2,394;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";72,583;;60;140
+7;"N  KA1";;0,392;30;;"QuantExpress-SQ1";"O  KA1-HS";"C,D,*";0,46;"XS-55";"Gas";68,611;;50;150
+11;"Na KA1-HR-Min";;1,041;30;;"QuantExpress-SQ2";"Na KA1-HR-Min";"C,D,*";0,23;"XS-55";"Gas";"24,691*";;50;150
+11;"Na KA1-HR-Min";"L";1,041;30;;"QuantExpress-SQ2";"Na KA1-HR-Min/L";"C,*";0,23;"XS-55";"Gas";"24,721*";"23,267; 26,241";60;155
+11;"Na KA1-HR-Tr";;1,041;30;;"QuantExpress-SQ2";"Na KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";"24,691*";;50;150
+11;"Na KA1-HR-Tr";"QE";1,041;30;;;;;0,23;"XS-55";"Gas";"24,691*";"21,800; 49,520";50;150
+11;"Na KA1-HS-Min";;1,041;30;;"QuantExpress-SQ2";"Na KA1-HS-Min";"C,D,*";0,46;"XS-55";"Gas";"24,706*";;50;150
+11;"Na KA1-HS-Min";"granit";1,041;30;;;;"C";0,46;"XS-55";"Gas";"24,706*";26,92;60;147,9
+11;"Na KA1-HS-Min";"granit new";1,041;30;;"QuantExpress-SQ2";"Na KA1-HS-Min";"C,D";0,46;"XS-55";"Gas";"24,706*";;50;150
+11;"Na KA1-HS-Min";"Oxid_IZK";1,041;30;;"QuantExpress-SQ2";"Na KA1-HS-Min/Oxid_IZK";"C";0,46;"XS-55";"Gas";24,726;25,726;57,92;154,2
+11;"Na KA1-HS-Tr";;1,041;30;;"QuantExpress-SQ2";"Na KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";24,726;;50;150
+11;"Na KA1-HS-Tr";"veg";1,041;30;;"QuantExpress-SQ2";"Na KA1-HS-Tr/veg";"*";0,46;"XS-55";"Gas";"24,770*";"22,996; 26,171";65,83;142,9
+11;"Na KA1-Maj";;1,041;30;;"QuantExpress-SQ2";"Na KA1-HS-Min";"C,D,*";0,46;"XS-55";"Gas";24,726;;50;150
+11;"Na KA1";"S8-Check";1,041;30;;"DC_S8-Check-STG";"Na KA1/S8-Check";"D-";0,46;"XS-55";"Gas";"24,734*";;35;280
+41;"Nb KA1-ALT-Min";;16,62;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";30,38;;50;150
+41;"Nb KA1-ALT-Min";"5el";16,62;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"30,410*";29,809;50;150
+41;"Nb KA1-ALT-Tr";;16,62;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";30,38;;60;140
+41;"Nb KA1-ALT-Tr";"RbNb-karbonat";16,62;60;;"Rekal-DVG";"Nb KA1-ALT-Tr/RbNb-karbonat";"C,D";0,23;"LiF220";"Sci.";30,38;;60;140
+41;"Nb KA1-HR-Min";;16,62;60;;"QuantExpress-SQ1";"Mo KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";21,369;;50;150
+41;"Nb KA1-HR-Min";"T";16,62;50;"Al 500um";"Rekal-DVG";"Nb KA1-HR-Min/T";"D-,*";0,17;"LiF200";"Sci.";"21,392*";21,02;50;150
+41;"Nb KA1-HR-Tr";;16,62;60;;"QuantExpress-SQ1";"Mo KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";21,369;;60;140
+41;"Nb KA1-HS-Min";;16,62;60;;"QuantExpress-SQ1";"Mo KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";21,369;;50;150
+41;"Nb KA1-HS-Min";"5el";16,62;50;"Al 500um";"QuantExpress-SQ1";"Nb KA1-HS-Min/5el";"*";0,17;"LiF200";"Sci.";"21,394*";"21,067; 21,762";64,17;137,1
+41;"Nb KA1-HS-Tr";;16,62;60;;"QuantExpress-SQ1";"Mo KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";21,369;;60;140
+41;"Nb KA1";"GEO-QUANT";16,62;60;;"DC_AusMon";"Nb KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"30,402*";"28,230; 29,842; 32,874";40;160
+41;"Nb KB1-ALT-Min";;18,62;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";27,04;;50;150
+41;"Nb KB1-ALT-Tr";;18,62;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";27,04;;60;140
+41;"Nb KB1-HR-Min";;18,62;60;;"QuantExpress-SQ1";"Mo KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";19,044;;50;150
+41;"Nb KB1-HR-Tr";;18,62;60;;"QuantExpress-SQ1";"Mo KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";19,044;;60;140
+41;"Nb LA1-HR";;2,166;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";81,694;;60;140
+41;"Nb LA1-HS";;2,166;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";81,694;;60;140
+41;"Nb LB1-HR";;2,257;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";77,761;;60;140
+41;"Nb LB1-HS";;2,257;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";77,761;;60;140
+60;"Nd LA1-HR-Min";;5,229;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";72,156;;50;150
+60;"Nd LA1-HR-Min";"L";5,229;50;;"Rekal-MSAN-1";"Nd LA1-HR-Min/L";"D-,*";0,17;"LiF200";"Sci.";"72,200*";"71,000; 72,930";52,08;150,8
+60;"Nd LA1-HR-Tr";;5,229;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";72,156;;60;140
+60;"Nd LA1-HR-Tr";"Ca_Nd_karb";5,229;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D";0,23;"LiF200";"Sci.";72,156;;60;140
+60;"Nd LA1-HS-Min";;5,229;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";72,156;;50;150
+60;"Nd LA1-HS-Tr";;5,229;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";72,156;;60;140
+60;"Nd LB1-ALT-Min";;5,722;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";99,063;;50;150
+60;"Nd LB1-ALT-Tr";;5,722;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";99,063;;60;140
+60;"Nd LB1-HR-Min";;5,722;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";65,127;;50;150
+60;"Nd LB1-HR-Tr";;5,722;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";65,127;;60;140
+60;"Nd LB1-HS-Min";;5,722;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";65,127;;50;150
+60;"Nd LB1-HS-Tr";;5,722;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";65,127;;60;140
+60;"Nd MA1-HR-Min";;0,9781;30;;"QuantExpress-SQ2";"Na KA1-HR-Min";"C,D,*";0,23;"XS-55";"Gas";26,327;;50;150
+60;"Nd MA1-HR-Tr";;0,9781;30;;"QuantExpress-SQ2";"Na KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";26,327;;50;150
+60;"Nd MA1-HS-Min";;0,9781;30;;"QuantExpress-SQ2";"Na KA1-HS-Min";"C,D,*";0,46;"XS-55";"Gas";26,327;;50;150
+28;"Ni KA1-ALT-Min";;7,478;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";71,196;;50;150
+28;"Ni KA1-ALT-Tr";;7,478;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";71,196;;60;140
+28;"Ni KA1-ALT-Tr";"Ca_Nd_karb";7,478;50;"Al 100um";"Rekal-MSAN-1";"Ni KA1-ALT-Tr/Ca_Nd_karb";"D-";0,23;"LiF200";"Sci.";"48,675*";48;60;140
+28;"Ni KA1-HR-Min";;7,478;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";48,638;;50;150
+28;"Ni KA1-HR-Tr";;7,478;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";48,638;;60;140
+28;"Ni KA1-HS-Min";;7,478;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";48,638;;50;150
+28;"Ni KA1-HS-Min";"a";7,478;50;"Al 500um";;;"*";0,17;"LiF200";"Sci.";48,638;;50;150
+28;"Ni KA1-HS-Min";"L";7,478;50;"Al 100um";;;"*";0,23;"LiF200";"Sci.";"48,675*";48;55,83;150
+28;"Ni KA1-HS-Tr";;7,478;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";48,638;;60;140
+28;"Ni KA1-Maj";;7,478;50;;"QuantExpress-SQ1";"Zn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";48,638;;35;300
+28;"Ni KA1";"GEO-QUANT";7,478;60;"Al 200um";"DC_AusMon, DC_Herasil";"Ni KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"71,266*";"68,990; 74,120";30;160
+28;"Ni KB1-ALT-Min";;8,264;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";63,575;;50;150
+28;"Ni KB1-ALT-Tr";;8,264;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";63,575;;60;140
+28;"Ni KB1-HR-Min";;8,264;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";43,762;;50;150
+28;"Ni KB1-HR-Tr";;8,264;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";43,762;;60;140
+28;"Ni KB1-HS-Tr";;8,264;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";43,762;;60;140
+28;"Ni KB1-Maj";;8,264;50;;"QuantExpress-SQ1";"Zn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";43,762;;35;300
+28;"Ni LA1-HR";;0,851;30;;"QuantExpress-SQ2";"Na KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";30,306;;50;150
+28;"Ni LA1-HS";;0,851;30;;"QuantExpress-SQ2";"Na KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";30,306;;50;150
+8;"O  KA1-HR";;0,525;30;;"QuantExpress-SQ1";"O  KA1-HR";"C,D,*";0,23;"XS-55";"Gas";"49,900*";;50;150
+8;"O  KA1-HS";;0,525;30;;"QuantExpress-SQ1";"O  KA1-HS";"C,D,*";0,46;"XS-55";"Gas";"49,931*";;50;150
+8;"O  KA1-HS";"L";0,525;20;;"QuantExpress-SQ1";"O  KA1-HS/L";"*";0,46;"XS-55";"Gas";"49,918*";47,82;34,17;150
+15;"P  KA1-HR-Min";;2,014;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";"89,407*";;50;150
+15;"P  KA1-HR-Min";"Fil";2,014;30;"Al 12um";;;;0,23;"PET";"Gas";89,434;;50;150
+15;"P  KA1-HR-Min";"L";2,014;40;;"QuantExpress-SQ2";"P  KA1-HR-Min/L";"*";0,23;"PET";"Gas";"89,407*";87,133;64,17;140,8
+15;"P  KA1-HR-Tr";;2,014;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";89,434;;60;140
+15;"P  KA1-HR-Tr";"Fil";2,014;30;"Al 12um";;;;0,23;"PET";"Gas";89,434;;60;140
+15;"P  KA1-HS-Min";;2,014;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";89,434;;50;150
+15;"P  KA1-HS-Min";"Fil";2,014;30;"Al 12um";;;;0,46;"PET";"Gas";89,434;;50;150
+15;"P  KA1-HS-Min";"granit";2,014;40;;;;;0,23;"PET";"Gas";"89,394*";88,293;65;134,2
+15;"P  KA1-HS-Min";"granit new";2,014;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D";0,46;"PET";"Gas";89,434;;50;150
+15;"P  KA1-HS-Min";"Oxid_IZK";2,014;40;;;;;0,46;"PET";"Gas";89,434;90,5;65,83;135,8
+15;"P  KA1-HS-Tr";;2,014;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";89,434;;60;140
+15;"P  KA1-HS-Tr";"Fil";2,014;30;"Al 12um";;;;0,46;"PET";"Gas";89,434;;60;140
+82;"Pb LA1-ALT-Min";;10,55;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"48,715*";;50;150
+82;"Pb LA1-ALT-Tr";;10,55;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";48,742;;60;140
+82;"Pb LA1-HR-Min";;10,55;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";"33,935*";;50;150
+82;"Pb LA1-HR-Tr";;10,55;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";33,949;;60;140
+82;"Pb LA1-HS-Min";;10,55;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";33,949;;50;150
+82;"Pb LA1-HS-Tr";;10,55;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";33,949;;60;140
+82;"Pb LA1-Maj";;10,55;50;;"QuantExpress-SQ2";"Pb LA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";33,949;;35;300
+82;"Pb LB1-ALT-Min";;12,61;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";40,377;;50;150
+82;"Pb LB1-ALT-Tr";;12,61;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";40,377;;60;140
+82;"Pb LB1-HR-Min";;12,61;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";28,266;;50;150
+82;"Pb LB1-HR-Tr";;12,61;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";28,266;;60;140
+82;"Pb LB1-HR-Tr";"BF";12,61;50;"Al 500um";;;"*";0,17;"LiF200";"Sci.";"28,252*";;60;140
+82;"Pb LB1-HR-Tr";"UTh";12,61;50;"Al 500um";"Rekal-MSAN-1";"Pb LB1-HR-Tr/UTh";"D-,*";0,17;"LiF200";"Sci.";"28,252*";28,737;60;140
+82;"Pb LB1-HS-Min";;12,61;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";28,266;;50;150
+82;"Pb LB1-HS-Tr";;12,61;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";28,266;;60;140
+82;"Pb LB1-Maj";;12,61;50;;"QuantExpress-SQ2";"Pb LA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";28,266;;35;300
+82;"Pb LB1";"GEO-QUANT";12,61;60;;"DC_AusMon, DC_Herasil";"Pb LB1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"40,366*";"36,598; 41,217; 44,853";40;160
+82;"Pb MA1-HR-Min";;2,343;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";74,43;;50;150
+82;"Pb MA1-HR-Tr";;2,343;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";74,43;;60;140
+82;"Pb MA1-HS-Min";;2,343;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";74,43;;50;150
+82;"Pb MA1-HS-Tr";;2,343;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";74,43;;60;140
+82;"Pb MB1-HR-Min";;2,443;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";70,922;;50;150
+82;"Pb MB1-HR-Tr";;2,443;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";70,922;;60;140
+82;"Pb MB1-HS-Min";;2,443;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";70,922;;50;150
+82;"Pb MB1-HS-Tr";;2,443;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";70,922;;60;140
+46;"Pd KA1-ALT-Min";;21,18;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";23,727;;50;150
+46;"Pd KA1-ALT-Min";"noFilter";21,18;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Min/NoFil";"C,D";0,23;"LiF220";"Sci.";23,727;;50;150
+46;"Pd KA1-ALT-Tr";;21,18;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";23,727;;60;140
+46;"Pd KA1-ALT-Tr";"noFilter";21,18;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Tr/NoFil";"C,D,*";0,23;"LiF220";"Sci.";23,727;;60;140
+46;"Pd KA1-HR-Min";;21,18;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";16,73;;50;150
+46;"Pd KA1-HR-Min";"cat";21,18;50;"Cu 300um";;;"*";0,17;"LiF200";"Sci.";"16,758*";"16,446; 17,169";60,83;134,2
+46;"Pd KA1-HR-Min";"f200";21,18;50;"Cu 200um";;;"*";0,23;"LiF200";"Sci.";"16,758*";"15,932; 17,258";67,08;132,9
+46;"Pd KA1-HR-Min";"noFilter";21,18;60;;"QuantExpress-SQ3";"Cd KA1-HR-Min/NoFil";"C,D";0,23;"LiF200";"Sci.";16,73;;50;150
+46;"Pd KA1-HR-Tr";;21,18;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";16,73;;60;140
+46;"Pd KA1-HR-Tr";"noFilter";21,18;60;;"QuantExpress-SQ3";"Cd KA1-HR-Tr/NoFil";"C,D";0,23;"LiF200";"Sci.";16,73;;60;140
+46;"Pd KA1-HS-Min";;21,18;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";16,73;;50;150
+46;"Pd KA1-HS-Min";"noFilter";21,18;60;;"QuantExpress-SQ3";"Cd KA1-HS-Min/NoFil";"C,D";0,46;"LiF200";"Sci.";16,73;;50;150
+46;"Pd KA1-HS-Tr";;21,18;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";16,73;;60;140
+46;"Pd KA1-HS-Tr";"noFilter";21,18;60;;"QuantExpress-SQ3";"Cd KA1-HS-Tr/NoFil";"C,D";0,46;"LiF200";"Sci.";16,73;;60;140
+46;"Pd KA1-Maj";;21,18;50;;"QuantExpress-SQ3";"Cd KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";16,73;;35;300
+46;"Pd KB1-ALT-Min";;23,81;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";21,075;;50;150
+46;"Pd KB1-ALT-Tr";;23,81;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";21,075;;60;140
+46;"Pd KB1-HR-Min";;23,81;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";14,872;;50;150
+46;"Pd KB1-HR-Min";"cata";23,81;50;"Cu 200um";;;"*";0,23;"LiF200";"Sci.";"14,871*";14,313;50;150
+46;"Pd KB1-HR-Tr";;23,81;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";14,872;;60;140
+46;"Pd KB1-HS-Min";;23,81;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";14,872;;50;150
+46;"Pd KB1-HS-Tr";;23,81;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";14,872;;60;140
+46;"Pd LA1-HR-Min";;2,839;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";59,897;;50;150
+46;"Pd LA1-HR-Min";"c";2,839;30;"Al 12um";;;"*";0,23;"PET";"Gas";"59,962*";"59,185; 60,963";67,92;132,1
+46;"Pd LA1-HR-Tr";;2,839;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";59,897;;60;140
+46;"Pd LA1-HS-Min";;2,839;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";59,897;;50;150
+46;"Pd LA1-HS-Tr";;2,839;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";59,897;;60;140
+59;"Pr LA1-HR-Min";;5,033;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";75,443;;50;150
+59;"Pr LA1-HR-Tr";;5,033;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";75,443;;60;140
+59;"Pr LA1-HS-Min";;5,033;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";75,443;;50;150
+59;"Pr LA1-HS-Tr";;5,033;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";75,443;;60;140
+59;"Pr LB1-ALT-Min";;5,489;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";104,915;;50;150
+59;"Pr LB1-ALT-Tr";;5,489;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";104,915;;60;140
+59;"Pr LB1-HR-Min";;5,489;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";68,247;;50;150
+59;"Pr LB1-HR-Tr";;5,489;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";68,247;;60;140
+59;"Pr LB1-HS-Min";;5,489;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";68,247;;50;150
+59;"Pr LB1-HS-Tr";;5,489;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";68,247;;60;140
+59;"Pr MA1-HR-Min";;0,9292;30;;"QuantExpress-SQ2";"Na KA1-HR-Min";"C,D,*";0,23;"XS-55";"Gas";27,726;;50;150
+59;"Pr MA1-HR-Tr";;0,9292;30;;"QuantExpress-SQ2";"Na KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";27,726;;50;150
+59;"Pr MA1-HS-Min";;0,9292;30;;"QuantExpress-SQ2";"Na KA1-HS-Min";"C,D,*";0,46;"XS-55";"Gas";27,726;;50;150
+59;"Pr MA1-HS-Tr";;0,9292;30;;"QuantExpress-SQ2";"Na KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";27,726;;50;150
+78;"Pt LA1-ALT-Min";;9,441;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";54,919;;50;150
+78;"Pt LA1-ALT-Tr";;9,441;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";54,919;;60;140
+78;"Pt LA1-HR-Min";;9,441;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";38,082;;50;150
+78;"Pt LA1-HR-Min";"c";9,441;50;;"QuantExpress-SQ2";"Pt LA1-HR-Min/c";"*";0,23;"LiF200";"Sci.";38,082;"37,366; 38,760";57,92;145,8
+78;"Pt LA1-HR-Tr";;9,441;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";38,082;;60;140
+78;"Pt LA1-HS-Min";;9,441;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";38,082;;50;150
+78;"Pt LA1-HS-Tr";;9,441;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";38,082;;60;140
+78;"Pt LB1-ALT-Min";;11,07;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";46,32;;50;150
+78;"Pt LB1-ALT-Tr";;11,07;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";46,32;;60;140
+78;"Pt LB1-HR-Min";;11,07;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";32,313;;50;150
+78;"Pt LB1-HR-Tr";;11,07;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";32,313;;60;140
+78;"Pt LB1-HS-Min";;11,07;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";32,313;;50;150
+78;"Pt LB1-HS-Tr";;11,07;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";32,313;;60;140
+78;"Pt MA1-HR-Min";;2,049;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";87,518;;50;150
+78;"Pt MA1-HR-Tr";;2,049;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";87,518;;60;140
+78;"Pt MA1-HS-Min";;2,049;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";87,518;;50;150
+78;"Pt MA1-HS-Tr";;2,049;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";87,518;;60;140
+37;"Rb KA1-ALT-Min";;13,4;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";37,93;;50;150
+37;"Rb KA1-ALT-Min";"5el";13,4;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"37,970*";"37,507; 38,616";50;150
+37;"Rb KA1-ALT-Tr";;13,4;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";37,93;;60;140
+37;"Rb KA1-HR-Min";;13,4;60;;"QuantExpress-SQ1";"Sr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";26,588;;50;150
+37;"Rb KA1-HR-Min";"ZnNi";13,4;50;;"Rekal-DVT";"Rb KA1-HR-Min/ZnNi";"C,D,*";0,17;"LiF200";"Sci.";26,588;;50;150
+37;"Rb KA1-HR-Tr";;13,4;60;;"QuantExpress-SQ1";"Sr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";26,588;;60;140
+37;"Rb KA1-HR-Tr";"UTh";13,4;50;;"Rekal-DVT";"Rb KA1-HR-Tr/UTh";"D-,*";0,17;"LiF200";"Sci.";"26,605*";25,74;60,83;137,1
+37;"Rb KA1-HR-Tr";"UTh/T";13,4;50;"Al 500um";"Rekal-DVT";"Rb KA1-HR-Tr/UTh/T";"D-,*";0,17;"LiF200";"Sci.";"26,610*";25,8;60,83;137,1
+37;"Rb KA1-HS-Min";;13,4;60;;"QuantExpress-SQ1";"Sr KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";26,588;;50;150
+37;"Rb KA1-HS-Tr";;13,4;60;;"QuantExpress-SQ1";"Sr KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";26,588;;60;140
+37;"Rb KA1";"GEO-QUANT";13,4;60;;"DC_AusMon";"Rb KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"37,955*";"32,874; 36,598; 41,217";40;160
+37;"Rb KB1-ALT-Min";;14,96;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";33,834;;50;150
+37;"Rb KB1-ALT-Tr";;14,96;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";33,834;;60;140
+37;"Rb KB1-HR-Min";;14,96;60;;"QuantExpress-SQ1";"Sr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";23,763;;50;150
+37;"Rb KB1-HR-Tr";;14,96;60;;"QuantExpress-SQ1";"Sr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";23,763;;60;140
+37;"Rb LA1-HR";;1,694;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";113,517;;60;140
+37;"Rb LA1-HS";;1,694;30;;"QuantExpress-SQ3";"Si KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";113,517;;60;140
+37;"Rb LB1-HR";;1,752;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";107,906;;60;140
+37;"Rb LB1-HS";;1,752;30;;"QuantExpress-SQ3";"Si KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";107,906;;60;140
+75;"Re LA1-ALT-Min";;8,646;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";60,468;;50;150
+75;"Re LA1-ALT-Tr";;8,646;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";60,468;;60;140
+75;"Re LA1-HR-Min";;8,646;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";41,739;;50;150
+75;"Re LA1-HR-Min";"FON";8,646;50;"Al 200um";;;"*";0,17;"LiF200";"Sci.";"41,004*";;50;150
+75;"Re LA1-HR-Tr";;8,646;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";41,739;;60;140
+75;"Re LA1-HS-Min";;8,646;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";41,739;;50;150
+75;"Re LA1-HS-Tr";;8,646;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";41,739;;60;140
+75;"Re LB1-ALT-Min";;10,01;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";51,567;;50;150
+75;"Re LB1-ALT-Tr";;10,01;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";51,567;;60;140
+75;"Re LB1-HR-Min";;10,01;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";35,846;;50;150
+75;"Re LB1-HR-Tr";;10,01;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";35,846;;60;140
+75;"Re LB1-HS-Min";;10,01;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";35,846;;50;150
+75;"Re LB1-HS-Tr";;10,01;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";35,846;;60;140
+75;"Re MA1-HR-Min";;1,843;30;;"QuantExpress-SQ3";"Si KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";100,506;;50;150
+75;"Re MA1-HR-Tr";;1,843;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";100,506;;60;140
+75;"Re MA1-HS-Min";;1,843;30;;"QuantExpress-SQ3";"Si KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";100,506;;50;150
+75;"Re MA1-HS-Tr";;1,843;30;;"QuantExpress-SQ3";"Si KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";100,506;;60;140
+45;"Rh KA1-ALT-Min";;20,22;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";24,873;;50;150
+45;"Rh KA1-ALT-Min";"Compton";19,13;60;;"QuantExpress-GRA";"Rh KA1-ALT-Min/Compton";"C,D,*";0,23;"LiF220";"Sci.";26,309;;50;150
+45;"Rh KA1-ALT-Min";"NoFilter";20,22;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Min/NoFil";"C,D";0,23;"LiF220";"Sci.";24,873;;50;150
+45;"Rh KA1-ALT-Min";"QE";20,22;60;"Cu 200um";;;;0,23;"LiF220";"Sci.";24,869;"10,000; 27,000";50;150
+45;"Rh KA1-ALT-Tr";;20,22;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";24,873;;60;140
+45;"Rh KA1-ALT-Tr";"Compton";19,13;60;;"QuantExpress-GRA";"Rh KA1-ALT-Tr/Compton";"C,D,*";0,23;"LiF220";"Sci.";"26,287*";;60;140
+45;"Rh KA1-ALT-Tr";"NoFilter";20,22;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Tr/NoFil";"C,D,*";0,23;"LiF220";"Sci.";24,873;;60;140
+45;"Rh KA1-ALT-Tr";"QE";20,22;60;"Cu 200um";;;;0,23;"LiF220";"Sci.";24,873;"10,000; 27,000";60;140
+45;"Rh KA1-ALT-Tr";"RbNb-karbonat";20,22;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";24,873;;60;140
+45;"Rh KA1-HR-Min";;20,22;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";17,531;;50;150
+45;"Rh KA1-HR-Min";"Compton";19,13;60;;"QuantExpress-GRA";"Rh KA1-HR-Min/Compton";"C,D,*";0,23;"LiF200";"Sci.";"18,487*";;50;150
+45;"Rh KA1-HR-Min";"Compton/5el";19,13;60;;"QuantExpress-GRA";"Rh KA1-HR-Min/Compton";"C,D,*";0,23;"LiF200";"Sci.";"18,517*";;50;150
+45;"Rh KA1-HR-Min";"IZK";20,22;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";17,531;;50;150
+45;"Rh KA1-HR-Min";"NoFilter";20,22;60;;"QuantExpress-SQ3";"Cd KA1-HR-Min/NoFil";"C,D,*";0,23;"LiF200";"Sci.";17,531;;50;150
+45;"Rh KA1-HR-Min";"QE";20,22;60;"Cu 200um";;;;0,23;"LiF200";"Sci.";17,531;"7,999; 19,999";50;150
+45;"Rh KA1-HR-Min";"T";20,22;60;"Cu 200um";;;"C,*";0,17;"LiF200";"Sci.";"17,543*";;50;150
+45;"Rh KA1-HR-Tr";;20,22;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";17,531;;60;140
+45;"Rh KA1-HR-Tr";"Compton";19,13;60;;"QuantExpress-GRA";"Rh KA1-HR-Tr/Compton";"C,D,*";0,23;"LiF200";"Sci.";18,535;;60;140
+45;"Rh KA1-HR-Tr";"Compton-UTh";19,13;50;"Al 800um";;;"*";0,17;"LiF200";"Sci.";"18,504*";;60;140
+45;"Rh KA1-HR-Tr";"NoFilter";20,22;60;;"QuantExpress-SQ3";"Cd KA1-HR-Tr/NoFil";"C,D,*";0,23;"LiF200";"Sci.";17,531;;60;140
+45;"Rh KA1-HR-Tr";"QE";20,22;60;"Cu 200um";;;;0,23;"LiF200";"Sci.";17,531;"7,999; 19,999";60;140
+45;"Rh KA1-HR-Tr";"Rayleigh";20,22;60;;"QuantExpress-SQ3";"Cd KA1-HR-Tr/NoFil";"C,D";0,23;"LiF200";"Sci.";17,531;;60;140
+45;"Rh KA1-HS-Min";;20,22;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";17,531;;50;150
+45;"Rh KA1-HS-Min";"Compton";19,13;60;;"QuantExpress-GRA";"Rh KA1-HS-Min/Compton";"C,D,*";0,46;"LiF200";"Sci.";18,535;;50;150
+45;"Rh KA1-HS-Min";"NoFilter";20,22;60;;"QuantExpress-SQ3";"Cd KA1-HS-Min/NoFil";"C,D";0,46;"LiF200";"Sci.";17,531;;50;150
+45;"Rh KA1-HS-Min";"QE";20,22;60;"Cu 200um";;;;0,46;"LiF200";"Sci.";17,531;"7,999; 19,999";50;150
+45;"Rh KA1-HS-Tr";;20,22;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";17,531;;60;140
+45;"Rh KA1-HS-Tr";"Compton";19,13;60;;"QuantExpress-GRA";"Rh KA1-HS-Tr/Compton";"C,D,*";0,46;"LiF200";"Sci.";18,535;;60;140
+45;"Rh KA1-HS-Tr";"NoFilter";20,22;60;;"QuantExpress-SQ3";"Cd KA1-HS-Tr/NoFil";"C,D";0,46;"LiF200";"Sci.";17,531;;60;140
+45;"Rh KA1-HS-Tr";"QE";20,22;60;"Cu 200um";;;;0,46;"LiF200";"Sci.";17,531;;60;140
+45;"Rh KA1-HS-Tr";"Sn_IZK";19,13;60;;"QuantExpress-GRA";"Rh KA1-HS-Tr/Compton";"C,D";0,46;"LiF200";"Sci.";18,535;;60;140
+45;"Rh KA1";"GEO-QUANT";19,13;60;;"DC_Herasil";"Rh KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"26,249*";"24,426; 29,842; 32,874";40;160
+45;"Rh LA1-HR-Min";"NoFilter";2,697;50;;;;;0,23;"PET";"Gas";63,404;;50;150
+45;"Rh LA1-HR-Tr";;2,697;30;"Al 12um";;;"*";0,23;"PET";"Gas";63,404;;60;140
+45;"Rh LA1-HR-Tr";"Alignment";2,697;30;;"QuantExpress-STG";"Rh LA1-HR-Tr/Alignment";"C,D";0,23;"PET";"Gas";63,404;;60;140
+45;"Rh LA1-HR-Tr";"L";2,697;20;"Al 12um";;;"*";0,23;"PET";"Gas";63,404;;55;140
+45;"Rh LA1-HR-Tr";"NoFilter";2,697;50;;;;;0,23;"PET";"Gas";63,404;;60;140
+45;"Rh LA1-HS-Min";;2,697;30;"Al 12um";;;"*";0,46;"PET";"Gas";"63,474*";;50;150
+45;"Rh LA1-HS-Min";"NoFilter";2,697;50;;;;;0,46;"PET";"Gas";63,404;;50;150
+45;"Rh LA1-HS-Tr";;2,697;30;"Al 12um";;;"*";0,46;"PET";"Gas";63,404;;60;140
+45;"Rh LA1-HS-Tr";"NoFilter";2,697;50;;;;;0,46;"PET";"Gas";63,404;;60;140
+44;"Ru KA1-ALT-Min";;19,28;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";26,102;;50;150
+44;"Ru KA1-ALT-Min";"NoFil";19,28;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Min/NoFil";"C,D";0,23;"LiF220";"Sci.";26,102;;50;150
+44;"Ru KA1-ALT-Tr";;19,28;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";26,102;;60;140
+44;"Ru KA1-ALT-Tr";"NoFil";19,28;60;;"QuantExpress-SQ3";"Cd KA1-ALT-Tr/NoFil";"C,D";0,23;"LiF220";"Sci.";26,102;;60;140
+44;"Ru KA1-HR-Min";;19,28;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";18,39;;50;150
+44;"Ru KA1-HR-Min";"NoFil";19,28;60;;"QuantExpress-SQ3";"Cd KA1-HR-Min/NoFil";"C,D";0,23;"LiF200";"Sci.";18,39;;50;150
+44;"Ru KA1-HR-Tr";;19,28;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";18,39;;60;140
+44;"Ru KA1-HR-Tr";"NoFil";19,28;60;;"QuantExpress-SQ3";"Cd KA1-HR-Tr/NoFil";"C,D";0,23;"LiF200";"Sci.";18,39;;60;140
+44;"Ru KA1-HS-Min";;19,28;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";18,39;;50;150
+44;"Ru KA1-HS-Min";"NoFil";19,28;60;;"QuantExpress-SQ3";"Cd KA1-HS-Min/NoFil";"C,D";0,46;"LiF200";"Sci.";18,39;;50;150
+44;"Ru KA1-HS-Tr";;19,28;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";18,39;;60;140
+44;"Ru KA1-HS-Tr";"NoFil";19,28;60;;"QuantExpress-SQ3";"Cd KA1-HS-Tr/NoFil";"C,D";0,46;"LiF200";"Sci.";18,39;;60;140
+44;"Ru KB1-ALT-Min";;21,65;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";23,202;;50;150
+44;"Ru KB1-ALT-Tr";;21,65;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";23,202;;60;140
+44;"Ru KB1-HR-Min";;21,65;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";16,363;;50;150
+44;"Ru KB1-HR-Tr";;21,65;60;"Cu 200um";"QuantExpress-SQ3";"Cd KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";16,363;;60;140
+44;"Ru LA1-HR-Min";;2,559;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";67,267;;50;150
+44;"Ru LA1-HR-Tr";;2,559;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";67,267;;60;140
+44;"Ru LA1-HS-Min";;2,559;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";67,267;;50;150
+44;"Ru LA1-HS-Tr";;2,559;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";67,267;;60;140
+16;"S  KA1-HR-Min";;2,308;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";75,755;;50;150
+16;"S  KA1-HR-Min";"L";2,308;40;;"QuantExpress-SQ2";"S  KA1-HR-Min/L";"C,*";0,23;"PET";"Gas";"75,746*";76,521;65;140
+16;"S  KA1-HR-Tr";;2,308;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";75,755;;60;140
+16;"S  KA1-HR-Tr";"QE";2,308;30;;;;;0,23;"PET";"Gas";75,755;"56,000; 90,000";60;140
+16;"S  KA1-HS-Min";;2,308;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";75,755;;50;150
+16;"S  KA1-HS-Tr";;2,308;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";75,755;;60;140
+16;"S  KA1-Maj";;2,308;30;;;;"*";0,23;"PET";"Gas";75,755;;35;300
+16;"S  KB1SX";;2,453;30;;;;;0,23;"PET";"Gas";70,58;;50;150
+51;"Sb KA1-ALT-Min";;26,36;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"19,029*";;50;150
+51;"Sb KA1-ALT-Tr";;26,36;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";19,014;;60;140
+51;"Sb KA1-HR-Min";;26,36;60;;"QuantExpress-SQ2";"Sb KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";"13,446*";;50;150
+51;"Sb KA1-HR-Min";"BF";26,36;50;;;;"C,*";0,23;"LiF200";"Sci.";"13,446*";;50;150
+51;"Sb KA1-HR-Tr";;26,36;60;;"QuantExpress-SQ2";"Sb KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";13,426;;60;140
+51;"Sb KA1-HS-Min";;26,36;60;;"QuantExpress-SQ2";"Sb KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";13,426;;50;150
+51;"Sb KA1-HS-Tr";;26,36;60;;"QuantExpress-SQ2";"Sb KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";13,426;;60;140,8
+51;"Sb KA1-Maj";;26,36;50;;"QuantExpress-SQ2";"Sb KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";13,426;;35;300
+51;"Sb KA1";"GEO-QUANT";26,36;60;;"DC_AusMon";"Sb KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"19,062*";"17,915; 20,577";50;150
+51;"Sb KA1";"S8-Check";26,36;60;"Cu 200um";"DC_S8-Check-STG";"Sb KA1/S8-Check";"D-";0,23;"LiF200";"Sci.";"13,465*";;50;150
+51;"Sb KB1-ALT-Min";;29,71;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";16,855;;50;150
+51;"Sb KB1-ALT-Tr";;29,71;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";16,855;;60;140
+51;"Sb KB1-HR-Min";;29,71;60;;"QuantExpress-SQ2";"Sb KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";11,907;;50;150
+51;"Sb KB1-HR-Tr";;29,71;60;;"QuantExpress-SQ2";"Sb KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";11,907;;60;140
+51;"Sb LA1-HR-Min";;3,604;50;;"QuantExpress-SQ2";"Ca KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";117,35;;50;150
+51;"Sb LA1-HR-Tr";;3,604;50;;"QuantExpress-SQ2";"Ca KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";117,35;;60;140
+51;"Sb LA1-HS-Min";;3,604;50;;"QuantExpress-SQ2";"Ca KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";117,35;;50;150
+51;"Sb LA1-HS-Tr";;3,604;50;;"QuantExpress-SQ2";"Ca KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";117,35;;60;140
+51;"Sb LA1-Min";"PET";3,604;50;;"QuantExpress-SQ3";"K  KA1-HS-Min/PET";"C,D";0,46;"PET";"Gas";46,32;;50;150
+51;"Sb LA1-Tr";"PET";3,604;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr/PET";"C,D";0,46;"PET";"Gas";46,32;;60;140
+51;"Sb LB1-HR-Min";;3,843;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";106,484;;50;150
+51;"Sb LB1-HR-Tr";;3,843;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";106,484;;60;140
+51;"Sb LB1-HS-Min";;3,843;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";106,484;;50;150
+51;"Sb LB1-HS-Tr";;3,843;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";106,484;;60;140
+21;"Sc KA1-HR-Min";;4,091;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";97,65;;50;150
+21;"Sc KA1-HR-Min";"L";4,091;40;"Al 12um";"Rekal-MSAN-1";"Sc KA1-HR-Min/L";"D-,*";0,17;"LiF200";"Gas";"97,733*";;75;125
+21;"Sc KA1-HR-Tr";;4,091;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";97,65;;60;140
+21;"Sc KA1-HR-Tr";"Ca_Nd_karb";4,091;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D";0,23;"LiF200";"Gas";97,65;;60;140
+21;"Sc KA1-HS-Min";;4,091;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";97,65;;50;150
+21;"Sc KA1-HS-Tr";;4,091;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";97,65;;60;140
+21;"Sc KA1";"GEO-QUANT";4,091;50;;"DC_AusMon";"Sc KA1/GEO-QUANT";"D-";0,23;"LiF200";"Gas";"97,702*";"94,838; 105,554";50;150
+21;"Sc KB1-Min";;4,46;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";87,319;;50;150
+21;"Sc KB1-Tr";;4,46;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";87,319;;60;140
+34;"Se KA1-ALT-Min";;11,22;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";45,65;;50;150
+34;"Se KA1-ALT-Tr";;11,22;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";45,65;;60;140
+34;"Se KA1-HR-Min";;11,22;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";31,859;;50;150
+34;"Se KA1-HR-Tr";;11,22;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";31,859;;60;140
+34;"Se KA1-HS-Min";;11,22;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";31,859;;50;150
+34;"Se KA1-HS-Tr";;11,22;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";31,859;;60;140
+34;"Se KB1-ALT-Min";;12,5;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";40,777;;50;150
+34;"Se KB1-ALT-Tr";;12,5;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";40,777;;60;140
+34;"Se KB1-HR-Min";;12,5;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";28,54;;50;150
+34;"Se KB1-HR-Tr";;12,5;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";28,54;;60;140
+34;"Se KB1-HS-Min";;12,5;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";28,54;;50;150
+34;"Se KB1-HS-Tr";;12,5;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";28,54;;60;140
+34;"Se LA1-HR";;1,379;30;;"QuantExpress-SQ3";"Mg KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";18,662;;50;150
+34;"Se LA1-HS-Min";;1,379;30;;"QuantExpress-SQ3";"Mg KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";18,662;;50;150
+14;"Si KA1-HR-Min";;1,74;30;;"QuantExpress-SQ3";"Si KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";"109,011*";;50;150
+14;"Si KA1-HR-Min";"BF";1,74;40;;"QuantExpress-SQ3";"Si KA1-HR-Min/L";"*";0,23;"PET";"Gas";"108,992*";;60,83;142,9
+14;"Si KA1-HR-Min";"L";1,74;40;;"QuantExpress-SQ3";"Si KA1-HR-Min/L";"*";0,23;"PET";"Gas";"108,992*";110,229;60,83;142,9
+14;"Si KA1-HR-Tr";;1,74;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";109,014;;60;140
+14;"Si KA1-HR-Tr";"Ca_Nd_karb";1,74;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D";0,23;"PET";"Gas";109,014;;60;140
+14;"Si KA1-HR-Tr";"QE";1,74;30;;;;;0,23;"PET";"Gas";109,014;95;60;140
+14;"Si KA1-HR-Tr";"Sn_IZK";1,74;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D";0,23;"PET";"Gas";109,014;;60;140
+14;"Si KA1-HS-Min";;1,74;30;;"QuantExpress-SQ3";"Si KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";109,014;;50;150
+14;"Si KA1-HS-Min";"Ca_Nd_karb";1,74;30;;"Rekal-CDO-3";"Si KA1-HS-Min/Ca_Nd_karb";"C,D";0,46;"PET";"Gas";"109,008*";110,352;50;150
+14;"Si KA1-HS-Min";"veg";1,74;30;;"QuantExpress-SQ3";"Si KA1-HS-Min/veg";"*";0,46;"PET";"Gas";109,014;110,568;65,83;139,2
+14;"Si KA1-HS-Tr";;1,74;30;;"QuantExpress-SQ3";"Si KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";109,014;;60;140
+14;"Si KA1-Maj";;1,74;30;;"QuantExpress-SQ3";"Si KA1-Maj";"C,D,*";0,23;"PET";"Gas";109,014;;35;300
+14;"Si KA1-Maj";"Ca_Nd_karb";1,74;30;;"Rekal-MSAN-1";"Si KA1-Maj/Ca_Nd_karb";"D-";0,23;"PET";"Gas";"109,007*";;35;172,9
+14;"Si KA1-Maj";"granit";1,74;40;;;;;0,23;"PET";"Gas";"108,980*";110,25;47,08;137,1
+14;"Si KA1-Maj";"granit new";1,74;30;;"QuantExpress-SQ3";"Si KA1-Maj";"C,D";0,23;"PET";"Gas";109,014;;35;300
+14;"Si KA1-Maj";"Oxid_IZK";1,74;40;;;;;0,23;"PET";"Gas";109,014;110,1;55,83;139,2
+14;"Si KA1";"S8-Check";1,74;30;;"DC_S8-Check-STG";"Si KA1/S8-Check";"D-";0,23;"PET";"Gas";"109,000*";;40;250
+14;"Si KB1-HR-Tr";"El";1,835;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D";0,23;"PET";"Gas";101,065;;60;140
+14;"Si KB1-HR-Tr";"Ox";1,833;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D";0,23;"PET";"Gas";101,265;;60;140
+14;"Si KB1-HS-Min";;1,837;30;;"QuantExpress-SQ3";"Si KA1-HS-Min";"C,D";0,46;"PET";"Gas";100,932;;50;150
+14;"Si KB1-HS-Tr";;1,837;30;;"QuantExpress-SQ3";"Si KA1-HS-Tr";"C,D";0,46;"PET";"Gas";100,932;;60;140
+62;"Sm LA1-ALT-Min";;5,635;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";101,142;;50;150
+62;"Sm LA1-ALT-Tr";;5,635;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";101,142;;60;140
+62;"Sm LA1-HR-Min";;5,635;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";66,251;;50;150
+62;"Sm LA1-HR-Tr";;5,635;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";66,251;;60;140
+62;"Sm LA1-HS-Min";;5,635;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";66,251;;50;150
+62;"Sm LA1-HS-Tr";;5,635;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";66,251;;60;140
+62;"Sm LB1-ALT-Min";;6,203;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";89,134;;50;150
+62;"Sm LB1-ALT-Tr";;6,203;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";89,134;;60;140
+62;"Sm LB1-HR-Min";;6,203;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";59,533;;50;150
+62;"Sm LB1-HR-Tr";;6,203;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";59,533;;60;140
+62;"Sm LB1-HS-Min";;6,203;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";59,533;;50;150
+62;"Sm LB1-HS-Tr";;6,203;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";59,533;;60;140
+62;"Sm MA1-HR-Min";;1,085;30;;"QuantExpress-SQ2";"Na KA1-HR-Min";"C,D,*";0,23;"XS-55";"Gas";23,723;;50;150
+62;"Sm MA1-HR-Tr";;1,085;30;;"QuantExpress-SQ2";"Na KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";23,723;;50;150
+62;"Sm MA1-HS-Min";;1,085;30;;"QuantExpress-SQ2";"Na KA1-HS-Min";"C,D,*";0,46;"XS-55";"Gas";23,723;;50;150
+62;"Sm MA1-HS-Tr";;1,085;30;;"QuantExpress-SQ2";"Na KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";23,723;;50;150
+50;"Sn KA1-ALT-Min";;25,27;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";19,841;;50;150
+50;"Sn KA1-ALT-Tr";;25,27;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";19,841;;60;140
+50;"Sn KA1-ALT-Tr";"Sn_IZK";25,27;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";19,841;;60;140
+50;"Sn KA1-HR-Min";;25,27;60;;"QuantExpress-SQ2";"Sb KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";14,006;;50;150
+50;"Sn KA1-HR-Tr";;25,27;60;;"QuantExpress-SQ2";"Sb KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";14,006;;60;140
+50;"Sn KA1-HS-Min";;25,27;60;;"QuantExpress-SQ2";"Sb KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";14,006;;50;150
+50;"Sn KA1-HS-Min";"IZK";25,27;50;"Cu 300um";;;"*";0,17;"LiF200";"Sci.";"14,001*";14,53;50;150
+50;"Sn KA1-HS-Tr";;25,27;60;;"QuantExpress-SQ2";"Sb KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";14,006;;60;140
+50;"Sn KA1-Maj";;25,27;50;;"QuantExpress-SQ2";"Sb KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";14,006;;35;300
+50;"Sn KA1";"GEO-QUANT";25,27;60;;"DC_AusMon";"Sn KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"19,870*";"17,915; 20,576";50;150
+50;"Sn KB1-ALT-Min";;28,47;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";17,595;;50;150
+50;"Sn KB1-ALT-Tr";;28,47;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";17,595;;60;140
+50;"Sn KB1-HR-Min";;28,47;60;;"QuantExpress-SQ2";"Sb KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";12,428;;50;150
+50;"Sn KB1-HR-Tr";;28,47;60;;"QuantExpress-SQ2";"Sb KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";12,428;;60;140
+50;"Sn KB1-HS-Tr";;28,47;60;;"QuantExpress-SQ2";"Sb KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";12,428;;60;140
+50;"Sn KB1-Maj";;28,47;50;;"QuantExpress-SQ2";"Sb KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";12,428;;35;300
+50;"Sn LA1-HR-Min";;3,444;50;;"QuantExpress-SQ3";"K  KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";126,761;;50;150
+50;"Sn LA1-HR-Tr";;3,444;50;;"QuantExpress-SQ3";"K  KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";126,761;;60;140
+50;"Sn LA1-HS-Min";;3,444;50;;"QuantExpress-SQ3";"K  KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";126,761;;50;150
+50;"Sn LA1-HS-Tr";;3,444;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";126,761;;60;140
+50;"Sn LB1-HR-Min";;3,663;50;;"QuantExpress-SQ2";"Ca KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";114,405;;50;150
+50;"Sn LB1-HR-Tr";;3,663;50;;"QuantExpress-SQ2";"Ca KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";114,405;;60;140
+50;"Sn LB1-HS-Min";;3,663;50;;"QuantExpress-SQ2";"Ca KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";114,405;;50;150
+50;"Sn LB1-HS-Tr";;3,663;50;;"QuantExpress-SQ2";"Ca KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";114,405;;60;140
+38;"Sr KA1-ALT-Min";;14,17;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"35,808*";;50;150
+38;"Sr KA1-ALT-Tr";;14,17;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";"35,810*";;60;140
+38;"Sr KA1-ALT-Tr";"5elem";14,17;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";"35,824*";"35,323; 36,440";60;140
+38;"Sr KA1-HR-Min";;14,17;60;;"QuantExpress-SQ1";"Sr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";"25,145*";;50;150
+38;"Sr KA1-HR-Tr";;14,17;60;;"QuantExpress-SQ1";"Sr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";25,119;;60;140
+38;"Sr KA1-HR-Tr";"T";14,17;50;"Al 500um";;;"*";0,17;"LiF200";"Sci.";"25,138*";25,8;67,08;140
+38;"Sr KA1-HR-Tr";"UTh-1";14,17;50;;;;"*";0,17;"LiF200";"Sci.";"25,143*";24,689;67,08;140
+38;"Sr KA1-HS-Min";;14,17;60;;"QuantExpress-SQ1";"Sr KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";25,119;;50;150
+38;"Sr KA1-HS-Tr";;14,17;60;;"QuantExpress-SQ1";"Sr KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";25,119;;60;140
+38;"Sr KA1";"GEO-QUANT";14,17;60;;"DC_AusMon";"Sr KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"35,833*";"32,874; 36,598";40;160
+38;"Sr KB1-ALT-Min";;15,83;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";31,919;;50;150
+38;"Sr KB1-ALT-Tr";;15,83;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";31,919;;60;140
+38;"Sr KB1-HR-Min";;15,83;60;;"QuantExpress-SQ3";"Zr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";22,437;;50;150
+38;"Sr KB1-HR-Tr";;15,83;60;;"QuantExpress-SQ3";"Zr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";22,437;;60;140
+38;"Sr KB1-HS-Min";;15,83;60;;"QuantExpress-SQ3";"Zr KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";22,437;;50;150
+38;"Sr KB1-HS-Tr";;15,83;60;;"QuantExpress-SQ3";"Zr KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";22,437;;60;140
+38;"Sr LA1-HR";;1,806;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";103,319;;60;140
+38;"Sr LA1-HS";;1,806;30;;"QuantExpress-SQ3";"Si KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";103,319;;60;140
+38;"Sr LB1-HR";;1,872;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";98,387;;60;140
+38;"Sr LB1-HS";;1,872;30;;"QuantExpress-SQ3";"Si KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";98,387;;60;140
+73;"Ta LA1-ALT-Min";;8,146;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";64,609;;50;150
+73;"Ta LA1-ALT-Tr";;8,146;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";64,609;;60;140
+73;"Ta LA1-HR-Min";;8,146;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";44,431;;50;150
+73;"Ta LA1-HR-Min";"a";8,146;50;"Al 500um";;;"*";0,17;"LiF200";"Sci.";"44,435*";44,031;70;124,2
+73;"Ta LA1-HR-Min";"L";8,146;50;;"QuantExpress-SQ1";"Ta LA1-HR-Min/L";"*";0,17;"LiF220";"Sci.";"64,644*";;50;162,1
+73;"Ta LA1-HR-Tr";;8,146;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";44,431;;60;140
+73;"Ta LA1-HS-Min";;8,146;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";44,431;;50;150
+73;"Ta LA1-HS-Tr";;8,146;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";44,431;;60;140
+73;"Ta LA1-Maj";;8,146;50;;"QuantExpress-SQ1";"Zn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";44,431;;35;300
+73;"Ta LB1-ALT-Min";;9,342;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";55,55;;50;150
+73;"Ta LB1-ALT-Tr";;9,342;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";55,55;;60;140
+73;"Ta LB1-ALT-Tr";"L";9,342;50;;;;"*";0,17;"LiF220";"Sci.";55,55;55,1;60;140
+73;"Ta LB1-HR-Min";;9,342;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";38,5;;50;150
+73;"Ta LB1-HR-Tr";;9,342;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";38,5;;60;140
+73;"Ta LB1-HR-Tr";"L";9,342;50;"Al 500um";;;"*";0,17;"LiF220";"Sci.";55,55;55,096;70;140
+73;"Ta LB1-HS-Min";;9,342;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";38,5;;50;150
+73;"Ta LB1-HS-Tr";;9,342;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";38,5;;60;140
+73;"Ta LB1-Maj";;9,342;50;;"QuantExpress-SQ1";"Zn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";38,5;;35;300
+73;"Ta MA1,2-HR-Min";;1,709;30;;"QuantExpress-SQ3";"Si KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";111,981;;50;150
+73;"Ta MA1,2-HR-Tr";;1,709;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";111,981;;60;140,8
+73;"Ta MA1,2-HS-Min";;1,709;30;;"QuantExpress-SQ3";"Si KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";111,981;;50;150
+73;"Ta MA1,2-HS-Tr";;1,709;30;;"QuantExpress-SQ3";"Si KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";111,981;;60;140
+65;"Tb LA1-ALT-Min";;6,273;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";87,887;;50;150
+65;"Tb LA1-ALT-Tr";;6,273;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";87,887;;60;140
+65;"Tb LA1-HR-Min";;6,273;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";58,807;;50;150
+65;"Tb LA1-HR-Tr";;6,273;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";58,807;;60;140
+65;"Tb LA1-HS-Min";;6,273;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";58,807;;50;150
+65;"Tb LA1-HS-Tr";;6,273;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";58,807;;60;140
+65;"Tb LB1-ALT-Min";;6,978;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";77,197;;50;150
+65;"Tb LB1-ALT-Tr";;6,978;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";77,197;;60;140
+65;"Tb LB1-HR-Min";;6,978;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";52,382;;50;150
+65;"Tb LB1-HR-Tr";;6,978;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";52,382;;60;140
+65;"Tb LB1-HS-Min";;6,978;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";52,382;;50;150
+65;"Tb LB1-HS-Tr";;6,978;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";52,382;;60;140
+65;"Tb MA1-HR-Min";;1,248;30;;"QuantExpress-SQ3";"Mg KA1-HR-Min";"C,D,*";0,23;"XS-55";"Gas";20,622;;40;160
+65;"Tb MA1-HR-Tr";;1,248;30;;"QuantExpress-SQ3";"Mg KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";20,622;;50;150
+65;"Tb MA1-HS-Min";;1,248;30;;"QuantExpress-SQ3";"Mg KA1-HS-Min";"C,D,*";0,46;"XS-55";"Gas";20,622;;40;160
+65;"Tb MA1-HS-Tr";;1,248;30;;"QuantExpress-SQ3";"Mg KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";20,622;;50;150
+52;"Te KA1-ALT-Min";;27,47;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";18,237;;50;150
+52;"Te KA1-ALT-Tr";;27,47;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";18,237;;60;140
+52;"Te KA1-HR-Min";;27,47;60;;"QuantExpress-SQ2";"Sb KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";12,88;;50;150
+52;"Te KA1-HR-Tr";;27,47;60;;"QuantExpress-SQ2";"Sb KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";12,88;;60;140
+52;"Te KA1-HS-Min";;27,47;60;;"QuantExpress-SQ2";"Sb KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";12,88;48;50;150
+52;"Te KA1-HS-Tr";;27,47;60;;"QuantExpress-SQ2";"Sb KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";12,88;;60;140
+52;"Te KA1-Maj";;27,47;50;;"QuantExpress-SQ2";"Sb KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";12,88;;35;300
+52;"Te KB1-ALT-Min";;30,97;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";16,163;;50;150
+52;"Te KB1-ALT-Tr";;30,97;60;;"QuantExpress-SQ2";"Sb KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";16,163;;60;140
+52;"Te KB1-HR-Min";;30,97;60;;"QuantExpress-SQ2";"Sb KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";11,421;;50;150
+52;"Te KB1-HR-Tr";;30,97;60;;"QuantExpress-SQ2";"Sb KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";11,421;;60;140
+52;"Te KB1-HS-Min";;30,97;60;;"QuantExpress-SQ2";"Sb KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";11,421;;50;150
+52;"Te KB1-HS-Tr";;30,97;60;;"QuantExpress-SQ2";"Sb KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";11,421;;60;140
+52;"Te LA1-HR-Min";;3,77;50;;"QuantExpress-SQ2";"Ca KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";109,507;;50;150
+52;"Te LA1-HR-Tr";;3,77;50;;"QuantExpress-SQ2";"Ca KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";109,507;;60;140
+52;"Te LA1-HS-Min";;3,77;50;;"QuantExpress-SQ2";"Ca KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";109,507;;50;150
+52;"Te LA1-HS-Min";"PET";3,77;50;;"QuantExpress-SQ3";"K  KA1-HS-Min/PET";"C,D";0,46;"PET";"Gas";44,173;;50;150
+52;"Te LA1-HS-Tr";;3,77;50;;"QuantExpress-SQ2";"Ca KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";109,507;;60;140
+52;"Te LA1-HS-Tr";"PET";3,77;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr/PET";"C,D";0,46;"PET";"Gas";44,173;;60;140
+52;"Te LB1-HR-Min";;4,029;50;;"QuantExpress-SQ2";"Ca KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";99,671;;50;150
+52;"Te LB1-HR-Tr";;4,029;50;;"QuantExpress-SQ2";"Ca KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";99,671;;60;140
+52;"Te LB1-HS-Min";;4,029;50;;"QuantExpress-SQ2";"Ca KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";99,671;;50;150
+52;"Te LB1-HS-Tr";;4,029;50;;"QuantExpress-SQ2";"Ca KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";99,671;;60;140
+90;"Th LA1-ALT-Min";;12,97;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";39,225;;50;150
+90;"Th LA1-ALT-Tr";;12,97;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";39,225;;60;140
+90;"Th LA1-HR-Min";;12,97;60;;"QuantExpress-SQ1";"Sr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";27,477;;50;150
+90;"Th LA1-HR-Tr";;12,97;60;;"QuantExpress-SQ1";"Sr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";27,477;;60;140
+90;"Th LA1-HR-Tr";"UTh";12,97;50;"Al 500um";;;"*";0,17;"LiF200";"Sci.";"27,463*";27,747;60;140
+90;"Th LA1-HS-Min";;12,97;60;;"QuantExpress-SQ1";"Sr KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";27,477;;50;150
+90;"Th LA1-HS-Min";"a";12,97;50;"Al 500um";"QuantExpress-SQ1";"Th LA1-HS-Min/a";"*";0,17;"LiF200";"Sci.";27,477;28,766;57,08;140,8
+90;"Th LA1-HS-Tr";;12,97;60;;"QuantExpress-SQ1";"Sr KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";27,477;;60;140
+90;"Th LA1";"GEO-QUANT";12,97;60;;"DC_AusMon";"Th LA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"39,175*";"36,598; 41,217";40;160
+90;"Th LB1-ALT-Min";;16,2;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";31,174;;50;150
+90;"Th LB1-ALT-Tr";;16,2;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";31,174;;60;140
+90;"Th LB1-HR-Min";;16,2;60;;"QuantExpress-SQ3";"Zr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";21,92;;50;150
+90;"Th LB1-HR-Tr";;16,2;60;;"QuantExpress-SQ3";"Zr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";21,92;;60;140
+90;"Th LB1-HS-Min";;16,2;60;;"QuantExpress-SQ3";"Zr KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";21,92;;50;150
+90;"Th LB1-HS-Tr";;16,2;60;;"QuantExpress-SQ3";"Zr KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";21,92;;60;140
+90;"Th MA1-HR-Min";;2,992;30;;"QuantExpress-SQ3";"Si KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";56,551;;50;150
+90;"Th MA1-HR-Tr";;2,992;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";56,551;;60;140
+90;"Th MA1-HS-Min";;2,992;30;;"QuantExpress-SQ3";"Si KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";56,551;;50;150
+90;"Th MA1-HS-Tr";;2,992;30;;"QuantExpress-SQ3";"Si KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";56,551;;60;140
+22;"Ti KA1-HR-Min";;4,511;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";"86,147*";;50;150
+22;"Ti KA1-HR-Min";"L";4,511;50;;"Rekal-MSAN-1";"Ti KA1-HR-Min/L";"D-,*";0,23;"LiF200";"Gas";"86,166*";85,22;70;134,2
+22;"Ti KA1-HR-Min";"QE";4,511;50;;;;;0,23;"LiF200";"Gas";86,095;"75,999; 137,499";50;150
+22;"Ti KA1-HR-Tr";;4,511;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";86,095;;60;140
+22;"Ti KA1-HR-Tr";"Ca_Nd_karb";4,511;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D";0,23;"LiF200";"Gas";86,095;;60;140
+22;"Ti KA1-HR-Tr";"QE";4,511;50;;;;;0,23;"LiF200";"Gas";86,095;"75,999; 137,499";60;140
+22;"Ti KA1-HS-Min";;4,511;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";86,095;;50;150
+22;"Ti KA1-HS-Min";"granit";4,511;50;;;;;0,23;"LiF200";"Gas";"86,149*";85,202;77,92;125,8
+22;"Ti KA1-HS-Min";"granit new";4,511;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D";0,46;"LiF200";"Gas";86,095;;50;150
+22;"Ti KA1-HS-Min";"Oxid_IZK";4,511;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min/Oxid_IZK";;0,46;"LiF200";"Gas";86,095;85,2;72,92;124,2
+22;"Ti KA1-HS-Min";"QE";4,511;50;;;;;0,46;"LiF200";"Gas";86,095;"75,999; 137,499";50;150
+22;"Ti KA1-HS-Tr";;4,511;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";86,095;;60;140
+22;"Ti KA1-HS-Tr";"QE";4,511;50;;;;;0,46;"LiF200";"Gas";86,095;"75,999; 137,499";60;140
+22;"Ti KA1-Maj";;4,511;50;;"QuantExpress-SQ1";"Ti KA1-Maj";"C,D,*";0,23;"LiF200";"Gas";86,095;;20,42;300
+22;"Ti KA1";"GEO-QUANT";4,511;50;;"DC_AusMon";"Ti KA1/GEO-QUANT";"D-";0,23;"LiF200";"Gas";"86,152*";"80,640; 89,088";50;150
+22;"Ti KB1-ALT-Min";;4,931;50;;"QuantExpress-SQ1";"Ti KB1-ALT-Min";"C,D,*";0,23;"LiF220";"Gas";123,908;;50;150
+22;"Ti KB1-ALT-Tr";;4,931;50;;"QuantExpress-SQ1";"Ti KB1-ALT-Tr";"C,D,*";0,23;"LiF220";"Gas";123,908;;60;140
+22;"Ti KB1-HR-Min";;4,931;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";77,285;;50;150
+22;"Ti KB1-HR-Tr";;4,931;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";77,285;;60;140
+22;"Ti KB1-HS-Min";;4,931;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";77,285;;50;150
+22;"Ti KB1-HS-Tr";;4,931;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";77,285;;60;140
+22;"Ti LA1";;0,452;30;;"QuantExpress-SQ1";"O  KA1-HR";"C,D,*";0,23;"XS-55";"Gas";58,608;;50;150
+81;"Tl LA1-ALT-Min";;10,25;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";50,266;;50;150
+81;"Tl LA1-ALT-Tr";;10,25;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";50,266;;60;140
+81;"Tl LA1-HR-Min";;10,25;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";34,974;;50;150
+81;"Tl LA1-HR-Tr";;10,25;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";34,974;;60;140
+81;"Tl LA1-HS-Min";;10,25;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";34,974;;50;150
+81;"Tl LA1-HS-Tr";;10,25;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";34,974;;60;140
+81;"Tl LB1-ALT-Min";;12,21;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";41,764;;50;150
+81;"Tl LB1-ALT-Tr";;12,21;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";41,764;;60;140
+81;"Tl LB1-HR-Min";;12,21;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";29,215;;50;150
+81;"Tl LB1-HR-Tr";;12,21;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";29,215;;60;140
+81;"Tl LB1-HS-Min";;12,21;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";29,215;;50;150
+81;"Tl LB1-HS-Tr";;12,21;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";29,215;;60;140
+81;"Tl MA1-HR-Min";;2,269;30;;"QuantExpress-SQ2";"P  KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";77,307;;50;150
+81;"Tl MA1-HR-Tr";;2,269;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";77,307;;60;140
+81;"Tl MA1-HS-Min";;2,269;30;;"QuantExpress-SQ2";"P  KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";77,307;;50;150
+81;"Tl MA1-HS-Tr";;2,269;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";77,307;;60;140
+92;"U  LA1-ALT-Min";;13,62;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";37,296;;50;150
+92;"U  LA1-ALT-Tr";;13,62;60;;"QuantExpress-SQ1";"Sr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";37,296;;60;140
+92;"U  LA1-HR-Min";;13,62;60;;"QuantExpress-SQ1";"Sr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";26,152;;50;150
+92;"U  LA1-HR-Tr";;13,62;60;;"QuantExpress-SQ1";"Sr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";26,152;;60;140
+92;"U  LA1-HR-Tr";"UTh-1";13,62;50;"Al 800um";;;"*";0,17;"LiF200";"Sci.";26,152;25,854;60,83;147,1
+92;"U  LA1-HS-Min";;13,62;60;;"QuantExpress-SQ1";"Sr KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";26,152;;50;150
+92;"U  LA1-HS-Tr";;13,62;60;;"QuantExpress-SQ1";"Sr KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";26,152;;60;140
+92;"U  LA1";"GEO-QUANT";13,62;60;;"DC_AusMon";"U  LA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"37,295*";"36,598; 41,217";40;160
+92;"U  LB1-ALT-Min";;17,22;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";29,287;;50;150
+92;"U  LB1-ALT-Tr";;17,22;60;;"QuantExpress-SQ1";"Mo KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";29,287;;60;140
+92;"U  LB1-HR-Min";;17,22;60;;"QuantExpress-SQ1";"Mo KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";20,61;;50;150
+92;"U  LB1-HR-Tr";;17,22;60;;"QuantExpress-SQ1";"Mo KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";20,61;;60;140
+92;"U  LB1-HS-Min";;17,22;60;;"QuantExpress-SQ1";"Mo KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";20,61;;50;150
+92;"U  LB1-HS-Tr";;17,22;60;;"QuantExpress-SQ1";"Mo KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";20,61;;60;140
+92;"U  MA1-HR-Min";;3,165;50;;"QuantExpress-SQ3";"K  KA1-HR-Min/PET";"C,D,*";0,23;"PET";"Gas";53,199;;50;150
+92;"U  MA1-HR-Tr";;3,165;50;;"QuantExpress-SQ3";"K  KA1-HR-Tr/PET";"C,D,*";0,23;"PET";"Gas";53,199;;60;140
+92;"U  MA1-HS-Min";;3,165;50;;"QuantExpress-SQ3";"K  KA1-HS-Min/PET";"C,D,*";0,46;"PET";"Gas";53,199;;50;150
+92;"U  MA1-HS-Tr";;3,165;50;;"QuantExpress-SQ3";"K  KA1-HS-Tr/PET";"C,D,*";0,46;"PET";"Gas";53,199;;60;140
+23;"V  KA1-ALT-Min";;4,952;50;;"QuantExpress-SQ1";"Ti KB1-ALT-Min";"C,D,*";0,23;"LiF220";"Gas";122,997;;50;150
+23;"V  KA1-ALT-Min";"QE";4,952;50;;;;;0,23;"LiF220";"Gas";122,997;"119,998; 125,998";50;150
+23;"V  KA1-ALT-Tr";;4,952;50;;"QuantExpress-SQ1";"Ti KB1-ALT-Tr";"C,D,*";0,23;"LiF220";"Gas";122,997;;60;140
+23;"V  KA1-ALT-Tr";"QE";4,952;50;;;;;0,23;"LiF220";"Gas";122,997;"119,998; 125,998";60;140
+23;"V  KA1-HR-Min";;4,952;50;;"QuantExpress-SQ1";"Ti KA1-HR-Min";"C,D,*";0,23;"LiF200";"Gas";76,895;;50;150
+23;"V  KA1-HR-Tr";;4,952;50;;"QuantExpress-SQ1";"Ti KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Gas";76,895;;60;140
+23;"V  KA1-HS-Min";;4,952;50;;"QuantExpress-SQ1";"Ti KA1-HS-Min";"C,D,*";0,46;"LiF200";"Gas";76,895;;50;150
+23;"V  KA1-HS-Min";"a";4,952;40;;;;"*";0,17;"LiF220";"Gas";"123,242*";;77,08;125,8
+23;"V  KA1-HS-Min";"L";4,952;50;"Al 12um";"Rekal-MSAN-1";"V  KA1-HS-Min/L";"D-,*";0,17;"LiF220";"Gas";"123,195*";122,327;74,17;122,9
+23;"V  KA1-HS-Tr";;4,952;50;;"QuantExpress-SQ1";"Ti KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Gas";76,895;;60;140
+23;"V  KA1";"GEO-QUANT";4,952;50;;"DC_AusMon";"V  KA1/GEO-QUANT";"D-";0,23;"LiF220";"Gas";"123,209*";"117,065; 126,094";60;160
+23;"V  KB1-ALT-Min";;5,426;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";106,668;;50;150
+23;"V  KB1-ALT-Tr";;5,426;60;;"QuantExpress-SQ1";"Mn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";106,668;;60;140
+23;"V  KB1-HR-Min";;5,426;60;;"QuantExpress-SQ1";"Mn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";69,153;;50;150
+23;"V  KB1-HR-Tr";;5,426;60;;"QuantExpress-SQ1";"Mn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";69,153;;60;140
+23;"V  KB1-HS-Min";;5,426;60;;"QuantExpress-SQ1";"Mn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";69,153;;50;150
+23;"V  KB1-HS-Tr";;5,426;60;;"QuantExpress-SQ1";"Mn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";69,153;;60;140
+23;"V  LA1-HR";;0,511;30;;"QuantExpress-SQ1";"O  KA1-HR";"C,D,*";0,23;"XS-55";"Gas";51,369;;50;150
+74;"W  LA1-ALT-Min";;8,397;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";62,457;;50;150
+74;"W  LA1-ALT-Tr";;8,397;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";62,457;;60;140
+74;"W  LA1-HR-Min";;8,397;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";43,036;;50;150
+74;"W  LA1-HR-Tr";;8,397;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";43,036;;60;140
+74;"W  LA1-HS-Min";;8,397;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";43,036;;50;150
+74;"W  LA1-HS-Tr";;8,397;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";43,036;;60;140
+74;"W  LA1-Maj";;8,397;50;;"QuantExpress-SQ1";"Zn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";43,036;;35;300
+74;"W  LB1-ALT-Min";;9,671;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";53,505;;50;150
+74;"W  LB1-ALT-Tr";;9,671;60;;"QuantExpress-SQ2";"Pb LA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";53,505;;60;140
+74;"W  LB1-HR-Min";;9,671;60;;"QuantExpress-SQ2";"Pb LA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";37,141;;50;150
+74;"W  LB1-HR-Tr";;9,671;60;;"QuantExpress-SQ2";"Pb LA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";37,141;;60;140
+74;"W  LB1-HS-Min";;9,671;60;;"QuantExpress-SQ2";"Pb LA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";37,141;;50;150
+74;"W  LB1-HS-Tr";;9,671;60;;"QuantExpress-SQ2";"Pb LA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";37,141;;60;140
+74;"W  LB1-Maj";;9,671;50;;"QuantExpress-SQ1";"Zn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";37,141;;35;300
+74;"W  MA1,2-HR-Min";;1,774;30;;"QuantExpress-SQ3";"Si KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";105,954;;50;150
+74;"W  MA1,2-HR-Tr";;1,774;30;;"QuantExpress-SQ3";"Si KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";105,954;;60;140
+74;"W  MA1,2-HS-Min";;1,774;30;;"QuantExpress-SQ3";"Si KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";105,954;;50;150
+74;"W  MA1,2-HS-Tr";;1,774;30;;"QuantExpress-SQ3";"Si KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";105,954;;60;140
+39;"Y  KA1-ALT-Min";;14,96;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";33,84;;50;150
+39;"Y  KA1-ALT-Tr";;14,96;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";33,84;;60;140
+39;"Y  KA1-ALT-Tr";"RbNb-karbonat";14,96;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";33,84;;60;140
+39;"Y  KA1-HR-Min";;14,96;60;;"QuantExpress-SQ3";"Zr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";23,768;;50;150
+39;"Y  KA1-HR-Min";"5el";14,96;60;;"QuantExpress-SQ3";"Y  KA1-HR-Min/5el";"C,*";0,23;"LiF200";"Sci.";"23,789*";"23,317; 24,232";62,92;139,2
+39;"Y  KA1-HR-Min";"T";14,96;50;"Al 500um";"Rekal-DVT";"Y  KA1-HR-Min/T";"D-,*";0,17;"LiF200";"Sci.";"23,773*";24,289;50;150
+39;"Y  KA1-HR-Tr";;14,96;60;;"QuantExpress-SQ3";"Zr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";23,768;;60;140
+39;"Y  KA1-HS-Min";;14,96;60;;"QuantExpress-SQ3";"Zr KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";23,768;;50;150
+39;"Y  KA1-HS-Min";"A";14,96;50;"Al 500um";"QuantExpress-SQ3";"Y  KA1-HS-Min/A";"*";0,17;"LiF200";"Sci.";"23,771*";24,248;62,92;137,9
+39;"Y  KA1-HS-Tr";;14,96;60;;"QuantExpress-SQ3";"Zr KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";23,768;;60;140
+39;"Y  KA1";"GEO-QUANT";14,96;60;;"DC_AusMon";"Y  KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"33,863*";"29,842; 32,874; 36,598";40;160
+39;"Y  KB1-ALT-Min";;16,74;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";30,152;;50;150
+39;"Y  KB1-ALT-Tr";;16,74;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";30,152;;60;140
+39;"Y  KB1-HR-Min";;16,74;60;;"QuantExpress-SQ3";"Zr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";21,211;;50;150
+39;"Y  KB1-HR-Tr";;16,74;60;;"QuantExpress-SQ3";"Zr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";21,211;;60;140
+39;"Y  LA1-HR";;1,922;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";94,976;;60;140
+39;"Y  LA1-HS";;1,922;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";94,976;;60;140
+39;"Y  LB1-HR";;1,996;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";90,451;;60;140
+39;"Y  LB1-HS";;1,996;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";90,451;;60;140
+70;"Yb LA1-ALT-Min";;7,414;60;;"QuantExpress-SQ2";"Co KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";71,904;;50;150
+70;"Yb LA1-ALT-Tr";;7,414;60;;"QuantExpress-SQ2";"Co KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";71,904;;60;140
+70;"Yb LA1-HR-Min";;7,414;60;;"QuantExpress-SQ2";"Co KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";49,085;;50;150
+70;"Yb LA1-HR-Tr";;7,414;60;;"QuantExpress-SQ2";"Co KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";49,085;;60;140
+70;"Yb LA1-HS-Min";;7,414;60;;"QuantExpress-SQ2";"Co KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";49,085;;50;150
+70;"Yb LA1-HS-Tr";;7,414;60;;"QuantExpress-SQ2";"Co KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";49,085;;60;140
+70;"Yb LB1-ALT-Min";;8,4;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";62,428;;50;150
+70;"Yb LB1-ALT-Tr";;8,4;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";62,428;;60;140
+70;"Yb LB1-HR-Min";;8,4;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";43,018;;50;150
+70;"Yb LB1-HR-Tr";;8,4;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";43,018;;60;140
+70;"Yb LB1-HS-Min";;8,4;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";43,018;;50;150
+70;"Yb LB1-HS-Tr";;8,4;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";43,018;;60;140
+70;"Yb MA1-HR-Min";;1,522;30;;"QuantExpress-SQ1";"Al KA1-HR-Min";"C,D,*";0,23;"PET";"Gas";137,085;;50;150
+70;"Yb MA1-HR-Tr";;1,522;30;;"QuantExpress-SQ1";"Al KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";137,085;;60;140
+70;"Yb MA1-HS-Min";;1,522;30;;"QuantExpress-SQ1";"Al KA1-HS-Min";"C,D,*";0,46;"PET";"Gas";137,085;;50;150
+70;"Yb MA1-HS-Tr";;1,522;30;;"QuantExpress-SQ1";"Al KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";137,085;;60;140
+30;"Zn KA1-ALT-Min";;8,639;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"60,541*";;50;150
+30;"Zn KA1-ALT-Tr";;8,639;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";60,517;;60;140
+30;"Zn KA1-ALT-Tr";"Ca_Nd_karb";8,639;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";60,517;;60;140
+30;"Zn KA1-HR-Min";;8,639;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";41,771;;50;150
+30;"Zn KA1-HR-Min";"T";8,639;50;"Al 500um";;;"C,*";0,23;"LiF200";"Sci.";"41,823*";41,095;50;150
+30;"Zn KA1-HR-Tr";;8,639;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";41,771;;60;140
+30;"Zn KA1-HS-Min";;8,639;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";41,771;;50;150
+30;"Zn KA1-HS-Min";"L";8,639;50;"Al 500um";"Rekal-MSAN-1";"Zn KA1-HS-Min/L";"D-,*";0,17;"LiF200";"Sci.";"41,814*";41,077;54,17;144,2
+30;"Zn KA1-HS-Tr";;8,639;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";41,771;;60;140
+30;"Zn KA1-Maj";;8,639;50;;"QuantExpress-SQ1";"Zn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";41,771;;35;300
+30;"Zn KA1";"GEO-QUANT";8,639;60;"Al 500um";"DC_AusMon, DC_Herasil";"Zn KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"60,566*";"59,246; 64,088";30;165
+30;"Zn KB1-ALT-Min";;9,577;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";54,073;;50;150
+30;"Zn KB1-ALT-Tr";;9,577;60;;"QuantExpress-SQ1";"Zn KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";54,073;;60;140
+30;"Zn KB1-HR-Min";;9,577;60;;"QuantExpress-SQ1";"Zn KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";37,519;;50;150
+30;"Zn KB1-HR-Tr";;9,577;60;;"QuantExpress-SQ1";"Zn KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";37,519;;60;140
+30;"Zn KB1-HS-Min";;9,577;60;;"QuantExpress-SQ1";"Zn KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";37,519;;50;150
+30;"Zn KB1-HS-Tr";;9,577;60;;"QuantExpress-SQ1";"Zn KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";37,519;;60;140
+30;"Zn KB1-Maj";;9,577;50;;"QuantExpress-SQ1";"Zn KA1-Maj";"C,D,*";0,23;"LiF200";"Sci.";37,519;;35;300
+30;"Zn LA1-HR-Tr";;1,012;30;;"QuantExpress-SQ2";"Na KA1-HR-Tr";"C,D,*";0,23;"XS-55";"Gas";25,439;;50;150
+30;"Zn LA1-HS-Min";;1,012;30;;"QuantExpress-SQ2";"Na KA1-HS-Min";"C,D,*";0,46;"XS-55";"Gas";25,439;;50;150
+30;"Zn LA1-HS-Tr";;1,012;30;;"QuantExpress-SQ2";"Na KA1-HS-Tr";"C,D,*";0,46;"XS-55";"Gas";25,439;;50;150
+40;"Zr KA1-ALT-Min";;15,78;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"32,065*";;50;150
+40;"Zr KA1-ALT-Min";"5el";15,78;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";"32,077*";32,709;50;150
+40;"Zr KA1-ALT-Tr";;15,78;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";32,04;;60;140
+40;"Zr KA1-ALT-Tr";"RbNb-karbonat";15,78;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Tr";"C,D";0,23;"LiF220";"Sci.";32,04;;60;140
+40;"Zr KA1-HR-Min";;15,78;60;;"QuantExpress-SQ3";"Zr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";22,521;;50;150
+40;"Zr KA1-HR-Min";"T";15,78;50;"Al 500um";;;"*";0,17;"LiF200";"Sci.";"22,503*";21,02;50;150
+40;"Zr KA1-HR-Tr";;15,78;60;;"QuantExpress-SQ3";"Zr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";22,521;;60;140
+40;"Zr KA1-HS-Min";;15,78;60;;"QuantExpress-SQ3";"Zr KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";22,521;;50;150
+40;"Zr KA1-HS-Tr";;15,78;60;;"QuantExpress-SQ3";"Zr KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";22,521;;60;140
+40;"Zr KA1";"GEO-QUANT";15,78;60;;"DC_AusMon";"Zr KA1/GEO-QUANT";"D-";0,23;"LiF220";"Sci.";"32,056*";"29,842; 32,874; 36,598";40;160
+40;"Zr KB1-ALT-Min";;17,67;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Min";"C,D,*";0,23;"LiF220";"Sci.";28,529;;50;150
+40;"Zr KB1-ALT-Tr";;17,67;60;;"QuantExpress-SQ3";"Zr KA1-ALT-Tr";"C,D,*";0,23;"LiF220";"Sci.";28,529;;60;140
+40;"Zr KB1-HR-Min";;17,67;60;;"QuantExpress-SQ3";"Zr KA1-HR-Min";"C,D,*";0,23;"LiF200";"Sci.";20,082;;50;150
+40;"Zr KB1-HR-Tr";;17,67;60;;"QuantExpress-SQ3";"Zr KA1-HR-Tr";"C,D,*";0,23;"LiF200";"Sci.";20,082;;60;140
+40;"Zr KB1-HS-Min";;17,67;60;;"QuantExpress-SQ3";"Zr KA1-HS-Min";"C,D,*";0,46;"LiF200";"Sci.";20,082;;50;150
+40;"Zr KB1-HS-Tr";;17,67;60;;"QuantExpress-SQ3";"Zr KA1-HS-Tr";"C,D,*";0,46;"LiF200";"Sci.";20,082;;60;140
+40;"Zr LA1-HR";;2,042;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";87,872;;60;140
+40;"Zr LA1-HS";;2,042;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";87,872;;60;140
+40;"Zr LB1-HR";;2,124;30;;"QuantExpress-SQ2";"P  KA1-HR-Tr";"C,D,*";0,23;"PET";"Gas";83,664;;60;140
+40;"Zr LB1-HS";;2,124;30;;"QuantExpress-SQ2";"P  KA1-HS-Tr";"C,D,*";0,46;"PET";"Gas";83,664;;60;140
