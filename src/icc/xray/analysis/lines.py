@@ -3,7 +3,7 @@ from collections import namedtuple
 import os, os.path
 import csv
 
-Line=namedtuple('Line', "Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_th, LLD, ULD")
+Line=namedtuple('Line', "Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_2th, LLD, ULD")
 
 class Lines(object):
     def __init__(self, csv=None, dbname=None):
@@ -21,18 +21,35 @@ class Lines(object):
         reader=csv.reader(open(filename), delimiter=';')
         db_name=os.path.splitext(filename)[0]+'.sqlite3'
         conn=self.connect(dbname=db_name)
-        self.create_db(conn)
-        #print reader.next() # skip first row of fiels names
+        reader.next() # skip first row of fiels names
         cur = conn.cursor()
-        cur.execute('DROP TABLE IF EXISTS lines')
+        cur.execute('DROP TABLE IF EXISTS lines ;')
+        self.create_db(conn)
         for row in map(Line._make, reader):
             params=['?'] * len(row)
             params=', '.join(params)
-            cur.execute("""
-                INSERT INTO lines (Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample,
+            cmd="""
+                INSERT INTO lines (Z, Line_Name, Comment, line_keV,
+                tube_KV, Filter, Ref_Sample,
                 Ref_Line, Calib, Collimator, Crystal, Detector,
-                Peak_2th, Bkg_th, LLD, ULD) VALUES (%s)
-            """ % params, row)
+                Peak_2th, Bkg_2th, LLD, ULD)
+                VALUES
+                (%s);
+            """ % params
+            cur.execute(cmd, row)
+            # print row
+        # cur.execute("COMMIT;")
+        conn.commit()
+        cur = conn.cursor()
+        cur.execute('''SELECT Z, Line_Name, Comment, line_keV,
+                tube_KV, Filter, Ref_Sample,
+                Ref_Line, Calib, Collimator, Crystal, Detector,
+                Peak_2th, Bkg_2th, LLD, ULD from lines;''')
+        for row in map(Line._make, cur):
+            print row
+
+        del cur
+        del conn
 
         return db_name
 
@@ -65,10 +82,10 @@ class Lines(object):
                 Crystal TEXT NULL,
                 Detector TEXT NULL,
                 Peak_2th REAL NULL,
-                Bkg_th TEXT NULL,
+                Bkg_2th TEXT NULL,
                 LLD REAL NULL,
                 ULD REAL NULL
-        )
+        );
         ''')
 
 
