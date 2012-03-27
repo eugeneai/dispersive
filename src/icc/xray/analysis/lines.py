@@ -3,6 +3,8 @@ from collections import namedtuple
 import os, os.path
 import csv
 
+DEBUG=False
+
 fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2nd, Bkg_2nd, LLD, ULD"
 
 Line=namedtuple('Line', fields)
@@ -19,7 +21,7 @@ class Lines(object):
 
         self.connect()
 
-    def convert_csv(self,filename):
+    def convert_csv(self,filename, debug = DEBUG):
         reader=csv.reader(open(filename), delimiter=';')
         db_name=os.path.splitext(filename)[0]+'.sqlite3'
         conn=self.connect(dbname=db_name)
@@ -36,13 +38,12 @@ class Lines(object):
                 (%s);
             """ % (fields, params)
             cur.execute(cmd, row)
-            # print row
-        # cur.execute("COMMIT;")
         conn.commit()
         cur = conn.cursor()
         cur.execute('''SELECT %s from lines;''' % fields)
-        for row in map(Line._make, cur):
-            print row
+        if debug:
+            for row in map(Line._make, cur):
+                print row
 
         del cur
         del conn
