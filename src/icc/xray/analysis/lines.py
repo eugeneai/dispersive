@@ -98,14 +98,14 @@ class Lines(object):
         );
         ''')
 
-    def fetch_all(self, sql, params=None):
+    def fetch_all(self, sql, params=tuple()):
         cur=self.db.cursor()
-        sql='''SELECT %s from lines;''' % fields+" where "+sql+';'
+        sql='''SELECT %s from lines ''' % fields+" where "+sql+';'
         rows=cur.execute(sql,params)
-        for row in map(Line._make, cur):
+        for row in map(Line._make, rows):
                 yield row
 
 if __name__=='__main__':
     lines=Lines('/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
-    for l in lines.fetch_all('Z=40'):
+    for l in lines.fetch_all('Line_Name like "%KA%" and Z=41'):
         print l
