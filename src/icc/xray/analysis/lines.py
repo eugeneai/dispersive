@@ -7,7 +7,9 @@ DEBUG=False
 
 fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_2th, LLD, ULD"
 
-Line=namedtuple('Line', fields)
+CSVLine=namedtuple('CSVLine', fields)
+Line=namedtuple('Line', 'Z, Name, keV')
+Element=namedtuple('Element', 'Z, Name')
 
 class Lines(object):
     def __init__(self, csv=None, dbname=None):
@@ -42,7 +44,7 @@ class Lines(object):
         cur.execute('DROP TABLE IF EXISTS lines ;')
         cur.execute('DROP TABLE IF EXISTS elements ;')
         self.create_db(conn)
-        for row in map(Line._make, reader):
+        for row in map(CSVLine._make, reader):
             #params=['?'] * len(row)
             #params=', '.join(params)
             params='?, ?, ?, float(?), ?, ?, ?, ?, ?, float(?), ?, ?, float(?), float(?), ?, ?'
@@ -138,7 +140,31 @@ class Lines(object):
         for row in map(Line._make, rows):
                 yield row
 
+    def select(self, Z=None, element=None, line=None, kev=None):
+        if line:
+            line=line.upper()
+        c=["1"]
+        if Z != None:
+            c.append("e.Z=%i" % Z)
+        if element != None:
+            c.append("e.Name='%s'" % element)
+        if line != None:
+            c.append("l.Name='%s'" % line);
+        if kev != None:
+            c.append("l.kev=%f" % kev);
+        stmt="""
+        SELECT e.Z, e.Name as element, l.Name as line, l.keV as kev
+        FROM elements e INNER JOIN lines l ON e.Z=l.Z
+        WHERE
+        %s ;
+        """ % ' and '.join(c)
+        cur = self.db.cursor()
+        cur.execute(stmt)
+        for row in cur:
+            yield row
+
+
 if __name__=='__main__':
     lines=Lines('/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
-    #for l in lines.fetch_all(' 1 order by Z'):
-    #    print l
+    for l in lines.select(Z=40):
+        print l
