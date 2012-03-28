@@ -11,6 +11,14 @@ CSVLine=namedtuple('CSVLine', fields)
 Line=namedtuple('Line', 'Z, Name, keV')
 Element=namedtuple('Element', 'Z, Name')
 
+def _float(x):
+    print x
+    try:
+        x=float(x)
+    except e:
+        print e
+    return x
+
 class Lines(object):
     def __init__(self, csv=None, dbname=None):
         if csv == None and db==None:
@@ -22,6 +30,7 @@ class Lines(object):
         self.dbname=dbname
 
         self.connect()
+        self.db.create_function("float", 1, _float)
 
     def convert_csv(self,filename, debug = DEBUG):
         def _f(x):
@@ -70,12 +79,12 @@ class Lines(object):
             lset.add((Z, ln_))
             if debug:
                 print row
-            c2.execute("INSERT INTO lines (Z, Name, keV) VALUES (?,?,?);",
+            c2.execute("INSERT INTO lines (Z, keV, Name) VALUES (?, ?, ?);",
                 row)
             if Z in eset:
                 continue
             eset.add(Z)
-            c2.execute("INSERT INTO elements (Z, Name) VALUES (?,?);",
+            c2.execute("INSERT INTO elements (Z, Name) VALUES (?, ?);",
                 (Z, ln.split()[0]))
 
         conn.commit()
