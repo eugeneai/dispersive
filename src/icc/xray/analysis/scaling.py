@@ -4,6 +4,7 @@ import scipy.special as fn
 ###import pylab as p
 import math
 from collections import OrderedDict, namedtuple
+import lines
 
 fwhm_coef=2.*math.sqrt(2.*math.log(2.))
 sqrt_2pi=math.sqrt(2.*math.pi)

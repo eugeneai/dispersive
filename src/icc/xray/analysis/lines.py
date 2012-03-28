@@ -8,7 +8,7 @@ DEBUG=False
 fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_2th, LLD, ULD"
 
 CSVLine=namedtuple('CSVLine', fields)
-Line=namedtuple('Line', 'Z, Name, keV')
+Line=namedtuple('Line', 'Z, element, name, keV')
 Element=namedtuple('Element', 'Z, Name')
 
 def _float(x):
@@ -21,7 +21,7 @@ def _float(x):
 
 class Lines(object):
     def __init__(self, csv=None, dbname=None):
-        if csv == None and db==None:
+        if csv == None and dbname==None:
             raise ValueError, 'one of csv or db should be supplied'
 
         if csv != None:
@@ -170,10 +170,11 @@ class Lines(object):
         cur = self.db.cursor()
         cur.execute(stmt)
         for row in cur:
-            yield row
+            yield Line._make(row)
 
 
 if __name__=='__main__':
-    lines=Lines('/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
+    #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
+    lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
     for l in lines.select(Z=40):
         print l
