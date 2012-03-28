@@ -21,6 +21,11 @@ def gauss(x, x0, A, fwhm):
     _=np.exp(-_)*_c
     return _
 
+def gauss_square(A, fwhm):
+    sigma = fwhm/fwhm_coef
+    _e = A*sigma*sqrt_2pi
+    return _e
+
 def arccot(x):
     return pi_d_2-np.arctan(x)
 
@@ -45,7 +50,7 @@ class Parameters(object):
             p.plot(x, y)
 
         Xopt=self.r_line(zero_line, 97, A=None, width=40, plot=True)
-        print Xopt
+        print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
 
         if DEBUG:
             p.show()
