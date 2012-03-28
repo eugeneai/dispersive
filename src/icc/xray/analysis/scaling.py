@@ -22,7 +22,7 @@ def gauss(x, x0, A, fwhm):
 def arccot(x):
     return pi_d_2-np.arctan(x)
 
-Line=namedtuple('Line','x0, fwhm, A, bkg, slope')
+Pike=namedtuple('Line','x0, fwhm, A, bkg, slope')
 
 def Parameters(object):
 
@@ -312,9 +312,9 @@ def test1():
     par.calculate()
 
 def test2():
-    l=LineTuple(x0=0, fwhm=1, A=1, bkg=0, slope=0)
+    l=Pike(x0=0, fwhm=1, A=1, bkg=0, slope=0)
     print l
 
 
 if __name__=='__main__':
-    test2()
+    test1()
