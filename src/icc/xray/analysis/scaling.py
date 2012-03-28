@@ -24,7 +24,7 @@ def gauss(x, x0, A, fwhm):
 def arccot(x):
     return pi_d_2-np.arctan(x)
 
-Pike=namedtuple('Line','x0, fwhm, A, bkg, slope')
+Pike=namedtuple('Line','x0, A, fwhm, bkg, slope')
 
 zero_pike=Pike._make((0, 1., 1., 0., 0.))
 zero_line=lines.Line._make((0, '', '', 0.0086))
@@ -44,7 +44,7 @@ class Parameters(object):
         if DEBUG:
             p.plot(x, y)
 
-        Xopt=self.r_line(zero_line, 90, A=10, width=40)
+        Xopt=self.r_line(zero_line, 97, A=None, width=40, plot=True)
         print Xopt
 
         if DEBUG:
@@ -162,15 +162,18 @@ class Parameters(object):
             xmax=xl-1
         return xmin,xmax
 
-    def of(self, X, xw):
-        x0,A, fwhm,b,k =X
-        _=gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
-        return _
+
 
     def r_line(self, line, x0, A=None, fwhm=10, xtol=1e-8, width=None, plot=False):
+        def of(X, xw):
+            x0,A, fwhm,b,k =X
+            _=gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
+            return _
+
         def fopt(X, xw, yw):
-            _=self.of(X, xw)
+            _=of(X, xw)
             return sum((yw-_)**2)
+
         if width == None:
             width=fwhm
         hw=width/2.
@@ -186,11 +189,13 @@ class Parameters(object):
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
         Xopt=op.fmin(fopt, X0, args=(xw,yw), xtol=xtol, maxiter=10000, maxfun=10000)
-        x0, A, fwhm, b, k =Xopt
-        nxw=np.arange(xw[0], xw[-1], 0.25)
         if plot:
+            x0, A, fwhm, b, k =Xopt
+            nxw=np.arange(xw[0], xw[-1], 0.25)
             fy=of(Xopt, nxw)
             p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
+        p.plot(xw,yw)
+        print xw,yw
         return Pike._make(Xopt)
 
     def ofp(self, X, xw):
