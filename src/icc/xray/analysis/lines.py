@@ -38,14 +38,16 @@ class Lines(object):
         conn.create_function("float", 1, _f)
         reader.next() # skip first row of fiels names
         cur = conn.cursor()
+        cur.execute('DROP TABLE IF EXISTS tmp ;')
         cur.execute('DROP TABLE IF EXISTS lines ;')
+        cur.execute('DROP TABLE IF EXISTS elements ;')
         self.create_db(conn)
         for row in map(Line._make, reader):
             #params=['?'] * len(row)
             #params=', '.join(params)
             params='?, ?, ?, float(?), ?, ?, ?, ?, ?, float(?), ?, ?, float(?), float(?), ?, ?'
             cmd="""
-                INSERT INTO lines (%s)
+                INSERT INTO tmp (%s)
                 VALUES
                 (%s);
             """ % (fields, params)
@@ -53,13 +55,28 @@ class Lines(object):
         #print cmd
         conn.commit()
         cur = conn.cursor()
-        cur.execute('''SELECT %s from lines;''' % fields)
-        if debug:
-            for row in map(Line._make, cur):
+        cur.execute('''SELECT DISTINCT Z, line_keV, Line_Name from tmp;''')
+        c2=conn.cursor()
+        lset=set()
+        eset=set()
+        for row in cur:
+            Z, keV, ln = row
+            ln_=ln.split()[1].split('-')[0]
+            row=(Z, keV, ln_)
+            if (Z, ln) in lset:
+                continue
+            lset.add((Z, ln_))
+            if debug:
                 print row
+            c2.execute("INSERT INTO lines (Z, Name, keV) VALUES (?,?,?);",
+                row)
+            if Z in eset:
+                continue
+            eset.add(Z)
+            c2.execute("INSERT INTO elements (Z, Name) VALUES (?,?);",
+                (Z, ln.split()[0]))
 
-        del cur
-        del conn
+        conn.commit()
 
         return db_name
 
@@ -77,7 +94,7 @@ class Lines(object):
             db = self.db
         c=db.cursor()
         c.execute('''
-            CREATE TABLE IF NOT EXISTS lines (
+            CREATE TABLE IF NOT EXISTS tmp (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Z INTEGER,
                 Line_Name TEXT NULL,
@@ -98,14 +115,30 @@ class Lines(object):
         );
         ''')
 
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS lines (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Z INTEGER,
+                Name TEXT,
+                keV REAL
+        );
+        ''')
+
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS elements (
+                Z INTEGER PRIMARY KEY,
+                Name TEXT
+        );
+        ''')
+
     def fetch_all(self, sql, params=tuple()):
         cur=self.db.cursor()
-        sql='''SELECT %s from lines ''' % fields+" where "+sql+';'
+        sql='''SELECT DISTINCT %s from lines ''' % fields+" where "+sql+';'
         rows=cur.execute(sql,params)
         for row in map(Line._make, rows):
                 yield row
 
 if __name__=='__main__':
     lines=Lines('/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
-    for l in lines.fetch_all('Line_Name like "%KA%" and Z=41'):
-        print l
+    #for l in lines.fetch_all(' 1 order by Z'):
+    #    print l
