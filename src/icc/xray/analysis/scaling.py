@@ -1,10 +1,12 @@
 import numpy as np
 import scipy.optimize as op
 import scipy.special as fn
-###import pylab as p
+import pylab as p
 import math
 from collections import OrderedDict, namedtuple
 import lines
+
+DEBUG=True
 
 fwhm_coef=2.*math.sqrt(2.*math.log(2.))
 sqrt_2pi=math.sqrt(2.*math.pi)
@@ -24,42 +26,29 @@ def arccot(x):
 
 Pike=namedtuple('Line','x0, fwhm, A, bkg, slope')
 
-def Parameters(object):
+zero_pike=Pike._make((0, 1., 1., 0., 0.))
+zero_line=lines.Line._make((0, '', '', 0.0086))
+
+class Parameters(object):
 
     def __init__(self, channels, k=1., b=0.):
-        self.channels=channels
+        self.channels=np.array(channels)
+        self.x=np.arange(len(self.channels))
         self.initial=OrderedDict({'k':k, 'b':b})
 
     def calculate(self):
-        y=np.array(plastic)
+        y=self.channels
         xl=len(y)
-        x=np.arange(xl)
+        x=self.x
         fwhm_mult=2.5
+        if DEBUG:
+            p.plot(x, y)
 
-        #    X0=np.array([80, np.max(y), 100, 0,0], dtype=float)
+        Xopt=self.r_line(zero_line, 90, A=10, width=40)
+        print Xopt
 
-        x=np.arange(-100., 100., 1)
-        xmin,xmax=-100-31,100+32
-        x1=x[xmin:xmax]
-        par1 = 100.- x1*x1/10.
-        par2 = - x*x/100.
-        print x1, par1
-        x+=len(x)/2
-        p.plot(x, np.zeros(len(x)))
-        #p.plot(x1, par1)
-        #p.plot(x, par2)
-        par=par2+0.
-        par[xmin:xmax]+=par1
-        par+=50
-        for i in range(len(par)):
-            if par[i]<0:
-                par[i]=0
-        p.plot(x, par)
-        y=par
-
-        Xopt=r_line(100, A=10, width=40, plot=True)
-
-        p.show()
+        if DEBUG:
+            p.show()
 
         return
         e_fe= 6.4
@@ -162,7 +151,7 @@ def Parameters(object):
 
 
 
-    def cut(x0,hw):
+    def cut(self, x0,hw, xl):
         ix0=math.floor(x0+0.5)
         ihw=math.floor(hw+0.5)
         xmin=math.floor(ix0-ihw)
@@ -173,19 +162,23 @@ def Parameters(object):
             xmax=xl-1
         return xmin,xmax
 
-    def of(X, xw):
+    def of(self, X, xw):
         x0,A, fwhm,b,k =X
         _=gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
         return _
 
-    def r_line(x0, A=None, fwhm=10, xtol=1e-8, width=None, plot=False):
+    def r_line(self, line, x0, A=None, fwhm=10, xtol=1e-8, width=None, plot=False):
         def fopt(X, xw, yw):
-            _=of(X, xw)
+            _=self.of(X, xw)
             return sum((yw-_)**2)
         if width == None:
             width=fwhm
         hw=width/2.
-        xmin,xmax=cut(x0, hw)
+        y=self.channels
+        x=self.x
+        xl=len(y)
+
+        xmin,xmax=self.cut(x0, hw, xl)
         if A == None:
             A=max(y[xmin:xmax])
             #print A
@@ -195,18 +188,18 @@ def Parameters(object):
         Xopt=op.fmin(fopt, X0, args=(xw,yw), xtol=xtol, maxiter=10000, maxfun=10000)
         x0, A, fwhm, b, k =Xopt
         nxw=np.arange(xw[0], xw[-1], 0.25)
-        fy=of(Xopt, nxw)
         if plot:
+            fy=of(Xopt, nxw)
             p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
-        return Xopt
+        return Pike._make(Xopt)
 
-    def ofp(X, xw):
+    def ofp(self, X, xw):
         x0,A, fwhm, a0, a1 =X
         dxw=(xw-x0)
         _=gauss(xw, x0, A, fwhm)+a0+a1*dxw
         return _
 
-    def r_line_zr(x0, A=None, fwhm=None, xtol=1e-8, width=None, plot=False):
+    def r_line_zr(self, x0, A=None, fwhm=None, xtol=1e-8, width=None, plot=False):
 
         def fopt(X, x0, fwhm, xw, yw):
             A, a0, a1 = X
@@ -238,7 +231,7 @@ def Parameters(object):
             p.plot(x,ffy, color=(0.7,0.0,0.3), alpha=0.5)
         return Xopt
 
-    def Gc(E, E0, fwhm, fg):
+    def Gc(self, E, E0, fwhm, fg):
         sigma = fwhm/fwhm_coef
         _1=sigma*fg
         _ = (sqrt_2pi*_1)
@@ -247,7 +240,7 @@ def Parameters(object):
         _x= -((dE/_1)**2)/2.
         return _*np.exp(_x)
 
-    def T(E, E0, fwhm, g, mult=1.):
+    def T(self, E, E0, fwhm, g, mult=1.):
         sigma = fwhm/fwhm_coef
         dE=E-E0
         _ef=math.exp(-1/(2*g**2))
@@ -257,7 +250,7 @@ def Parameters(object):
         _x=mult*dE/(sqrt_2*sigma)+1./(sqrt_2*g)
         return _exp1*fn.erfc(_x)
 
-    def cou_approx(A, E, E0, fwhm, fg, fa, fb, ga, gb):
+    def cou_approx(self, A, E, E0, fwhm, fg, fa, fb, ga, gb):
         #print (E, E0, fwhm, fg, fa, fb, ga, gb)
         _  = 0.0
         _ += Gc(E, E0, fwhm, fg)
@@ -265,12 +258,12 @@ def Parameters(object):
         #_ += fb*T(E, E0, fwhm, gb, mult=-1)
         return A*_ #+ ofp([x0_mo, A_mo, fwhm, a0, a1], E)
 
-    def cou_opt(X,  Ew, E0, fwhm, yw):
+    def cou_opt(self, X,  Ew, E0, fwhm, yw):
         #print X
         A, fg, fa, fb, ga, gb = X
         return sum((cou_approx(A, Ew, E0, fwhm, fg, fa, fb, ga, gb)-yw)**2)
 
-    def cou_fmin(E, E0, fwhm, X0=None, xtol=1e-3, xmin=0, xmax=None):
+    def cou_fmin(self, E, E0, fwhm, X0=None, xtol=1e-3, xmin=0, xmax=None):
         if X0 == None:
             X0 = [1., 1, 1., 1., 1, 1]
         if xmax == None:
@@ -279,7 +272,7 @@ def Parameters(object):
         yw=y[xmin:xmax]
         return op.fmin(cou_opt, X0, args=(Ew, E0, fwhm, yw), xtol=xtol, maxiter=10000, maxfun=10000)
 
-    def cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg,  shift, c2, a3, b, c, x_mo, fwhm_mo, xw):
+    def cou_sim(self, A_mo, x_cou, A_cou, fwhm_cou, bkg,  shift, c2, a3, b, c, x_mo, fwhm_mo, xw):
         _  = 0.0
         _ += gauss(xw, x_mo, A_mo, fwhm_mo)
         _ += gauss(xw, x_cou-shift, A_cou, fwhm_cou)
@@ -289,13 +282,13 @@ def Parameters(object):
         _ += bkg
         return _
 
-    def cou_sim_opt(X, fwhm_mo, xw, yw):
+    def cou_sim_opt(self, X, fwhm_mo, xw, yw):
         A_mo, x_cou, A_cou, fwhm_cou, bkg, shift, c2, a3, b, c, x_mo = X
         _ = cou_sim(A_mo, x_cou, A_cou, fwhm_cou, bkg, shift, c2, a3, b, c, x_mo, fwhm_mo, xw)
         _ = sum((_-yw)**2)
         return _
 
-    def cou_sim_fmin(X, x_mo, fwhm_mo, xmin=0, xmax=None, xtol=1e-8):
+    def cou_sim_fmin(self, X, x_mo, fwhm_mo, xmin=0, xmax=None, xtol=1e-8):
         if xmax == None:
             xmax=len(E)
         xw=x[xmin:xmax]
