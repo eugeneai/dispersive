@@ -65,7 +65,7 @@ class Lines(object):
             Z, keV, ln = row
             ln_=ln.split()[1].split('-')[0]
             row=(Z, keV, ln_)
-            if (Z, ln) in lset:
+            if (Z, ln_) in lset:
                 continue
             lset.add((Z, ln_))
             if debug:
