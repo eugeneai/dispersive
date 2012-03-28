@@ -194,6 +194,7 @@ class Parameters(object):
             nxw=np.arange(xw[0], xw[-1], 0.25)
             fy=of(Xopt, nxw)
             p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
+            #p.fill_between(nxw,fy,b, color=(0.7,0.3,0), alpha=0.5)
         p.plot(xw,yw)
         print xw,yw
         return Pike._make(Xopt)
