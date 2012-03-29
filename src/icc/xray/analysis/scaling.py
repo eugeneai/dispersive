@@ -49,7 +49,7 @@ class Parameters(object):
         if DEBUG:
             p.plot(x, y)
 
-        Xopt=self.r_line(zero_line, 97, A=None, width=40, plot=True)
+        Xopt=self.r_line(zero_line, 97, A=None, width=40, plot=True, account_bkg=False)
         print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
 
         if DEBUG:
@@ -169,14 +169,20 @@ class Parameters(object):
 
 
 
-    def r_line(self, line, x0, A=None, fwhm=10, xtol=1e-8, width=None, plot=False):
-        def of(X, xw):
-            x0,A, fwhm,b,k =X
-            _=gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
+    def r_line(self, line, x0, A=None, fwhm=10, xtol=1e-8, width=None,
+            plot=False, account_bkg=True):
+
+        def _gauss(x0, A, fwhm, b, k, xw):
+            return gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
+
+        def of(*args):
+            #x0,A, fwhm,b,k =X
+            _= apply(_gauss, args)
             return _
 
         def fopt(X, xw, yw):
-            _=of(X, xw)
+            args=tuple(X)+(xw,)
+            _=apply(of, args)
             return sum((yw-_)**2)
 
         if width == None:
@@ -197,7 +203,7 @@ class Parameters(object):
         if plot:
             x0, A, fwhm, b, k =Xopt
             nxw=np.arange(xw[0], xw[-1], 0.25)
-            fy=of(Xopt, nxw)
+            fy=apply(of, tuple(Xopt)+(nxw,))
             p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
             #p.fill_between(nxw,fy,b, color=(0.7,0.3,0), alpha=0.5)
         p.plot(xw,yw)
