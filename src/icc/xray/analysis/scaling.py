@@ -54,6 +54,29 @@ class Parameters(object):
         #Xopt=self.r_line(zero_line, Xopt.x0, A=Xopt.A, fwhm=Xopt.fwhm, width=40, plot=True, account_bkg=False)
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
 
+        xtmp=Xopt.x0
+        Xl=Xopt
+        mm=3.
+        xstep=mm*Xopt.fwhm
+        my = max(y)
+        while (xtmp<xl-xstep):
+            xtmp+=xstep
+            Xl=self.r_line(zero_line, xtmp, A=None, fwhm=Xl.fwhm, width=40, plot=False, account_bkg=True, iters=2000)
+            if Xl.fwhm > 4.*Xopt.fwhm: continue
+            if Xl.fwhm < Xopt.fwhm: continue
+            if Xl.x0 < 0: continue
+            if Xl.x0 > xl: continue
+            if Xl.A < 0: continue
+            if Xl.A > 1.5*my: continue
+            print Xl.x0, Xl.A, xtmp
+
+            xmin1,xmax1=self.cut(Xl.x0, Xl.fwhm*2., xl)
+            x0, A, fwhm, b, k =list(Xopt)
+            nxw=np.arange(xmin1, xmax1, 0.125)
+            fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)+(nxw-x0)*k+b
+            p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
+            xtmp=Xl.x0
+
         if DEBUG:
             p.show()
 
@@ -183,7 +206,7 @@ class Parameters(object):
 
     def r_line(self, line, x0, A=None, fwhm=10, xtol=1e-8, width=None,
             plot=False, account_bkg=True,
-            mask=[1,1,1,0,0]):
+            mask=[1,1,1,0,0], iters=10000):
 
         def _gauss(x0, A, fwhm, b, k, xw):
             return gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
@@ -217,16 +240,22 @@ class Parameters(object):
         X,F=self.split_args(X0, mask)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
-        Xopt=op.fmin(fopt, X, args=F+[xw,yw], xtol=xtol, maxiter=10000, maxfun=10000)
-        if plot:
-            x0, A, fwhm, b, k =list(Xopt)+F
-            nxw=np.arange(xw[0], xw[-1], 0.25)
-            fy=apply(of, list(Xopt)+F+[nxw])
+        Xopt=op.fmin(fopt, X, args=F+[xw,yw], xtol=xtol, maxiter=iters, maxfun=iters)
+        Xopt=Pike._make(list(Xopt)+F)
+        while plot:
+            if Xopt.x0>A*2 or Xopt.x0<0 or Xopt.fwhm<0 or Xopt.fwhm>xl/20:
+                return Xopt
+            xmin1,xmax1=self.cut(Xopt[0], hw, xl)
+            x0, A, fwhm, b, k =list(Xopt)
+            try:
+                nxw=np.arange(xmin1, xmax1, 0.25)
+            except ValueError:
+                break
+            fy=apply(of, list(Xopt)+[nxw])
             p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
             #p.fill_between(nxw,fy,b, color=(0.7,0.3,0), alpha=0.5)
-        p.plot(xw,yw)
-        print xw,yw
-        return Pike._make(list(Xopt)+F)
+            break
+        return Xopt
 
     def ofp(self, X, xw):
         x0,A, fwhm, a0, a1 =X
