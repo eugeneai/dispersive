@@ -51,6 +51,8 @@ class Parameters(object):
 
         Xopt=self.r_line(zero_line, 97, A=None, width=40, plot=True, account_bkg=False)
         print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
+        #Xopt=self.r_line(zero_line, Xopt.x0, A=Xopt.A, fwhm=Xopt.fwhm, width=40, plot=True, account_bkg=False)
+        #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
 
         if DEBUG:
             p.show()
