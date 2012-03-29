@@ -167,10 +167,21 @@ class Parameters(object):
             xmax=xl-1
         return xmin,xmax
 
-
+    def split_args(self, X, mask):
+        if len(X)!=len(mask):
+            raise ValueError, 'vector X and mask must be of the same length'
+        nx=[]
+        nf=[]
+        for x, m in zip(X, mask):
+            if m:
+                nx.append(x)
+            else:
+                nf.append(x)
+        return nx, nf
 
     def r_line(self, line, x0, A=None, fwhm=10, xtol=1e-8, width=None,
-            plot=False, account_bkg=True):
+            plot=False, account_bkg=True,
+            mask=[1,1,1,0,0]):
 
         def _gauss(x0, A, fwhm, b, k, xw):
             return gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
@@ -180,9 +191,10 @@ class Parameters(object):
             _= apply(_gauss, args)
             return _
 
-        def fopt(X, xw, yw):
-            args=tuple(X)+(xw,)
-            _=apply(of, args)
+        def fopt(X, *args):
+            fargs=list(X)+list(args)[:-1]
+            #print fargs
+            _=apply(of, fargs)
             return sum((yw-_)**2)
 
         if width == None:
@@ -196,19 +208,23 @@ class Parameters(object):
         if A == None:
             A=max(y[xmin:xmax])
             #print A
-        X0=np.array([x0, A, fwhm, 0,0], dtype=float)
+        X0=[x0, A, fwhm, 0,0]
+        m=[]+mask
+        if account_bkg:
+            mask[-1]=mask[-2]=1
+        X,F=self.split_args(X0, mask)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
-        Xopt=op.fmin(fopt, X0, args=(xw,yw), xtol=xtol, maxiter=10000, maxfun=10000)
+        Xopt=op.fmin(fopt, X, args=F+[xw,yw], xtol=xtol, maxiter=10000, maxfun=10000)
         if plot:
-            x0, A, fwhm, b, k =Xopt
+            x0, A, fwhm, b, k =list(Xopt)+F
             nxw=np.arange(xw[0], xw[-1], 0.25)
-            fy=apply(of, tuple(Xopt)+(nxw,))
+            fy=apply(of, list(Xopt)+F+[nxw])
             p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
             #p.fill_between(nxw,fy,b, color=(0.7,0.3,0), alpha=0.5)
         p.plot(xw,yw)
         print xw,yw
-        return Pike._make(Xopt)
+        return Pike._make(list(Xopt)+F)
 
     def ofp(self, X, xw):
         x0,A, fwhm, a0, a1 =X
