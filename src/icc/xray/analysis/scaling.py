@@ -34,6 +34,9 @@ Pike=namedtuple('Line','x0, A, fwhm, bkg, slope')
 zero_pike=Pike._make((0, 1., 1., 0., 0.))
 zero_line=lines.Line._make((0, '', '', 0.0086))
 
+class FittingWarning(ValueError):
+    pass
+
 class Parameters(object):
 
     def __init__(self, channels, k=1., b=0.):
@@ -60,18 +63,48 @@ class Parameters(object):
         print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         sub_line(y, Xopt)
 
-        # Find a maximum in the spectrum, recognize it as line, split it from soectrum, repeat some times to collect lines.
-        while True:
-            my = max(y)
-            Xl=self.r_line(xtmp, A=None, fwhm=Xl.fwhm, width=Xopt.fwhm*c1_fwhm, plot=False, account_bkg=[1,1], iters=2000)
+        #Some recognition parameters.
 
-
-
-        xtmp=Xopt.x0
-        Xl=Xopt
         mm=3.5
         c1_fwhm=2.5
         c2_fwhm=3.5
+
+        # Find a maximum in the spectrum, recognize it as line, split it from soectrum, repeat some times to collect lines.
+        Xl=Xopt
+        max_lines=20
+        f_lines=[]
+        while True:
+            mx = np.argmax(y)
+            try:
+                Xl=self.r_line(mx, A=None, fwhm=Xl.fwhm, width=Xopt.fwhm*c1_fwhm,
+                    plot=False, account_bkg=[1,0], iters=2000, raise_on_warn=True)
+            except FittingWarning, w:
+                if w==1:
+                    break
+
+            if y[int(Xl.x0+0.5)] - Xl.A < -Xl.A/1.5:
+                    break
+            sub_line(y, Xl)
+            x0, A, fwhm, b, k =list(Xl)
+            xmin1,xmax1=self.cut(Xl.x0, Xl.fwhm*2., xl)
+            nxw=np.arange(xmin1, xmax1, 0.125)
+            fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)+(nxw-x0)*k+b
+            p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
+            xtmp=Xl.x0
+            fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)
+            p.plot(nxw,fy, color=(0.7,0.3,1), alpha=0.5)
+            f_lines.append(Xl)
+            max_lines-=1
+            if max_lines==0:
+                break
+
+        print(f_lines)
+        p.plot(x,y)
+        p.show()
+        return
+
+        xtmp=Xopt.x0
+        Xl=Xopt
         xstep=mm*Xopt.fwhm
         my = max(y)
         while (xtmp<xl-xstep):
@@ -225,7 +258,8 @@ class Parameters(object):
 
     def r_line(self, x0, A=None, fwhm=10, xtol=1e-8, width=None,
             plot=False, account_bkg=None,
-            mask=[1,1,1,0,0], iters=10000, channels=None):
+            mask=[1,1,1,0,0], iters=10000, channels=None,
+            raise_on_warn=False):
 
         def _gauss(x0, A, fwhm, b, k, xw):
             return gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
@@ -262,7 +296,12 @@ class Parameters(object):
         X,F=self.split_args(X0, m)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
-        Xopt=op.fmin(fopt, X, args=F+[xw,yw], xtol=xtol, maxiter=iters, maxfun=iters)
+        Xopt, fval, iterations, fcalls, warnflag =op.fmin(fopt, X, args=F+[xw,yw],
+            xtol=xtol, maxiter=iters,
+            maxfun=iters,
+            disp=False, full_output=1)
+        if warnflag and raise_on_warn:
+            raise FittingWarning, warnflag
         Xopt=Pike._make(list(Xopt)+F)
         while plot:
             if Xopt.x0>A*2 or Xopt.x0<0 or Xopt.fwhm<0 or Xopt.fwhm>xl/20:
