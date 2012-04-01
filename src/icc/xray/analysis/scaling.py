@@ -61,7 +61,7 @@ class Parameters(object):
 
 
         Xopt=self.r_line(97, A=None, width=40, plot=True)
-        print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
+        #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         sub_line(y, Xopt)
 
         #Some recognition parameters.
@@ -73,7 +73,7 @@ class Parameters(object):
         # Find a maximum in the spectrum, recognize it as line, split it from soectrum, repeat some times to collect lines.
         Xl=Xopt
         max_lines=20
-        f_lines=[]
+        f_lines=[Xopt]
         while True:
             mx = np.argmax(y)
             try:
@@ -104,8 +104,15 @@ class Parameters(object):
         f_lines.sort(_fwhm_s)
         del f_lines[-2:]
         pprint.pprint(f_lines)
-        p.plot(x,y)
+        y=np.array(self.channels)
+        fy=np.zeros(xl, dtype=float)
+        for l in f_lines:
+            sub_line(y, l)
+            fy=fy+gauss(x, l.x0, l.A, l.fwhm)
+        p.plot(x,y, color=(0,0.6,0.))
+        p.plot(x,fy, color=(0,0.6,0.6))
         p.show()
+        y=np.array(self.channels)
         return
 
         xtmp=Xopt.x0
