@@ -49,10 +49,17 @@ class Parameters(object):
         if DEBUG:
             p.plot(x, y)
 
+        def sub_line(channels, line):
+            w=int(line.fwhm*2.+0.5)
+            xmin, xmax = self.cut(line.x0, w, xl)
+            y=channels
+            y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
+
+
         Xopt=self.r_line(zero_line, 97, A=None, width=40, plot=True)
         print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
-        #Xopt=self.r_line(zero_line, Xopt.x0, A=Xopt.A, fwhm=Xopt.fwhm, width=40, plot=True, account_bkg=False)
-        #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
+        sub_line(y, Xopt)
+
 
         xtmp=Xopt.x0
         Xl=Xopt
