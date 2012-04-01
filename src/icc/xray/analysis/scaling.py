@@ -42,7 +42,7 @@ class Parameters(object):
         self.initial=OrderedDict({'k':k, 'b':b})
 
     def calculate(self):
-        y=self.channels
+        y=np.array(self.channels)
         xl=len(y)
         x=self.x
         fwhm_mult=2.5
@@ -56,19 +56,22 @@ class Parameters(object):
 
         xtmp=Xopt.x0
         Xl=Xopt
-        mm=3.
+        mm=3.5
+        c1_fwhm=2.5
+        c2_fwhm=3.5
         xstep=mm*Xopt.fwhm
         my = max(y)
         while (xtmp<xl-xstep):
             xtmp+=xstep
-            Xl=self.r_line(zero_line, xtmp, A=None, fwhm=Xl.fwhm, width=40, plot=False, account_bkg=[1,1], iters=2000)
-            if Xl.fwhm > 2.*Xopt.fwhm: continue
+            Xl=self.r_line(zero_line, xtmp, A=None, fwhm=Xl.fwhm, width=Xopt.fwhm*c1_fwhm, plot=False, account_bkg=[1,1], iters=2000)
+            if Xl.fwhm > 2.5*Xopt.fwhm: continue
             if Xl.fwhm < Xopt.fwhm: continue
             if Xl.x0 < 0: continue
             if Xl.x0 > xl: continue
             if Xl.A < 0: continue
             if Xl.A > 1.5*my: continue
             if Xl.bkg < 0.: continue
+            Xl=self.r_line(zero_line, Xl.x0, A=Xl.A, fwhm=Xl.fwhm, width=Xopt.fwhm*c2_fwhm, plot=False, account_bkg=[1,1], iters=2000)
             print Xl, xtmp
 
             xmin1,xmax1=self.cut(Xl.x0, Xl.fwhm*2., xl)
