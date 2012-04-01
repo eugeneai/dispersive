@@ -5,6 +5,7 @@ import pylab as p
 import math
 from collections import OrderedDict, namedtuple
 import lines
+import pprint
 
 DEBUG=True
 
@@ -97,8 +98,12 @@ class Parameters(object):
             max_lines-=1
             if max_lines==0:
                 break
+        def _fwhm_s(a,b):
+            return -int(b.fwhm-a.fwhm)
 
-        print(f_lines)
+        f_lines.sort(_fwhm_s)
+        del f_lines[-2:]
+        pprint.pprint(f_lines)
         p.plot(x,y)
         p.show()
         return
