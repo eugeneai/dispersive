@@ -56,9 +56,15 @@ class Parameters(object):
             y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
 
 
-        Xopt=self.r_line(zero_line, 97, A=None, width=40, plot=True)
+        Xopt=self.r_line(97, A=None, width=40, plot=True)
         print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         sub_line(y, Xopt)
+
+        # Find a maximum in the spectrum, recognize it as line, split it from soectrum, repeat some times to collect lines.
+        while True:
+            my = max(y)
+            Xl=self.r_line(xtmp, A=None, fwhm=Xl.fwhm, width=Xopt.fwhm*c1_fwhm, plot=False, account_bkg=[1,1], iters=2000)
+
 
 
         xtmp=Xopt.x0
@@ -70,7 +76,7 @@ class Parameters(object):
         my = max(y)
         while (xtmp<xl-xstep):
             xtmp+=xstep
-            Xl=self.r_line(zero_line, xtmp, A=None, fwhm=Xl.fwhm, width=Xopt.fwhm*c1_fwhm, plot=False, account_bkg=[1,1], iters=2000)
+            Xl=self.r_line(xtmp, A=None, fwhm=Xl.fwhm, width=Xopt.fwhm*c1_fwhm, plot=False, account_bkg=[1,1], iters=2000)
             if Xl.fwhm > 2.5*Xopt.fwhm: continue
             if Xl.fwhm < Xopt.fwhm: continue
             if Xl.x0 < 0: continue
@@ -78,7 +84,7 @@ class Parameters(object):
             if Xl.A < 0: continue
             if Xl.A > 1.5*my: continue
             if Xl.bkg < 0.: continue
-            Xl=self.r_line(zero_line, Xl.x0, A=Xl.A, fwhm=Xl.fwhm, width=Xopt.fwhm*c2_fwhm, plot=False, account_bkg=[1,1], iters=2000)
+            Xl=self.r_line(Xl.x0, A=Xl.A, fwhm=Xl.fwhm, width=Xopt.fwhm*c2_fwhm, plot=False, account_bkg=[1,1], iters=2000)
             print Xl, xtmp
 
             xmin1,xmax1=self.cut(Xl.x0, Xl.fwhm*2., xl)
@@ -217,7 +223,7 @@ class Parameters(object):
                 nf.append(x)
         return nx, nf
 
-    def r_line(self, line, x0, A=None, fwhm=10, xtol=1e-8, width=None,
+    def r_line(self, x0, A=None, fwhm=10, xtol=1e-8, width=None,
             plot=False, account_bkg=None,
             mask=[1,1,1,0,0], iters=10000, channels=None):
 
