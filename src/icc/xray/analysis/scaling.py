@@ -49,7 +49,7 @@ class Parameters(object):
         if DEBUG:
             p.plot(x, y)
 
-        Xopt=self.r_line(zero_line, 97, A=None, width=40, plot=True, account_bkg=False)
+        Xopt=self.r_line(zero_line, 97, A=None, width=40, plot=True)
         print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         #Xopt=self.r_line(zero_line, Xopt.x0, A=Xopt.A, fwhm=Xopt.fwhm, width=40, plot=True, account_bkg=False)
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
@@ -61,21 +61,24 @@ class Parameters(object):
         my = max(y)
         while (xtmp<xl-xstep):
             xtmp+=xstep
-            Xl=self.r_line(zero_line, xtmp, A=None, fwhm=Xl.fwhm, width=40, plot=False, account_bkg=True, iters=2000)
-            if Xl.fwhm > 4.*Xopt.fwhm: continue
+            Xl=self.r_line(zero_line, xtmp, A=None, fwhm=Xl.fwhm, width=40, plot=False, account_bkg=[1,1], iters=2000)
+            if Xl.fwhm > 2.*Xopt.fwhm: continue
             if Xl.fwhm < Xopt.fwhm: continue
             if Xl.x0 < 0: continue
             if Xl.x0 > xl: continue
             if Xl.A < 0: continue
             if Xl.A > 1.5*my: continue
-            print Xl.x0, Xl.A, xtmp
+            if Xl.bkg < 0.: continue
+            print Xl, xtmp
 
             xmin1,xmax1=self.cut(Xl.x0, Xl.fwhm*2., xl)
-            x0, A, fwhm, b, k =list(Xopt)
+            x0, A, fwhm, b, k =list(Xl)
             nxw=np.arange(xmin1, xmax1, 0.125)
             fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)+(nxw-x0)*k+b
             p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
             xtmp=Xl.x0
+            fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)
+            p.plot(nxw,fy, color=(0.7,0.3,1), alpha=0.5)
 
         if DEBUG:
             p.show()
@@ -205,8 +208,8 @@ class Parameters(object):
         return nx, nf
 
     def r_line(self, line, x0, A=None, fwhm=10, xtol=1e-8, width=None,
-            plot=False, account_bkg=True,
-            mask=[1,1,1,0,0], iters=10000):
+            plot=False, account_bkg=None,
+            mask=[1,1,1,0,0], iters=10000, channels=None):
 
         def _gauss(x0, A, fwhm, b, k, xw):
             return gauss(xw, x0, A, fwhm)+b+k*(xw-x0)
@@ -225,7 +228,10 @@ class Parameters(object):
         if width == None:
             width=fwhm
         hw=width/2.
-        y=self.channels
+        if channels != None:
+            y=channels
+        else:
+            y=self.channels
         x=self.x
         xl=len(y)
 
@@ -234,10 +240,10 @@ class Parameters(object):
             A=max(y[xmin:xmax])
             #print A
         X0=[x0, A, fwhm, 0,0]
-        m=[]+mask
-        if account_bkg:
-            mask[-1]=mask[-2]=1
-        X,F=self.split_args(X0, mask)
+        m=list(mask)
+        if account_bkg != None:
+            m[-2:]=account_bkg
+        X,F=self.split_args(X0, m)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
         Xopt=op.fmin(fopt, X, args=F+[xw,yw], xtol=xtol, maxiter=iters, maxfun=iters)
