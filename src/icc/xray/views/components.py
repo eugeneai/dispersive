@@ -26,7 +26,7 @@ import icc.xray.models.interfaces as mdli
 import icc.rake.views.components as rakeviews
 import icc.rake.views.interfaces as rakeints
 from icc.xray.views.interfaces import *
-import os
+import os, os.path
 import subprocess as spp
 
 import matplotlib.widgets as widgets
@@ -894,9 +894,41 @@ class ProjectView(View):
         print "On spectra export", widget, data
 
     def on_spectra_load(self, widget, data=None):
-        file_name = self.get_filename(self.FILE_PATTERNS, open_msg="Load spectra ...", filter_name='Spectra Files')
+        file_name = self.get_filename(self.FILE_PATTERNS,
+            open_msg="Load spectra ...",
+            filter_name='Spectra Files')
         if file_name != None:
             self.load_spectra(file_name)
+
+    def on_convert_to(self, widget, data=None):
+        print "Ok", widget, data
+        if self.active_fpath == None:
+            return
+        rc,path=self.active_fpath
+        print rc
+        # ('spectrum', filename, sp.data[spec_no], (sp, spec_no))
+        if rc[0]=='spectrum':
+            _, filename, sp_data, _ = rc
+            print self.FILE_PATTERNS
+            filename=self.get_filename(self.FILE_PATTERNS,
+                save=True,
+                open_msg="Export to a file...",
+                save_msg="Save file...",
+                filter_name='Spectra Files',
+                filename=filename.replace('.','_')+'-'+sp_data.name+'.spe')
+            if filename:
+                self.convert_to(sp_data, filename)
+
+    def convert_to(self, sp_data, filename):
+        name, ext = os.path.splitext(filename)
+        o=file(filename, "w")
+        if ext=='.spe':
+            print ">>> Exporting", sp_data.name, filename, ext
+            o.write("$MEAS_TIM:\n    972    1000\n$DATE_MEA:\n12-03-2010  16:52:15\n")
+            o.write("$MCA_CAL:\n 3\n 8.785848e-001 3.627669e-002 1.488566e-006\n$DATA:\n")
+            o.write("%9i %9i\n" % (0, len(sp_data.channels)-1))
+            o.write("-----\n")
+        o.close()
 
     def load_spectra(self, file_name):
         self.model.add_spectral_data_source(file_name)
