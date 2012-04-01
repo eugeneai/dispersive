@@ -926,8 +926,12 @@ class ProjectView(View):
             print ">>> Exporting", sp_data.name, filename, ext
             o.write("$MEAS_TIM:\n    972    1000\n$DATE_MEA:\n12-03-2010  16:52:15\n")
             o.write("$MCA_CAL:\n 3\n 8.785848e-001 3.627669e-002 1.488566e-006\n$DATA:\n")
-            o.write("%9i %9i\n" % (0, len(sp_data.channels)-1))
-            o.write("-----\n")
+            o.write("%9i%9i" % (0, len(sp_data.channels)-1))
+            for i, ch in enumerate(sp_data.channels):
+                if i % 10 == 0:
+                    o.write("\n")
+                o.write("%9i" % ch)
+            o.write("\n")
         o.close()
 
     def load_spectra(self, file_name):
