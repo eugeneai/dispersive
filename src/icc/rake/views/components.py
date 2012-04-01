@@ -270,31 +270,46 @@ class View(gtk.Object):
         if mb == None:
             return
 
-        mi = gtk.MenuItem(label=label)
+        menu_name="menu_"+label.lower()
         mi_name=a_group.get_name()+"_menu"
-        mi.set_name(mi_name)
 
-        #Create menu
-        m=gtk.Menu()
-        mi.set_submenu(m)
+        mi = None
+
+        new_menu=True
+        for w in mb:
+            if w.get_name()==menu_name:
+                mi = w
+                new_menu=False
+                m=mi.get_submenu()
+                print "Children:", m
+        if mi == None:
+            mi = gtk.MenuItem(label=label)
+            mi.set_name(menu_name)
+
+            #Create menu
+            m=gtk.Menu()
+            mi.set_submenu(m)
+
         for a in a_group.list_actions():
             m.append(a.create_menu_item())
 
         setattr(self.ui, mi_name, mi)
 
-        children = mb.get_children()
-        l = len(children)
-        if before == None:
-            mb.insert(mi, l-1)
-        else:
-            for ch, num in enumerate(children):
-                if ch == before:
-                    mb.insert(mi, num)
-                    break
+        if new_menu:
+            children = mb.get_children()
+            l = len(children)
+            if before == None:
+                mb.insert(mi, l-1)
             else:
-                mi.destroy()
-                delattr(self.ui, mi_name)
-                return
+                for ch, num in enumerate(children):
+                    if ch == before:
+                        mb.insert(mi, num)
+                        break
+                else:
+                    mi.destroy()
+                    delattr(self.ui, mi_name)
+                    return
+
         mi.show()
         return mi
 

@@ -660,7 +660,8 @@ class ProjectView(View):
     widget_names = ["project_frame",
                     "project_tree_view", "main_vbox", "common_label",
                     "project_list_model", "project_tree_model", "paned_top", "paned_bottom",
-                    "ag_spectra", "ag_process"]
+                    "ag_spectra", "ag_process",
+                    "ag_other", "ac_convert_to"]
     implements(rakeints.IProjectView)
     ZC.adapts(mdli.IProject, rakeints.IView)
     #@+others
@@ -685,6 +686,8 @@ class ProjectView(View):
 
         self.add_actions_to_menu(self.ui.ag_spectra, label='Spectra')
         self.ui.tb_widgets=self.add_actions_to_toolbar(self.ui.ag_spectra)
+
+        self.add_actions_to_menu(self.ui.ag_other, label='Spectra')
 
         parent.connect('project-open', self.on_file_open)
         parent.connect('project-save', self.on_file_save)

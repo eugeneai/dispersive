@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.24"/>
+  <object class="GtkActionGroup" id="ag_other">
+    <child>
+      <object class="GtkAction" id="ac_convert_to">
+        <property name="label" translatable="yes">Export to</property>
+        <property name="short_label" translatable="yes">Export</property>
+        <property name="tooltip" translatable="yes">Export spectral data in another format.</property>
+        <property name="stock_id">gtk-save-as</property>
+        <property name="icon_name">emblem-downloads</property>
+        <signal name="activate" handler="on_convert_to" swapped="no"/>
+      </object>
+    </child>
+  </object>
   <object class="GtkActionGroup" id="ag_process">
     <child>
       <object class="GtkAction" id="ac_scaling">
