@@ -281,7 +281,6 @@ class View(gtk.Object):
                 mi = w
                 new_menu=False
                 m=mi.get_submenu()
-                print "Children:", m
         if mi == None:
             mi = gtk.MenuItem(label=label)
             mi.set_name(menu_name)
@@ -368,7 +367,7 @@ class View(gtk.Object):
         return []
 
     def get_filename(self, patterns, save=False, open_msg="Open file...", save_msg="Save file...",
-            filter_name='Project Files'):
+            filter_name='Project Files', filename=None):
         if save:
             msg = save_msg
             # msg="Save the project..."
@@ -380,7 +379,6 @@ class View(gtk.Object):
             ac = gtk.FILE_CHOOSER_ACTION_OPEN
             icon = gtk.STOCK_OPEN
 
-        filename = None
         chooser = gtk.FileChooserDialog(msg, self.locate_widget('main_window'),
             ac,
             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
@@ -392,17 +390,27 @@ class View(gtk.Object):
 
         ffilter = gtk.FileFilter()
         ffilter.set_name(filter_name)
-        print "Patterns:", patterns
+        #print "Patterns:", patterns
         for pattern, name in patterns:
             p="*"+pattern
             ffilter.add_pattern(p)
         chooser.add_filter(ffilter)
+
+        if len(patterns)>1:
+            for pattern, name in patterns:
+                p="*"+pattern
+                ffilter = gtk.FileFilter()
+                ffilter.add_pattern(p)
+                ffilter.set_name(name+" "+p)
+                chooser.add_filter(ffilter)
 
         ffilter = gtk.FileFilter()
         ffilter.set_name("All Files")
         ffilter.add_pattern("*")
         chooser.add_filter(ffilter)
 
+        if filename:
+            chooser.set_current_name(filename)
         response = chooser.run()
         if response == gtk.RESPONSE_OK:
             filename = chooser.get_filename()
