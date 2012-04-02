@@ -70,7 +70,8 @@ class Parameters(object):
         xp1=x[Xopt.x0*2:]
         xx=np.linspace(0,xl,xl*4)
         spline=ip.splrep(x,y, k=3, s=3e7)
-        ys=ip.splev(xx,spline)
+        ys=ip.splev(xx,spline, der=1)
+        p.plot(x, np.zeros(xl))
         p.plot(xx, ys)
         p.plot(x, self.channels)
 
