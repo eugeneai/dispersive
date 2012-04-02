@@ -497,7 +497,7 @@ class Application(View):
         # check wether data has been saved. YYY
         c=get_global_configuration()
         factory_name=c.add_option('factory_name', default='main_model')
-        self.set_model(ZC.createObject(factory_name.get()))
+        self.set_model(ZC.createObject(factory_name.get().strip()))
         self.insert_project_view(self.ui)
         self.ui.ac_save.set_sensitive(True)
 
