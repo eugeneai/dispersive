@@ -64,10 +64,20 @@ class Parameters(object):
         Xopt=self.r_line(97, A=None, width=40, plot=True)
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         S_fwhm=1.5
-        sub_line(y, Xopt, S_fwhm)
+        #sub_line(y, Xopt, S_fwhm)
+
+        # cut first zero pike and its plato
+        xp1=x[Xopt.x0*2:]
+        xx=np.linspace(0,xl,xl*4)
+        spline=ip.splrep(x,y, k=3, s=3e7)
+        ys=ip.splev(xx,spline)
+        p.plot(xx, ys)
+        p.plot(x, self.channels)
+
+        p.show()
+        return
 
         #Some recognition parameters.
-
         mm=3.5
         c1_fwhm=2.5
         c2_fwhm=3.5
