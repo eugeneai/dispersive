@@ -386,8 +386,6 @@ class View(gtk.Object):
         chooser.set_default_response(gtk.RESPONSE_OK)
         chooser.set_current_folder('.')
 
-
-
         ffilter = gtk.FileFilter()
         ffilter.set_name(filter_name)
         #print "Patterns:", patterns
