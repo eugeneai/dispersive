@@ -6,6 +6,7 @@ import math
 from collections import OrderedDict, namedtuple
 import lines
 import pprint
+import scipy.interpolate as ip
 
 DEBUG=True
 
@@ -53,8 +54,8 @@ class Parameters(object):
         if DEBUG:
             p.plot(x, y)
 
-        def sub_line(channels, line):
-            w=int(line.fwhm*2.+0.5)
+        def sub_line(channels, line, s=2.):
+            w=int(line.fwhm*s+0.5)
             xmin, xmax = self.cut(line.x0, w, xl)
             y=channels
             y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
@@ -62,7 +63,8 @@ class Parameters(object):
 
         Xopt=self.r_line(97, A=None, width=40, plot=True)
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
-        sub_line(y, Xopt)
+        S_fwhm=1.5
+        sub_line(y, Xopt, S_fwhm)
 
         #Some recognition parameters.
 
@@ -72,50 +74,71 @@ class Parameters(object):
 
         # Find a maximum in the spectrum, recognize it as line, split it from soectrum, repeat some times to collect lines.
         Xl=Xopt
-        max_lines=20
-        f_lines=[Xopt]
-        while True:
-            mx = np.argmax(y)
-            try:
-                Xl=self.r_line(mx, A=None, fwhm=Xl.fwhm, width=Xopt.fwhm*c1_fwhm,
-                    plot=False, account_bkg=[1,0], iters=2000, raise_on_warn=True)
-            except FittingWarning, w:
-                if w==1:
+        max_lines=200
+        for __ in range(5):
+            f_lines=[Xopt]
+            while True:
+                mx = np.argmax(y)
+                try:
+                    Xl=self.r_line(mx, A=None, fwhm=Xl.fwhm, width=Xopt.fwhm*c1_fwhm,
+                        plot=False, account_bkg=[0,0], iters=2000, raise_on_warn=True,
+                        channels=y)
+                except FittingWarning, w:
+                    if w==1:
+                        break
+
+                if y[int(Xl.x0+0.5)] - Xl.A < -Xl.A/5.:
+                        break
+                sub_line(y, Xl, s=S_fwhm)
+                #x0, A, fwhm, b, k =list(Xl)
+                #xmin1,xmax1=self.cut(Xl.x0, Xl.fwhm*S_fwhm, xl)
+                #nxw=np.arange(xmin1, xmax1, 0.125)
+                #fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)+(nxw-x0)*k+b
+                #p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.1,0.1,0.9), alpha=0.5)
+                xtmp=Xl.x0
+                #fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)
+                #p.plot(nxw,fy, color=(0.7,0.3,1), alpha=0.5)
+                f_lines.append(Xl)
+                max_lines-=1
+                if max_lines==0:
                     break
+            def _fwhm_s(a,b):
+                return -int(b.fwhm-a.fwhm)
 
-            if y[int(Xl.x0+0.5)] - Xl.A < -Xl.A/5.:
-                    break
-            sub_line(y, Xl)
-            x0, A, fwhm, b, k =list(Xl)
-            xmin1,xmax1=self.cut(Xl.x0, Xl.fwhm*2., xl)
-            nxw=np.arange(xmin1, xmax1, 0.125)
-            fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)+(nxw-x0)*k+b
-            p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.1,0.1,0.9), alpha=0.5)
-            xtmp=Xl.x0
-            fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)
-            p.plot(nxw,fy, color=(0.7,0.3,1), alpha=0.5)
-            f_lines.append(Xl)
-            max_lines-=1
-            if max_lines==0:
-                break
-        def _fwhm_s(a,b):
-            return -int(b.fwhm-a.fwhm)
+            f_lines.sort(_fwhm_s)
+            if f_lines[-1].fwhm>f_lines[0].fwhm*1.8:
+                del f_lines[-1]
 
-        f_lines.sort(_fwhm_s)
-        if f_lines[-1].fwhm>f_lines[0].fwhm*2.:
-            del f_lines[-1]
+            y=np.array(self.channels)
+            fy=np.zeros(xl, dtype=float)
+            w=np.zeros(xl, dtype=float)+1.
+            for l in f_lines:
+                sub_line(y, l, s=S_fwhm)
+                fy=fy+gauss(x, l.x0, l.A, l.fwhm)
+                _w=int(l.fwhm*S_fwhm+0.5)
+                xmin, xmax = self.cut(l.x0, _w, xl)
+                w[xmin:xmax]=0.
+            # cut first zero pike and its plato
+            xp1=x[Xopt.x0*2:]
 
+            p.plot(x,fy, color=(1,0.1,0.1))
+
+            y=np.array(self.channels)
+            spline=ip.splrep(xp1,y[Xopt.x0*2:],w[Xopt.x0*2:], k=3, s=5e8)
+            ys=ip.splev(x,spline)
+            p.plot(x, ys)
+            ym=self.channels-ys
+            for _i, _ in enumerate(ym):
+                if _ <0: ym[_i]=0.
+            p.plot(x, ym, color=(1,0,1), linewidth=__+1)
+            y=ym
+
+        p.plot(x,self.channels, color=(0,0.6,0.), linewidth=3.)
         pprint.pprint(f_lines)
-        y=np.array(self.channels)
-        fy=np.zeros(xl, dtype=float)
-        for l in f_lines:
-            sub_line(y, l)
-            fy=fy+gauss(x, l.x0, l.A, l.fwhm)
-        p.plot(x,y, color=(0,0.6,0.))
-        p.plot(x,fy, color=(1,0.1,0.1))
+        print len(f_lines)
         if DEBUG:
             p.show()
-        y=np.array(self.channels)
+
         return
 
         e_fe= 6.4
