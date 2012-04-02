@@ -113,40 +113,11 @@ class Parameters(object):
             fy=fy+gauss(x, l.x0, l.A, l.fwhm)
         p.plot(x,y, color=(0,0.6,0.))
         p.plot(x,fy, color=(1,0.1,0.1))
-        p.show()
+        if DEBUG:
+            p.show()
         y=np.array(self.channels)
         return
 
-        xtmp=Xopt.x0
-        Xl=Xopt
-        xstep=mm*Xopt.fwhm
-        my = max(y)
-        while (xtmp<xl-xstep):
-            xtmp+=xstep
-            Xl=self.r_line(xtmp, A=None, fwhm=Xl.fwhm, width=Xopt.fwhm*c1_fwhm, plot=False, account_bkg=[1,1], iters=2000)
-            if Xl.fwhm > 2.5*Xopt.fwhm: continue
-            if Xl.fwhm < Xopt.fwhm: continue
-            if Xl.x0 < 0: continue
-            if Xl.x0 > xl: continue
-            if Xl.A < 0: continue
-            if Xl.A > 1.5*my: continue
-            if Xl.bkg < 0.: continue
-            Xl=self.r_line(Xl.x0, A=Xl.A, fwhm=Xl.fwhm, width=Xopt.fwhm*c2_fwhm, plot=False, account_bkg=[1,1], iters=2000)
-            print Xl, xtmp
-
-            xmin1,xmax1=self.cut(Xl.x0, Xl.fwhm*2., xl)
-            x0, A, fwhm, b, k =list(Xl)
-            nxw=np.arange(xmin1, xmax1, 0.125)
-            fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)+(nxw-x0)*k+b
-            p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
-            xtmp=Xl.x0
-            fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)
-            p.plot(nxw,fy, color=(0.7,0.3,1), alpha=0.5)
-
-        if DEBUG:
-            p.show()
-
-        return
         e_fe= 6.4
         e_0 = 0.0086
         e_mo= 17.41
