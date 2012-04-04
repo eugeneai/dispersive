@@ -21,3 +21,4 @@ python/
 SPECPLUS/
 tmp/
 data/all_data/
+src/icc.xray.egg-info/*
