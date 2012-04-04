@@ -31,7 +31,8 @@ import subprocess as spp
 
 import matplotlib.widgets as widgets
 from matplotlib.figure import Figure
-from numpy import arange, sin, pi
+from numpy import arange, sin, pi, array
+import numpy as np
 
 # uncomment to select /GTK/GTKAgg/GTKCairo
 #from matplotlib.backends.backend_gtk import FigureCanvasGTK as FigureCanvas
@@ -926,8 +927,17 @@ class ProjectView(View):
             print ">>> Exporting", sp_data.name, filename, ext
             o.write("$MEAS_TIM:\n    972    1000\n$DATE_MEA:\n12-03-2010  16:52:15\n")
             o.write("$MCA_CAL:\n 3\n 8.785848e-001 3.627669e-002 1.488566e-006\n$DATA:\n")
-            o.write("%9i%9i" % (0, len(sp_data.channels)-1))
+            ll=len(sp_data.channels)
+            c1=np.zeros(ll/2)
+            c2=np.zeros(ll/2)
             for i, ch in enumerate(sp_data.channels):
+                if i % 2 == 0:
+                    c1[i/2]=ch
+                else:
+                    c2[(i-1)/2]=ch
+            c=c1+c2
+            o.write("%9i%9i" % (0, len(c)-1))
+            for i, ch in enumerate(c):
                 if i % 10 == 0:
                     o.write("\n")
                 o.write("%9i" % ch)
