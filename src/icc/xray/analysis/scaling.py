@@ -71,10 +71,22 @@ class Parameters(object):
         xx=np.linspace(0,xl,xl*4)
         spline=ip.splrep(x,y, k=3, s=5e7)
         p.plot(x, np.zeros(xl))
-        ys=ip.splev(xx,spline, der=1)
-        p.plot(xx, ys)
+
         ys=ip.splev(xx,spline)
-        p.plot(xx, ys)
+        dys=ip.splev(xx,spline, der=1)
+        ddys=ip.splev(xx,spline, der=2)
+        pv=None
+        cpoints=[]
+        for i, v in enumerate(dys):
+            if pv==None:
+                pv=v
+                continue
+            if pv>0 and v<=0:
+                cpoints.append((xx[i],ys[i]))
+            pv=v
+        for _x,_y in cpoints:
+            p.axvline(_x, ymax=0.7, color=(0,0,0))
+
         p.plot(x, self.channels)
 
         p.show()
