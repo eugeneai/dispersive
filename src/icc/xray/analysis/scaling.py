@@ -87,6 +87,8 @@ class Parameters(object):
         for _x,_y in cpoints:
             p.axvline(_x, ymax=0.7, color=(0,0,0))
 
+        p.plot(xx,dys)
+        p.plot(xx,ddys)
         p.plot(x, self.channels)
 
         p.show()
