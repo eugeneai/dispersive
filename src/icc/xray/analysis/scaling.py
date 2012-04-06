@@ -86,15 +86,16 @@ class Parameters(object):
             _x=x[i]
             p.axvline(_x, color=(0,0,0))
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
-        S_fwhm=1.5
+        S_fwhm=2.
 
         ws=[]
         for pp in peaks:
             try:
-                Xopt=self.r_line(pp, A=y[pp],
+                Xopt=self.r_line(x[pp], A=y[pp],
                     fwhm=fwhm_guess, width=fwhm_guess*S_fwhm,
                     plot=True, raise_on_warn=True,
-                    account_bkg=[1,1],
+                    mask=[1,1,0,0,0], # FIXME: Join of the variables are badly implemented.
+                    # account_bkg=[0,0],
                     iters=3000)
             except FittingWarning, w:
                 continue
