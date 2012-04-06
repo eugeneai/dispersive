@@ -59,13 +59,13 @@ class Parameters(object):
             y=channels
             y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
 
-        peaks=sig.find_peaks_cwt(y, np.array([xl/40.]))
+        peaks=sig.find_peaks_cwt(y, np.linspace(8,40,10), min_snr=2.)
         heights=[(y[i], i) for i in peaks]
         heights.sort()
         heights.reverse()
 
         ws=[]
-        for h, pp in (heights[0],):
+        for h, pp in (heights[0],heights[-1]):
             try:
                 Xopt=self.r_line(pp, A=h, width=40, plot=False,
                     raise_on_warn=True, iters=1000)
@@ -78,12 +78,13 @@ class Parameters(object):
             p.axvline(_x, color=(1,0,0))
 
         print heights, ws
+
+        fwhm_guess=ws[0]
+        peaks=sig.find_peaks_cwt(y, np.linspace(ws[0]/3.,ws[-1]/1.5,20),
+            min_snr=1.6)
         for i in peaks:
             _x=x[i]
             p.axvline(_x, color=(0,0,0))
-
-        fwhm_guess=ws[0]
-        peaks=sig.find_peaks_cwt(y, np.array([fwhm_guess,]))
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         S_fwhm=1.5
 
@@ -93,7 +94,8 @@ class Parameters(object):
                 Xopt=self.r_line(pp, A=y[pp],
                     fwhm=fwhm_guess, width=fwhm_guess*S_fwhm,
                     plot=True, raise_on_warn=True,
-                    iters=1000)
+                    account_bkg=[1,1],
+                    iters=3000)
             except FittingWarning, w:
                 continue
             ws.append(Xopt)
@@ -101,6 +103,7 @@ class Parameters(object):
         ws.sort(key=lambda x:x.A)
         ws.reverse()
         pprint.pprint(ws)
+        print len(ws)
         for l in ws:
             p.axvline(l.x0, color=(0,1,0))
 
