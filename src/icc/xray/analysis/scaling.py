@@ -7,6 +7,7 @@ from collections import OrderedDict, namedtuple
 import lines
 import pprint
 import scipy.interpolate as ip
+import scipy.signal as sig
 
 DEBUG=True
 
@@ -51,8 +52,6 @@ class Parameters(object):
         xl=len(y)
         x=self.x
         fwhm_mult=2.5
-        if DEBUG:
-            p.plot(x, y)
 
         def sub_line(channels, line, s=2.):
             w=int(line.fwhm*s+0.5)
@@ -60,35 +59,34 @@ class Parameters(object):
             y=channels
             y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
 
+        peaks=sig.find_peaks_cwt(y, np.array([xl/20.]))
 
-        Xopt=self.r_line(97, A=None, width=40, plot=True)
+        ws=[]
+        for pp in (peaks[0],peaks[-1]):
+            try:
+                Xopt=self.r_line(pp, A=None, width=40, plot=True,
+                    raise_on_warn=True)
+            except FittingWarning, w:
+                continue
+            ws.append(int(Xopt.fwhm))
+
+        for i in peaks:
+            _x=x[i]
+            p.axvline(_x, ymax=0.7, color=(1,0,0))
+
+        print peaks, ws
+        peaks=sig.find_peaks_cwt(y, np.array(ws))
+
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         S_fwhm=1.5
         #sub_line(y, Xopt, S_fwhm)
 
-        # cut first zero pike and its plato
-        xp1=x[Xopt.x0*2:]
-        xx=np.linspace(0,xl,xl*4)
-        spline=ip.splrep(x,y, k=3, s=5e7)
         p.plot(x, np.zeros(xl))
 
-        ys=ip.splev(xx,spline)
-        dys=ip.splev(xx,spline, der=1)
-        ddys=ip.splev(xx,spline, der=2)
-        pv=None
-        cpoints=[]
-        for i, v in enumerate(dys):
-            if pv==None:
-                pv=v
-                continue
-            if pv>0 and v<=0:
-                cpoints.append((xx[i],ys[i]))
-            pv=v
-        for _x,_y in cpoints:
+        for i in peaks:
+            _x=x[i]
             p.axvline(_x, ymax=0.7, color=(0,0,0))
 
-        p.plot(xx,dys)
-        p.plot(xx,ddys)
         p.plot(x, self.channels)
 
         p.show()
