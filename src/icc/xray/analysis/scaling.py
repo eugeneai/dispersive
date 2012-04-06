@@ -59,34 +59,55 @@ class Parameters(object):
             y=channels
             y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
 
-        peaks=sig.find_peaks_cwt(y, np.array([xl/20.]))
+        peaks=sig.find_peaks_cwt(y, np.array([xl/40.]))
+        heights=[(y[i], i) for i in peaks]
+        heights.sort()
+        heights.reverse()
 
         ws=[]
-        for pp in (peaks[0],peaks[-1]):
+        for h, pp in (heights[0],):
             try:
-                Xopt=self.r_line(pp, A=None, width=40, plot=True,
-                    raise_on_warn=True)
+                Xopt=self.r_line(pp, A=h, width=40, plot=False,
+                    raise_on_warn=True, iters=1000)
             except FittingWarning, w:
                 continue
             ws.append(int(Xopt.fwhm))
 
         for i in peaks:
             _x=x[i]
-            p.axvline(_x, ymax=0.7, color=(1,0,0))
+            p.axvline(_x, color=(1,0,0))
 
-        print peaks, ws
-        peaks=sig.find_peaks_cwt(y, np.array(ws))
+        print heights, ws
+        for i in peaks:
+            _x=x[i]
+            p.axvline(_x, color=(0,0,0))
 
+        fwhm_guess=ws[0]
+        peaks=sig.find_peaks_cwt(y, np.array([fwhm_guess,]))
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         S_fwhm=1.5
+
+        ws=[]
+        for pp in peaks:
+            try:
+                Xopt=self.r_line(pp, A=y[pp],
+                    fwhm=fwhm_guess, width=fwhm_guess*S_fwhm,
+                    plot=True, raise_on_warn=True,
+                    iters=1000)
+            except FittingWarning, w:
+                continue
+            ws.append(Xopt)
+
+        ws.sort(key=lambda x:x.A)
+        ws.reverse()
+        pprint.pprint(ws)
+        for l in ws:
+            p.axvline(l.x0, color=(0,1,0))
+
+
         #sub_line(y, Xopt, S_fwhm)
 
         p.plot(x, np.zeros(xl))
-
-        for i in peaks:
-            _x=x[i]
-            p.axvline(_x, ymax=0.7, color=(0,0,0))
-
         p.plot(x, self.channels)
 
         p.show()
