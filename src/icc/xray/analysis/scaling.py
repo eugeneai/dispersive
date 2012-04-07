@@ -16,6 +16,8 @@ sqrt_2pi=math.sqrt(2.*math.pi)
 sqrt_2 = math.sqrt(2.)
 pi_d_2 = math.pi/2.
 
+e_0 = 0.0086
+
 def gauss(x, x0, A, fwhm):
     sigma = fwhm/fwhm_coef
     _c=A  #/(sigma*sqrt_2pi)
@@ -81,7 +83,7 @@ class Parameters(object):
 
         fwhm_guess=ws[0]
         peaks=sig.find_peaks_cwt(y, np.linspace(ws[0]/3.,ws[-1]/1.5,20),
-            min_snr=1.6)
+            min_snr=1.8)
         for i in peaks:
             _x=x[i]
             p.axvline(_x, color=(0,0,0))
@@ -94,7 +96,7 @@ class Parameters(object):
                 Xopt=self.r_line(x[pp], A=y[pp],
                     fwhm=fwhm_guess, width=fwhm_guess*S_fwhm,
                     plot=True, raise_on_warn=True,
-                    mask=[1,1,0,0,0], # FIXME: Join of the variables are badly implemented.
+                    mask=[1,1,1,0,0], # FIXME: Join of the variables are badly implemented.
                     # account_bkg=[0,0],
                     iters=3000)
             except FittingWarning, w:
@@ -115,6 +117,9 @@ class Parameters(object):
         p.plot(x, self.channels)
 
         p.show()
+
+
+
         return
 
         #Some recognition parameters.
@@ -192,7 +197,6 @@ class Parameters(object):
         return
 
         e_fe= 6.4
-        e_0 = 0.0086
         e_mo= 17.41
         e_zr= 15.774
         p.plot(x,y)
