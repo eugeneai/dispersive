@@ -182,8 +182,8 @@ class Lines(object):
 
 
 if __name__=='__main__':
-    LY={'K':0.8, "L":0.5, "M":0.3}
-    LC={'K':(0,0,0), "L":(1,0,0), "M":(0,0,1)}
+    L1={'A':0.8, "B":0.8/6.}
+    L2={'K':(0,0,0), "L":(1,0,0)}
 
 
     import pylab as pl
@@ -191,7 +191,7 @@ if __name__=='__main__':
     import numpy as np
     #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
     lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
-    ls=list(lines.select(order_by="keV", where="l.keV<20"))
+    ls=list(lines.select(order_by="keV", where="not l.name like 'M%' and keV<20. and (e.name='Mo' or e.name='W' or e.name='Cl' or e.name='Zr' or e.name='V' or e.name='Si' or e.name='As') "))
     pp.pprint(ls)
     print len(ls)
     x=np.array([0, ls[-1].keV*1.03])
@@ -200,9 +200,12 @@ if __name__=='__main__':
     y=np.array([0, 0.])
     pl.plot(x,y)
 
+    pl.axvline(0.0, color=(0,1,0))
+    pl.axvline(0.0086, color=(0,1,0))
     for l in ls:
         ln=l.name[0]
-        pl.axvline(l.keV, ymax=LY.get(ln, 1.), color=LC.get(ln, (0,1,0)))
+        ln2=l.name[1]
+        pl.axvline(l.keV, color=L2.get(ln, 1.), ymax=L1.get(ln2, (0,1,0)))
 
     pl.show()
 

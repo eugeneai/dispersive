@@ -75,16 +75,16 @@ class Parameters(object):
                 continue
             ws.append(int(Xopt.fwhm))
 
-        for i in peaks:
-            _x=x[i]
-            p.axvline(_x, color=(1,0,0))
+        #for i in peaks:
+        #    _x=x[i]
+        #    p.axvline(_x, color=(1,0,0))
 
 
         peaks=sig.find_peaks_cwt(np.log(y+0.5), np.linspace(ws[0]/3.,ws[-1]/1.5,20),
             min_snr=0.6)
-        for i in peaks:
-            _x=x[i]
-            p.axvline(_x, color=(0,0,0))
+        #for i in peaks:
+        #    _x=x[i]
+        #    p.axvline(_x, color=(0,0,0))
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         S_fwhm=2.
 
