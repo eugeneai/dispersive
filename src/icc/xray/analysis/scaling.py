@@ -380,7 +380,7 @@ class Parameters(object):
             raise FittingWarning, warnflag
         Xopt=Pike._make(list(Xopt)+F+[fval])
         while plot:
-            if Xopt.x0>A*2 or Xopt.x0<0 or Xopt.fwhm<0 or Xopt.fwhm>xl/20:
+            if Xopt.A>A*2 or Xopt.x0<0 or Xopt.fwhm<0 or Xopt.fwhm>xl/20:
                 return Xopt
             xmin1,xmax1=self.cut(Xopt[0], hw, xl)
             x0, A, fwhm, b, k, chisq =list(Xopt)
