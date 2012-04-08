@@ -34,9 +34,9 @@ def gauss_square(A, fwhm):
 def arccot(x):
     return pi_d_2-np.arctan(x)
 
-Pike=namedtuple('Line','x0, A, fwhm, bkg, slope')
+Pike=namedtuple('Line','x0, A, fwhm, bkg, slope, chisq')
 
-zero_pike=Pike._make((0, 1., 1., 0., 0.))
+zero_pike=Pike._make((0, 1., 1., 0., 0., None))
 zero_line=lines.Line._make((0, '', '', 0.0086))
 
 class FittingWarning(ValueError):
@@ -79,8 +79,6 @@ class Parameters(object):
             _x=x[i]
             p.axvline(_x, color=(1,0,0))
 
-        print heights, ws
-
         fwhm_guess=ws[0]
         peaks=sig.find_peaks_cwt(np.log(y+0.5), np.linspace(ws[0]/3.,ws[-1]/1.5,20),
             min_snr=0.6)
@@ -101,6 +99,8 @@ class Parameters(object):
                     iters=3000)
             except FittingWarning, w:
                 continue
+            if Xopt.bkg<-5: # FIXME: WHY it is less than -5???
+                continue
             ws.append(Xopt)
 
         ws.sort(key=lambda x:x.A)
@@ -109,6 +109,10 @@ class Parameters(object):
         print len(ws)
         for l in ws:
             p.axvline(l.x0, color=(0,1,0))
+
+        ws.sort(key=lambda x:x.chisq)
+        ws.reverse()
+        pprint.pprint(ws)
 
 
         #sub_line(y, Xopt, S_fwhm)
@@ -364,17 +368,17 @@ class Parameters(object):
             disp=False, full_output=1)
         if warnflag and raise_on_warn:
             raise FittingWarning, warnflag
-        Xopt=Pike._make(list(Xopt)+F)
+        Xopt=Pike._make(list(Xopt)+F+[fval])
         while plot:
             if Xopt.x0>A*2 or Xopt.x0<0 or Xopt.fwhm<0 or Xopt.fwhm>xl/20:
                 return Xopt
             xmin1,xmax1=self.cut(Xopt[0], hw, xl)
-            x0, A, fwhm, b, k =list(Xopt)
+            x0, A, fwhm, b, k, chisq =list(Xopt)
             try:
                 nxw=np.arange(xmin1, xmax1, 0.25)
             except ValueError:
                 break
-            fy=apply(of, list(Xopt)+[nxw])
+            fy=apply(of, list(Xopt)[:-1]+[nxw])
             p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
             #p.fill_between(nxw,fy,b, color=(0.7,0.3,0), alpha=0.5)
             break
