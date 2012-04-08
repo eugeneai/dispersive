@@ -51,7 +51,6 @@ class Parameters(object):
 
     def calculate(self):
         y=np.array(self.channels)
-        y=np.log(y+0.1)
         xl=len(y)
         x=self.x
         fwhm_mult=2.5
@@ -62,7 +61,7 @@ class Parameters(object):
             y=channels
             y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
 
-        peaks=sig.find_peaks_cwt(y, np.linspace(8,40,10), min_snr=2.)
+        peaks=sig.find_peaks_cwt(np.log(y+0.05), np.linspace(8,40,10), min_snr=2.)
         heights=[(y[i], i) for i in peaks]
         heights.sort()
         heights.reverse()
@@ -83,8 +82,8 @@ class Parameters(object):
         print heights, ws
 
         fwhm_guess=ws[0]
-        peaks=sig.find_peaks_cwt(y, np.linspace(ws[0]/3.,ws[-1]/1.5,20),
-            min_snr=1.8)
+        peaks=sig.find_peaks_cwt(np.log(y+0.5), np.linspace(ws[0]/3.,ws[-1]/1.5,20),
+            min_snr=0.6)
         for i in peaks:
             _x=x[i]
             p.axvline(_x, color=(0,0,0))
@@ -97,7 +96,7 @@ class Parameters(object):
                 Xopt=self.r_line(x[pp], A=y[pp],
                     fwhm=fwhm_guess, width=fwhm_guess*S_fwhm,
                     plot=True, raise_on_warn=True,
-                    mask=[1,1,1,0,0], # FIXME: Join of the variables are badly implemented.
+                    mask=[1,1,1,1,0], # FIXME: Join of the variables are badly implemented.
                     # account_bkg=[0,0],
                     iters=3000)
             except FittingWarning, w:
