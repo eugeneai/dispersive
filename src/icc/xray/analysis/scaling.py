@@ -79,7 +79,7 @@ class Parameters(object):
             _x=x[i]
             p.axvline(_x, color=(1,0,0))
 
-        fwhm_guess=ws[0]
+
         peaks=sig.find_peaks_cwt(np.log(y+0.5), np.linspace(ws[0]/3.,ws[-1]/1.5,20),
             min_snr=0.6)
         for i in peaks:
@@ -88,6 +88,8 @@ class Parameters(object):
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         S_fwhm=2.
 
+
+        fwhm_guess=ws[0]
         ws=[]
         for pp in peaks:
             try:
@@ -103,16 +105,24 @@ class Parameters(object):
                 continue
             ws.append(Xopt)
 
+        ws.sort(key=lambda x:x.fwhm)
+        fwhm_guess_min=ws[0].fwhm
+        fwhm_guess_max=fwhm_guess_min*4.
+        print "LIMITS:", fwhm_guess_min, fwhm_guess_max
+        ws=[l for l in ws if l.fwhm <= fwhm_guess_max]
+
         ws.sort(key=lambda x:x.A)
         ws.reverse()
-        pprint.pprint(ws)
+        # pprint.pprint(ws)
         print len(ws)
         for l in ws:
             p.axvline(l.x0, color=(0,1,0))
 
-        ws.sort(key=lambda x:x.chisq)
+        ws.sort(key=lambda l:l.chisq/l.fwhm)
         ws.reverse()
         pprint.pprint(ws)
+        for l in ws:
+            print l.chisq/l.fwhm, l
 
 
         #sub_line(y, Xopt, S_fwhm)
