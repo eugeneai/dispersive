@@ -149,7 +149,7 @@ class Lines(object):
         for row in map(Line._make, rows):
                 yield row
 
-    def select(self, Z=None, element=None, line=None, kev=None):
+    def select(self, Z=None, element=None, line=None, kev=None, order_by=None):
         if line:
             line=line.upper()
         c=["1"]
@@ -165,8 +165,12 @@ class Lines(object):
         SELECT e.Z, e.Name as element, l.Name as line, l.keV as kev
         FROM elements e INNER JOIN lines l ON e.Z=l.Z
         WHERE
-        %s ;
+        %s
         """ % ' and '.join(c)
+        if order_by:
+            stmt+=" ORDER BY "+order_by
+
+        stmt+=" ;"
         cur = self.db.cursor()
         cur.execute(stmt)
         for row in cur:
@@ -174,7 +178,10 @@ class Lines(object):
 
 
 if __name__=='__main__':
+    import pylab as pl
     #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
     lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
-    for l in lines.select(Z=40):
+    ls=list(lines.select(order_by="keV"))
+    for l in ls:
         print l
+
