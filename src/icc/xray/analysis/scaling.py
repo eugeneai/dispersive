@@ -51,6 +51,7 @@ class Parameters(object):
 
     def calculate(self):
         y=np.array(self.channels)
+        y=np.log(y+0.1)
         xl=len(y)
         x=self.x
         fwhm_mult=2.5
