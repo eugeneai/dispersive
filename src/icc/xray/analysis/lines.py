@@ -3,7 +3,7 @@ from collections import namedtuple
 import os, os.path
 import csv
 
-DEBUG=False
+DEBUG=True
 
 fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_2th, LLD, ULD"
 
@@ -149,7 +149,7 @@ class Lines(object):
         for row in map(Line._make, rows):
                 yield row
 
-    def select(self, Z=None, element=None, line=None, kev=None, order_by=None):
+    def select(self, Z=None, element=None, line=None, kev=None, where=None, order_by=None):
         if line:
             line=line.upper()
         c=["1"]
@@ -167,21 +167,43 @@ class Lines(object):
         WHERE
         %s
         """ % ' and '.join(c)
+        if where:
+            stmt+=" and "+where
         if order_by:
             stmt+=" ORDER BY "+order_by
 
         stmt+=" ;"
         cur = self.db.cursor()
+        if DEBUG:
+            print "STMT:", stmt
         cur.execute(stmt)
         for row in cur:
             yield Line._make(row)
 
 
 if __name__=='__main__':
+    LY={'K':0.8, "L":0.5, "M":0.3}
+    LC={'K':(0,0,0), "L":(1,0,0), "M":(0,0,1)}
+
+
     import pylab as pl
+    import pprint as pp
+    import numpy as np
     #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
     lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
-    ls=list(lines.select(order_by="keV"))
+    ls=list(lines.select(order_by="keV", where="l.keV<20"))
+    pp.pprint(ls)
+    print len(ls)
+    x=np.array([0, ls[-1].keV*1.03])
+    y=np.array([1, 1.])
+    pl.plot(x,y)
+    y=np.array([0, 0.])
+    pl.plot(x,y)
+
     for l in ls:
-        print l
+        ln=l.name[0]
+        pl.axvline(l.keV, ymax=LY.get(ln, 1.), color=LC.get(ln, (0,1,0)))
+
+    pl.show()
+
 
