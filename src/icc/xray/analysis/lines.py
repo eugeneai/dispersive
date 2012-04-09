@@ -3,7 +3,7 @@ from collections import namedtuple
 import os, os.path
 import csv
 
-DEBUG=False
+DEBUG=True
 
 fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_2th, LLD, ULD"
 
@@ -149,7 +149,7 @@ class Lines(object):
         for row in map(Line._make, rows):
                 yield row
 
-    def select(self, Z=None, element=None, line=None, kev=None):
+    def select(self, Z=None, element=None, line=None, kev=None, where=None, order_by=None):
         if line:
             line=line.upper()
         c=["1"]
@@ -165,9 +165,17 @@ class Lines(object):
         SELECT e.Z, e.Name as element, l.Name as line, l.keV as kev
         FROM elements e INNER JOIN lines l ON e.Z=l.Z
         WHERE
-        %s ;
+        %s
         """ % ' and '.join(c)
+        if where:
+            stmt+=" and "+where
+        if order_by:
+            stmt+=" ORDER BY "+order_by
+
+        stmt+=" ;"
         cur = self.db.cursor()
+        if DEBUG:
+            print "STMT:", stmt
         cur.execute(stmt)
         for row in cur:
             yield Line._make(row)
@@ -175,10 +183,33 @@ class Lines(object):
 
 if __name__=='__main__':
     import os
+    import pylab as pl
+    import pprint as pp
+    import numpy as np
+
     #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
     if os.name!="nt":
         lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
     else:
         lines=Lines(dbname='C:\\dispersive\\SPECPLUS\\DATA\\lines.sqlite3')
-    for l in lines.select(Z=40):
-        print l
+        
+    L1={'A':0.8, "B":0.8/6.}
+    L2={'K':(0,0,0), "L":(1,0,0)}
+
+    ls=list(lines.select(order_by="keV", where="not l.name like 'M%' and keV<20. and (e.name='Mo' or e.name='W' or e.name='Cl' or e.name='Zr' or e.name='V' or e.name='Si' or e.name='As') "))
+    pp.pprint(ls)
+    print len(ls)
+    x=np.array([0, ls[-1].keV*1.03])
+    y=np.array([1, 1.])
+    pl.plot(x,y)
+    y=np.array([0, 0.])
+    pl.plot(x,y)
+
+    pl.axvline(0.0, color=(0,1,0))
+    pl.axvline(0.0086, color=(0,1,0))
+    for l in ls:
+        ln=l.name[0]
+        ln2=l.name[1]
+        pl.axvline(l.keV, color=L2.get(ln, 1.), ymax=L1.get(ln2, (0,1,0)))
+
+    pl.show()
