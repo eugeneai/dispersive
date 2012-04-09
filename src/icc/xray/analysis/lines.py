@@ -174,7 +174,11 @@ class Lines(object):
 
 
 if __name__=='__main__':
+    import os
     #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
-    lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
+    if os.name!="nt":
+        lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
+    else:
+        lines=Lines(dbname='C:\\dispersive\\SPECPLUS\\DATA\\lines.sqlite3')
     for l in lines.select(Z=40):
         print l
