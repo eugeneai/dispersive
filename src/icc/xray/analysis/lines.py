@@ -1,6 +1,6 @@
 import sqlite3 as sql
 from collections import namedtuple
-import os, os.path
+import os, os.path, types
 import csv
 
 DEBUG=True
@@ -150,17 +150,22 @@ class Lines(object):
                 yield row
 
     def select(self, Z=None, element=None, line=None, kev=None, where=None, order_by=None):
+        def _expand(x, ex):
+            if x == None:
+                return ' 1 '
+            if type(x) in [types.TupleType, types.ListType, types.GeneratorType]:
+                rc=[ex % _ for _ in x]
+            else:
+                return " ( " + ex % x + " ) "
+            return ' ( '+' or '.join(rc)+' ) '
+
         if line:
             line=line.upper()
         c=["1"]
-        if Z != None:
-            c.append("e.Z=%i" % Z)
-        if element != None:
-            c.append("e.Name='%s'" % element)
-        if line != None:
-            c.append("l.Name='%s'" % line);
-        if kev != None:
-            c.append("l.kev=%f" % kev);
+        c.append(_expand(Z, "e.Z=%i"))
+        c.append(_expand(element, "e.name='%s'"))
+        c.append(_expand(line, "l.name='%s'"))
+        c.append(_expand(kev, "l.kev=%f"))
         stmt="""
         SELECT e.Z, e.Name as element, l.Name as line, l.keV as kev
         FROM elements e INNER JOIN lines l ON e.Z=l.Z
@@ -192,11 +197,12 @@ if __name__=='__main__':
         lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
     else:
         lines=Lines(dbname='C:\\dispersive\\SPECPLUS\\DATA\\lines.sqlite3')
-        
+
     L1={'A':0.8, "B":0.8/6.}
     L2={'K':(0,0,0), "L":(1,0,0)}
 
-    ls=list(lines.select(order_by="keV", where="not l.name like 'M%' and keV<20. and (e.name='Mo' or e.name='W' or e.name='Cl' or e.name='Zr' or e.name='V' or e.name='Si' or e.name='As') "))
+    ls=list(lines.select(order_by="keV", element=["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As"],
+        where="not l.name like 'M%' and keV<20.0"))
     pp.pprint(ls)
     print len(ls)
     x=np.array([0, ls[-1].keV*1.03])
