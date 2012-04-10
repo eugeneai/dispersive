@@ -172,7 +172,7 @@ class Parameters(object):
             y_bkg[:]=_[:]
         p.plot(x, y_bkg, color=(0,0,float(count)/max_count))
         p.plot(x, self.channels-y_bkg, color=(0.5,0.5,0))
-
+        # Repeat the recognition procedure again? or split the Compton pike?
 
 
 
