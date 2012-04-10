@@ -121,17 +121,19 @@ class Parameters(object):
 
         _y=np.array([_.fwhm for _ in ws])
         _x0=np.array([_.x0 for _ in ws])
+        _x0-=_x0[0]
+        _y[0]=0.
         print "X FWHMs:", _x0
         print "Y FWHMs:", _y
-        def ffwhm((k, b, c), x):
-            return _y-((np.sqrt(x+b)*k)+c)
+        def ffwhm(k, x):
+            return _y-((np.sqrt(x)*k))
 
-        k_fwhm, b_fwhm, c_fwhm = op.leastsq(ffwhm, [1.,0.,0.], args=_x0)[0]
+        k_fwhm = op.leastsq(ffwhm, [1.], args=_x0)[0]
 
-        print (k_fwhm, b_fwhm, c_fwhm)
+        print (k_fwhm) # , b_fwhm, c_fwhm)
 
         def x0_to_fwhm(x0):
-            return np.sqrt(x0+b_fwhm)*k_fwhm+c_fwhm
+            return np.sqrt(x0-_x0[0])*k_fwhm
 
         print "F FWHMs:", x0_to_fwhm(_x0)
 
@@ -144,16 +146,17 @@ class Parameters(object):
         _ = np.array(y_bkg)
         print "Bkg processing"
 
-        max_count=20
+        max_count=200
         for count in range(max_count):
+            cmc=(float(max_count-count)/(max_count))
             x_mi=168
-            w=int(0.25+x0_to_fwhm(x_mi))
+            w=int(0.25+x0_to_fwhm(x_mi)*cmc)
             #w=18
             x_ma=x_mi+w*2
             x_c=int((x_mi+x_ma)/2.)
             print "S:",w,
             while 1:
-                w=int(0.25+x0_to_fwhm(x_c))
+                w=int(0.25+x0_to_fwhm(x_c)*cmc)
                 x_mi=x_c-w
                 x_ma=x_c+w
                 if x_ma >= xl:
@@ -168,6 +171,7 @@ class Parameters(object):
                 x_c+=1
             y_bkg[:]=_[:]
         p.plot(x, y_bkg, color=(0,0,float(count)/max_count))
+        p.plot(x, self.channels-y_bkg, color=(0.5,0.5,0))
 
 
 
