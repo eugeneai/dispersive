@@ -112,27 +112,67 @@ class Parameters(object):
         fwhm_guess_min=ws[0].fwhm
         fwhm_guess_max=fwhm_guess_min*4.
         print "LIMITS:", fwhm_guess_min, fwhm_guess_max
-        ws=[l for l in ws if l.fwhm <= fwhm_guess_max]
+        ws=[l for l in ws if l.fwhm <= fwhm_guess_max] # filter out big fitted lines.
 
-        ws.sort(key=lambda x:x.A)
-        ws.reverse()
-        # pprint.pprint(ws)
-        print len(ws)
+        ws.sort(key=lambda x: x.fwhm)
+        fwhm_min=ws[0].fwhm
+        fwhm_max=ws[-1].fwhm
+
+
+        _y=np.array([_.fwhm for _ in ws])
+        _x0=np.array([_.x0 for _ in ws])
+        print "X FWHMs:", _x0
+        print "Y FWHMs:", _y
+        def ffwhm((k, b, c), x):
+            return _y-((np.sqrt(x+b)*k)+c)
+
+        k_fwhm, b_fwhm, c_fwhm = op.leastsq(ffwhm, [1.,0.,0.], args=_x0)[0]
+
+        print (k_fwhm, b_fwhm, c_fwhm)
+
+        def x0_to_fwhm(x0):
+            return np.sqrt(x0+b_fwhm)*k_fwhm+c_fwhm
+
+        print "F FWHMs:", x0_to_fwhm(_x0)
+
         for l in ws:
             p.axvline(l.x0, color=(0,1,0))
 
-        ws.sort(key=lambda l:l.chisq/l.fwhm)
-        ws.reverse()
-        pprint.pprint(ws)
-        for l in ws:
-            print l.chisq/l.fwhm, l
-
-
-        #sub_line(y, Xopt, S_fwhm)
-
         p.plot(x, np.zeros(xl))
-        p.plot(x, self.channels)
 
+        y_bkg=np.array(self.channels)
+        _ = np.array(y_bkg)
+        print "Bkg processing"
+
+        max_count=20
+        for count in range(max_count):
+            x_mi=168
+            w=int(0.25+x0_to_fwhm(x_mi))
+            #w=18
+            x_ma=x_mi+w*2
+            x_c=int((x_mi+x_ma)/2.)
+            print "S:",w,
+            while 1:
+                w=int(0.25+x0_to_fwhm(x_c))
+                x_mi=x_c-w
+                x_ma=x_c+w
+                if x_ma >= xl:
+                    print "E:", w
+                    break
+                y_mi=y_bkg[x_mi]
+                y_ma=y_bkg[x_ma]
+                y_c =y_bkg[x_c]
+                y_a=(y_mi+y_ma)/2
+                if y_c > y_a:
+                    _[x_c]=y_a
+                x_c+=1
+            y_bkg[:]=_[:]
+        p.plot(x, y_bkg, color=(0,0,float(count)/max_count))
+
+
+
+
+        p.plot(x, self.channels, color=(1,0,0))
         p.show()
 
 
@@ -234,7 +274,6 @@ class Parameters(object):
         r_line(1000, fwhm=fwhm_0, width=w, plot=True)
         #recog(3255, fwhm=fwhm_0, width=w/2.)
         #recog(x0_mo, fwhm=fwhm_0, width=w, plot=True)
-        _y=np.array([fwhm_0, fwhm_fe])
 
         def ffwhm(k, x):
             return _y-np.sqrt(x)*k
