@@ -146,21 +146,18 @@ class Parameters(object):
         _ = np.array(y_bkg)
         print "Bkg processing"
 
-        max_count=200
+        max_count=20
         for count in range(max_count):
             cmc=(float(max_count-count)/(max_count))
             x_mi=168
             w=int(0.25+x0_to_fwhm(x_mi)*cmc)
-            #w=18
             x_ma=x_mi+w*2
             x_c=int((x_mi+x_ma)/2.)
-            print "S:",w,
             while 1:
                 w=int(0.25+x0_to_fwhm(x_c)*cmc)
                 x_mi=x_c-w
                 x_ma=x_c+w
                 if x_ma >= xl:
-                    print "E:", w
                     break
                 y_mi=y_bkg[x_mi]
                 y_ma=y_bkg[x_ma]
@@ -173,6 +170,25 @@ class Parameters(object):
         p.plot(x, y_bkg, color=(0,0,float(count)/max_count))
         p.plot(x, self.channels-y_bkg, color=(0.5,0.5,0))
         # Repeat the recognition procedure again? or split the Compton pike?
+
+        peaks=sig.find_peaks_cwt(np.log(self.channels-y_bkg+0.5),
+            np.linspace(fwhm_min, fwhm_max, 20), min_snr=0.6)
+
+        pprint.pprint(peaks)
+        print len(peaks)+1
+
+        for pi in peaks:
+            xp=x[pi]
+            yp=y[pi]
+
+            p.axvline(xp, color=(1, 0, 1))
+
+
+
+
+
+
+
 
 
 
