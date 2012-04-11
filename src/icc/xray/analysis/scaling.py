@@ -54,7 +54,7 @@ class Parameters(object):
         xl=len(y)
         x=self.x
         fwhm_mult=2.5
-
+        """
         def sub_line(channels, line, s=2.):
             w=int(line.fwhm*s+0.5)
             xmin, xmax = self.cut(line.x0, w, xl)
@@ -168,6 +168,31 @@ class Parameters(object):
                 x_c+=1
             y_bkg[:]=_[:]
         p.plot(x, y_bkg, color=(0,0,float(count)/max_count))
+
+        # spline again
+        """
+
+        print "Spline:"
+        y=np.array(self.channels)
+        w=1./(y+1)
+        miter=50
+        for iter in range(miter):
+            print "Iter ", iter
+            spline=ip.splrep(x,y,w, s=1e7)
+            ys=ip.splev(x,spline)
+            #ya=sum(ys*ys*w)
+            dy=1+y-ys
+            le=np.less_equal(dy, 0.)
+            print "g",w[2661], dy[2669]
+            print "b",w[2250], dy[2250]
+            le=1.*(le)
+            uw=(1.-le)*2/(dy)
+            lw=le*w*2
+            w=lw+uw
+            c=float(miter-iter)/miter
+            p.plot(x, ys, color=(c,c,c), linewidth=1)
+
+        """
         p.plot(x, self.channels-y_bkg, color=(0.5,0.5,0))
         # Repeat the recognition procedure again? or split the Compton pike?
 
@@ -182,7 +207,7 @@ class Parameters(object):
             yp=y[pi]
 
             p.axvline(xp, color=(1, 0, 1))
-
+        """
 
 
 
