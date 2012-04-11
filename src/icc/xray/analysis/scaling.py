@@ -171,7 +171,7 @@ class Parameters(object):
         p.plot(x, self.channels-y_bkg, color=(0.5,0.5,0))
         # Repeat the recognition procedure again? or split the Compton pike?
 
-        peaks=sig.find_peaks_cwt(np.log(self.channels-y_bkg+0.5),
+        peaks=sig.find_peaks_cwt(self.channels-y_bkg,
             np.linspace(fwhm_min, fwhm_max, 20), min_snr=0.6)
 
         pprint.pprint(peaks)
