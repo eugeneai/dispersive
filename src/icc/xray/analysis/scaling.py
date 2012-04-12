@@ -54,7 +54,7 @@ class Parameters(object):
         xl=len(y)
         x=self.x
         fwhm_mult=2.5
-        """
+
         def sub_line(channels, line, s=2.):
             w=int(line.fwhm*s+0.5)
             xmin, xmax = self.cut(line.x0, w, xl)
@@ -144,6 +144,7 @@ class Parameters(object):
 
         y_bkg=np.array(self.channels)
         _ = np.array(y_bkg)
+
         print "Bkg processing"
 
         max_count=20
@@ -170,29 +171,36 @@ class Parameters(object):
         p.plot(x, y_bkg, color=(0,0,float(count)/max_count))
 
         # spline again
-        """
 
-        '''
         print "Spline:"
-        y=np.array(self.channels)
-        w=1./(y+1)
+        y=np.array(y_bkg)
+        w=np.zeros(xl)+1.
+        for _i in x:
+            if y[_i]>0:
+                w[_i]=1./y[_i]
+            else:
+                w[_i]=0.
+        xmin=163
+        w[:xmin]=0.
+        w0=np.array(w)
         miter=50
         for iter in range(miter):
-            print "Iter ", iter
-            spline=ip.splrep(x,y,w, s=1e7)
+            spline=ip.splrep(x,y,w)
             ys=ip.splev(x,spline)
             #ya=sum(ys*ys*w)
-            dy=1+y-ys
+            dy=y-ys
             le=np.less_equal(dy, 0.)
-            print "g",w[2661], dy[2669]
-            print "b",w[2250], dy[2250]
-            le=1.*(le)
-            uw=(1.-le)*2/(dy)
-            lw=le*w*2
-            w=lw+uw
+            for _i in x:
+                dy=y[_i]-ys[_i]
+                if dy<0:
+                    w[_i]=1./-dy
+                elif abs(dy)>1000:
+                    w[_i]=0.
+                else:
+                    w[_i]=w0[_i]
             c=float(miter-iter)/miter
             p.plot(x, ys, color=(c,c,c), linewidth=1)
-        '''
+            print "Iter ", iter, c
 
         """
         p.plot(x, self.channels-y_bkg, color=(0.5,0.5,0))
@@ -210,77 +218,6 @@ class Parameters(object):
 
             p.axvline(xp, color=(1, 0, 1))
         """
-        print "Polynome approx"
-        alpha=[]
-        beta=[]
-        al=[]
-        gaml=[]
-        w=np.zeros(xl)+1.
-        for _i in x:
-            if y[_i]>0:
-                w[_i]=1./y[_i]
-            else:
-                w[_i]=0.
-        w0=np.array(w)
-        def poly(x, l):
-            if l==0:
-                return np.zeros(len(x))+1.
-            if l==1:
-                return x-alpha[0]
-            _1=(x-alpha[l-1])*poly(x,l-1)
-            _2=beta[l-1]*poly(x,l-2)
-            return _1-_2
-
-        def op_poly(x, ll):
-            s=np.zeros(len(x))
-            l=0
-            while l<=ll:
-                s+=al[l]*poly(x,l)
-                l+=1
-            return s
-
-        def fit_poly(x, ll):
-            for l in xrange(ll+1):
-                _p=w*poly(x,l)**2
-                _ps=np.sum(_p)
-                gaml[l]=_ps
-                al[l]=np.sum(w*y*poly(x,l))/gaml[l]
-
-        def fit_coef(x, ll):
-            for l in range(ll+1):
-                #print "l:", l, alpha[l-1], gaml[l]
-                if l==0:
-                    alpha[l]=np.sum(w*x)/np.sum(w)
-                    beta[l]=0.
-                else:
-                    alpha[l]=np.sum(w*x*poly(x,l)**2)/gaml[l]
-                    beta[l]=np.sum(w*x*poly(x,l)*poly(x,l-1))/gaml[l-1]
-
-        L=15
-        gaml=np.zeros(L+1)
-        al=np.zeros(L+1)
-        alpha=np.zeros(L+1)
-        beta=np.zeros(L+1)
-        for cnt2 in range(10):
-            for count in range(1):
-                print "Cnt", count
-                fit_poly(x, L)
-                fit_coef(x, L)
-
-            pby= op_poly(x,L)
-            print "OP:",pby
-            p.plot(x,pby, color='black')
-            nw=np.array(w)
-            for _i in x:
-                #if pby[_i]<0:
-                #    continue
-                if y[_i]>pby[_i]:
-                    nw[_i]=w[_i]/2.
-                else:
-                    nw[_i]=w0[_i]
-            w=nw
-
-        pprint.pprint(["y",gaml,"a",al,"alpha",alpha,"beta", beta, "w", w])
 
         p.plot(x, self.channels, color=(1,0,0))
         p.show()
