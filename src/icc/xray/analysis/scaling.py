@@ -172,6 +172,7 @@ class Parameters(object):
         # spline again
         """
 
+        '''
         print "Spline:"
         y=np.array(self.channels)
         w=1./(y+1)
@@ -191,6 +192,7 @@ class Parameters(object):
             w=lw+uw
             c=float(miter-iter)/miter
             p.plot(x, ys, color=(c,c,c), linewidth=1)
+        '''
 
         """
         p.plot(x, self.channels-y_bkg, color=(0.5,0.5,0))
@@ -208,14 +210,77 @@ class Parameters(object):
 
             p.axvline(xp, color=(1, 0, 1))
         """
+        print "Polynome approx"
+        alpha=[]
+        beta=[]
+        al=[]
+        gaml=[]
+        w=np.zeros(xl)+1.
+        for _i in x:
+            if y[_i]>0:
+                w[_i]=1./y[_i]
+            else:
+                w[_i]=0.
+        w0=np.array(w)
+        def poly(x, l):
+            if l==0:
+                return np.zeros(len(x))+1.
+            if l==1:
+                return x-alpha[0]
+            _1=(x-alpha[l-1])*poly(x,l-1)
+            _2=beta[l-1]*poly(x,l-2)
+            return _1-_2
 
+        def op_poly(x, ll):
+            s=np.zeros(len(x))
+            l=0
+            while l<=ll:
+                s+=al[l]*poly(x,l)
+                l+=1
+            return s
 
+        def fit_poly(x, ll):
+            for l in xrange(ll+1):
+                _p=w*poly(x,l)**2
+                _ps=np.sum(_p)
+                gaml[l]=_ps
+                al[l]=np.sum(w*y*poly(x,l))/gaml[l]
 
+        def fit_coef(x, ll):
+            for l in range(ll+1):
+                #print "l:", l, alpha[l-1], gaml[l]
+                if l==0:
+                    alpha[l]=np.sum(w*x)/np.sum(w)
+                    beta[l]=0.
+                else:
+                    alpha[l]=np.sum(w*x*poly(x,l)**2)/gaml[l]
+                    beta[l]=np.sum(w*x*poly(x,l)*poly(x,l-1))/gaml[l-1]
 
+        L=15
+        gaml=np.zeros(L+1)
+        al=np.zeros(L+1)
+        alpha=np.zeros(L+1)
+        beta=np.zeros(L+1)
+        for cnt2 in range(10):
+            for count in range(1):
+                print "Cnt", count
+                fit_poly(x, L)
+                fit_coef(x, L)
 
+            pby= op_poly(x,L)
+            print "OP:",pby
+            p.plot(x,pby, color='black')
+            nw=np.array(w)
+            for _i in x:
+                #if pby[_i]<0:
+                #    continue
+                if y[_i]>pby[_i]:
+                    nw[_i]=w[_i]/2.
+                else:
+                    nw[_i]=w0[_i]
+            w=nw
 
-
-
+        pprint.pprint(["y",gaml,"a",al,"alpha",alpha,"beta", beta, "w", w])
 
         p.plot(x, self.channels, color=(1,0,0))
         p.show()
