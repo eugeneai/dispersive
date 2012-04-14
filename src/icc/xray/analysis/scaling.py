@@ -64,7 +64,7 @@ class Parameters(object):
             y=channels
             y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
 
-        peaks=sig.find_peaks_cwt(np.log(y+0.05), np.linspace(8,40,10), min_snr=1.)
+        peaks=sig.find_peaks_cwt(y, np.linspace(8,40,10), min_snr=1.)
 
         for pike in peaks:
             p.axvline(x[pike], color=(0,1,1), linewidth=3.)
@@ -87,9 +87,10 @@ class Parameters(object):
         #    p.axvline(_x, color=(1,0,0))
 
 
-        _wsmin,_wsmax=int(ws[0]/3.), int(ws[-1]/1.5)+1
+        _wsmin,_wsmax=int(ws[0]/4.), int(ws[-1]/1.5)+1
+        print "WS RANGE", _wsmin, _wsmax
         _div=_wsmax-_wsmin+1
-        peaks, cwt_field=sig.find_peaks_cwt1(np.log(y+0.5), np.linspace(_wsmin,_wsmax,_div),
+        peaks, cwt_field=sig.find_peaks_cwt1(y, np.linspace(_wsmin,_wsmax,_div),
             max_distances=np.linspace(_wsmin,_wsmax,_div),
             min_snr=0.6)
         #for i in peaks:
@@ -106,11 +107,11 @@ class Parameters(object):
                 cwt_b=int(fwhm_guess-_wsmin)
                 cwt_guess=cwt_field[cwt_b][pp]
                 print "Cut: [",pp,']'
-                for _l in cwt_field:
-                    print _l[pp],
+                for _il, _l in enumerate(cwt_field):
+                    print _il+_wsmin,':',_l[pp],
                 print
                 y_guess=y[pp]
-                print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess
+                print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess, "FWHM:", fwhm_guess
                 print "Ratio:", y_guess/(cwt_guess/fwhm_guess)
                 Xopt=self.r_line(x[pp], A=y[pp],
                     fwhm=fwhm_guess, width=fwhm_guess*S_fwhm,
