@@ -55,13 +55,20 @@ class Parameters(object):
         x=self.x
         fwhm_mult=2.5
 
-        def sub_line(channels, line, s=2.):
+        p.figure(1)
+        #p.subplot(211)
+
+        def sub_line(channels, line, s=3.):
             w=int(line.fwhm*s+0.5)
             xmin, xmax = self.cut(line.x0, w, xl)
             y=channels
             y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
 
-        peaks=sig.find_peaks_cwt(np.log(y+0.05), np.linspace(8,40,10), min_snr=2.)
+        peaks=sig.find_peaks_cwt(np.log(y+0.05), np.linspace(8,40,10), min_snr=1.)
+
+        for pike in peaks:
+            p.axvline(x[pike], color=(0,1,1), linewidth=3.)
+
         heights=[(y[i], i) for i in peaks]
         heights.sort()
         heights.reverse()
@@ -80,18 +87,31 @@ class Parameters(object):
         #    p.axvline(_x, color=(1,0,0))
 
 
-        peaks=sig.find_peaks_cwt(np.log(y+0.5), np.linspace(ws[0]/3.,ws[-1]/1.5,20),
+        _wsmin,_wsmax=int(ws[0]/3.), int(ws[-1]/1.5)+1
+        _div=_wsmax-_wsmin+1
+        peaks, cwt_field=sig.find_peaks_cwt1(np.log(y+0.5), np.linspace(_wsmin,_wsmax,_div),
+            max_distances=np.linspace(_wsmin,_wsmax,_div),
             min_snr=0.6)
         #for i in peaks:
         #    _x=x[i]
         #    p.axvline(_x, color=(0,0,0))
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
-        S_fwhm=2.
+        S_fwhm=3.
 
         fwhm_guess=ws[0]
+        peaks.sort(key=lambda peak:y[peak])
         ws=[]
         for pp in peaks:
             try:
+                cwt_b=int(fwhm_guess-_wsmin)
+                cwt_guess=cwt_field[cwt_b][pp]
+                print "Cut: [",pp,']'
+                for _l in cwt_field:
+                    print _l[pp],
+                print
+                y_guess=y[pp]
+                print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess
+                print "Ratio:", y_guess/(cwt_guess/fwhm_guess)
                 Xopt=self.r_line(x[pp], A=y[pp],
                     fwhm=fwhm_guess, width=fwhm_guess*S_fwhm,
                     plot=True, raise_on_warn=True,
@@ -107,6 +127,9 @@ class Parameters(object):
             if Xopt.x0-Xopt.fwhm/2.<=0: # Line is not on the spectrum
                 continue
             ws.append(Xopt)
+            sub_line(y, Xopt)
+
+        p.plot(x,y, color=(0,1,0))
 
         ws.sort(key=lambda x:x.fwhm)
         fwhm_guess_min=ws[0].fwhm
@@ -220,6 +243,10 @@ class Parameters(object):
         """
 
         p.plot(x, self.channels, color=(1,0,0))
+
+        #p.subplot(212)
+        #p.imshow(cwt_field)
+
         p.show()
 
 

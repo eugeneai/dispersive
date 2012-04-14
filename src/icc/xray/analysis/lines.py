@@ -2,6 +2,7 @@ import sqlite3 as sql
 from collections import namedtuple
 import os, os.path, types
 import csv
+import numpy as np
 
 DEBUG=True
 
@@ -185,6 +186,12 @@ class Lines(object):
         for row in cur:
             yield Line._make(row)
 
+    def as_deltafun(self, **kwargs):
+        ls = self.select(**kwargs)
+        print ls
+        return ls
+
+
 
 if __name__=='__main__':
     import os
@@ -201,7 +208,7 @@ if __name__=='__main__':
     L1={'A':0.8, "B":0.8/6.}
     L2={'K':(0,0,0), "L":(1,0,0)}
 
-    ls=list(lines.select(order_by="keV", element=["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As"],
+    ls=list(lines.as_deltafun(order_by="keV", element=["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As"],
         where="not l.name like 'M%' and keV<20.0"))
     pp.pprint(ls)
     print len(ls)
