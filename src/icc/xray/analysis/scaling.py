@@ -64,6 +64,23 @@ class Parameters(object):
             y=channels
             y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
 
+        # first Filter out high frequencies, then filterout very low ones (background).
+        # account Zero pike and Pike of the Tube (if any)
+
+        _y=np.array(y, dtype=np.float)
+
+        #_y=np.atleast_2d(_y, (1,-1))
+        print _y
+        #yfiltered=sig.medfilt2d(_y, kernel_size=np.array([5.,1.], dtype=np.int))
+        yfiltered=sig.bspline(_y, 300)
+        print yfiltered
+
+        p.plot(x,yfiltered, color=(0,1,0), linewidth=3, alpha=0.5)
+        p.plot(x,y, color=(0,0,0), linewidth=1)
+
+        p.show()
+        return
+
         peaks=sig.find_peaks_cwt(y, np.linspace(8,40,10), min_snr=1.)
 
         for pike in peaks:
@@ -108,7 +125,7 @@ class Parameters(object):
                 cwt_guess=cwt_field[cwt_b][pp]
                 print "Cut: [",pp,']'
                 for _il, _l in enumerate(cwt_field):
-                    print _il+_wsmin,':',_l[pp],
+                    print _il+_wsmin,':',_l[pp-2:pp+2],
                 print
                 y_guess=y[pp]
                 print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess, "FWHM:", fwhm_guess
