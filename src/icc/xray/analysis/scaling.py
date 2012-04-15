@@ -71,30 +71,73 @@ class Parameters(object):
 
         _y=np.atleast_2d(_y)
 
-        order=8
+        order=1
         _order=int(order*2)
         b, a = sig.butter(order, 0.1, btype='low')
         #zi = sig.lfilter_zi(b, a)
         #yfiltered, zo = sig.lfilter(b, a, y, zi=zi)
         #zi = sig.lfilter_zi(b, a)
         yfiltered = sig.lfilter(b, a, y)
-        p.plot(x,yfiltered, color=(0,0,1), linewidth=3, alpha=0.5)
+        #p.plot(x,yfiltered, color=(0,0,1), linewidth=3, alpha=0.5)
         y_e=yfiltered[-1]
         yfiltered[:-_order]=yfiltered[_order:]
         yfiltered[-_order:]=np.zeros(_order)+y_e
+        p.plot(x,yfiltered, color=(0,1,0), linewidth=3, alpha=0.5)
+
+        order=5
+        _order=int(order*2)
+        b, a = sig.butter(order, [0.0003, 0.9], btype='bandstop')
+        #zi = sig.lfilter_zi(b, a)
+        #yfiltered, zo = sig.lfilter(b, a, y, zi=zi)
+        #zi = sig.lfilter_zi(b, a)
+        yfilteredlb = sig.lfilter(b, a, y)
+        #p.plot(x,yfiltered, color=(0,0,1), linewidth=3, alpha=0.5)
+        y_e=yfilteredlb[-1]
+        yfilteredlb[:-_order]=yfilteredlb[_order:]
+        yfilteredlb[-_order:]=np.zeros(_order)+y_e
+
+        #Find left Zero pike
+        chst=-1
+        for i, ch in enumerate(yfiltered):
+            if ch<chst:
+                break
+            else:
+                chst=ch
+        zero=i-1
+        chst=-1
+        i=x[-1]
+        while i>=0:
+            _y=yfiltered[i]
+            if yfilteredlb[i]>_y:
+                i-=1
+                continue
+            if _y<chst:
+                break
+            else:
+                chst=_y
+            i-=1
+        tube=i
+        print zero, tube
 
         #yfiltered=sig.medfilt2d(_y, kernel_size=np.array([1.,11.], dtype=np.int))[0]
         #yfiltered=sig.medfilt(_y) # , kernel_size=np.array([5.,1.], dtype=np.int))
         #yfiltered=sig.bspline(_y, 500)
 
-        p.plot(x,yfiltered, color=(0,1,0), linewidth=3, alpha=0.5)
-        p.plot(x,y, color=(0,0,0), linewidth=1)
+        p.plot(x,yfilteredlb, color=(0,1,0), linewidth=3, alpha=0.5)
+        ws=[]
+        points=[zero, tube]
+        for x0 in points:
+            try:
+                Xopt=self.r_line(x0, A=y[x0], width=max(points)*2, plot=False,
+                    raise_on_warn=True, iters=1000)
+            except FittingWarning, w:
+                print x0, "warn", w
+                continue
+            print Xopt
+            ws.append(int(Xopt.fwhm))
 
-
-        p.show()
-        return
-
-        peaks=sig.find_peaks_cwt(y, np.linspace(8,40,10), min_snr=1.)
+        zero_fwhm, tube_fwhm = ws
+        peaks=sig.find_peaks_cwt(y, np.linspace(zero_fwhm, tube_fwhm,10), min_snr=1.)
 
         for pike in peaks:
             p.axvline(x[pike], color=(0,1,1), linewidth=3.)
@@ -103,21 +146,14 @@ class Parameters(object):
         heights.sort()
         heights.reverse()
 
-        ws=[]
-        for h, pp in (heights[0],heights[-1]):
-            try:
-                Xopt=self.r_line(pp, A=h, width=40, plot=False,
-                    raise_on_warn=True, iters=1000)
-            except FittingWarning, w:
-                continue
-            ws.append(int(Xopt.fwhm))
+
 
         #for i in peaks:
         #    _x=x[i]
         #    p.axvline(_x, color=(1,0,0))
 
 
-        _wsmin,_wsmax=int(ws[0]/4.), int(ws[-1]/1.5)+1
+        _wsmin,_wsmax=int(ws[0]/2.), int(ws[-1]/1.5)+1
         print "WS RANGE", _wsmin, _wsmax
         _div=_wsmax-_wsmin+1
         peaks, cwt_field=sig.find_peaks_cwt1(y, np.linspace(_wsmin,_wsmax,_div),
