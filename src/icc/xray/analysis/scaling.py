@@ -67,16 +67,29 @@ class Parameters(object):
         # first Filter out high frequencies, then filterout very low ones (background).
         # account Zero pike and Pike of the Tube (if any)
 
-        _y=np.array(y, dtype=np.float)
+        _y=np.array(y, dtype=np.dtype('f8'))
 
-        #_y=np.atleast_2d(_y, (1,-1))
-        print _y
-        #yfiltered=sig.medfilt2d(_y, kernel_size=np.array([5.,1.], dtype=np.int))
-        yfiltered=sig.bspline(_y, 300)
-        print yfiltered
+        _y=np.atleast_2d(_y)
+
+        order=8
+        _order=int(order*2)
+        b, a = sig.butter(order, 0.1, btype='low')
+        #zi = sig.lfilter_zi(b, a)
+        #yfiltered, zo = sig.lfilter(b, a, y, zi=zi)
+        #zi = sig.lfilter_zi(b, a)
+        yfiltered = sig.lfilter(b, a, y)
+        p.plot(x,yfiltered, color=(0,0,1), linewidth=3, alpha=0.5)
+        y_e=yfiltered[-1]
+        yfiltered[:-_order]=yfiltered[_order:]
+        yfiltered[-_order:]=np.zeros(_order)+y_e
+
+        #yfiltered=sig.medfilt2d(_y, kernel_size=np.array([1.,11.], dtype=np.int))[0]
+        #yfiltered=sig.medfilt(_y) # , kernel_size=np.array([5.,1.], dtype=np.int))
+        #yfiltered=sig.bspline(_y, 500)
 
         p.plot(x,yfiltered, color=(0,1,0), linewidth=3, alpha=0.5)
         p.plot(x,y, color=(0,0,0), linewidth=1)
+
 
         p.show()
         return
