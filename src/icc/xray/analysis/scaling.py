@@ -128,7 +128,7 @@ class Parameters(object):
         points=[zero, tube]
         for x0 in points:
             try:
-                Xopt=self.r_line(x0, A=y[x0], width=max(points)*2, plot=False,
+                Xopt=self.r_line(x0, A=y[x0], width=max(points)*2, plot=True,
                     raise_on_warn=True, iters=1000)
             except FittingWarning, w:
                 print x0, "warn", w
@@ -137,7 +137,7 @@ class Parameters(object):
             ws.append(int(Xopt.fwhm))
 
         zero_fwhm, tube_fwhm = ws
-        peaks=sig.find_peaks_cwt(y, np.linspace(zero_fwhm, tube_fwhm,10), min_snr=1.)
+        peaks=sig.find_peaks_cwt(y, np.linspace(zero_fwhm, tube_fwhm,100), min_snr=1.)
 
         for pike in peaks:
             p.axvline(x[pike], color=(0,1,1), linewidth=3.)
@@ -153,7 +153,7 @@ class Parameters(object):
         #    p.axvline(_x, color=(1,0,0))
 
 
-        _wsmin,_wsmax=int(ws[0]/2.), int(ws[-1]/1.5)+1
+        _wsmin,_wsmax=int(ws[0]/2.), int(ws[-1]/2.)+1
         print "WS RANGE", _wsmin, _wsmax
         _div=_wsmax-_wsmin+1
         peaks, cwt_field=sig.find_peaks_cwt1(y, np.linspace(_wsmin,_wsmax,_div),
@@ -181,7 +181,7 @@ class Parameters(object):
                 print "Ratio:", y_guess/(cwt_guess/fwhm_guess)
                 Xopt=self.r_line(x[pp], A=y[pp],
                     fwhm=fwhm_guess, width=fwhm_guess*S_fwhm,
-                    plot=True, raise_on_warn=True,
+                    plot=False, raise_on_warn=True,
                     mask=[1,1,1,1,0], # FIXME: Join of the variables are badly implemented.
                     # account_bkg=[0,0],
                     iters=3000)
