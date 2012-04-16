@@ -141,37 +141,36 @@ class Parameters(object):
 
         print "FWHM interval:", zero_fwhm, tube_fwhm
         a,b=zero_fwhm/2., tube_fwhm/2.
+        _wsmin=a
+        _wsmax=b
         scan_num=(b-a)*2
         fwhm_widths=np.linspace(a, b,scan_num)
-        peaks=sig.find_peaks_cwt(y, fwhm_widths, min_snr=1.)
+        # print "widths",fwhm_widths
+        peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=1.,
+            max_distances=fwhm_widths)
+
+        # np.savetxt("ctw.txt", cwt_field)
+
+        #We need to interpolate 9 points near found maxima to find the real maxima.
+
+        # bisplrep(x, y, z[, w, xb, xe, yb, ye, kx, ...])	Find a bivariate B-spline representation of a surface.
+        # bisplev(x, y, tck[, dx, dy])	Evaluate a bivariate B-spline and its derivatives.
 
         for pike in peaks:
-            p.axvline(x[pike], color=(0,1,1), linewidth=3.)
+            p.axvline(x[pike], color=(0,1,1), linewidth=1.)
 
-        heights=[(y[i], i) for i in peaks]
-        heights.sort()
-        heights.reverse()
-
-
-
-        #for i in peaks:
-        #    _x=x[i]
-        #    p.axvline(_x, color=(1,0,0))
+        #heights=[(y[i], i) for i in peaks]
+        #heights.sort()
+        #heights.reverse()
 
 
-        _wsmin,_wsmax=int(zero_fwhm/2.), int(tube_fwhm/2.)+1
-        print "WS RANGE", _wsmin, _wsmax
-        _div=_wsmax-_wsmin+1
-        peaks, cwt_field=sig.find_peaks_cwt1(y, np.linspace(_wsmin,_wsmax,_div),
-            max_distances=np.linspace(_wsmin,_wsmax,_div),
-            min_snr=0.6)
-        def nearest_pike(x0, peaks):
+        def nearest_peake(x0, peaks):
             dpeaks=np.abs(peaks-x0)
             i = np.argmin(dpeaks)
             return peaks[i]
 
-        print "NEAREST to Zero is ", nearest_pike(zero_x0,peaks), ' to ', zero_x0
-        print "NEAREST to Tube is ", nearest_pike(tube_x0,peaks), ' to ', tube_x0
+        print "NEAREST to Zero is ", nearest_peake(zero_x0,peaks), ' to ', zero_x0
+        print "NEAREST to Tube is ", nearest_peake(tube_x0,peaks), ' to ', tube_x0
 
 
         #for i in peaks:
