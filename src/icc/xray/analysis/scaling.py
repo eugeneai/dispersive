@@ -116,7 +116,7 @@ class Parameters(object):
             else:
                 chst=_y
             i-=1
-        tube=i
+        tube=i+1
         print zero, tube
 
         #yfiltered=sig.medfilt2d(_y, kernel_size=np.array([1.,11.], dtype=np.int))[0]
@@ -134,10 +134,16 @@ class Parameters(object):
                 print x0, "warn", w
                 continue
             print Xopt
-            ws.append(int(Xopt.fwhm))
+            ws.append(Xopt)
 
-        zero_fwhm, tube_fwhm = ws
-        peaks=sig.find_peaks_cwt(y, np.linspace(zero_fwhm, tube_fwhm,100), min_snr=1.)
+        zero_fwhm, tube_fwhm = [w.fwhm for w in ws]
+        zero_x0, tube_x0 = [w.x0 for w in ws]
+
+        print "FWHM interval:", zero_fwhm, tube_fwhm
+        a,b=zero_fwhm/2., tube_fwhm/2.
+        scan_num=(b-a)*2
+        fwhm_widths=np.linspace(a, b,scan_num)
+        peaks=sig.find_peaks_cwt(y, fwhm_widths, min_snr=1.)
 
         for pike in peaks:
             p.axvline(x[pike], color=(0,1,1), linewidth=3.)
@@ -153,19 +159,28 @@ class Parameters(object):
         #    p.axvline(_x, color=(1,0,0))
 
 
-        _wsmin,_wsmax=int(ws[0]/2.), int(ws[-1]/2.)+1
+        _wsmin,_wsmax=int(zero_fwhm/2.), int(tube_fwhm/2.)+1
         print "WS RANGE", _wsmin, _wsmax
         _div=_wsmax-_wsmin+1
         peaks, cwt_field=sig.find_peaks_cwt1(y, np.linspace(_wsmin,_wsmax,_div),
             max_distances=np.linspace(_wsmin,_wsmax,_div),
             min_snr=0.6)
+        def nearest_pike(x0, peaks):
+            dpeaks=np.abs(peaks-x0)
+            i = np.argmin(dpeaks)
+            return peaks[i]
+
+        print "NEAREST to Zero is ", nearest_pike(zero_x0,peaks), ' to ', zero_x0
+        print "NEAREST to Tube is ", nearest_pike(tube_x0,peaks), ' to ', tube_x0
+
+
         #for i in peaks:
         #    _x=x[i]
         #    p.axvline(_x, color=(0,0,0))
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
         S_fwhm=3.
 
-        fwhm_guess=ws[0]
+        fwhm_guess=zero_fwhm
         peaks.sort(key=lambda peak:y[peak])
         ws=[]
         for pp in peaks:
