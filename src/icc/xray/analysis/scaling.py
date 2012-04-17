@@ -51,16 +51,6 @@ class Parameters(object):
 
     def calculate(self):
 
-        m=[1,0,1,0,1,1,0]
-        X=[1,2,3,4,5,6,7]
-        x,f=self.split_args(X, m)
-        print x, f, m
-        Xp=self.join_args(x, f, m)
-        print Xp
-        assert Xp==X
-        return
-
-
 
         y=np.array(self.channels)
         xl=len(y)
@@ -202,7 +192,7 @@ class Parameters(object):
         #    _x=x[i]
         #    p.axvline(_x, color=(0,0,0))
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
-        S_fwhm=3.
+        S_fwhm=2.5
 
         fwhm_guess=zero_fwhm
         peaks.sort(key=lambda peak:y[peak])
@@ -217,13 +207,24 @@ class Parameters(object):
                 print
                 y_guess=y[pp]
                 print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess, "FWHM:", cwt_fwhms[pp]
-                print "Ratio:", y_guess/(cwt_guess/fwhm_guess)
+                print "Ratio:", y_guess/(cwt_guess/cwt_fwhms[pp])
                 Xopt=self.r_line(x[pp], A=y[pp],
                     fwhm=cwt_fwhms[pp], width=cwt_fwhms[pp]*S_fwhm,
-                    plot=True, raise_on_warn=True,
-                    mask=[0,1,0,1,1], # FIXME: Join of the variables are badly implemented.
+                    plot=False, raise_on_warn=True,
+                    mask=[0,1,0,1,0],
                     # account_bkg=[0,0],
-                    iters=3000)
+                    iters=6000)
+            except FittingWarning, w:
+                print "FITWARN!!!!"
+                continue
+            try:
+                Xopt=self.r_line(Xopt.x0, Xopt.A,
+                    fwhm=Xopt.fwhm, width=Xopt.fwhm*S_fwhm,
+                    bkg=Xopt.bkg,
+                    plot=True, raise_on_warn=True,
+                    mask=[1,1,1,1,1],
+                    # account_bkg=[0,0],
+                    iters=6000)
             except FittingWarning, w:
                 print "FITWARN!!!!"
                 continue
@@ -236,7 +237,7 @@ class Parameters(object):
                 continue
             """
             ws.append(Xopt)
-            sub_line(y, Xopt)
+            #sub_line(y, Xopt)
 
         p.plot(x,y, color=(0,1,0))
 
@@ -335,7 +336,7 @@ class Parameters(object):
                     w[_i]=w0[_i]
             c=float(miter-iter)/miter
             p.plot(x, ys, color=(c,c,c), linewidth=1)
-            print "Iter ", iter, c
+            #print "Iter ", iter, c
 
         """
         p.plot(x, self.channels-y_bkg, color=(0.5,0.5,0))
@@ -575,7 +576,7 @@ class Parameters(object):
         return args
 
 
-    def r_line(self, x0, A=None, fwhm=10, xtol=1e-8, width=None,
+    def r_line(self, x0, A=None, fwhm=10, bkg=0, xtol=1e-8, width=None,
             plot=False, account_bkg=None,
             mask=[1,1,1,0,0], iters=10000, channels=None,
             raise_on_warn=False):
@@ -590,7 +591,8 @@ class Parameters(object):
 
         def fopt(X, *args):
             mask, fix, rest=args
-            fargs=self.join_args(X, fix, mask)+list(rest)[:-1]
+            xw,yw=list(rest)
+            fargs=self.join_args(X, fix, mask)+[xw]
             #print fargs
             _=apply(of, fargs)
             return sum((yw-_)**2)
@@ -609,11 +611,12 @@ class Parameters(object):
         if A == None:
             A=max(y[xmin:xmax])
             #print A
-        X0=[x0, A, fwhm, 0,0]
+        X0=[x0, A, fwhm, bkg,0]
         m=list(mask)
         if account_bkg != None:
             m[-2:]=account_bkg
         X,F=self.split_args(X0, m)
+        #print X,F, mask, X0
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
         Xopt, fval, iterations, fcalls, warnflag =op.fmin(fopt, X, args=(m,F,[xw,yw]),
@@ -622,7 +625,7 @@ class Parameters(object):
             disp=False, full_output=1)
         if warnflag and raise_on_warn:
             raise FittingWarning, warnflag
-        Xopt=Pike._make(list(Xopt)+F+[fval])
+        Xopt=Pike._make(self.join_args(Xopt, F, m)+[fval])
         while plot:
             if Xopt.A>A*2 or Xopt.x0<0 or Xopt.fwhm<0 or Xopt.fwhm>xl/20:
                 return Xopt
