@@ -136,10 +136,10 @@ class Parameters(object):
         zero_x0, tube_x0 = [w.x0 for w in ws]
 
         print "FWHM interval:", zero_fwhm, tube_fwhm
-        a,b=zero_fwhm/2., tube_fwhm/2.
+        a,b=zero_fwhm*0.5, tube_fwhm*1.1
         _wsmin=a
         _wsmax=b
-        scan_num=(b-a)*2
+        scan_num=int((b-a)*2)+1
         fwhm_widths=np.linspace(a, b,scan_num)
         # print "widths",fwhm_widths
         peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=1.,
@@ -148,24 +148,62 @@ class Parameters(object):
         # np.savetxt("ctw.txt", cwt_field)
 
         #We need to interpolate 9 points near found maxima to find the real maxima.
-        def precize_peak(cwt_data, peak):
+        def precize_peak(cwt_data, peak, fwhm):
+            print ">>>", fwhm
             print cwt_data.shape
             wl, xl=cwt_data.shape
             pmin,pmax=self.cut(peak,1, xl)
-            w=np.argmax(cwt_data[:,pmin:pmax], axis=0)[0]
-            print w
-            wmin,wmax=self.cut(w,1, wl)
-            print "Max:", cwt_data[w,peak]
+            wc=np.argmax(cwt_data[:,pmin:pmax], axis=0)[0]
+            print wc
+            wmin,wmax=self.cut(wc,1, wl)
+            print "Max:", cwt_data[wc,peak]
             interp_data=cwt_data[wmin:wmax, pmin:pmax]
             print interp_data
-            return peak
+            w=wmin
+            p=pmin
+            _x=[]
+            _w=[]
+            _m=[]
+            while True:
+                if w>=wmax:
+                    w=wmin
+                    p+=1
+                if p>=pmax:
+                    break
+                _x.append(p)
+                _w.append(fwhm[w])
+                _m.append(cwt_data[w,p])
+                w+=1
+            _x=np.array(_x, dtype=float)
+            _w=np.array(_w, dtype=float)
+            _m=np.array(_m, dtype=float)
+            tck=ip.bisplrep(
+                _x, _w, _m,
+                kx=2, ky=2)
+
+            _x=np.linspace(pmin,pmax-1, (pmax-pmin)*8)
+            _w=np.linspace(fwhm[wmin],fwhm[wmax-1], (wmax-wmin)*8)
+            rc=ip.bisplev(
+                _x,
+                _w,
+                tck,
+                dx=0,
+                dy=0)
+            px=np.argmax(rc, axis=1)
+            pw=np.argmax(rc, axis=0)
+            p=np.argmax(rc)
+            pm=np.max(rc)
+            print px, pw, p, pm
+            print rc
+
+            return peak, _x[px], _w[pw]
 
 
 
-        for peak in peaks[:1]:
-            precize_peak(cwt_field, peak)
+        for peak in [peaks[0]]:
+            print "x0, fwhm=", precize_peak(cwt_field, peak, fwhm_widths)
 
-        return
+        #return
 
         # bisplrep(x, y, z[, w, xb, xe, yb, ye, kx, ...])	Find a bivariate B-spline representation of a surface.
         # bisplev(x, y, tck[, dx, dy])	Evaluate a bivariate B-spline and its derivatives.
@@ -522,7 +560,7 @@ class Parameters(object):
 
     def cut(self, x0,hw, xl):
         ix0=int(math.floor(x0+0.5))
-        ihw=int(math.floor(hw+0.5))
+        ihw=int(math.floor(hw))
         xmin=ix0-ihw
         if xmin<0:
             xmin=0
