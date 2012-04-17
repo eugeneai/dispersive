@@ -148,64 +148,21 @@ class Parameters(object):
         # np.savetxt("ctw.txt", cwt_field)
 
         #We need to interpolate 9 points near found maxima to find the real maxima.
-        def precize_peak(cwt_data, peak, fwhm):
+        def get_fwhm_cwt(cwt_data, peak, fwhm):
             #print ">>>", fwhm
-            print cwt_data.shape
             wl, xl=cwt_data.shape
             pmin,pmax=self.cut(peak,1, xl)
-            wc=np.argmax(cwt_data[:,pmin:pmax], axis=0)[0]
-            print wc, fwhm[wc]
-            wmin,wmax=self.cut(wc,2, wl)
-            print "Max:", cwt_data[wc,peak]
-            interp_data=cwt_data[wmin:wmax, pmin:pmax]
-            print interp_data
-            w=wmin
-            p=pmin
-            _x=[]
-            _w=[]
-            _m=[]
-            while True:
-                if w>=wmax:
-                    w=wmin
-                    p+=1
-                if p>=pmax:
-                    break
-                _x.append(p)
-                _w.append(fwhm[w])
-                _m.append(cwt_data[w,p])
-                w+=1
-            _x=np.array(_x, dtype=float)
-            _w=np.array(_w, dtype=float)
-            _m=np.array(_m, dtype=float)
-            tck=ip.bisplrep(
-                _x, _w, _m,
-                kx=2, ky=2)
-
-            _x=np.linspace(pmin,pmax-1, (pmax-pmin)*8)
-            _w=np.linspace(fwhm[wmin],fwhm[wmax-1], (wmax-wmin)*8)
-            rc=ip.bisplev(
-                _x,
-                _w,
-                tck,
-                dx=0,
-                dy=0)
-            print "RC", rc.shape
-            px=np.argmax(rc, axis=1)
-            pw=np.argmax(rc, axis=0)
-            p=np.argmax(rc)
-            pm=np.max(rc)
-            print px, pw, p, pm
-            ww=rc.shape[1]
-            pw=p / ww
-            px=p % w
-            print px,pw, _x[px], _w[pw]
-
-            return peak, _x[px], _w[pw]
+            #print cwt_data[:,pmin:pmax]
+            wc=np.argmax(cwt_data[:,peak], axis=0)
+            #print wc, fwhm[wc]
+            return peak, fwhm[wc]
 
 
-
-        for peak in [peaks[0]]:
-            print "x0, fwhm=", precize_peak(cwt_field, peak, fwhm_widths)
+        cwt_fwhms={}
+        for peak in peaks:
+            x0, fwhm=get_fwhm_cwt(cwt_field, peak, fwhm_widths)
+            print "x0, fwhm=", x0, fwhm
+            cwt_fwhms[peak]=fwhm
 
         #return
 
