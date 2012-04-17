@@ -124,7 +124,7 @@ class Parameters(object):
         points=[zero, tube]
         for x0 in points:
             try:
-                Xopt=self.r_line(x0, A=y[x0], width=max(points)*2, plot=True,
+                Xopt=self.r_line(x0, A=y[x0], width=max(points)*2, plot=False,
                     raise_on_warn=True, iters=1000)
             except FittingWarning, w:
                 print x0, "warn", w
@@ -142,7 +142,7 @@ class Parameters(object):
         scan_num=int((b-a)*2)+1
         fwhm_widths=np.linspace(a, b,scan_num)
         # print "widths",fwhm_widths
-        peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=1.,
+        peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=1.5,
             max_distances=fwhm_widths)
 
         # np.savetxt("ctw.txt", cwt_field)
@@ -207,9 +207,9 @@ class Parameters(object):
                 print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess, "FWHM:", fwhm_guess
                 print "Ratio:", y_guess/(cwt_guess/fwhm_guess)
                 Xopt=self.r_line(x[pp], A=y[pp],
-                    fwhm=fwhm_guess, width=fwhm_guess*S_fwhm,
-                    plot=False, raise_on_warn=True,
-                    mask=[1,1,1,1,0], # FIXME: Join of the variables are badly implemented.
+                    fwhm=cwt_fwhms[pp], width=cwt_fwhms[pp]*S_fwhm,
+                    plot=True, raise_on_warn=True,
+                    mask=[1,1,1,1,1], # FIXME: Join of the variables are badly implemented.
                     # account_bkg=[0,0],
                     iters=3000)
             except FittingWarning, w:
