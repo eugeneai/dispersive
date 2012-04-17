@@ -119,10 +119,6 @@ class Parameters(object):
         tube=i+1
         print zero, tube
 
-        #yfiltered=sig.medfilt2d(_y, kernel_size=np.array([1.,11.], dtype=np.int))[0]
-        #yfiltered=sig.medfilt(_y) # , kernel_size=np.array([5.,1.], dtype=np.int))
-        #yfiltered=sig.bspline(_y, 500)
-
         p.plot(x,yfilteredlb, color=(0,1,0), linewidth=3, alpha=0.5)
         ws=[]
         points=[zero, tube]
@@ -152,6 +148,24 @@ class Parameters(object):
         # np.savetxt("ctw.txt", cwt_field)
 
         #We need to interpolate 9 points near found maxima to find the real maxima.
+        def precize_peak(cwt_data, peak):
+            print cwt_data.shape
+            wl, xl=cwt_data.shape
+            pmin,pmax=self.cut(peak,1, xl)
+            w=np.argmax(cwt_data[:,pmin:pmax], axis=0)[0]
+            print w
+            wmin,wmax=self.cut(w,1, wl)
+            print "Max:", cwt_data[w,peak]
+            interp_data=cwt_data[wmin:wmax, pmin:pmax]
+            print interp_data
+            return peak
+
+
+
+        for peak in peaks[:1]:
+            precize_peak(cwt_field, peak)
+
+        return
 
         # bisplrep(x, y, z[, w, xb, xe, yb, ye, kx, ...])	Find a bivariate B-spline representation of a surface.
         # bisplev(x, y, tck[, dx, dy])	Evaluate a bivariate B-spline and its derivatives.
@@ -358,7 +372,7 @@ class Parameters(object):
                         break
                 sub_line(y, Xl, s=S_fwhm)
                 #x0, A, fwhm, b, k =list(Xl)
-                #xmin1,xmax1=self.cut(Xl.x0, Xl.fwhm*S_fwhm, xl)
+                #xmin1,xmax1=self.cut(Xl.x0, Xl.fwhm*S_fwhm/2., xl)
                 #nxw=np.arange(xmin1, xmax1, 0.125)
                 #fy=gauss(nxw, Xl.x0, Xl.A, Xl.fwhm)+(nxw-x0)*k+b
                 #p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.1,0.1,0.9), alpha=0.5)
@@ -382,7 +396,7 @@ class Parameters(object):
             for l in f_lines:
                 sub_line(y, l, s=S_fwhm)
                 fy=fy+gauss(x, l.x0, l.A, l.fwhm)
-                _w=int(l.fwhm*S_fwhm+0.5)
+                _w=int(l.fwhm*S_fwhm/2.+0.5)
                 xmin, xmax = self.cut(l.x0, _w, xl)
                 w[xmin:xmax]=0.
             # cut first zero pike and its plato
@@ -507,14 +521,15 @@ class Parameters(object):
 
 
     def cut(self, x0,hw, xl):
-        ix0=math.floor(x0+0.5)
-        ihw=math.floor(hw+0.5)
-        xmin=math.floor(ix0-ihw)
+        ix0=int(math.floor(x0+0.5))
+        ihw=int(math.floor(hw+0.5))
+        xmin=ix0-ihw
         if xmin<0:
             xmin=0
-        xmax=math.floor(ix0+ihw)
+        xmax=ix0+ihw+1 # +1 as it will be used in [...:...] operation.
         if xmax>=xl:
-            xmax=xl-1
+            xmax=xl
+        print xmin,xmax
         return xmin,xmax
 
     def split_args(self, X, mask):
