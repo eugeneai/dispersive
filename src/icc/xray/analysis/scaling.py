@@ -209,7 +209,7 @@ class Parameters(object):
                 Xopt=self.r_line(x[pp], A=y[pp],
                     fwhm=cwt_fwhms[pp], width=cwt_fwhms[pp]*S_fwhm,
                     plot=True, raise_on_warn=True,
-                    mask=[1,1,1,1,1], # FIXME: Join of the variables are badly implemented.
+                    mask=[0,1,0,1,1], # FIXME: Join of the variables are badly implemented.
                     # account_bkg=[0,0],
                     iters=3000)
             except FittingWarning, w:
@@ -543,6 +543,19 @@ class Parameters(object):
                 nf.append(x)
         return nx, nf
 
+    def join_args(self, X, fix, mask):
+        args=[]
+        xi=fi=0
+        for m in mask:
+            if m:
+                args.append(X[xi])
+                xi+=1
+            else:
+                args.append(fix[fi])
+                fi+=1
+        return args
+
+
     def r_line(self, x0, A=None, fwhm=10, xtol=1e-8, width=None,
             plot=False, account_bkg=None,
             mask=[1,1,1,0,0], iters=10000, channels=None,
@@ -557,7 +570,8 @@ class Parameters(object):
             return _
 
         def fopt(X, *args):
-            fargs=list(X)+list(args)[:-1]
+            mask, fix, rest=args
+            fargs=self.join_args(X, fix, mask)+list(rest)[:-1]
             #print fargs
             _=apply(of, fargs)
             return sum((yw-_)**2)
@@ -583,7 +597,7 @@ class Parameters(object):
         X,F=self.split_args(X0, m)
         xw=x[xmin:xmax]
         yw=y[xmin:xmax]
-        Xopt, fval, iterations, fcalls, warnflag =op.fmin(fopt, X, args=F+[xw,yw],
+        Xopt, fval, iterations, fcalls, warnflag =op.fmin(fopt, X, args=(m,F,[xw,yw]),
             xtol=xtol, maxiter=iters,
             maxfun=iters,
             disp=False, full_output=1)
