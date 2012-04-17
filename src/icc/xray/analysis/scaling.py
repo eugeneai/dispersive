@@ -50,6 +50,18 @@ class Parameters(object):
         self.initial=OrderedDict({'k':k, 'b':b})
 
     def calculate(self):
+
+        m=[1,0,1,0,1,1,0]
+        X=[1,2,3,4,5,6,7]
+        x,f=self.split_args(X, m)
+        print x, f, m
+        Xp=self.join_args(x, f, m)
+        print Xp
+        assert Xp==X
+        return
+
+
+
         y=np.array(self.channels)
         xl=len(y)
         x=self.x
@@ -204,7 +216,7 @@ class Parameters(object):
                     print _il+_wsmin,':',_l[pp-2:pp+2],
                 print
                 y_guess=y[pp]
-                print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess, "FWHM:", fwhm_guess
+                print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess, "FWHM:", cwt_fwhms[pp]
                 print "Ratio:", y_guess/(cwt_guess/fwhm_guess)
                 Xopt=self.r_line(x[pp], A=y[pp],
                     fwhm=cwt_fwhms[pp], width=cwt_fwhms[pp]*S_fwhm,
@@ -213,17 +225,23 @@ class Parameters(object):
                     # account_bkg=[0,0],
                     iters=3000)
             except FittingWarning, w:
+                print "FITWARN!!!!"
                 continue
+            """
             if Xopt.bkg<-5: # FIXME: WHY it is less than -5???
                 continue
             if Xopt.x0+Xopt.fwhm/2.>=xl: # Line is not on the spectrum
                 continue
             if Xopt.x0-Xopt.fwhm/2.<=0: # Line is not on the spectrum
                 continue
+            """
             ws.append(Xopt)
             sub_line(y, Xopt)
 
         p.plot(x,y, color=(0,1,0))
+
+        print "WS:"
+        pprint.pprint(ws)
 
         ws.sort(key=lambda x:x.fwhm)
         fwhm_guess_min=ws[0].fwhm
@@ -545,7 +563,8 @@ class Parameters(object):
 
     def join_args(self, X, fix, mask):
         args=[]
-        xi=fi=0
+        xi=0
+        fi=0
         for m in mask:
             if m:
                 args.append(X[xi])
