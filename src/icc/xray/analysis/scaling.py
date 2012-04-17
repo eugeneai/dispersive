@@ -149,13 +149,13 @@ class Parameters(object):
 
         #We need to interpolate 9 points near found maxima to find the real maxima.
         def precize_peak(cwt_data, peak, fwhm):
-            print ">>>", fwhm
+            #print ">>>", fwhm
             print cwt_data.shape
             wl, xl=cwt_data.shape
             pmin,pmax=self.cut(peak,1, xl)
             wc=np.argmax(cwt_data[:,pmin:pmax], axis=0)[0]
-            print wc
-            wmin,wmax=self.cut(wc,1, wl)
+            print wc, fwhm[wc]
+            wmin,wmax=self.cut(wc,2, wl)
             print "Max:", cwt_data[wc,peak]
             interp_data=cwt_data[wmin:wmax, pmin:pmax]
             print interp_data
@@ -189,12 +189,16 @@ class Parameters(object):
                 tck,
                 dx=0,
                 dy=0)
+            print "RC", rc.shape
             px=np.argmax(rc, axis=1)
             pw=np.argmax(rc, axis=0)
             p=np.argmax(rc)
             pm=np.max(rc)
             print px, pw, p, pm
-            print rc
+            ww=rc.shape[1]
+            pw=p / ww
+            px=p % w
+            print px,pw, _x[px], _w[pw]
 
             return peak, _x[px], _w[pw]
 
