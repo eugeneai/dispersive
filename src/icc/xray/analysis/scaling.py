@@ -144,12 +144,10 @@ class Parameters(object):
         scan_num=int((b-a)*2)+1
         fwhm_widths=np.linspace(a, b,scan_num)
         # print "widths",fwhm_widths
-        peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=1.5,
-            max_distances=fwhm_widths)
-
-        # np.savetxt("ctw.txt", cwt_field)
 
         #We need to interpolate 9 points near found maxima to find the real maxima.
+        cwt_fwhms={}
+
         def get_fwhm_cwt(cwt_data, peak, fwhm):
             #print ">>>", fwhm
             wl, xl=cwt_data.shape
@@ -159,51 +157,74 @@ class Parameters(object):
             #print wc, fwhm[wc]
             return peak, fwhm[wc]
 
-
-        cwt_fwhms={}
-        for peak in peaks:
-            x0, fwhm=get_fwhm_cwt(cwt_field, peak, fwhm_widths)
-            print "x0, fwhm=", x0, fwhm
-            cwt_fwhms[peak]=fwhm
-
-        #return
-
-        # bisplrep(x, y, z[, w, xb, xe, yb, ye, kx, ...])	Find a bivariate B-spline representation of a surface.
-        # bisplev(x, y, tck[, dx, dy])	Evaluate a bivariate B-spline and its derivatives.
-
-        for pike in peaks:
-            p.axvline(x[pike], color=(0,1,1), linewidth=1.)
-
-        #heights=[(y[i], i) for i in peaks]
-        #heights.sort()
-        #heights.reverse()
-
-
         def nearest_peake(x0, peaks):
             dpeaks=np.abs(peaks-x0)
             i = np.argmin(dpeaks)
             return peaks[i]
 
-        print "NEAREST to Zero is ", nearest_peake(zero_x0,peaks), ' to ', zero_x0
-        print "NEAREST to Tube is ", nearest_peake(tube_x0,peaks), ' to ', tube_x0
+        for iter_num in range(6):
+            peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=2.,
+                max_distances=fwhm_widths)
 
-        B_fwhm1=2.
-        B_fwhm2=4
-        omega=np.ones(xl)
-        for x0, fwhm in cwt_fwhms.iteritems():
-            xmin,xmax=self.cut(x0, fwhm*B_fwhm1/2., xl)
-            omega[xmin:xmax]=0.5
-        for x0, fwhm in cwt_fwhms.iteritems():
-            xmin,xmax=self.cut(x0, fwhm*B_fwhm2/2., xl)
-            omega[xmin:xmax]=0.0
+            # np.savetxt("ctw.txt", cwt_field)
 
-        spline=ip.splrep(x,y,omega, k=3, s=5e7)
-        ys=ip.splev(x,spline)
+            for peak in peaks:
+                x0, fwhm=get_fwhm_cwt(cwt_field, peak, fwhm_widths)
+                print "x0, fwhm=", x0, fwhm
+                cwt_fwhms[peak]=fwhm
+
+            #return
+
+            # bisplrep(x, y, z[, w, xb, xe, yb, ye, kx, ...])	Find a bivariate B-spline representation of a surface.
+            # bisplev(x, y, tck[, dx, dy])	Evaluate a bivariate B-spline and its derivatives.
+
+            for pike in peaks:
+                p.axvline(x[pike], color=(0,1,1), linewidth=1.)
+
+            #heights=[(y[i], i) for i in peaks]
+            #heights.sort()
+            #heights.reverse()
+
+            #print "NEAREST to Zero is ", nearest_peake(zero_x0,peaks), ' to ', zero_x0
+            #print "NEAREST to Tube is ", nearest_peake(tube_x0,peaks), ' to ', tube_x0
+
+            B_fwhm1=3. # 7.
+            B_fwhm2=3.5
+
+            omega=np.ones(xl)
+
+            for x0, fwhm in cwt_fwhms.iteritems():
+                xmin,xmax=self.cut(x0, fwhm*B_fwhm1/2., xl)
+                omega[xmin:xmax]=0.005
+            for x0, fwhm in cwt_fwhms.iteritems():
+                xmin,xmax=self.cut(x0, fwhm*B_fwhm2/2., xl)
+                omega[xmin:xmax]=0.0
+
+            omega[:233]=1.
+
+            nx=[]
+            ny=[]
+            no=[]
+
+            for _x in x:
+                if omega[_x]:
+                    nx.append(_x)
+                    ny.append(y[_x])
+                    no.append(omega[_x])
+
+
+            spline=ip.splrep(nx,ny,no, k=3, s=1e7)
+            ys=ip.splev(x,spline)
+            for _x in x:
+                if ys[_x]<0:
+                    ys[_x]=0.
+            #p.plot(x, ys, color=(1,0,0))
+            y=ys
+
+
+        p.plot(x, ys, color=(0,.5,.5))
         p.plot(x, omega*100000, color=(1,0,0))
-        p.plot(x, y, color=(0,0,0))
-        p.plot(x, ys, color=(1,0,0))
-
-
+        p.plot(x, self.channels, color=(0,0,0), alpha=0.5)
         p.show()
         return
 
