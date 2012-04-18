@@ -187,12 +187,32 @@ class Parameters(object):
         print "NEAREST to Zero is ", nearest_peake(zero_x0,peaks), ' to ', zero_x0
         print "NEAREST to Tube is ", nearest_peake(tube_x0,peaks), ' to ', tube_x0
 
+        B_fwhm1=2.
+        B_fwhm2=4
+        omega=np.ones(xl)
+        for x0, fwhm in cwt_fwhms.iteritems():
+            xmin,xmax=self.cut(x0, fwhm*B_fwhm1/2., xl)
+            omega[xmin:xmax]=0.5
+        for x0, fwhm in cwt_fwhms.iteritems():
+            xmin,xmax=self.cut(x0, fwhm*B_fwhm2/2., xl)
+            omega[xmin:xmax]=0.0
+
+        spline=ip.splrep(x,y,omega, k=3, s=5e7)
+        ys=ip.splev(x,spline)
+        p.plot(x, omega*100000, color=(1,0,0))
+        p.plot(x, y, color=(0,0,0))
+        p.plot(x, ys, color=(1,0,0))
+
+
+        p.show()
+        return
+
+
 
         #for i in peaks:
         #    _x=x[i]
         #    p.axvline(_x, color=(0,0,0))
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
-        S_fwhm=2.5
 
         fwhm_guess=zero_fwhm
         peaks.sort(key=lambda peak:y[peak])
