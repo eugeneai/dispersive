@@ -123,6 +123,7 @@ class Parameters(object):
 
         p.plot(x,yfilteredlb, color=(0,1,0), linewidth=3, alpha=0.5)
         ws=[]
+        bad_ws=[]
         points=[zero, tube]
         for x0 in points:
             try:
@@ -146,7 +147,6 @@ class Parameters(object):
         # print "widths",fwhm_widths
 
         #We need to interpolate 9 points near found maxima to find the real maxima.
-        cwt_fwhms={}
 
         def get_fwhm_cwt(cwt_data, peak, fwhm):
             #print ">>>", fwhm
@@ -162,8 +162,11 @@ class Parameters(object):
             i = np.argmin(dpeaks)
             return peaks[i]
 
+        cwt_fwhms={}
+        ws=[]
         for iter_num in range(6):
-            peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=2.,
+            print "Start ITERATION:", iternum
+            peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=0.5,
                 max_distances=fwhm_widths)
 
             # np.savetxt("ctw.txt", cwt_field)
@@ -188,102 +191,120 @@ class Parameters(object):
             #print "NEAREST to Zero is ", nearest_peake(zero_x0,peaks), ' to ', zero_x0
             #print "NEAREST to Tube is ", nearest_peake(tube_x0,peaks), ' to ', tube_x0
 
-            B_fwhm1=3. # 7.
-            B_fwhm2=3.5
-
-            omega=np.ones(xl)
-
-            for x0, fwhm in cwt_fwhms.iteritems():
-                xmin,xmax=self.cut(x0, fwhm*B_fwhm1/2., xl)
-                omega[xmin:xmax]=0.005
-            for x0, fwhm in cwt_fwhms.iteritems():
-                xmin,xmax=self.cut(x0, fwhm*B_fwhm2/2., xl)
-                omega[xmin:xmax]=0.0
-
-            omega[:233]=1.
-
-            nx=[]
-            ny=[]
-            no=[]
-
-            for _x in x:
-                if omega[_x]:
-                    nx.append(_x)
-                    ny.append(y[_x])
-                    no.append(omega[_x])
-
-
-            spline=ip.splrep(nx,ny,no, k=3, s=1e7)
-            ys=ip.splev(x,spline)
-            for _x in x:
-                if ys[_x]<0:
-                    ys[_x]=0.
-            #p.plot(x, ys, color=(1,0,0))
-            y=ys
-
-
-        p.plot(x, ys, color=(0,.5,.5))
-        p.plot(x, omega*100000, color=(1,0,0))
-        p.plot(x, self.channels, color=(0,0,0), alpha=0.5)
-        p.show()
-        return
-
-
 
         #for i in peaks:
         #    _x=x[i]
         #    p.axvline(_x, color=(0,0,0))
         #print Xopt, "square:", gauss_square(Xopt.A, Xopt.fwhm)
 
-        fwhm_guess=zero_fwhm
-        peaks.sort(key=lambda peak:y[peak])
-        ws=[]
-        for pp in peaks:
-            try:
-                cwt_b=int(fwhm_guess-_wsmin)
-                cwt_guess=cwt_field[cwt_b][pp]
-                print "Cut: [",pp,']'
-                for _il, _l in enumerate(cwt_field):
-                    print _il+_wsmin,':',_l[pp-2:pp+2],
-                print
-                y_guess=y[pp]
-                print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess, "FWHM:", cwt_fwhms[pp]
-                print "Ratio:", y_guess/(cwt_guess/cwt_fwhms[pp])
-                Xopt=self.r_line(x[pp], A=y[pp],
-                    fwhm=cwt_fwhms[pp], width=cwt_fwhms[pp]*S_fwhm,
-                    plot=False, raise_on_warn=True,
-                    mask=[0,1,0,1,0],
-                    # account_bkg=[0,0],
-                    iters=6000)
-            except FittingWarning, w:
-                print "FITWARN!!!!"
-                continue
-            try:
-                Xopt=self.r_line(Xopt.x0, Xopt.A,
-                    fwhm=Xopt.fwhm, width=Xopt.fwhm*S_fwhm,
-                    bkg=Xopt.bkg,
-                    plot=True, raise_on_warn=True,
-                    mask=[1,1,1,1,1],
-                    # account_bkg=[0,0],
-                    iters=6000)
-            except FittingWarning, w:
-                print "FITWARN!!!!"
-                continue
-            """
-            if Xopt.bkg<-5: # FIXME: WHY it is less than -5???
-                continue
-            if Xopt.x0+Xopt.fwhm/2.>=xl: # Line is not on the spectrum
-                continue
-            if Xopt.x0-Xopt.fwhm/2.<=0: # Line is not on the spectrum
-                continue
-            """
-            ws.append(Xopt)
-            #sub_line(y, Xopt)
+            fwhm_guess=zero_fwhm
+            peaks.sort(key=lambda peak:y[peak])
+            S_fwhm=2.5
+            peak_rec=False
+            for pp in peaks:
+                if pp in bad_ws:
+                    continue
+                try:
+                    cwt_b=int(fwhm_guess-_wsmin)
+                    cwt_guess=cwt_field[cwt_b][pp]
+                    print "Cut: [",pp,']'
+                    for _il, _l in enumerate(cwt_field):
+                        print _il+_wsmin,':',_l[pp-2:pp+2],
+                    print
+                    y_guess=y[pp]
+                    print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess, "FWHM:", cwt_fwhms[pp]
+                    print "Ratio:", y_guess/(cwt_guess/cwt_fwhms[pp])
+                    Xopt=self.r_line(x[pp], A=y[pp],
+                        fwhm=cwt_fwhms[pp], width=cwt_fwhms[pp]*S_fwhm,
+                        plot=False, raise_on_warn=True,
+                        mask=[0,1,0,1,0],
+                        # account_bkg=[0,0],
+                        iters=6000)
+                except FittingWarning, w:
+                    print "FITWARN!!!!"
+                    bad_ws.append(pp)
+                    continue
+                try:
+                    Xopt=self.r_line(Xopt.x0, Xopt.A,
+                        fwhm=Xopt.fwhm, width=Xopt.fwhm*S_fwhm,
+                        bkg=Xopt.bkg,
+                        plot=True, raise_on_warn=True,
+                        mask=[1,1,1,1,1],
+                        # account_bkg=[0,0],
+                        iters=6000)
+                except FittingWarning, w:
+                    print "FITWARN!!!!"
+                    bad_ws.append(pp)
+                    continue
+                if Xopt.bkg<-5: # FIXME: WHY it is less than -5???
+                    bad_ws.append(pp)
+                    continue
+                if Xopt.x0+Xopt.fwhm/2.>=xl: # Line is not on the spectrum
+                    bad_ws.append(pp)
+                    continue
+                if Xopt.x0-Xopt.fwhm/2.<=0: # Line is not on the spectrum
+                    bad_ws.append(pp)
+                    continue
+                if Xopt.A<0:
+                    bad_ws.append(pp)
+                    continue
+                ws.append(Xopt)
+                peak_rec=True
+                sub_line(y, Xopt)
+            if not peak_rec:
+                break
 
-        p.plot(x,y, color=(0,1,0))
+            p.plot(x,y, color=(0,0,0))
+
+        print "Stop ITERATIONs at:", iternum
+        B_fwhm1=3. # 7.
+        B_fwhm2=3.
+
+        omega=np.ones(xl)
+
+        cwt_fwhms[1895]=20.
+        cwt_fwhms[1994]=20.
+        cwt_fwhms[1932]=20.
+        cwt_fwhms[2245]=20.
+
+        for x0, fwhm in cwt_fwhms.iteritems():
+            xmin,xmax=self.cut(x0, fwhm*B_fwhm1/2., xl)
+            omega[xmin:xmax]=0.005
+        for x0, fwhm in cwt_fwhms.iteritems():
+            xmin,xmax=self.cut(x0, fwhm*B_fwhm2/2., xl)
+            omega[xmin:xmax]=0.0
+
+        omega[:233]=1.
+
+        nx=[]
+        ny=[]
+        no=[]
+
+        for _x in x:
+            if omega[_x]:
+                nx.append(_x)
+                ny.append(self.channels[_x])
+                no.append(omega[_x])
+
+
+        spline=ip.splrep(nx,ny,no, k=3, s=1e7)
+        ys=ip.splev(x,spline)
+        for _x in x:
+            if ys[_x]<0:
+                ys[_x]=0.
+
+        p.plot(x, ys, color=(1,0,1), linewidth=3., alpha=0.3)
+        p.plot(x, omega*100000, color=(1,0,0))
+
+        #p.plot(x,y, color=(0,1,0))
+        p.plot(x,self.channels, color=(1,0,0))
+
 
         print "WS:"
         pprint.pprint(ws)
+
+        p.show()
+        return
 
         ws.sort(key=lambda x:x.fwhm)
         fwhm_guess_min=ws[0].fwhm
@@ -617,7 +638,7 @@ class Parameters(object):
         return args
 
 
-    def r_line(self, x0, A=None, fwhm=10, bkg=0, xtol=1e-8, width=None,
+    def r_line(self, x0, A=None, fwhm=10, bkg=0, xtol=1e-2, width=None,
             plot=False, account_bkg=None,
             mask=[1,1,1,0,0], iters=10000, channels=None,
             raise_on_warn=False):
