@@ -17,6 +17,7 @@ sqrt_2 = math.sqrt(2.)
 pi_d_2 = math.pi/2.
 
 e_0 = 0.0086
+e_mo= 17.41
 
 def gauss(x, x0, A, fwhm):
     sigma = fwhm/fwhm_coef
@@ -122,13 +123,26 @@ class Parameters(object):
         print zero, tube
 
         p.plot(x,yfilteredlb, color=(0,1,0), linewidth=3, alpha=0.5)
-        ws=[]
-        bad_ws=[]
         points=[zero, tube]
+        ws=[]
+        S_fwhm=2.5
         for x0 in points:
             try:
                 Xopt=self.r_line(x0, A=y[x0], width=max(points)*2, plot=False,
-                    raise_on_warn=True, iters=1000)
+                    raise_on_warn=True, iters=1000,
+                    mask=[0,1,0,1,1],
+                    )
+            except FittingWarning, w:
+                print x0, "warn", w
+                continue
+            try:
+                Xopt=self.r_line(Xopt.x0, Xopt.A,
+                    fwhm=Xopt.fwhm, width=Xopt.fwhm*S_fwhm,
+                    bkg=Xopt.bkg,
+                    plot=True, raise_on_warn=True,
+                    mask=[1,1,1,1,1],
+                    # account_bkg=[0,0],
+                    iters=6000)
             except FittingWarning, w:
                 print x0, "warn", w
                 continue
@@ -137,6 +151,17 @@ class Parameters(object):
 
         zero_fwhm, tube_fwhm = [w.fwhm for w in ws]
         zero_x0, tube_x0 = [w.x0 for w in ws]
+
+        _y=np.array([e_0, e_mo])
+        _x0=np.array([_.x0 for _ in ws])
+        def scale((k,b), x, y):
+            return y-(x*k)+b
+        k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y))[0]
+
+        print "Scaling:", k_scale, b_scale
+
+        return
+
 
         print "FWHM interval:", zero_fwhm, tube_fwhm
         a,b=zero_fwhm*0.5, tube_fwhm*1.1
@@ -164,8 +189,9 @@ class Parameters(object):
 
         cwt_fwhms={}
         ws=[]
+        bad_ws=[]
         for iter_num in range(6):
-            print "Start ITERATION:", iternum
+            print "Start ITERATION:", iter_num
             peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=0.5,
                 max_distances=fwhm_widths)
 
@@ -199,7 +225,6 @@ class Parameters(object):
 
             fwhm_guess=zero_fwhm
             peaks.sort(key=lambda peak:y[peak])
-            S_fwhm=2.5
             peak_rec=False
             for pp in peaks:
                 if pp in bad_ws:
@@ -249,6 +274,7 @@ class Parameters(object):
                     bad_ws.append(pp)
                     continue
                 ws.append(Xopt)
+                cwt_fwhms[pp]=Xopt.fwhm
                 peak_rec=True
                 sub_line(y, Xopt)
             if not peak_rec:
@@ -256,9 +282,9 @@ class Parameters(object):
 
             p.plot(x,y, color=(0,0,0))
 
-        print "Stop ITERATIONs at:", iternum
-        B_fwhm1=3. # 7.
-        B_fwhm2=3.
+        print "Stop ITERATIONs at:", iter_num
+        B_fwhm1=4. # 7.
+        B_fwhm2=4.
 
         omega=np.ones(xl)
 
@@ -268,9 +294,13 @@ class Parameters(object):
         cwt_fwhms[2245]=20.
 
         for x0, fwhm in cwt_fwhms.iteritems():
+            if x0 in bad_ws:
+                continue
             xmin,xmax=self.cut(x0, fwhm*B_fwhm1/2., xl)
             omega[xmin:xmax]=0.005
         for x0, fwhm in cwt_fwhms.iteritems():
+            if x0 in bad_ws:
+                continue
             xmin,xmax=self.cut(x0, fwhm*B_fwhm2/2., xl)
             omega[xmin:xmax]=0.0
 
@@ -503,7 +533,6 @@ class Parameters(object):
         return
 
         e_fe= 6.4
-        e_mo= 17.41
         e_zr= 15.774
         p.plot(x,y)
         p.plot(x,x*0.)
