@@ -40,61 +40,55 @@ Pike=namedtuple('Line','x0, A, fwhm, bkg, slope, chisq')
 zero_pike=Pike._make((0, 1., 1., 0., 0., None))
 zero_line=lines.Line._make((0, '', '', 0.0086))
 
+class Object():
+    pass
+
 class FittingWarning(ValueError):
     pass
 
 class Parameters(object):
 
-    def __init__(self, channels, k=1., b=0.):
+    def __init__(self, channels):
         self.channels=np.array(channels)
         self.x=np.arange(len(self.channels))
-        self.initial=OrderedDict({'k':k, 'b':b})
+        self.peakes=[] # List of the recognized lines
+        self.rough_peakes=[] # Map peake x (integer) to its fwhm and amplitude
+        self.peake_cache={}  # Map initial x0 to its fitted line
+        self.scale=Object()
+        self.scale.done=False
+        self.scale.peakes=[]
 
-    def calculate(self):
+    def sub_line(self, channels, line, s=3.):
+        w=int(line.fwhm*s+0.5)
+        xmin, xmax = self.cut(line.x0, w, xl)
+        y=channels
+        y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm)
 
-
+    def calc_scaling(self, plot=False, force=False):
+        if self.scale.done and not force:
+            return self.scale
         y=np.array(self.channels)
         xl=len(y)
         x=self.x
-        fwhm_mult=2.5
+        y=np.array(y, dtype=np.dtype('f8'))
 
-        p.figure(1)
-        #p.subplot(211)
+        _y=np.atleast_2d(y)
 
-        def sub_line(channels, line, s=3.):
-            w=int(line.fwhm*s+0.5)
-            xmin, xmax = self.cut(line.x0, w, xl)
-            y=channels
-            y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm) # +(nxw-x0)*k+b
-
-        # first Filter out high frequencies, then filterout very low ones (background).
-        # account Zero pike and Pike of the Tube (if any)
-
-        _y=np.array(y, dtype=np.dtype('f8'))
-
-        _y=np.atleast_2d(_y)
-
+        #Filter out high frequences, i.e., filter out the noice.
         order=1
         _order=int(order*2)
         b, a = sig.butter(order, 0.1, btype='low')
-        #zi = sig.lfilter_zi(b, a)
-        #yfiltered, zo = sig.lfilter(b, a, y, zi=zi)
-        #zi = sig.lfilter_zi(b, a)
         yfiltered = sig.lfilter(b, a, y)
-        #p.plot(x,yfiltered, color=(0,0,1), linewidth=3, alpha=0.5)
         y_e=yfiltered[-1]
-        yfiltered[:-_order]=yfiltered[_order:]
+        yfiltered[:-_order]=yfiltered[_order:]  # Shift the result (works not fine).
         yfiltered[-_order:]=np.zeros(_order)+y_e
         p.plot(x,yfiltered, color=(0,1,0), linewidth=3, alpha=0.5)
 
+        #Calc the trend of the background.
         order=5
         _order=int(order*2)
         b, a = sig.butter(order, [0.0003, 0.9], btype='bandstop')
-        #zi = sig.lfilter_zi(b, a)
-        #yfiltered, zo = sig.lfilter(b, a, y, zi=zi)
-        #zi = sig.lfilter_zi(b, a)
         yfilteredlb = sig.lfilter(b, a, y)
-        #p.plot(x,yfiltered, color=(0,0,1), linewidth=3, alpha=0.5)
         y_e=yfilteredlb[-1]
         yfilteredlb[:-_order]=yfilteredlb[_order:]
         yfilteredlb[-_order:]=np.zeros(_order)+y_e
@@ -120,35 +114,39 @@ class Parameters(object):
                 chst=_y
             i-=1
         tube=i+1
-        print zero, tube
 
-        p.plot(x,yfilteredlb, color=(0,1,0), linewidth=3, alpha=0.5)
+        if plot:
+            p.plot(x,yfiltered, color=(0,1,0), linewidth=3, alpha=0.5)
+            p.plot(x,yfilteredlb, color=(0,1,0), linewidth=3, alpha=0.5)
+
         points=[zero, tube]
         ws=[]
         S_fwhm=2.5
         for x0 in points:
+            Xopt=self.peake_cache.get(x0, None)
+            if Xopt != None:
+                ws.append(Xopt)
+                continue
             try:
                 Xopt=self.r_line(x0, A=y[x0], width=max(points)*2, plot=False,
                     raise_on_warn=True, iters=1000,
                     mask=[0,1,0,1,1],
                     )
             except FittingWarning, w:
-                print x0, "warn", w
                 continue
             try:
                 Xopt=self.r_line(Xopt.x0, Xopt.A,
                     fwhm=Xopt.fwhm, width=Xopt.fwhm*S_fwhm,
                     bkg=Xopt.bkg,
-                    plot=True, raise_on_warn=True,
+                    plot=plot, raise_on_warn=True,
                     mask=[1,1,1,1,1],
-                    # account_bkg=[0,0],
                     iters=6000)
             except FittingWarning, w:
-                print x0, "warn", w
                 continue
-            print Xopt
+            self.line_cache[x0]=Xopt
             ws.append(Xopt)
 
+        self.scale.peakes=ws
         zero_fwhm, tube_fwhm = [w.fwhm for w in ws]
         zero_x0, tube_x0 = [w.x0 for w in ws]
 
@@ -157,8 +155,27 @@ class Parameters(object):
         def scale((k,b), x, y):
             return y-(x*k)+b
         k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y))[0]
+        self.scale.k=k_scale
+        self.scale.b=b_scale
+        self.scale.done=True
+        return self.scale
 
-        print "Scaling:", k_scale, b_scale
+    def calc_fwhm_scale(self, plot=false):
+        scale=self.calc_scale
+
+    def calculate(self):
+        y=np.array(self.channels)
+        xl=len(y)
+        x=self.x
+        fwhm_mult=2.5
+
+        p.figure(1)
+        #p.subplot(211)
+
+
+        # first Filter out high frequencies, then filterout very low ones (background).
+        # account Zero pike and Pike of the Tube (if any)
+
 
         return
 
