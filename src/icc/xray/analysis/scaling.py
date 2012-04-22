@@ -52,11 +52,15 @@ class Parameters(object):
         self.channels=np.array(channels)
         self.x=np.arange(len(self.channels))
         self.peakes=[] # List of the recognized lines
-        self.rough_peakes=[] # Map peake x (integer) to its fwhm and amplitude
         self.peake_cache={}  # Map initial x0 to its fitted line
         self.scale=Object()
         self.scale.done=False
         self.scale.peakes=[]
+
+        self.cwt=Object()
+        self.cwt.peakes=OrderedDict() # Map peake x (integer) to its fwhm calculated from CWT
+        self.cwt.done=False
+
 
     def sub_line(self, channels, line, s=3.):
         w=int(line.fwhm*s+0.5)
@@ -64,7 +68,7 @@ class Parameters(object):
         y=channels
         y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm)
 
-    def calc_scaling(self, plot=False, force=False):
+    def calc_scale(self, plot=False, force=False):
         if self.scale.done and not force:
             return self.scale
         y=np.array(self.channels)
@@ -143,7 +147,7 @@ class Parameters(object):
                     iters=6000)
             except FittingWarning, w:
                 continue
-            self.line_cache[x0]=Xopt
+            self.peake_cache[x0]=Xopt
             ws.append(Xopt)
 
         self.scale.peakes=ws
@@ -160,25 +164,61 @@ class Parameters(object):
         self.scale.done=True
         return self.scale
 
-    def calc_fwhm_scale(self, plot=false):
+    def calc_fwhm_scale(self, plot=False):
         scale=self.calc_scale
 
-    def calculate(self):
-        y=np.array(self.channels)
-        xl=len(y)
-        x=self.x
-        fwhm_mult=2.5
+    def scan_peakes_cwt(self, plot=False, force=False):
 
-        p.figure(1)
-        #p.subplot(211)
+        if self.cwt.done and not force:
+            return self.cwt
 
+        scale=self.calc_scale(self, plot=plot)
+        ws=scale.peakes
+        zero_fwhm, tube_fwhm = [w.fwhm for w in ws]
+        zero_x0, tube_x0 = [w.x0 for w in ws]
 
-        # first Filter out high frequencies, then filterout very low ones (background).
-        # account Zero pike and Pike of the Tube (if any)
+        a,b=zero_fwhm*0.5, tube_fwhm*1.1
+        _wsmin=a
+        _wsmax=b
+        scan_num=int((b-a)*2)+1
+        fwhm_widths=np.linspace(a, b,scan_num)
+        # print "widths",fwhm_widths
 
+        #We need to interpolate 9 points near found maxima to find the real maxima.
 
+        def get_fwhm_cwt(cwt_data, peak, fwhm):
+            #print ">>>", fwhm
+            wl, xl=cwt_data.shape
+            pmin,pmax=self.cut(peak,1, xl)
+            #print cwt_data[:,pmin:pmax]
+            wc=np.argmax(cwt_data[:,peak], axis=0)
+            #print wc, fwhm[wc]
+            return peak, fwhm[wc]
+
+        def nearest_peake(x0, peaks):
+            dpeaks=np.abs(peaks-x0)
+            i = np.argmin(dpeaks)
+            return peaks[i]
+
+        cwt_fwhms=OrderedDict()
+        peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=0.5,
+            max_distances=fwhm_widths)
+
+        for peak in peaks:
+            x0, fwhm=get_fwhm_cwt(cwt_field, peak, fwhm_widths)
+            cwt_fwhms[peak]=fwhm
+
+        self.cwt.field=cwt_field
+        self.cwt.peakes=cwt_fwhms
+        self.cwt.done=True
+        return self.cwt
+
+    def calculate(self, plot=False):
+        self.calc_scale(plot=plot)
+        self.calc_fwhm_scale(plot=plot)
         return
 
+    def trash(self):
 
         print "FWHM interval:", zero_fwhm, tube_fwhm
         a,b=zero_fwhm*0.5, tube_fwhm*1.1
