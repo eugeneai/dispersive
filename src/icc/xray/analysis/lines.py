@@ -208,7 +208,10 @@ if __name__=='__main__':
     L1={'A':0.8, "B":0.8/6.}
     L2={'K':(0,0,0), "L":(1,0,0)}
 
-    ls=list(lines.as_deltafun(order_by="keV", element=["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As"],
+    elements=["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As"]
+    elements=['Mo']
+
+    ls=list(lines.as_deltafun(order_by="keV", element=elements,
         where="not l.name like 'M%' and keV<20.0"))
     pp.pprint(ls)
     print len(ls)

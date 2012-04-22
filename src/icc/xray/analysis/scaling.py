@@ -17,7 +17,7 @@ sqrt_2 = math.sqrt(2.)
 pi_d_2 = math.pi/2.
 
 e_0 = 0.0086
-e_mo= 17.41
+e_mo= 17.48
 
 def gauss(x, x0, A, fwhm):
     sigma = fwhm/fwhm_coef
@@ -69,6 +69,18 @@ class Parameters(object):
         xmin, xmax = self.cut(line.x0, w, xl)
         y=channels
         y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm)
+
+    def keV_to_channel(self, keV):
+        if self.scale.done:
+            return (keV-self.scale.b)/self.scale.k
+        else:
+            return RuntimeError, "scale did not calculated"
+
+    def channel_to_keV(self, channel):
+        if self.scale.done:
+            return channel*self.scale.k+self.scale.b
+        else:
+            return RuntimeError, "scale did not calculated"
 
     def calc_scale(self, plot=False, force=False):
         if self.scale.done and not force:
@@ -181,8 +193,9 @@ class Parameters(object):
         _y=np.array(self.scale.lines)
         _x0=np.array([_.x0 for _ in ws])
         def scale((k,b), x, y):
-            return y-(x*k)+b
+            return y-((x*k)+b)
         k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y))[0]
+        print "K, B:", k_scale, b_scale
         self.scale.k=k_scale
         self.scale.b=b_scale
         self.scale.done=True
@@ -912,9 +925,40 @@ class Parameters(object):
             xtol=xtol, maxiter=10000, maxfun=10000)
 
     def line_plot(self, lines):
+        ym=0.8
+        L1={'A':ym, "B":ym * 0.6}
+        L2={'K':(0,0,1), "L":(0,0,0.5)}
+
         self.calc_scale()
+        channels=[]
+        chmax = max(self.channels)
         for line in lines:
-            print
+            #print line
+            ch = self.keV_to_channel(line.keV)
+            channels.append(ch)
+            lname=line.name
+            col=L2[lname[0]]
+            ymax=L1[lname[1]]
+            p.axvline(ch, ymax=ymax, color=col)
+            y=self.channels[ch] * 1.3
+            if y < 0.3 * chmax:
+                y=chmax
+            p.text(ch, y, "%s\n%s"  % (line.element, line.name),
+                horizontalalignment='center',
+                verticalalignment='center')
+        return channels
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def test1():
@@ -926,10 +970,10 @@ def test1():
 
     par=Parameters(standard)
     par.set_scale_lines_kev([e_0, e_mo])
-    #par.calculate(plot=True)
+    par.calculate(plot=True)
     #par.scan_peakes_cwt(plot=True)
 
-    elements=["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As"]
+    elements=["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As", "Si", 'Sr', 'Cu']
     if os.name!="nt":
         ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
     else:
