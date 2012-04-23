@@ -30,7 +30,7 @@ class Lines(object):
                 dbname=self.convert_csv(csv)
             else:
                 dbname=self.convert_csv2(csv)
-                
+
         if dbname == None:
             raise RuntimeError, "conversion error"
 
@@ -94,11 +94,21 @@ class Lines(object):
             c2.execute("INSERT INTO elements (Z, Name) VALUES (?, ?);",
                 (Z, ln.split()[0]))
 
+        cur.execute('DROP TABLE IF EXISTS tmp ;')
         conn.commit()
 
         return db_name
-        
+
     def convert_csv2(self,filename, debug = DEBUG):
+        CONV={
+            '_ALPHA':'A',
+            '_BETA':'B',
+            '_GAMMA':'G',
+            '_ETA':'E',
+            '_15':'',
+            }
+        LINE_LIST=['KA1', 'KA2', 'KB1', 'KB2', 'KB3', 'LA1', 'LA2', 'LB2', 'LB6', 'LB1','LG1',
+            'LB3', 'LB4', 'LG2', 'LG3']
         def _f(x):
             if x=='':
                 return None
@@ -115,7 +125,12 @@ class Lines(object):
         conn.create_function("float", 1, _f)
         header = reader.next() # skip first row of fiels names
         header=[h.split(',')[0] for h in header]
-        print "HEADER:", header
+        def repl(x):
+            for k,v in CONV.iteritems():
+                x=x.replace(k,v)
+            return x
+        header=[repl(h) for h in header]
+        #print "HEADER:", header
         cur = conn.cursor()
         cur.execute('DROP TABLE IF EXISTS tmp ;')
         cur.execute('DROP TABLE IF EXISTS lines ;')
@@ -123,50 +138,22 @@ class Lines(object):
         self.create_db(conn)
         for row in reader:
             drow={k:v for k,v in zip(header, row)}
-            print drow
-            cur.execute('INSERT INTO elements (Z, name, element) VALUES (?,?,?);', 
+            #print drow
+            cur.execute('INSERT INTO elements (Z, name, element) VALUES (?,?,?);',
                 (drow['ATOMIC_NR'], drow['EL_SYMB'], drow['EL_NAME_EN']))
-            
-            
-            
-            
-            return
-            #params=['?'] * len(row)
-            #params=', '.join(params)
-            params='?, ?, ?, float(?), ?, ?, ?, ?, ?, float(?), ?, ?, float(?), float(?), ?, ?'
-            cmd="""
-                INSERT INTO tmp (%s)
-                VALUES
-                (%s);
-            """ % (fields, params)
-            cur.execute(cmd, row)
-        #print cmd
-        conn.commit()
-        return
-        cur = conn.cursor()
-        cur.execute('''SELECT DISTINCT Z, line_keV, Line_Name from tmp;''')
-        c2=conn.cursor()
-        lset=set()
-        eset=set()
-        for row in cur:
-            Z, keV, ln = row
-            ln_=ln.split()[1].split('-')[0]
-            row=(Z, keV, ln_)
-            if (Z, ln_) in lset:
-                continue
-            lset.add((Z, ln_))
-            if debug:
-                print row
-            c2.execute("INSERT INTO lines (Z, keV, Name) VALUES (?, ?, ?);",
-                row)
-            if Z in eset:
-                continue
-            eset.add(Z)
-            c2.execute("INSERT INTO elements (Z, Name) VALUES (?, ?);",
-                (Z, ln.split()[0]))
+            c2=conn.cursor()
+            for l in LINE_LIST:
+                v=drow[l]
+                v=v.strip()
+                if v:
+                    v=v.replace(',','.')
+                    v=float(v)
+                    c2.execute("INSERT INTO lines (Z, keV, Name) VALUES (?, ?, ?);",
+                        (drow['ATOMIC_NR'], v, l))
+        cur.execute('DROP TABLE IF EXISTS tmp ;')
 
         conn.commit()
-        
+
         return db_name
 
     def connect(self, dbname=None):
@@ -277,11 +264,13 @@ if __name__=='__main__':
     import pprint as pp
     import numpy as np
 
-    lines=Lines(csv='C:\\dispersive\\data\\EdxData1.csv', v=2)
+    lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/data/EdxData1.csv', v=2)
+    """
     if os.name!="nt":
         lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
     else:
         lines=Lines(dbname='C:\\dispersive\\SPECPLUS\\DATA\\lines.sqlite3')
+    """
 
     L1={'A':0.8, "B":0.8/6.}
     L2={'K':(0,0,0), "L":(1,0,0)}
@@ -304,6 +293,6 @@ if __name__=='__main__':
     for l in ls:
         ln=l.name[0]
         ln2=l.name[1]
-        pl.axvline(l.keV, color=L2.get(ln, 1.), ymax=L1.get(ln2, (0,1,0)))
+        pl.axvline(l.keV, color=L2.get(ln, (1,0,0)), ymax=L1.get(ln2, 0.4))
 
     pl.show()

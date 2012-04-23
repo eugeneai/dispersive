@@ -926,7 +926,7 @@ class Parameters(object):
 
     def line_plot(self, lines):
         ym=0.8
-        L1={'A':ym, "B":ym * 0.6}
+        L1={'A':ym, "B":ym * 0.6, "G":ym*0.3}
         L2={'K':(0,0,1), "L":(0,0,0.5)}
 
         self.calc_scale()
@@ -975,12 +975,14 @@ def test1():
 
     elements=["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As", "Si", 'Sr', 'Cu']
     if os.name!="nt":
-        ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
+        ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
     else:
-        ldb=lines.Lines(dbname='C:\\dispersive\\SPECPLUS\\DATA\\lines.sqlite3')
+        ldb=lines.Lines(dbname='C:\\dispersive\\data\\EdxData1.sqlite3')
 
     ls = ldb.as_deltafun(order_by="keV", element=elements,
             where="not l.name like 'M%' and keV<20.0")
+    ls=list(ls)
+    pprint.pprint(ls)
 
     par.line_plot(ls)
 
