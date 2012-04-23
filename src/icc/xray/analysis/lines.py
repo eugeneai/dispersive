@@ -21,12 +21,18 @@ def _float(x):
     return x
 
 class Lines(object):
-    def __init__(self, csv=None, dbname=None):
+    def __init__(self, csv=None, dbname=None, v=1):
         if csv == None and dbname==None:
             raise ValueError, 'one of csv or db should be supplied'
 
         if csv != None:
-            dbname=self.convert_csv(csv)
+            if v==1:
+                dbname=self.convert_csv(csv)
+            else:
+                dbname=self.convert_csv2(csv)
+                
+        if dbname == None:
+            raise RuntimeError, "conversion error"
 
         self.dbname=dbname
 
@@ -91,6 +97,77 @@ class Lines(object):
         conn.commit()
 
         return db_name
+        
+    def convert_csv2(self,filename, debug = DEBUG):
+        def _f(x):
+            if x=='':
+                return None
+            if x.find(';')!=-1:
+                return None
+            try:
+                return float(x.replace(',','.').replace('*',''))
+            except ValueError, e:
+                print "Error:", e
+                return x
+        reader=csv.reader(open(filename), delimiter=';')
+        db_name=os.path.splitext(filename)[0]+'.sqlite3'
+        conn=self.connect(dbname=db_name)
+        conn.create_function("float", 1, _f)
+        header = reader.next() # skip first row of fiels names
+        header=[h.split(',')[0] for h in header]
+        print "HEADER:", header
+        cur = conn.cursor()
+        cur.execute('DROP TABLE IF EXISTS tmp ;')
+        cur.execute('DROP TABLE IF EXISTS lines ;')
+        cur.execute('DROP TABLE IF EXISTS elements ;')
+        self.create_db(conn)
+        for row in reader:
+            drow={k:v for k,v in zip(header, row)}
+            print drow
+            cur.execute('INSERT INTO elements (Z, name, element) VALUES (?,?,?);', 
+                (drow['ATOMIC_NR'], drow['EL_SYMB'], drow['EL_NAME_EN']))
+            
+            
+            
+            
+            return
+            #params=['?'] * len(row)
+            #params=', '.join(params)
+            params='?, ?, ?, float(?), ?, ?, ?, ?, ?, float(?), ?, ?, float(?), float(?), ?, ?'
+            cmd="""
+                INSERT INTO tmp (%s)
+                VALUES
+                (%s);
+            """ % (fields, params)
+            cur.execute(cmd, row)
+        #print cmd
+        conn.commit()
+        return
+        cur = conn.cursor()
+        cur.execute('''SELECT DISTINCT Z, line_keV, Line_Name from tmp;''')
+        c2=conn.cursor()
+        lset=set()
+        eset=set()
+        for row in cur:
+            Z, keV, ln = row
+            ln_=ln.split()[1].split('-')[0]
+            row=(Z, keV, ln_)
+            if (Z, ln_) in lset:
+                continue
+            lset.add((Z, ln_))
+            if debug:
+                print row
+            c2.execute("INSERT INTO lines (Z, keV, Name) VALUES (?, ?, ?);",
+                row)
+            if Z in eset:
+                continue
+            eset.add(Z)
+            c2.execute("INSERT INTO elements (Z, Name) VALUES (?, ?);",
+                (Z, ln.split()[0]))
+
+        conn.commit()
+        
+        return db_name
 
     def connect(self, dbname=None):
         if dbname != None:
@@ -139,7 +216,8 @@ class Lines(object):
         c.execute('''
             CREATE TABLE IF NOT EXISTS elements (
                 Z INTEGER PRIMARY KEY,
-                Name TEXT
+                name TEXT,
+                element TEXT NULL
         );
         ''')
 
@@ -199,7 +277,7 @@ if __name__=='__main__':
     import pprint as pp
     import numpy as np
 
-    #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
+    lines=Lines(csv='C:\\dispersive\\data\\EdxData1.csv', v=2)
     if os.name!="nt":
         lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
     else:
