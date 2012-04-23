@@ -156,6 +156,8 @@ class Parameters(object):
         _wsmin,_wsmax=int(ws[0]/2.), int(ws[-1]/2.)+1
         print "WS RANGE", _wsmin, _wsmax
         _div=_wsmax-_wsmin+1
+        p.show()
+        return
         peaks, cwt_field=sig.find_peaks_cwt1(y, np.linspace(_wsmin,_wsmax,_div),
             max_distances=np.linspace(_wsmin,_wsmax,_div),
             min_snr=0.6)

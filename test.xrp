@@ -1,9 +1,6 @@
 <XRF_Project>
   <files>
-    <file name="11.rtx" filename="/home/eugeneai/Development/codes/dispersive/data/Test/11.rtx">
-      <scale zero="0" scale="1"/>
-    </file>
-    <file name="sns228-02.spx" filename="/home/eugeneai/Development/codes/dispersive/data/Test/sns228-02.spx">
+    <file name="Compton-peak 23.03.12.rtx" filename="/home/eugeneai/Development/codes/dispersive/data/Coumpton/Compton-peak 23.03.12.rtx">
       <scale zero="0" scale="1"/>
     </file>
   </files>
