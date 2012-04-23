@@ -42,3 +42,7 @@ src/icc.xray.egg-info/*/src/icc/xray/analysis/all.png
 /src/icc.xray.egg-info/top_level.txt
 /src/icc.xray.egg-info/zip-safe
 /src/icc/xray/analysis/all.png
+/src/icc/xray/analysis/ctw.csv
+/src/icc/xray/analysis/ctw.txt
+/src/icc/xray/analysis/result.svg
+/_.txt

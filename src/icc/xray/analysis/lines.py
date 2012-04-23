@@ -21,12 +21,18 @@ def _float(x):
     return x
 
 class Lines(object):
-    def __init__(self, csv=None, dbname=None):
+    def __init__(self, csv=None, dbname=None, v=1):
         if csv == None and dbname==None:
             raise ValueError, 'one of csv or db should be supplied'
 
         if csv != None:
-            dbname=self.convert_csv(csv)
+            if v==1:
+                dbname=self.convert_csv(csv)
+            else:
+                dbname=self.convert_csv2(csv)
+
+        if dbname == None:
+            raise RuntimeError, "conversion error"
 
         self.dbname=dbname
 
@@ -88,6 +94,64 @@ class Lines(object):
             c2.execute("INSERT INTO elements (Z, Name) VALUES (?, ?);",
                 (Z, ln.split()[0]))
 
+        cur.execute('DROP TABLE IF EXISTS tmp ;')
+        conn.commit()
+
+        return db_name
+
+    def convert_csv2(self,filename, debug = DEBUG):
+        CONV={
+            '_ALPHA':'A',
+            '_BETA':'B',
+            '_GAMMA':'G',
+            '_ETA':'E',
+            '_15':'',
+            }
+        LINE_LIST=['KA1', 'KA2', 'KB1', 'KB2', 'KB3', 'LA1', 'LA2', 'LB2', 'LB6', 'LB1','LG1',
+            'LB3', 'LB4', 'LG2', 'LG3']
+        def _f(x):
+            if x=='':
+                return None
+            if x.find(';')!=-1:
+                return None
+            try:
+                return float(x.replace(',','.').replace('*',''))
+            except ValueError, e:
+                print "Error:", e
+                return x
+        reader=csv.reader(open(filename), delimiter=';')
+        db_name=os.path.splitext(filename)[0]+'.sqlite3'
+        conn=self.connect(dbname=db_name)
+        conn.create_function("float", 1, _f)
+        header = reader.next() # skip first row of fiels names
+        header=[h.split(',')[0] for h in header]
+        def repl(x):
+            for k,v in CONV.iteritems():
+                x=x.replace(k,v)
+            return x
+        header=[repl(h) for h in header]
+        #print "HEADER:", header
+        cur = conn.cursor()
+        cur.execute('DROP TABLE IF EXISTS tmp ;')
+        cur.execute('DROP TABLE IF EXISTS lines ;')
+        cur.execute('DROP TABLE IF EXISTS elements ;')
+        self.create_db(conn)
+        for row in reader:
+            drow={k:v for k,v in zip(header, row)}
+            #print drow
+            cur.execute('INSERT INTO elements (Z, name, element) VALUES (?,?,?);',
+                (drow['ATOMIC_NR'], drow['EL_SYMB'], drow['EL_NAME_EN']))
+            c2=conn.cursor()
+            for l in LINE_LIST:
+                v=drow[l]
+                v=v.strip()
+                if v:
+                    v=v.replace(',','.')
+                    v=float(v)
+                    c2.execute("INSERT INTO lines (Z, keV, Name) VALUES (?, ?, ?);",
+                        (drow['ATOMIC_NR'], v, l))
+        cur.execute('DROP TABLE IF EXISTS tmp ;')
+
         conn.commit()
 
         return db_name
@@ -139,7 +203,8 @@ class Lines(object):
         c.execute('''
             CREATE TABLE IF NOT EXISTS elements (
                 Z INTEGER PRIMARY KEY,
-                Name TEXT
+                name TEXT,
+                element TEXT NULL
         );
         ''')
 
@@ -199,18 +264,21 @@ if __name__=='__main__':
     import pprint as pp
     import numpy as np
 
-    #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.csv')
+    lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/data/EdxData1.csv', v=2)
+    """
     if os.name!="nt":
         lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
     else:
         lines=Lines(dbname='C:\\dispersive\\SPECPLUS\\DATA\\lines.sqlite3')
+    """
 
     L1={'A':0.8, "B":0.8/6.}
     L2={'K':(0,0,0), "L":(1,0,0)}
 
-    #ls=list(lines.as_deltafun(order_by="keV", element=["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As"],
-    #    where="not l.name like 'M%' and keV<20.0"))
-    ls=list(lines.as_deltafun(order_by="keV",
+    elements=["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As"]
+    elements=['Mo']
+
+    ls=list(lines.as_deltafun(order_by="keV", element=elements,
         where="not l.name like 'M%' and keV<20.0"))
     pp.pprint(ls)
     print len(ls)
@@ -225,6 +293,6 @@ if __name__=='__main__':
     for l in ls:
         ln=l.name[0]
         ln2=l.name[1]
-        pl.axvline(l.keV, color=L2.get(ln, 1.), ymax=L1.get(ln2, (0,1,0)))
+        pl.axvline(l.keV, color=L2.get(ln, (1,0,0)), ymax=L1.get(ln2, 0.4))
 
     pl.show()
