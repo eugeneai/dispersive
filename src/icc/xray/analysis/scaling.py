@@ -930,7 +930,8 @@ class Parameters(object):
             "KB1":20,
             "KB3":10,
 
-            "LA1":12,
+            "LA1":100,
+            "LA2":12,
             "LB1":50,
             "LB2":20,
             "LB3":8,
