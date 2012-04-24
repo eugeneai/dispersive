@@ -924,9 +924,23 @@ class Parameters(object):
         return op.fmin(cou_sim_opt, X, args=(fwhm_mo, xw, yw),
             xtol=xtol, maxiter=10000, maxfun=10000)
 
+    REL_INT={
+            "KA1":100,
+            "KA2":50,
+            "KB1":20,
+            "KB3":10,
+
+            "LA1":12,
+            "LB1":50,
+            "LB2":20,
+            "LB3":8,
+            "LG1":10,
+
+        }
+    REL_NC=0.1
     def line_plot(self, lines):
         ym=0.8
-        L1={'A':ym, "B":ym * 0.6, "G":ym*0.3}
+        #L1={'A':ym, "B":ym * 0.6, "G":ym*0.3}
         L2={'K':(0,0,1), "L":(0,0,0.5)}
 
         self.calc_scale()
@@ -938,8 +952,10 @@ class Parameters(object):
             channels.append(ch)
             lname=line.name
             col=L2[lname[0]]
-            ymax=L1[lname[1]]
-            p.axvline(ch, ymax=ymax, color=col)
+            ri=self.REL_INT.get(lname, self.REL_NC)
+            #ymax=L1[lname[1]]
+            #p.axvline(ch, ymax=ymax, color=col)
+            p.axvline(ch, ymax=ym*ri/100., color=col)
             y=self.channels[ch] * 1.3
             if y < 0.3 * chmax:
                 y=chmax
