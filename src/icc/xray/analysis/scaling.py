@@ -938,7 +938,9 @@ class Parameters(object):
             "LG1":10,
 
         }
-    REL_NC=0.1
+
+    REL_NC=5
+
     def line_plot(self, lines):
         ym=0.8
         #L1={'A':ym, "B":ym * 0.6, "G":ym*0.3}
@@ -947,6 +949,7 @@ class Parameters(object):
         self.calc_scale()
         channels=[]
         chmax = max(self.channels)
+        props = dict(boxstyle='round', facecolor='wheat', alpha=0.8, linewidth=0)
         for line in lines:
             #print line
             ch = self.keV_to_channel(line.keV)
@@ -957,12 +960,14 @@ class Parameters(object):
             #ymax=L1[lname[1]]
             #p.axvline(ch, ymax=ymax, color=col)
             p.axvline(ch, ymax=ym*ri/100., color=col)
-            y=self.channels[ch] * 1.3
-            if y < 0.3 * chmax:
-                y=chmax
-            p.text(ch, y, "%s\n%s"  % (line.element, line.name),
-                horizontalalignment='center',
-                verticalalignment='center')
+            y=self.channels[ch] * 1.
+            #if y < 0.3 * chmax:
+            #    y=chmax
+            p.text(ch, y, "%s %s"  % (line.element, line.name),
+                horizontalalignment='right',
+                verticalalignment='bottom',
+                family='monospace', size=8,
+                alpha=0.6, bbox=props)
         return channels
 
 
@@ -1004,6 +1009,11 @@ def test1():
     par.line_plot(ls)
 
     p.plot(par.x, par.channels, color=(0,0,0))
+    p.axis('tight')
+    ax=list(p.axis())
+    ax[2]=-ax[-1]/100.
+    ax[-1]=ax[-1]*1.1
+    p.axis(ax)
     p.show()
 
 def test2():
