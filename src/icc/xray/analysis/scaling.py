@@ -1003,6 +1003,7 @@ def test1():
 
     ls = ldb.as_deltafun(order_by="keV", element=elements,
             where="not l.name like 'M%' and keV<20.0")
+            #where="not l.name like 'M%' and keV<20.0", analytical=True)
     ls=list(ls)
     pprint.pprint(ls)
 

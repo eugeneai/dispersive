@@ -215,7 +215,8 @@ class Lines(object):
         for row in map(Line._make, rows):
                 yield row
 
-    def select(self, Z=None, element=None, line=None, kev=None, where=None, order_by=None):
+    def select(self, Z=None, element=None, line=None, kev=None,
+        where=None, order_by=None, analytical=False):
         def _expand(x, ex):
             if x == None:
                 return ' 1 '
@@ -232,6 +233,8 @@ class Lines(object):
         c.append(_expand(element, "e.name='%s'"))
         c.append(_expand(line, "l.name='%s'"))
         c.append(_expand(kev, "l.kev=%f"))
+        if analytical:
+            c.append("((e.Z<=50 and l.name like 'KA%') or (e.Z>50 and l.name like 'LA%'))")
         stmt="""
         SELECT e.Z, e.Name as element, l.Name as line, l.keV as kev
         FROM elements e INNER JOIN lines l ON e.Z=l.Z
