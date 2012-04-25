@@ -220,7 +220,7 @@ class Lines(object):
         def _expand(x, ex):
             if x == None:
                 return ' 1 '
-            if type(x) in [types.TupleType, types.ListType, types.GeneratorType]:
+            if type(x) in [types.TupleType, types.ListType, types.GeneratorType, type(set())]:
                 rc=[ex % _ for _ in x]
             else:
                 return " ( " + ex % x + " ) "
