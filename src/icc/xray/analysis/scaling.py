@@ -201,6 +201,7 @@ class Parameters(object):
         def scale((k,b), x, y):
             return y-((x*k)+b)
         k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y))[0]
+
         print "K, B:", k_scale, b_scale
         self.scale.k=k_scale
         self.scale.b=b_scale
@@ -248,17 +249,21 @@ class Parameters(object):
                 ls2.append(l)
                 i+=1
 
+        LL={"L":0.12, "K":0.5}
         def wgt(e1, e2):
             if e1==e2:
                 return e1
-            return (e1+0.5*e2)/1.5
+
+            K=LL[e1.name[0]]
+
+            return (e1.keV+K*e2.keV)/(1+K)
             #return (e1+e2)/2.
 
         for l1, l2 in zip(ls1, ls2):
             print l1
             print l2
             print "-----"
-            x0=self.keV_to_channel(wgt(l1.keV,l2.keV))
+            x0=self.keV_to_channel(wgt(l1,l2))
             p=self.iter_r_line(x0, plot=True, fwhm=self.scale.peakes[0].fwhm)
             if p:
                 ws.append((p, l1, l2))
@@ -266,7 +271,7 @@ class Parameters(object):
             raise RuntimeError, 'not enough data to graduation, sorry'
         pprint.pprint(ws)
         pass
-        _y=np.array([e_0]+[wgt(w[1].keV,w[2].keV) for w in ws])
+        _y=np.array([e_0]+[wgt(w[1],w[2]) for w in ws])
         _x0=np.array([self.scale.peakes[0].x0]+[w[0].x0 for w in ws])
         _diag=np.array([self.scale.peakes[0].A]+[w[0].A for w in ws])
         def scale((k,b), x, y):
@@ -283,6 +288,8 @@ class Parameters(object):
         self.scale.done=True
 
         return self.scale
+
+    def approx_background(self, elements):
 
     def iter_r_line(self, x0, A=None, fwhm=None, bkg=0.,
         task=None, plot=False):
@@ -1126,7 +1133,8 @@ def test1():
     par.calculate(plot=True)
     #par.scan_peakes_cwt(plot=True)
 
-    elements=set(["V", "Mo", "W", "Cl", "Zr", "Si", "As", 'P', 'S', 'Ar', 'Fe', 'Ne', 'Ho', "Yb", "Br", "Rb"])
+    elements=set(["V", "Mo", "W", "Cl", "Zr", "Si", "As",
+        'P', 'S', 'Ar', 'Fe', 'Ne', 'Ho', "Yb", "Rb"])
     #elements=set(["W", "As"])
     if os.name!="nt":
         ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
