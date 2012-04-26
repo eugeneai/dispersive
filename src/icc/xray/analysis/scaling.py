@@ -211,26 +211,70 @@ class Parameters(object):
         ws=[]
         # Select analytical lines (the brightest ones) from the database.
         max_keV=self.channel_to_keV(len(self.channels))
-        ls=self.line_db_conn.select(element=elements,
-            where="keV < %3.5f and l.name like '%%1'" % max_keV,
-            analytical=True)
-        for l in ls:
-            x0=self.keV_to_channel(l.keV)
+        els=elements # sorted(list(elements))
+        ls=self.line_db_conn.select(element=els,
+            where="keV < %3.5f" % max_keV,
+            analytical=True, order_by="e.Z")
+        ls=list(ls)
+        pprint.pprint(ls)
+
+
+
+        #ls1=self.line_db_conn.select(element=els,
+        #    where="keV < %3.5f and l.name like '%%1'" % max_keV,
+        #    analytical=True)
+        #ls2=self.line_db_conn.select(element=els,
+        #    where="keV < %3.5f and l.name like '%%2'" % max_keV,
+        #    analytical=True)
+        ls1=[]
+        ls2=[]
+        i=0
+        lls=len(ls)
+        print lls
+        while i<lls:
+            l=ls[i]
+            z=l.Z
+            lp=l
+            ls1.append(l)
+            i+=1
+            if i<lls:
+                l=ls[i]
+            else:
+                ls2.append(lp)
+                break
+            if l.Z!=z:
+                ls2.append(lp)
+            else:
+                ls2.append(l)
+                i+=1
+
+        def wgt(e1, e2):
+            if e1==e2:
+                return e1
+            return (e1+0.5*e2)/1.5
+            #return (e1+e2)/2.
+
+        for l1, l2 in zip(ls1, ls2):
+            print l1
+            print l2
+            print "-----"
+            x0=self.keV_to_channel(wgt(l1.keV,l2.keV))
             p=self.iter_r_line(x0, plot=True, fwhm=self.scale.peakes[0].fwhm)
             if p:
-                ws.append((p, l))
-        if len(ws)<2:
+                ws.append((p, l1, l2))
+        if len(ws)<1:
             raise RuntimeError, 'not enough data to graduation, sorry'
         pprint.pprint(ws)
         pass
-        _y=np.array([e_0]+[w[1].keV for w in ws])
+        _y=np.array([e_0]+[wgt(w[1].keV,w[2].keV) for w in ws])
         _x0=np.array([self.scale.peakes[0].x0]+[w[0].x0 for w in ws])
         _diag=np.array([self.scale.peakes[0].A]+[w[0].A for w in ws])
         def scale((k,b), x, y):
             return y-((x*k)+b)
 
         k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y),
-            diag=_diag)[0]
+            #diag=_diag)[0]
+            )[0]
 
         print "K, B:", k_scale, b_scale
 
@@ -1035,6 +1079,7 @@ class Parameters(object):
         channels=[]
         chmax = max(self.channels)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.8, linewidth=0)
+        lc=len(self.channels)
         for line in lines:
             #print line
             ch = self.keV_to_channel(line.keV)
@@ -1045,6 +1090,8 @@ class Parameters(object):
             #ymax=L1[lname[1]]
             #p.axvline(ch, ymax=ymax, color=col)
             p.axvline(ch, ymax=ym*ri/100., color=col)
+            if ch>lc:
+                continue
             y=self.channels[ch] * 1.
             #if y < 0.3 * chmax:
             #    y=chmax
@@ -1080,7 +1127,7 @@ def test1():
     #par.scan_peakes_cwt(plot=True)
 
     elements=set(["V", "Mo", "W", "Cl", "Zr", "Si", "As", 'P', 'S', 'Ar', 'Fe', 'Ne', 'Ho', "Yb", "Br", "Rb"])
-    #elements=set(["Fr", "W", "As"])
+    #elements=set(["W", "As"])
     if os.name!="nt":
         ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
     else:
@@ -1093,7 +1140,10 @@ def test1():
     ls=list(ls)
     #pprint.pprint(ls)
 
-    par.refine_scale(elements=elements-set(['Mo']))
+    #par.refine_scale(elements=elements-set(['Mo']))
+    par.refine_scale(elements=set(['As', 'V']))
+    #par.scale.k=0.005004
+    #par.scale.b=-0.4843
     par.line_plot(ls)
 
     p.plot(par.x, par.channels, color=(0,0,0))
