@@ -812,7 +812,7 @@ class Parameters(object):
         xmax=ix0+ihw+1 # +1 as it will be used in [...:...] operation.
         if xmax>=xl:
             xmax=xl
-        print xmin,xmax
+        #print xmin,xmax
         return xmin,xmax
 
     def split_args(self, X, mask):
@@ -1079,7 +1079,8 @@ def test1():
     par.calculate(plot=True)
     #par.scan_peakes_cwt(plot=True)
 
-    elements=set(["V", "Mo", "W", "Cl", "Zr", "Si", "As", 'P', 'S'])
+    elements=set(["V", "Mo", "W", "Cl", "Zr", "Si", "As", 'P', 'S', 'Ar', 'Fe', 'Ne', 'Ho', "Yb", "Br", "Rb"])
+    #elements=set(["Fr", "W", "As"])
     if os.name!="nt":
         ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
     else:
