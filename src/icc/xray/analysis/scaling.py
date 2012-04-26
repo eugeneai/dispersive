@@ -62,6 +62,10 @@ class Parameters(object):
         self.cwt=Object()
         self.cwt.peakes=OrderedDict() # Map peake x (integer) to its fwhm calculated from CWT
         self.cwt.done=False
+        self.line_db_conn=None
+
+    def set_line_db_conn(self, conn):
+        self.line_db_conn=conn
 
     def set_scale_lines_kev(self, lines):
         self.scale.lines=sorted(lines)
@@ -158,7 +162,7 @@ class Parameters(object):
             fail_iter=False
             A=y[x0]
             bkg=0.
-            for step in range(3):
+            for step in range(len(task)):
                 if fail_iter:
                     break
                 mask, xtol, _plot, iters, s_fwhm=task[step]
@@ -202,10 +206,85 @@ class Parameters(object):
         self.scale.b=b_scale
         self.scale.done=True
         return self.scale
-        
+
     def refine_scale(self, elements):
-        print elements
+        ws=[]
+        # Select analytical lines (the brightest ones) from the database.
+        max_keV=self.channel_to_keV(len(self.channels))
+        ls=self.line_db_conn.select(element=elements,
+            where="keV < %3.5f and l.name like '%%1'" % max_keV,
+            analytical=True)
+        for l in ls:
+            x0=self.keV_to_channel(l.keV)
+            p=self.iter_r_line(x0, plot=True, fwhm=self.scale.peakes[0].fwhm)
+            if p:
+                ws.append((p, l))
+        if len(ws)<2:
+            raise RuntimeError, 'not enough data to graduation, sorry'
+        pprint.pprint(ws)
         pass
+        _y=np.array([e_0]+[w[1].keV for w in ws])
+        _x0=np.array([self.scale.peakes[0].x0]+[w[0].x0 for w in ws])
+        _diag=np.array([self.scale.peakes[0].A]+[w[0].A for w in ws])
+        def scale((k,b), x, y):
+            return y-((x*k)+b)
+
+        k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y),
+            diag=_diag)[0]
+
+        print "K, B:", k_scale, b_scale
+
+        self.scale.k=k_scale
+        self.scale.b=b_scale
+        self.scale.done=True
+
+        return self.scale
+
+    def iter_r_line(self, x0, A=None, fwhm=None, bkg=0.,
+        task=None, plot=False):
+        xorig=int(x0)
+        Xopt=self.peake_cache.get(xorig, None)
+        if Xopt != None:
+            return Xopt
+        if task == None:
+            task=(
+                ([1,1,1,0,0], 1e-8, False, 1000, 1.5),
+                ([1,1,0,1,1], 1e-8, False, 2000, 2.0),
+                ([1,1,1,1,1], 1e-8, True, 6000, 2.5),
+            )
+        if A == None:
+            A=self.channels[int(x0)]
+        slope=0.
+        #X=[x0, A, fwhm, bkg, slope]
+        fail_iter=False
+        for step in range(len(task)):
+            if fail_iter:
+                break
+            mask, xtol, _plot, iters, s_fwhm=task[step]
+            try:
+                if fwhm == None:
+                    fwhm=10
+                width=fwhm
+                Xopt=self.r_line(x0, A=A,
+                    fwhm=fwhm,
+                    width=width, plot=_plot and plot,
+                    raise_on_warn=True, iters=iters,
+                    mask=mask, xtol=xtol
+                    )
+            except FittingWarning, w:
+                print "Fit Warning step", step
+                fail_iter=True
+                continue
+            x0=Xopt.x0
+            A=Xopt.A
+            fwhm=Xopt.fwhm
+            bkg=Xopt.bkg
+        if not fail_iter:
+            self.peake_cache[int(x0)]=Xopt
+            self.peake_cache[int(xorig)]=Xopt
+            return Xopt
+        return
+
 
     def calc_fwhm_scale(self, plot=False):
         scale=self.calc_scale
@@ -1000,17 +1079,18 @@ def test1():
     par.calculate(plot=True)
     #par.scan_peakes_cwt(plot=True)
 
-    elements=set(["V", "Mo", "W", "Cl", "Se","Zr", "Si", "As", "Si", 'Sr', 'Cu'])
+    elements=set(["V", "Mo", "W", "Cl", "Zr", "Si", "As", 'P', 'S'])
     if os.name!="nt":
         ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
     else:
         ldb=lines.Lines(dbname='C:\\dispersive\\data\\EdxData1.sqlite3')
+    par.set_line_db_conn(ldb)
 
     ls = ldb.as_deltafun(order_by="keV", element=elements,
             where="not l.name like 'M%' and keV<20.0")
             #where="not l.name like 'M%' and keV<20.0", analytical=True)
     ls=list(ls)
-    pprint.pprint(ls)
+    #pprint.pprint(ls)
 
     par.refine_scale(elements=elements-set(['Mo']))
     par.line_plot(ls)
