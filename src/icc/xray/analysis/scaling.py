@@ -343,7 +343,8 @@ class Parameters(object):
             deeper*=relax
             ws[:233]=1.
 
-            p.plot(self.x, ws*max(self.channels)/3., color=(1,0,0), alpha=0.3)
+            if plot:
+                p.plot(self.x, ws*max(self.channels)/3., color=(1,0,0), alpha=0.3)
 
 
             nx=[]
@@ -366,7 +367,8 @@ class Parameters(object):
                 if ys[_x]+noice>y[_x]:
                     deeper[_x]=deeping
 
-        p.plot(self.x, ys, color=(1,0,1), linewidth=3., alpha=0.3)
+        if plot:
+            p.plot(self.x, ys, color=(1,0,1), linewidth=3., alpha=0.3)
 
         return ys
 
@@ -1214,7 +1216,7 @@ def test1():
     #par.scan_peakes_cwt(plot=True)
 
     elements=set(["V", "Mo", "W", "Cl", "Zr", "Si", "As",
-        'P', 'S', 'Ar', 'Fe', 'Ne', 'Ho', "Yb"])
+        'P', 'S', 'Ar', 'Fe', 'Ne', 'Ho'])
     #elements=set(["W", "As"])
     if os.name!="nt":
         ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
@@ -1233,9 +1235,9 @@ def test1():
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
     par.line_plot(ls)
-    par.approx_background(elements=elements, plot=True)
+    ybkg = par.approx_background(elements=elements)
 
-    p.plot(par.x, par.channels, color=(0,0,0))
+    p.plot(par.x, par.channels-ybkg, color=(0,0,0))
     p.axis('tight')
     ax=list(p.axis())
     ax[2]=-ax[-1]/100.
