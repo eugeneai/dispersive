@@ -58,6 +58,8 @@ class Parameters(object):
         self.scale=Object()
         self.scale.done=False
         self.scale.peakes=[]
+        self.scale.fwhm=Object()
+        self.scale.fwhm.done=False
 
         self.cwt=Object()
         self.cwt.peakes=OrderedDict() # Map peake x (integer) to its fwhm calculated from CWT
@@ -217,7 +219,6 @@ class Parameters(object):
             where="keV < %3.5f" % max_keV,
             analytical=True, order_by="e.Z")
         ls=list(ls)
-        pprint.pprint(ls)
 
 
 
@@ -286,10 +287,39 @@ class Parameters(object):
         self.scale.k=k_scale
         self.scale.b=b_scale
         self.scale.done=True
+        self.scale.peakes.extend([w[0] for w in ws])
+        self.calculate_fwhm(self.scale.peakes)
 
         return self.scale
 
-    def approx_background(self, elements):
+    def calculate_fwhm(self, peakes):
+        pprint.pprint(peakes)
+        _y=np.array([0.]+[w.fwhm for w in peakes])
+        _x0=np.array([self.scale.peakes[0].x0]+[w.x0 for w in peakes])
+
+        def scale((k,b), x, y):
+            return y-((np.sqrt(x)*k)+b)
+
+        k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y))[0]
+
+        print "FWHM scale:", k_scale, b_scale
+
+        self.scale.fwhm.k=k_scale
+        self.scale.fwhm.b=b_scale
+        self.scale.fwhm.done=True
+
+        return self.scale.fwhm
+
+
+
+    def approx_background(self, elements, plot=False):
+        max_keV=self.channel_to_keV(len(self.channels))
+        els=elements # sorted(list(elements))
+        ls=self.line_db_conn.select(element=els,
+            where="keV < %3.5f" % max_keV,
+            order_by="e.Z")
+        ls=list(ls)
+
 
     def iter_r_line(self, x0, A=None, fwhm=None, bkg=0.,
         task=None, plot=False):
@@ -1153,6 +1183,7 @@ def test1():
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
     par.line_plot(ls)
+    par.approx_background(elements=elements, plot=True)
 
     p.plot(par.x, par.channels, color=(0,0,0))
     p.axis('tight')
