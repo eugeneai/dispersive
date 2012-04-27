@@ -310,15 +310,65 @@ class Parameters(object):
 
         return self.scale.fwhm
 
+    def keV_to_fwhm(self, keV):
+        x0=self.keV_to_channel(keV)
+        return np.sqrt(x0)*self.scale.fwhm.k+self.scale.fwhm.b
 
 
-    def approx_background(self, elements, plot=False):
+    def approx_background(self, elements, plot=False,
+            sw=((3.9, 0.2), (3.18, 0.)), s=9e7,
+                deeping=1., noice=000, relax=0.9):
         max_keV=self.channel_to_keV(len(self.channels))
         els=elements # sorted(list(elements))
         ls=self.line_db_conn.select(element=els,
             where="keV < %3.5f" % max_keV,
             order_by="e.Z")
         ls=list(ls)
+        xl=len(self.channels)
+        ws=np.ones(xl)
+        deeper=np.zeros(xl)
+        for _deep_count in range(10):
+            for _s, w in sw:
+                for l in ls:
+                    x0=self.keV_to_channel(l.keV)
+                    fwhm=self.keV_to_fwhm(l.keV)
+                    hwidth=fwhm*_s/2.
+                    xmin,xmax=self.cut(x0, hwidth, xl)
+                    ws[xmin:xmax]=w
+
+            for _x in self.x:
+                if deeper[_x]:
+                    ws[_x]=deeper[_x]
+
+            deeper*=relax
+            ws[:233]=1.
+
+            p.plot(self.x, ws*max(self.channels)/3., color=(1,0,0), alpha=0.3)
+
+
+            nx=[]
+            ny=[]
+            nw=[]
+
+            for _x in self.x:
+                if ws[_x]:
+                    nx.append(_x)
+                    ny.append(self.channels[_x])
+                    nw.append(ws[_x])
+
+
+            spline=ip.splrep(nx,ny,nw, k=3, s=s)
+            ys=ip.splev(self.x,spline)
+            y=np.array(self.channels)
+            for _x in self.x:
+                if ys[_x]<0:
+                    ys[_x]=0.
+                if ys[_x]+noice>y[_x]:
+                    deeper[_x]=deeping
+
+        p.plot(self.x, ys, color=(1,0,1), linewidth=3., alpha=0.3)
+
+        return ys
 
 
     def iter_r_line(self, x0, A=None, fwhm=None, bkg=0.,
@@ -1164,7 +1214,7 @@ def test1():
     #par.scan_peakes_cwt(plot=True)
 
     elements=set(["V", "Mo", "W", "Cl", "Zr", "Si", "As",
-        'P', 'S', 'Ar', 'Fe', 'Ne', 'Ho', "Yb", "Rb"])
+        'P', 'S', 'Ar', 'Fe', 'Ne', 'Ho', "Yb"])
     #elements=set(["W", "As"])
     if os.name!="nt":
         ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
