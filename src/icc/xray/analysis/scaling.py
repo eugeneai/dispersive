@@ -66,8 +66,14 @@ class Parameters(object):
         self.cwt.done=False
         self.line_db_conn=None
 
+        self.set_active_channels(self.channels)
+
     def set_line_db_conn(self, conn):
         self.line_db_conn=conn
+
+    def set_active_channels(self, channels):
+        self.active_channels=channels
+        self.peake_cache={}
 
     def set_scale_lines_kev(self, lines):
         self.scale.lines=sorted(lines)
@@ -108,7 +114,8 @@ class Parameters(object):
         y_e=yfiltered[-1]
         #yfiltered[:-_order]=yfiltered[_order:]  # Shift the result (works not fine).
         #yfiltered[-_order:]=np.zeros(_order)+y_e
-        p.plot(x,yfiltered, color=(0,1,0), linewidth=3, alpha=0.5)
+        if plot:
+            p.plot(x,yfiltered, color=(0,1,0), linewidth=3, alpha=0.5)
 
         #Calc the trend of the background.
         order=5
@@ -386,7 +393,7 @@ class Parameters(object):
                 ([1,1,1,1,1], 1e-8, True, 6000, 2.5),
             )
         if A == None:
-            A=self.channels[int(x0)]
+            A=self.active_channels[int(x0)]
         slope=0.
         #X=[x0, A, fwhm, bkg, slope]
         fail_iter=False
@@ -450,7 +457,7 @@ class Parameters(object):
             return peak, fwhm[wc]
 
         cwt_fwhms=OrderedDict()
-        y=np.array(self.channels)
+        y=np.array(self.active_channels)
         peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=0.5,
             max_distances=fwhm_widths)
 
@@ -467,6 +474,9 @@ class Parameters(object):
         self.calc_scale(plot=plot)
         self.calc_fwhm_scale(plot=plot)
         return
+
+    def model_spectra(self, elements, plot=False):
+        pass
 
     def trash(self):
 
@@ -620,7 +630,7 @@ class Parameters(object):
         for _x in x:
             if omega[_x]:
                 nx.append(_x)
-                ny.append(self.channels[_x])
+                ny.append(self.active_channels[_x])
                 no.append(omega[_x])
 
 
@@ -634,7 +644,7 @@ class Parameters(object):
         p.plot(x, omega*100000, color=(1,0,0))
 
         #p.plot(x,y, color=(0,1,0))
-        p.plot(x,self.channels, color=(1,0,0))
+        p.plot(x,self.active_channels, color=(1,0,0))
 
 
         print "WS:"
@@ -677,7 +687,7 @@ class Parameters(object):
 
         p.plot(x, np.zeros(xl))
 
-        y_bkg=np.array(self.channels)
+        y_bkg=np.array(self.active_channels)
         _ = np.array(y_bkg)
 
         print "Bkg processing"
@@ -754,7 +764,7 @@ class Parameters(object):
             p.axvline(xp, color=(1, 0, 1))
         """
 
-        p.plot(x, self.channels, color=(1,0,0))
+        p.plot(x, self.active_channels, color=(1,0,0))
 
         #p.subplot(212)
         #p.imshow(cwt_field)
@@ -807,7 +817,7 @@ class Parameters(object):
             if f_lines[-1].fwhm>f_lines[0].fwhm*1.8:
                 del f_lines[-1]
 
-            y=np.array(self.channels)
+            y=np.array(self.active_channels)
             fy=np.zeros(xl, dtype=float)
             w=np.zeros(xl, dtype=float)+1.
             for l in f_lines:
@@ -821,7 +831,7 @@ class Parameters(object):
 
             p.plot(x,fy, color=(1,0.1,0.1))
 
-            y=np.array(self.channels)
+            y=np.array(self.active_channels)
             spline=ip.splrep(xp1,y[Xopt.x0*2:],w[Xopt.x0*2:], k=3, s=5e8)
             ys=ip.splev(x,spline)
             p.plot(x, ys)
@@ -1166,9 +1176,9 @@ class Parameters(object):
 
         self.calc_scale()
         channels=[]
-        chmax = max(self.channels)
+        chmax = max(self.active_channels)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.8, linewidth=0)
-        lc=len(self.channels)
+        lc=len(self.active_channels)
         for line in lines:
             #print line
             ch = self.keV_to_channel(line.keV)
@@ -1181,7 +1191,7 @@ class Parameters(object):
             p.axvline(ch, ymax=ym*ri/100., color=col)
             if ch>lc:
                 continue
-            y=self.channels[ch] * 1.
+            y=self.active_channels[ch] * 1.
             #if y < 0.3 * chmax:
             #    y=chmax
             p.text(ch, y, "%s %s"  % (line.element, line.name),
@@ -1212,7 +1222,7 @@ def test1():
 
     par=Parameters(standard)
     par.set_scale_lines_kev([e_0, e_mo])
-    par.calculate(plot=True)
+    par.calculate(plot=False)
     #par.scan_peakes_cwt(plot=True)
 
     elements=set(["V", "Mo", "W", "Cl", "Zr", "Si", "As",
@@ -1236,6 +1246,12 @@ def test1():
     #par.scale.b=-0.4843
     par.line_plot(ls)
     ybkg = par.approx_background(elements=elements)
+
+    p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6)
+    p.plot(par.x, ybkg, color=(0,1,1), alpha=0.5)
+    par.set_active_channels(par.channels-ybkg)
+
+    par.model_spectra(elements=elements)
 
     p.plot(par.x, par.channels-ybkg, color=(0,0,0))
     p.axis('tight')
