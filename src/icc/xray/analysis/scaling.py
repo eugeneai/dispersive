@@ -272,7 +272,8 @@ class Parameters(object):
             print l2
             print "-----"
             x0=self.keV_to_channel(wgt(l1,l2))
-            print "Fitting line at x0=", x0
+            if plot:
+                print "Fitting line at x0=", x0
             p=self.iter_r_line(x0, plot=plot, fwhm=self.scale.peakes[0].fwhm, background=background)
             if p:
                 ws.append((p, l1, l2))
