@@ -376,8 +376,8 @@ class Parameters(object):
                 if ys[_x]+noice>y[_x]:
                     deeper[_x]=deeping
 
-        if plot:
-            p.plot(self.x, ys, color=(1,0,1), linewidth=3., alpha=0.3)
+            if plot:
+                p.plot(self.x, ys, color=(1,0,1), linewidth=3., alpha=0.3)
 
         return ys
 
@@ -1234,7 +1234,7 @@ def test1():
     #par.scan_peakes_cwt(plot=True)
 
     elements=set(["V", "Mo", "W", "Cl", "Zr", "Si", "As",
-        'P', 'S', 'Ar', 'Fe', 'Ne', 'Ho'])
+        'P', 'S', 'Ar', 'Fe', 'Cu'])
     #elements=set(["W", "As"])
     if os.name!="nt":
         ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
@@ -1253,10 +1253,10 @@ def test1():
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
     par.line_plot(ls)
-    ybkg = par.approx_background(elements=elements)
+    ybkg = par.approx_background(elements=elements, plot=True)
 
-    p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6)
-    p.plot(par.x, ybkg, color=(0,1,1), alpha=0.5)
+    p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6,)
+    p.plot(par.x, ybkg, color=(0,1,1), alpha=0.5, linestyle='-')
     par.set_active_channels(par.channels-ybkg)
 
     par.refine_scale(elements=set(['As', 'V', 'W', 'Mo', 'Zr']), background=False, plot=False)
@@ -1268,6 +1268,7 @@ def test1():
     ax[2]=-ax[-1]/100.
     ax[-1]=ax[-1]*1.1
     p.axis(ax)
+    p.axhline(y=0, xmin=0, xmax=1, color=(0,0,0), alpha=0.3, linestyle='--')
     p.show()
 
 def test2():
