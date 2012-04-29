@@ -45,6 +45,7 @@ from matplotlib.backend_bases import NavigationToolbar2
 from matplotlib.backends.backend_gtkagg import NavigationToolbar2GTK, NavigationToolbar2GTKAgg
 from matplotlib.backends.backend_gtk import FileChooserDialog
 import matplotlib
+import matplotlib.pyplot as pyplot
 
 CHANNEL_NO=4096
 CALIBR_ZERO=90
@@ -520,8 +521,13 @@ class PlottingView(View):
         vbox = gtk.VBox()
         win.add(vbox)
 
-        fig = Figure(figsize=(5,4), dpi=120)
+        fig = Figure(figsize=(5,4), dpi=120,
+            subplotpars=matplotlib.figure.SubplotParams(left=0.03, right=0.96, bottom=0.03, top=0.96)
+         )
         self.ui.fig = fig
+        self.ui.ax = fig.add_subplot(111)
+        self.ui.ax2=self.ui.ax.twinx()
+        self.ui.ay2=self.ui.ax.twiny()
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         self.ui.canvas = canvas
@@ -550,8 +556,13 @@ class PlottingView(View):
             return
         fig = self.ui.fig
         fig.clear()
-        ax = fig.add_subplot(111)
-        self.ui.ax = ax
+        self.ui.ax = fig.add_subplot(111)
+        self.ui.ax2=self.ui.ax.twinx()
+        self.ui.ay2=self.ui.ax.twiny()
+        ax = self.ui.ax
+        ax2 = self.ui.ax2
+        ay2 = self.ui.ay2
+
 
         ax.set_ylabel(self.axis.x_lab)
         ax.set_xlabel(self.axis.y_lab) #k$e$V
@@ -572,23 +583,45 @@ class PlottingView(View):
                 #kevs = self.model.scale.to_keV(X)
                 ssp={}
                 ssp.setdefault('aa', True)
-                ssp.setdefault('linewidth', 1)
-                ssp.setdefault('alpha',1.0)
+                #ssp.setdefault('linewidth', 1)
+                ssp.setdefault('alpha',0.3)
                 kwargs = {}
                 kwargs.update(ssp)
                 #del kwargs['spectrum']
                 #pl, = ax.plot(kevs, spectrum, **kwargs)
                 pl, = ax.plot(X, spectrum, **kwargs)
+                ax.axis('tight')
+                _ax=list(ax.axis())
+                _ax[2]=-_ax[-1]/100.
+                _ax[-1]=_ax[-1]*1.1
+                ax.axis(_ax)
+                ax.axhline(y=0, xmin=0, xmax=1, color=(0,0,0), alpha=0.3, linestyle='--')
+                #ax.set_yticklabels([])
+                #ax.set_xticklabels([])
                 #spec['line2D'] = pl
 
-            ax.set_title('Spectra plot')
+            #ax.set_title('Spectra plot')
             #ax.set_xlim(kevs[0],kevs[-1])
             ax.set_xlim(X[0],X[-1])
             # ax.set_yscale('log')
-            ax.ticklabel_format(style='sci', scilimits=(3,0), axis='y')
             ax.grid(b=True, aa=False, alpha=0.3)
             #ax.legend()
             ax.minorticks_on()
+            #ax.ticklabel_format(style='sci', scilimits=(3,0), axis='y')
+            for tick in ax.xaxis.get_major_ticks():
+                tick.label.set_fontsize(5)
+            for tick in ax.yaxis.get_major_ticks():
+                tick.label.set_fontsize(5)
+            #ax2=ax.twinx()
+            ax2.set_xticklabels(["0", r"$\frac{1}{2}\pi$",
+                     r"$\pi$", r"$\frac{3}{2}\pi$", r"$2\pi$"])
+            ax.set_xticklabels(["0", r"$\frac{1}{2}\pi$",
+                     r"$\pi$", r"$\frac{3}{2}\pi$", r"$2\pi$"])
+            ax2.set_xlim(ax.get_xlim())
+            #pyplot.setp(ax2, xticklabels=['1', '2'])
+            #top.set_xlabels(ax.get_xlabels())
+            for tick in ax2.get_xticklabels():
+                tick.set_fontsize(5)
         self.ui.canvas.draw()
 
     #@+node:eugeneai.20110116171118.1394: *3* on_click
