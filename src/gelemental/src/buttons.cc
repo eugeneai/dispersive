@@ -133,25 +133,44 @@ ColorButton::is_force_needed ()
 //******************************************************************************
 // class ColorToggleButton
 
+#define __min(a,b) (a)<(b)?(a):(b)
 
 void
 ColorToggleButton::set_color (const color_value_base& value)
 {
 	Gdk::Color color = allocate (value.get_color ());
+	Gdk::Color sel_color = allocate (value.get_color ());
+	Gdk::Color pre_color = allocate (value.get_color ());
+
+	sel_color.set_rgb_p(
+		(color.get_red_p()*70)/100,
+		(color.get_green_p()*70)/100,
+		(color.get_blue_p()*70)/100
+	);
+
+	/*
+	pre_color.set_rgb_p(
+		__min((color.get_red_p()*100)/90, 100),
+		__min((color.get_green_p()*100)/90, 100),
+		__min((color.get_blue_p()*100)/90, 100)
+	);
+	*/
 
 	if (is_force_needed ())
 	{
 		RefPtr<Gtk::Style> style = Gtk::Style::create ();
 		style->set_bg (Gtk::STATE_NORMAL, color);
-		style->set_bg (Gtk::STATE_ACTIVE, color);
-		style->set_bg (Gtk::STATE_PRELIGHT, color);
+		style->set_bg (Gtk::STATE_ACTIVE, sel_color);
+		style->set_bg (Gtk::STATE_PRELIGHT, pre_color);
+		style->set_bg (Gtk::STATE_SELECTED, sel_color);
 		set_style (style);
 	}
 	else
 	{
 		modify_bg (Gtk::STATE_NORMAL, color);
-		modify_bg (Gtk::STATE_ACTIVE, color);
-		modify_bg (Gtk::STATE_PRELIGHT, color);
+		modify_bg (Gtk::STATE_ACTIVE, sel_color);
+		modify_bg (Gtk::STATE_PRELIGHT, pre_color);
+		modify_bg (Gtk::STATE_SELECTED, sel_color);
 	}
 
 	if (Gtk::Widget *child = get_child ())
@@ -169,6 +188,7 @@ ColorToggleButton::unset_color ()
 		unset_bg (Gtk::STATE_NORMAL);
 		unset_bg (Gtk::STATE_ACTIVE);
 		unset_bg (Gtk::STATE_PRELIGHT);
+		unset_bg (Gtk::STATE_SELECTED);
 	}
 
 	if (Gtk::Widget *child = get_child ())
@@ -180,10 +200,15 @@ void
 ColorToggleButton::set_fgcolor (Gtk::Widget& child, const color_value_base& value)
 {
 	Gdk::Color compliment = allocate (value.get_color ().get_compliment ());
+	Gdk::Color sel_compliment;
+	//Gdk::Color sel_compliment = allocate (value.get_color ());
+
+	sel_compliment.set_rgb_p(90,90,90);
 
 	child.modify_fg (Gtk::STATE_NORMAL, compliment);
-	child.modify_fg (Gtk::STATE_ACTIVE, compliment);
+	child.modify_fg (Gtk::STATE_ACTIVE, sel_compliment);
 	child.modify_fg (Gtk::STATE_PRELIGHT, compliment);
+	child.modify_fg (Gtk::STATE_SELECTED, sel_compliment);
 }
 
 
@@ -193,6 +218,7 @@ ColorToggleButton::unset_fgcolor (Gtk::Widget& child)
 	child.unset_fg (Gtk::STATE_NORMAL);
 	child.unset_fg (Gtk::STATE_ACTIVE);
 	child.unset_fg (Gtk::STATE_PRELIGHT);
+	child.unset_fg (Gtk::STATE_SELECTED);
 }
 
 
