@@ -26,6 +26,8 @@
 #error "value.tcc must be included from value.hh."
 #endif
 
+#include <limits>
+
 namespace Elemental {
 
 
