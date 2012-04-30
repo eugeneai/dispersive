@@ -50,6 +50,7 @@ class TableTable
 public:
 
 	TableTable (const RefPtr<Gtk::UIManager>& ui);
+	TableTable ();
 	virtual ~TableTable ();
 
 	struct State
@@ -59,12 +60,12 @@ public:
 		bool logarithmic;
 		bool legend_expanded;
 	};
-	
+
 	State get_state () const;
 	void set_state (State& state);
 
 private:
-	
+
 	RefPtr<Gtk::UIManager> ui;
 	Gtk::UIManager::ui_merge_id ui_id;
 	RefPtr<Gtk::ActionGroup> actions;

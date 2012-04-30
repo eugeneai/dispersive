@@ -50,7 +50,7 @@ TableTable::TableTable (const RefPtr<Gtk::UIManager>& ui_)
 	conditions (_("_At %1 K and standard pressure"), true), scales (false, 6)
 {
 	set_border_width (12);
-	
+
 	populate_button_table ();
 	update_display ();
 	pack_start (button_table, Gtk::PACK_EXPAND_WIDGET);
@@ -60,11 +60,11 @@ TableTable::TableTable (const RefPtr<Gtk::UIManager>& ui_)
 	legend.property_expanded ().signal_changed ().connect (sigc::bind
 		(sigc::mem_fun (*this, &TableTable::on_legend_toggled), true));
 	pack_start (legend, Gtk::PACK_SHRINK);
-	
+
 	Gtk::VBox *legend_vbox = new Gtk::VBox (false, 2);
 	legend_vbox->set_border_width (6);
 	legend.add (*Gtk::manage (legend_vbox));
-	
+
 	temperature.signal_value_changed ().connect
 		(sigc::mem_fun (*this, &TableTable::on_temperature_changed));
 	Gtk::SpinButton *temperature_entry = new Gtk::SpinButton (temperature);
@@ -123,7 +123,7 @@ TableTable::TableTable (const RefPtr<Gtk::UIManager>& ui_)
 				(*this, &TableTable::on_color_by_changed), *prop));
 			extra_ui += "<menuitem action='" + pname + "' />";
 		}
-		
+
 		extra_ui += "</menu>";
 		++n;
 	}
@@ -145,6 +145,102 @@ TableTable::TableTable (const RefPtr<Gtk::UIManager>& ui_)
 			"<menuitem action='ViewShowLegend' />"
 		"</menu></menubar></ui>"
 	);
+
+	show_all_children ();
+	if (initial_action)
+		initial_action->activate ();
+	show ();
+}
+
+TableTable::TableTable ()
+:	Gtk::VBox (false, 12), actions (Gtk::ActionGroup::create ()),
+	button_table (10, 18, true), next_reference (1),
+	focus_el (NULL), hover_el (NULL),
+	throttle_clear_hover (misc::Throttle::DELAY, 1.0), display (false, 6),
+	color_by (NULL), temperature (STANDARD_TEMPERATURE, 0, DBL_MAX, 10, 100),
+	throttle_update_temperature (misc::Throttle::LIMIT, 0.5),
+	logarithmic (_("Lo_garithmic"), true),
+	legend (_("_Legend"), true),
+	conditions (_("_At %1 K and standard pressure"), true), scales (false, 6)
+{
+	set_border_width (12);
+
+	populate_button_table ();
+	update_display ();
+	pack_start (button_table, Gtk::PACK_EXPAND_WIDGET);
+
+	legend.set_use_markup (true);
+	legend.set_use_underline (true);
+	legend.property_expanded ().signal_changed ().connect (sigc::bind
+		(sigc::mem_fun (*this, &TableTable::on_legend_toggled), true));
+	pack_start (legend, Gtk::PACK_SHRINK);
+
+	Gtk::VBox *legend_vbox = new Gtk::VBox (false, 2);
+	legend_vbox->set_border_width (6);
+	legend.add (*Gtk::manage (legend_vbox));
+
+	temperature.signal_value_changed ().connect
+		(sigc::mem_fun (*this, &TableTable::on_temperature_changed));
+	Gtk::SpinButton *temperature_entry = new Gtk::SpinButton (temperature);
+	temperature_entry->set_digits (1);
+	temperature_entry->set_width_chars (6);
+	conditions.set_param (1, *Gtk::manage (temperature_entry));
+	legend_vbox->pack_start (conditions, Gtk::PACK_SHRINK);
+
+	Gtk::RadioButtonGroup scale_group = logarithmic.get_group ();
+	scales.pack_start
+		(*Gtk::manage (new Gtk::Label (_("Scale:"))), Gtk::PACK_SHRINK);
+	legend_vbox->pack_start (scales, Gtk::PACK_SHRINK);
+
+	Gtk::RadioButton *linear =
+		new Gtk::RadioButton (scale_group, _("Li_near"), true);
+	linear->set_active (true);
+	scales.pack_start (*Gtk::manage (linear), Gtk::PACK_SHRINK);
+
+	logarithmic.signal_toggled ().connect
+		(sigc::mem_fun (*this, &TableTable::on_logarithmic_toggled));
+	scales.pack_start (logarithmic, Gtk::PACK_SHRINK);
+
+	legend_vbox->pack_start (colorbar, Gtk::PACK_EXPAND_WIDGET);
+
+	Gtk::RadioButtonGroup color_group;
+	// Translators: i.e. the verb "to color".
+	actions->add (Gtk::Action::create ("ViewColorMenu", _("_Color by")));
+	actions->add (Gtk::RadioAction::create (color_group, "ViewColorByNone",
+		_("_None")), sigc::bind (sigc::mem_fun
+			(*this, &TableTable::on_color_by_changed), (PropertyBase*) NULL));
+	actions->add (Gtk::RadioAction::create (color_group, "ViewColorByElement",
+		_("_Element")), sigc::bind (sigc::mem_fun
+			(*this, &TableTable::on_color_by_changed), &P_COLOR));
+
+	int n = 1;
+	RefPtr<Gtk::Action> initial_action;
+	FOREACH (std::list<Category*>, CATEGORIES, category)
+	{
+		if (*category == &C_MISCELLANEOUS) continue; // already handled
+
+		ustring cname = compose::ucompose ("ViewColorCategory%1", n);
+		actions->add (Gtk::Action::create (cname, (*category)->get_name ()));
+
+		int o = 1;
+		FOREACH (std::list<PropertyBase*>, (*category)->properties, prop)
+		{
+			if (!(*prop)->is_colorable ()) continue;
+			ustring pname = compose::ucompose ("ViewColorBy%1_%2", n, o++);
+			RefPtr<Gtk::Action> paction = Gtk::RadioAction::create
+				(color_group, pname, (*prop)->get_name ());
+			if (*prop == &P_SERIES)
+				initial_action = paction;
+			actions->add (paction, sigc::bind (sigc::mem_fun
+				(*this, &TableTable::on_color_by_changed), *prop));
+		}
+
+		++n;
+	}
+
+	actions->add (show_legend = Gtk::ToggleAction::create
+		("ViewShowLegend", _("Show _Legend")), sigc::bind (sigc::mem_fun
+			(*this, &TableTable::on_legend_toggled), false));
 
 	show_all_children ();
 	if (initial_action)
@@ -325,7 +421,7 @@ TableTable::on_color_by_changed (PropertyBase* property)
 {
 	if (color_by == property) return;
 	color_by = property;
-	
+
 	legend.set_label (compose::ucompose (_("_Legend (<b>%1</b>)"),
 		(color_by != NULL) ? color_by->get_name () : _("None")));
 
@@ -438,7 +534,7 @@ TableTable::update_colorbar ()
 	{
 		delete table;
 		result = table = NULL;
-	
+
 		FloatProperty *float_prop = CAST (color_by, FloatProperty);
 		if (float_prop != NULL && float_prop->is_scale_valid ())
 		{
@@ -447,12 +543,12 @@ TableTable::update_colorbar ()
 			LegendButton *button = new LegendButton (ColorValue (0.0));
 			button->set_label (compose::ucompose1 (float_prop->get_minimum ()));
 			buttons->pack_start (*Gtk::manage (button));
-			
+
 			button = new LegendButton (ColorValue (0.5));
 			button->set_label (compose::ucompose1
 				(float_prop->get_medium (logarithmic.get_active ())));
 			buttons->pack_start (*Gtk::manage (button));
-			
+
 			button = new LegendButton (ColorValue (1.0));
 			button->set_label (compose::ucompose1 (float_prop->get_maximum ()));
 			buttons->pack_start (*Gtk::manage (button));
