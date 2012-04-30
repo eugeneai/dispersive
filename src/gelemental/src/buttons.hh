@@ -25,6 +25,7 @@
 #include <libelemental/element.hh>
 
 #include <gtkmm/button.h>
+#include <gtkmm/togglebutton.h>
 #include <gtkmm/tooltips.h>
 
 //******************************************************************************
@@ -34,7 +35,7 @@ namespace gElemental {
 //******************************************************************************
 
 class ColorButton
-:	public Gtk::Button
+:	public Gtk::ToggleButton
 {
 public:
 
@@ -73,7 +74,7 @@ public:
 private:
 
 	virtual void on_clicked ();
-	
+
 	Int group, period;
 };
 
