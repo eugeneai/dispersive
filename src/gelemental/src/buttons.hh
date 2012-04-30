@@ -35,6 +35,24 @@ namespace gElemental {
 //******************************************************************************
 
 class ColorButton
+:	public Gtk::Button
+{
+public:
+
+	void set_color (const color_value_base& value);
+	void unset_color ();
+
+protected:
+
+	void set_fgcolor (Gtk::Widget& child, const color_value_base& value);
+	void unset_fgcolor (Gtk::Widget& child);
+
+private:
+
+	static bool is_force_needed ();
+};
+
+class ColorToggleButton
 :	public Gtk::ToggleButton
 {
 public:
@@ -55,7 +73,7 @@ private:
 //******************************************************************************
 
 class ElementButton
-:	public ColorButton
+:	public ColorToggleButton
 {
 public:
 
@@ -70,10 +88,6 @@ public:
 		double temperature, bool logarithmic);
 
 	const Element &el;
-
-private:
-
-	virtual void on_clicked ();
 
 	Int group, period;
 };

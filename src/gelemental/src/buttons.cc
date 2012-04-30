@@ -101,7 +101,7 @@ ColorButton::unset_fgcolor (Gtk::Widget& child)
 bool
 ColorButton::is_force_needed ()
 {
-	static const char *OFFENDING_THEMES[] = 
+	static const char *OFFENDING_THEMES[] =
 	{
 		"Amaranth",
 		"Lush",
@@ -111,22 +111,120 @@ ColorButton::is_force_needed ()
 
 	static bool tested = false;
 	static bool needed = false;
-	
+
 	if (!tested)
 	{
 		ustring theme = Gtk::Settings::get_default ()->
 			property_gtk_theme_name ().get_value ();
-		
+
 		for (const char **test = OFFENDING_THEMES; *test; ++test)
 			if (theme == *test)
 			{
 				needed = true;
 				break;
 			}
-		
+
 		tested = true;
 	}
-	
+
+	return needed;
+}
+
+//******************************************************************************
+// class ColorToggleButton
+
+
+void
+ColorToggleButton::set_color (const color_value_base& value)
+{
+	Gdk::Color color = allocate (value.get_color ());
+
+	if (is_force_needed ())
+	{
+		RefPtr<Gtk::Style> style = Gtk::Style::create ();
+		style->set_bg (Gtk::STATE_NORMAL, color);
+		style->set_bg (Gtk::STATE_ACTIVE, color);
+		style->set_bg (Gtk::STATE_PRELIGHT, color);
+		set_style (style);
+	}
+	else
+	{
+		modify_bg (Gtk::STATE_NORMAL, color);
+		modify_bg (Gtk::STATE_ACTIVE, color);
+		modify_bg (Gtk::STATE_PRELIGHT, color);
+	}
+
+	if (Gtk::Widget *child = get_child ())
+		set_fgcolor (*child, value);
+}
+
+
+void
+ColorToggleButton::unset_color ()
+{
+	if (is_force_needed ())
+		unset_style ();
+	else
+	{
+		unset_bg (Gtk::STATE_NORMAL);
+		unset_bg (Gtk::STATE_ACTIVE);
+		unset_bg (Gtk::STATE_PRELIGHT);
+	}
+
+	if (Gtk::Widget *child = get_child ())
+		unset_fgcolor (*child);
+}
+
+
+void
+ColorToggleButton::set_fgcolor (Gtk::Widget& child, const color_value_base& value)
+{
+	Gdk::Color compliment = allocate (value.get_color ().get_compliment ());
+
+	child.modify_fg (Gtk::STATE_NORMAL, compliment);
+	child.modify_fg (Gtk::STATE_ACTIVE, compliment);
+	child.modify_fg (Gtk::STATE_PRELIGHT, compliment);
+}
+
+
+void
+ColorToggleButton::unset_fgcolor (Gtk::Widget& child)
+{
+	child.unset_fg (Gtk::STATE_NORMAL);
+	child.unset_fg (Gtk::STATE_ACTIVE);
+	child.unset_fg (Gtk::STATE_PRELIGHT);
+}
+
+
+bool
+ColorToggleButton::is_force_needed ()
+{
+	static const char *OFFENDING_THEMES[] =
+	{
+		"Amaranth",
+		"Lush",
+		"Nuvola",
+		NULL
+	};
+
+	static bool tested = false;
+	static bool needed = false;
+
+	if (!tested)
+	{
+		ustring theme = Gtk::Settings::get_default ()->
+			property_gtk_theme_name ().get_value ();
+
+		for (const char **test = OFFENDING_THEMES; *test; ++test)
+			if (theme == *test)
+			{
+				needed = true;
+				break;
+			}
+
+		tested = true;
+	}
+
 	return needed;
 }
 
@@ -199,11 +297,11 @@ ElementButton::set_color_by_property (const PropertyBase* property,
 
 	else if (property == &P_PHASE)
 		set_color (el.get_phase (temperature));
-	
+
 	else if cast (property, const FloatProperty, float_prop)
 	{
 		const Float &float_value = el.get_property (*float_prop);
-	
+
 		if (float_value.has_value () && float_prop->is_scale_valid ())
 			set_color (ColorValue
 				(float_prop->get_scale_position (float_value, logarithmic)));
@@ -211,21 +309,13 @@ ElementButton::set_color_by_property (const PropertyBase* property,
 		else
 			set_color (ColorValue ());
 	}
-	
+
 	else if cast (&el.get_property_base (*property),
 		const color_value_base, color_value)
 		set_color (*color_value);
-	
+
 	else
 		unset_color ();
-}
-
-
-void
-ElementButton::on_clicked ()
-{
-	ColorButton::on_clicked ();
-	show_properties ();
 }
 
 
@@ -257,7 +347,7 @@ ElementIdentity::ElementIdentity (const Element& el)
 	set_fgcolor (*symbol, color);
 	symbol->set_markup ("<big><big><b>" + el.symbol + "</b></big></big>");
 	square->pack_start (*Gtk::manage (symbol), Gtk::PACK_EXPAND_PADDING);
-	
+
 	pop_composite_child ();
 	show_all_children ();
 }
