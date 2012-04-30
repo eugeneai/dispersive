@@ -99,7 +99,6 @@ TableTable::TableTable (const RefPtr<Gtk::UIManager>& ui_)
 		_("_Element")), sigc::bind (sigc::mem_fun
 			(*this, &TableTable::on_color_by_changed), &P_COLOR));
 
-	ustring extra_ui;
 	int n = 1;
 	RefPtr<Gtk::Action> initial_action;
 	FOREACH (std::list<Category*>, CATEGORIES, category)
@@ -108,7 +107,6 @@ TableTable::TableTable (const RefPtr<Gtk::UIManager>& ui_)
 
 		ustring cname = compose::ucompose ("ViewColorCategory%1", n);
 		actions->add (Gtk::Action::create (cname, (*category)->get_name ()));
-		extra_ui += "<menu action='" + cname + "'>";
 
 		int o = 1;
 		FOREACH (std::list<PropertyBase*>, (*category)->properties, prop)
@@ -121,30 +119,14 @@ TableTable::TableTable (const RefPtr<Gtk::UIManager>& ui_)
 				initial_action = paction;
 			actions->add (paction, sigc::bind (sigc::mem_fun
 				(*this, &TableTable::on_color_by_changed), *prop));
-			extra_ui += "<menuitem action='" + pname + "' />";
 		}
 
-		extra_ui += "</menu>";
 		++n;
 	}
 
 	actions->add (show_legend = Gtk::ToggleAction::create
 		("ViewShowLegend", _("Show _Legend")), sigc::bind (sigc::mem_fun
 			(*this, &TableTable::on_legend_toggled), false));
-
-	ui->insert_action_group (actions);
-	ui_id = ui->add_ui_from_string
-	(
-		"<ui><menubar name='MenuBar'><menu action='ViewMenu'>"
-			"<separator />"
-			"<menu action='ViewColorMenu'>"
-				"<menuitem action='ViewColorByNone' />"
-				"<menuitem action='ViewColorByElement' />"
-				+ extra_ui +
-			"</menu>"
-			"<menuitem action='ViewShowLegend' />"
-		"</menu></menubar></ui>"
-	);
 
 	show_all_children ();
 	if (initial_action)
