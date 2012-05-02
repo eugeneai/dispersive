@@ -23,6 +23,7 @@
 #define GELEMENTAL__TABLE_TABLE_HH
 
 #include <libelemental/misc/throttle.hh>
+#include <libelemental/misc/macros.hh>
 #include "misc.hh"
 #include "buttons.hh"
 
