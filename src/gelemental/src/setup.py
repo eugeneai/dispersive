@@ -43,7 +43,35 @@ setup(
                 '/usr/include/qt4/QtCore',
                 '/usr/lib/gtk-2.0/include',
                 '/usr/include/gdk-pixbuf-2.0',
-                ]
+                ],
+            libraries=[
+                'gtkmm-2.4',
+                'atkmm-1.6',
+                'gdkmm-2.4',
+                'giomm-2.4',
+                'pangomm-1.4',
+                'gtk-x11-2.0',
+                'glibmm-2.4',
+                'cairomm-1.0',
+                'sigc-2.0',
+                'gdk-x11-2.0',
+                'atk-1.0',
+                'gio-2.0',
+                'pangoft2-1.0',
+                'pangocairo-1.0',
+                'gdk_pixbuf-2.0',
+                'cairo',
+                'pango-1.0',
+                'freetype',
+                'fontconfig',
+                'gobject-2.0',
+                'gmodule-2.0',
+                'gthread-2.0',
+                'rt',
+                'glib-2.0',
+                'elemental',
+                'misc-gtk'
+            ]
         )
     ]
 )
