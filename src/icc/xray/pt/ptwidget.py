@@ -37,6 +37,8 @@ class PTWidget(gtk.VBox):
         self.ui.pt=gtk.Table(rows=10, columns=18, homogeneous=True)
         self.pack_start(self.ui.pt, expand=True, fill=True)
         self.ui.elements=[]
+        white=gtk.gdk.color_parse('white')
+        black=gtk.gdk.color_parse('black')
         for i in range(118):
             j=i+1
             T=TABLE[j]
@@ -44,9 +46,31 @@ class PTWidget(gtk.VBox):
             self.ui.elements.append(el)
             try:
                 color=gtk.gdk.color_parse("#"+T[4])
-                el.modify_bg(gtk.STATE_NORMAL, color)
             except ValueError:
-                pass
+                color = gtk.gdk.Color("#eee")
+            if color != None:
+                col =color.red_float,color.green_float,color.blue_float
+                ccol=[1.-_c for _c in col]
+                compcolor=apply(gtk.gdk.Color, ccol)
+
+                dcol = [_c*70/100 for _c in col]
+                darkcolor=apply(gtk.gdk.Color, dcol)
+
+                bcol = [min(1., _c*100/70) for _c in col]
+                brightcolor=apply(gtk.gdk.Color, bcol)
+
+                el.modify_bg(gtk.STATE_NORMAL, color)
+                #el.modify_bg(gtk.STATE_ACTIVE, darkcolor)
+                el.modify_bg(gtk.STATE_ACTIVE, black)
+                el.modify_bg(gtk.STATE_PRELIGHT, brightcolor)
+                #el.modify_bg(gtk.STATE_PRELIGHT, compcolor)
+                el.modify_bg(gtk.STATE_SELECTED, color)
+
+                lab=el.get_child()
+                lab.modify_fg(gtk.STATE_ACTIVE, white)
+                lab.modify_fg(gtk.STATE_NORMAL, black)
+
+
             for l, r in ROWS:
                 if len(l) == 1:
                     if l[0]==j:
