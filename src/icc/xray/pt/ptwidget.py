@@ -39,8 +39,14 @@ class PTWidget(gtk.VBox):
         self.ui.elements=[]
         for i in range(118):
             j=i+1
-            el=factory(label=TABLE[j][1])
+            T=TABLE[j]
+            el=factory(label=T[1])
             self.ui.elements.append(el)
+            try:
+                color=gtk.gdk.color_parse("#"+T[4])
+                el.modify_bg(gtk.STATE_NORMAL, color)
+            except ValueError:
+                pass
             for l, r in ROWS:
                 if len(l) == 1:
                     if l[0]==j:
