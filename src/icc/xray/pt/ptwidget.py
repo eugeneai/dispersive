@@ -2,6 +2,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk, gobject
 import sys
+import data
 
 ROWS=[
     ((1,),           (1, 1)),
@@ -23,11 +24,13 @@ ROWS=[
 LA = (6,3)
 AC = (7,3)
 
+TABLE={row[0]:row for row in data.TABLE}
+
 class UI:
     pass
 
 class PTWidget(gtk.VBox):
-    def __init__(self):
+    def __init__(self, factory=gtk.Button):
         gtk.VBox.__init__(self)
         b=gtk.Button("asd")
         self.ui=UI()
@@ -36,7 +39,7 @@ class PTWidget(gtk.VBox):
         self.ui.elements=[]
         for i in range(118):
             j=i+1
-            el=gtk.Button(label=str(j))
+            el=factory(label=TABLE[j][1])
             self.ui.elements.append(el)
             for l, r in ROWS:
                 if len(l) == 1:
@@ -51,21 +54,64 @@ class PTWidget(gtk.VBox):
                         self.ui.pt.attach(el, c-1, c, r-1,r)
                         break
                 el.show()
-            self.set_size_request(500,260)
+            self.set_size_request(600,260)
 
 DATA=[]
 
-def import_data(filename):
+def import_data(filename, module_name):
     """Import data from a CSV file """
+    import csv
+    o=open(module_name, "w")
+    i=open(filename)
+    o.write("# Generated automatically, do not edit.\n\n")
+    o.write("TABLE=(\n")
+    def _c(s):
+        try:
+            s=int(s)
+            return s
+        except ValueError:
+            pass
+        try:
+            s=float(s)
+            return s
+        except ValueError:
+            pass
+        return s.strip()
+
+    for row in csv.reader(i):
+        nrow = [_c(c) for c in row]
+        N = row[0]
+        oxi=nrow[12]
+        try:
+            oxi=oxi.split(',')
+            oxi=map(lambda x: _c(x.strip()), oxi)
+        except AttributeError:
+            oxi=[oxi]
+        if oxi==['']:
+            oxi=[]
+        nrow[12]=oxi
+        o.write("(")
+        nrow[4]=row[4] # color should not be converted
+        for c in nrow:
+            o.write(repr(c))
+            o.write(',')
+        o.write(")")
+        o.write(',')
+        o.write('\n')
+    o.write(")\n")
+    o.close()
+    i.close()
 
 def test():
     testw = gtk.Window(gtk.WINDOW_TOPLEVEL)
     testw.connect("destroy", gtk.main_quit)
-    pt=PTWidget()
+    pt=PTWidget(factory=gtk.ToggleButton)
     testw.add(pt)
     testw.show_all()
     gtk.main()
 
 if __name__=="__main__":
+    #import_data("/home/eugeneai/Development/codes/dispersive/data/pt-data1.csv",
+    #    "data.py")
     test()
 
