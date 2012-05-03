@@ -23,6 +23,7 @@ setup(
                     "numpy",
                     "scipy",
                     "lxml",
+                    "periodictable",
                     #"matplotlib",
                     #"rsvg",
                     # "numpy",
