@@ -7,6 +7,7 @@ AC_CONFIG_SRCDIR([src/main.cc])
 
 AM_INIT_AUTOMAKE([1.9 dist-bzip2 no-dist-gzip])
 AM_MAINTAINER_MODE
+AC_CONFIG_MACRO_DIR([m4])
 
 dnl ensure that when the Automake generated makefile calls aclocal,
 dnl it honours the $ACLOCAL_FLAGS environment variable

@@ -161,3 +161,4 @@ src/gelemental/autom4te.cache/
 src/gelemental/src/.deps/
 src/gelemental/src/elwidget.o
 /data/.~lock.pt-data1.csv#
+/src/gelemental/m4/lt~obsolete.m4

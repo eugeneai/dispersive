@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -I$(top_srcdir) -DLOCALEDIR=\"$(localedir)\" \
 	$(GELEMENTAL_CPPFLAGS)
-AM_CXXFLAGS = $(GELEMENTAL_CXXFLAGS) -I/usr/include/python2.7
+AM_CXXFLAGS = $(GELEMENTAL_CXXFLAGS)
 
 bin_PROGRAMS = gelemental
 
@@ -10,8 +10,7 @@ gelemental_SOURCES = \
 	buttons.hh buttons.cc \
 	table-table.hh table-table.cc \
 	table-list.hh table-list.cc \
-	main.hh main.cc \
-	elwidget.cpp
+	main.hh main.cc
 
 gelemental_LDADD = \
 	$(GELEMENTAL_LIBS) \
