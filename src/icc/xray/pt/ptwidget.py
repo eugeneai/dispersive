@@ -111,6 +111,14 @@ class PTWidget(gtk.VBox):
 #DATA=[]
 
 class PTToggleWidget(PTWidget):
+    __gsignals__ = {
+        'toggled': (
+            gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE,
+            (gobject.TYPE_INT, gobject.TYPE_STRING, gobject.TYPE_PYOBJECT)
+            # Atomic number, Symbol, and the button itself
+        ),
+    }
     def __init__(self, factory=gtk.ToggleButton, palette=PAL_GROUP):
         PTWidget.__init__(self, factory=factory, palette=palette)
         self.ui.eldict={}
@@ -120,6 +128,7 @@ class PTToggleWidget(PTWidget):
             self.ui.eldict[Z]=el
             self.ui.eldict[T[1]]=el
             self.ui.eldict[el]=Z
+            el.connect("toggled", self.on_toggled)
 
     def select(self, elements, active=True):
         """ Select or unselect an element denoted by
@@ -149,6 +158,13 @@ class PTToggleWidget(PTWidget):
                 selected.append(Z)
 
         return selected
+
+    def on_toggled(self, button):
+        #print button, button.get_active()
+        Z=self.ui.eldict[button]
+        self.emit('toggled', Z, TABLE[Z][1], button)
+
+gobject.type_register(PTToggleWidget)
 
 
 
@@ -198,9 +214,12 @@ def import_data(filename, module_name):
     i.close()
 
 def test():
+    def action(ptw, Z, N, b):
+        print "Toggled:", ptw, Z, N, b, b.get_active()
     testw = gtk.Window(gtk.WINDOW_TOPLEVEL)
     testw.connect("destroy", gtk.main_quit)
     pt=PTToggleWidget()
+    pt.connect('toggled', action)
     testw.add(pt)
     testw.show_all()
     pt.select(['Zn', 'Zr', 'Y'], active=True)
@@ -209,6 +228,6 @@ def test():
 
 if __name__=="__main__":
     #import_data("/home/eugeneai/Development/codes/dispersive/data/pt-data1.csv",
-    #    "data.py")
+    #    "data_.py")
     test()
 
