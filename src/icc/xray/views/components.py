@@ -985,6 +985,9 @@ class ProjectView(View):
 
     #@-others
 
+class PeriodicTableView(gtk.Dialog):
+    pass
+
 gobject.type_register(ProjectView)
 
 if __name__=="__main__":
