@@ -721,6 +721,9 @@ class ProjectView(View):
         self.add_actions_to_menu(self.ui.ag_spectra, label='Spectra')
         self.ui.tb_widgets=self.add_actions_to_toolbar(self.ui.ag_spectra)
 
+        self.add_actions_to_menu(self.ui.ag_process, label='Spectra')
+        self.ui.tb_widgets2=self.add_actions_to_toolbar(self.ui.ag_process)
+
         self.add_actions_to_menu(self.ui.ag_other, label='Spectra')
 
         parent.connect('project-open', self.on_file_open)
@@ -732,6 +735,8 @@ class ProjectView(View):
     def do_destroy_view(self, self_widget, data=None):
         self.del_actions_from_menu(self.ui.ag_spectra)
         self.del_actions_from_toolbar(self.ui.ag_spectra, self.ui.tb_widgets)
+        self.del_actions_from_menu(self.ui.ag_process)
+        self.del_actions_from_toolbar(self.ui.ag_process, self.ui.tb_widgets2)
 
     def on_file_open(self, app, filename, data=None):
         try:
@@ -744,6 +749,9 @@ class ProjectView(View):
     def on_file_save(self, app, filename, data=None):
         self.model.save(filename)
         return True
+
+    def on_periodic_table(self, widget, _):
+        print "Here", widget, _
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
     def get_objects(self):
@@ -985,7 +993,7 @@ class ProjectView(View):
 
     #@-others
 
-class PeriodicTableView(gtk.Dialog):
+class PeriodicTableDialog(gtk.Dialog):
     pass
 
 gobject.type_register(ProjectView)

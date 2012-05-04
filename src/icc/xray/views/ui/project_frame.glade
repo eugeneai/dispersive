@@ -44,6 +44,18 @@
       </object>
       <accelerator key="f" modifiers="GDK_MOD1_MASK"/>
     </child>
+    <child>
+      <object class="GtkAction" id="ac_ptable">
+        <property name="label" translatable="yes">Periodic Table</property>
+        <property name="short_label" translatable="yes">Periodic Table</property>
+        <property name="tooltip" translatable="yes">Select elements with periodic table.</property>
+        <property name="stock_id">gtk-justify-fill</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="activate" handler="on_periodic_table" swapped="no"/>
+      </object>
+      <accelerator key="p" modifiers="GDK_MOD1_MASK"/>
+    </child>
   </object>
   <object class="GtkActionGroup" id="ag_spectra">
     <property name="name">Spectra</property>

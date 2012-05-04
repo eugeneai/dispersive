@@ -350,8 +350,8 @@ class View(gtk.Object):
                 tb.insert(ti, -1)
                 widgets.append(ti)
                 ti.show()
-            else:
-                print a, 'did not created', a.get_is_important()
+            #else:
+            #    print a, 'did not created', a.get_is_important()
 
         return widgets
 
