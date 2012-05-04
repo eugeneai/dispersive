@@ -87,6 +87,14 @@ class PTWidget(gtk.VBox):
                     el.modify_bg(gtk.STATE_PRELIGHT, brightcolor)
                     #el.modify_bg(gtk.STATE_PRELIGHT, compcolor)
                     el.modify_bg(gtk.STATE_SELECTED, color)
+                    
+                    style = el.get_style().copy()
+                    style.bg[gtk.STATE_NORMAL] = color
+                    style.bg[gtk.STATE_ACTIVE] = black
+                    style.bg[gtk.STATE_PRELIGHT] = brightcolor
+                    style.bg[gtk.STATE_SELECTED] = color
+                       #set the button's style to the one you created
+                    el.set_style(style)
 
                     lab=el.get_child()
                     lab.modify_fg(gtk.STATE_ACTIVE, white)
