@@ -87,7 +87,7 @@ class PTWidget(gtk.VBox):
                     el.modify_bg(gtk.STATE_PRELIGHT, brightcolor)
                     #el.modify_bg(gtk.STATE_PRELIGHT, compcolor)
                     el.modify_bg(gtk.STATE_SELECTED, color)
-                    
+
                     style = el.get_style().copy()
                     style.bg[gtk.STATE_NORMAL] = color
                     style.bg[gtk.STATE_ACTIVE] = black
@@ -114,7 +114,7 @@ class PTWidget(gtk.VBox):
                         self.ui.pt.attach(el, c-1, c, r-1,r)
                         break
                 el.show()
-            self.set_size_request(600,260)
+            self.set_size_request(500,200)
 
 #DATA=[]
 
