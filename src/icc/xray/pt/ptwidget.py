@@ -26,11 +26,28 @@ AC = (7,3)
 
 TABLE={row[0]:row for row in data.TABLE}
 
+PAL_CFK=1
+PAL_GROUP=2
+PAL_NONE=0
+
+PAL_GRP={
+    'nonmetal':'00ee00',
+    'noble gas':'66aaff',
+    'alkali metal':'ffaa00',
+    'alkaline earth metal':'f3f300',
+    'metalloid':'55cc88',
+    'halogen':'00ddbb',
+    'transition metal':'dd9999',
+    'metal':'99bbaa',
+    'lanthanoid':'ffaa88',
+    'actinoid':'ddaacc',
+}
+
 class UI:
     pass
 
 class PTWidget(gtk.VBox):
-    def __init__(self, factory=gtk.Button):
+    def __init__(self, factory=gtk.Button, palette=PAL_GROUP):
         gtk.VBox.__init__(self)
         b=gtk.Button("asd")
         self.ui=UI()
@@ -44,31 +61,36 @@ class PTWidget(gtk.VBox):
             T=TABLE[j]
             el=factory(label=T[1])
             self.ui.elements.append(el)
-            try:
-                color=gtk.gdk.color_parse("#"+T[4])
-            except ValueError:
-                color = gtk.gdk.Color("#eee")
-            if color != None:
-                col =color.red_float,color.green_float,color.blue_float
-                ccol=[1.-_c for _c in col]
-                compcolor=apply(gtk.gdk.Color, ccol)
+            if palette > PAL_NONE:
+                if palette==PAL_CFK:
+                    try:
+                        color=gtk.gdk.color_parse("#"+T[4])
+                    except ValueError:
+                        color = gtk.gdk.Color("#eee")
+                elif palette==PAL_GROUP:
+                    grp=T[-2]
+                    color=gtk.gdk.color_parse("#"+PAL_GRP.get(grp, 'eee'))
+                if color != None:
+                    col =color.red_float,color.green_float,color.blue_float
+                    ccol=[1.-_c for _c in col]
+                    compcolor=apply(gtk.gdk.Color, ccol)
 
-                dcol = [_c*70/100 for _c in col]
-                darkcolor=apply(gtk.gdk.Color, dcol)
+                    dcol = [_c*70/100 for _c in col]
+                    darkcolor=apply(gtk.gdk.Color, dcol)
 
-                bcol = [min(1., _c*100/70) for _c in col]
-                brightcolor=apply(gtk.gdk.Color, bcol)
+                    bcol = [min(1., _c*100/70) for _c in col]
+                    brightcolor=apply(gtk.gdk.Color, bcol)
 
-                el.modify_bg(gtk.STATE_NORMAL, color)
-                #el.modify_bg(gtk.STATE_ACTIVE, darkcolor)
-                el.modify_bg(gtk.STATE_ACTIVE, black)
-                el.modify_bg(gtk.STATE_PRELIGHT, brightcolor)
-                #el.modify_bg(gtk.STATE_PRELIGHT, compcolor)
-                el.modify_bg(gtk.STATE_SELECTED, color)
+                    el.modify_bg(gtk.STATE_NORMAL, color)
+                    #el.modify_bg(gtk.STATE_ACTIVE, darkcolor)
+                    el.modify_bg(gtk.STATE_ACTIVE, black)
+                    el.modify_bg(gtk.STATE_PRELIGHT, brightcolor)
+                    #el.modify_bg(gtk.STATE_PRELIGHT, compcolor)
+                    el.modify_bg(gtk.STATE_SELECTED, color)
 
-                lab=el.get_child()
-                lab.modify_fg(gtk.STATE_ACTIVE, white)
-                lab.modify_fg(gtk.STATE_NORMAL, black)
+                    lab=el.get_child()
+                    lab.modify_fg(gtk.STATE_ACTIVE, white)
+                    lab.modify_fg(gtk.STATE_NORMAL, black)
 
 
             for l, r in ROWS:
