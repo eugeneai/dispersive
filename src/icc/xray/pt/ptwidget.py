@@ -108,7 +108,50 @@ class PTWidget(gtk.VBox):
                 el.show()
             self.set_size_request(600,260)
 
-DATA=[]
+#DATA=[]
+
+class PTToggleWidget(PTWidget):
+    def __init__(self, factory=gtk.ToggleButton, palette=PAL_GROUP):
+        PTWidget.__init__(self, factory=factory, palette=palette)
+        self.ui.eldict={}
+        for i, el in enumerate(self.ui.elements):
+            Z=i+1
+            T=TABLE[Z]
+            self.ui.eldict[Z]=el
+            self.ui.eldict[T[1]]=el
+            self.ui.eldict[el]=Z
+
+    def select(self, elements, active=True):
+        """ Select or unselect an element denoted by
+            their list of Zs or symbols."""
+
+        if elements == None:
+            return
+
+        if len(elements)==0:
+            for e in self.ui.elements:
+                e.set_active(not active)
+            return
+
+        for e in elements:
+            el=self.ui.eldict[e]
+            el.set_active(active)
+
+    def selected(self, symbols=False):
+        """Return a set of the selected elements as
+        set of atom numbers or as set of symbols"""
+        selected=[]
+        for el in self.ui.elements:
+            if el.get_active():
+                Z=self.ui.eldict[el]
+                if symbols:
+                    Z=TABLE[Z][1]
+                selected.append(Z)
+
+        return selected
+
+
+
 
 def import_data(filename, module_name):
     """Import data from a CSV file """
@@ -157,10 +200,12 @@ def import_data(filename, module_name):
 def test():
     testw = gtk.Window(gtk.WINDOW_TOPLEVEL)
     testw.connect("destroy", gtk.main_quit)
-    pt=PTWidget(factory=gtk.ToggleButton)
+    pt=PTToggleWidget()
     testw.add(pt)
     testw.show_all()
+    pt.select(['Zn', 'Zr', 'Y'], active=True)
     gtk.main()
+    print pt.selected(symbols=True)
 
 if __name__=="__main__":
     #import_data("/home/eugeneai/Development/codes/dispersive/data/pt-data1.csv",
