@@ -15,16 +15,6 @@
   </object>
   <object class="GtkActionGroup" id="ag_process">
     <child>
-      <object class="GtkAction" id="ac_scaling">
-        <property name="label" translatable="yes">Scaling</property>
-        <property name="short_label" translatable="yes">Scaling</property>
-        <property name="tooltip" translatable="yes">Relate the channels to their keV</property>
-        <property name="stock_id">gtk-color-picker</property>
-        <property name="always_show_image">True</property>
-      </object>
-      <accelerator key="s" modifiers="GDK_MOD1_MASK"/>
-    </child>
-    <child>
       <object class="GtkAction" id="ac_coupton">
         <property name="label" translatable="yes">Coumpton</property>
         <property name="short_label" translatable="yes">Coumpton</property>
@@ -45,14 +35,24 @@
       <accelerator key="f" modifiers="GDK_MOD1_MASK"/>
     </child>
     <child>
-      <object class="GtkAction" id="ac_ptable">
+      <object class="GtkToggleAction" id="ac_scaling">
+        <property name="label" translatable="yes">Scaling</property>
+        <property name="short_label" translatable="yes">Scaling</property>
+        <property name="tooltip" translatable="yes">Relate the channels to their keV</property>
+        <property name="stock_id">gtk-color-picker</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+      </object>
+      <accelerator key="s" modifiers="GDK_MOD1_MASK"/>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_ptable">
         <property name="label" translatable="yes">Periodic Table</property>
         <property name="short_label" translatable="yes">Periodic Table</property>
         <property name="tooltip" translatable="yes">Select elements with periodic table.</property>
         <property name="stock_id">gtk-justify-fill</property>
         <property name="is_important">True</property>
         <property name="always_show_image">True</property>
-        <signal name="activate" handler="on_periodic_table" swapped="no"/>
       </object>
       <accelerator key="p" modifiers="GDK_MOD1_MASK"/>
     </child>
@@ -94,6 +94,20 @@
         <signal name="toggled" handler="on_spectra_export" swapped="no"/>
       </object>
     </child>
+  </object>
+  <object class="GtkTreeStore" id="project_tree_model">
+    <columns>
+      <!-- column-name node -->
+      <column type="gchararray"/>
+      <!-- column-name icon -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name active -->
+      <column type="gboolean"/>
+      <!-- column-name enabled -->
+      <column type="gboolean"/>
+      <!-- column-name color -->
+      <column type="GdkPixbuf"/>
+    </columns>
   </object>
   <object class="GtkListStore" id="project_list_model">
     <columns>
@@ -138,20 +152,6 @@
         <col id="11">10</col>
       </row>
     </data>
-  </object>
-  <object class="GtkTreeStore" id="project_tree_model">
-    <columns>
-      <!-- column-name node -->
-      <column type="gchararray"/>
-      <!-- column-name icon -->
-      <column type="GdkPixbuf"/>
-      <!-- column-name active -->
-      <column type="gboolean"/>
-      <!-- column-name enabled -->
-      <column type="gboolean"/>
-      <!-- column-name color -->
-      <column type="GdkPixbuf"/>
-    </columns>
   </object>
   <object class="GtkFrame" id="project_frame">
     <property name="visible">True</property>
