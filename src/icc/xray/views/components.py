@@ -34,6 +34,8 @@ from matplotlib.figure import Figure
 from numpy import arange, sin, pi, array
 import numpy as np
 
+import icc.xray.pt.ptwidget as ptwidget
+
 # uncomment to select /GTK/GTKAgg/GTKCairo
 #from matplotlib.backends.backend_gtk import FigureCanvasGTK as FigureCanvas
 from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
@@ -751,7 +753,21 @@ class ProjectView(View):
         return True
 
     def on_periodic_table(self, widget, _):
-        print "Here", widget, _
+        active = widget.get_active()
+        rc=gsm().queryUtility(IPeriodicTableView)
+        if rc==None:
+            #factory=gsm().queryUtility(IPeriodicTableView, 'periodic-table-factory')
+            pt=ZC.createObject('periodic-table-factory')
+            gsm().registerUtility(pt, IPeriodicTableView)
+        else:
+            pt=rc
+        if active:
+            pt.show()
+        else:
+            pt.hide()
+        #connect
+
+
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
     def get_objects(self):
@@ -993,8 +1009,28 @@ class ProjectView(View):
 
     #@-others
 
-class PeriodicTableDialog(gtk.Dialog):
-    pass
+class PeriodicTableWindow(View):
+    implements(IPeriodicTableView)
+    template = "ui/periodic_table_window.glade"
+    widget_names = ["pt_window",
+            "hbox",
+            "lines_view", 'line_list',
+            'pt_place',
+    #                "project_tree_view", "main_vbox", "common_label",
+    #                "project_list_model", "project_tree_model", "paned_top", "paned_bottom",
+    #                "ag_spectra", "ag_process",
+    #                "ag_other", "ac_convert_to"
+    ]
+    def __init__(self, model=None):
+        View.__init__(self, model=model)
+        self.ui.table=ptwidget.PTToggleWidget()
+        self.ui.pt_place.add(self.ui.table)
+
+    def show(self):
+        self.ui.pt_window.show_all()
+
+    def hide(self):
+        self.ui.pt_window.hide()
 
 gobject.type_register(ProjectView)
 
