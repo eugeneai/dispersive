@@ -53,6 +53,7 @@
         <property name="stock_id">gtk-justify-fill</property>
         <property name="is_important">True</property>
         <property name="always_show_image">True</property>
+        <signal name="toggled" handler="on_periodic_table" swapped="no"/>
       </object>
       <accelerator key="p" modifiers="GDK_MOD1_MASK"/>
     </child>
