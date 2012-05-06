@@ -42,6 +42,7 @@
         <property name="stock_id">gtk-color-picker</property>
         <property name="is_important">True</property>
         <property name="always_show_image">True</property>
+        <signal name="toggled" handler="on_scaling_toggled" swapped="no"/>
       </object>
       <accelerator key="s" modifiers="GDK_MOD1_MASK"/>
     </child>

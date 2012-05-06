@@ -698,7 +698,7 @@ class ProjectView(View):
                     "project_list_model", "project_tree_model", "paned_top", "paned_bottom",
                     "ag_spectra", "ag_process",
                     "ag_other", "ac_convert_to",
-                    'ac_ptable'
+                    'ac_ptable','ac_scaling',
                     ]
     implements(rakeints.IProjectView)
     ZC.adapts(mdli.IProject, rakeints.IView)
@@ -736,6 +736,8 @@ class ProjectView(View):
         self.project_tree_selection = self.ui.project_tree_view.get_selection()
         self.project_tree_selection.connect('changed',self.on_project_tree_selection_changed)
 
+        self.ui.ag_process.set_sensitive(False)
+
     def do_destroy_view(self, self_widget, data=None):
         self.del_actions_from_menu(self.ui.ag_spectra)
         self.del_actions_from_toolbar(self.ui.ag_spectra, self.ui.tb_widgets)
@@ -768,12 +770,24 @@ class ProjectView(View):
             pt.connect("window-hide",
                 lambda x: self.ui.ac_ptable.set_active(False)
             )
+            pt.connect("selected", self.on_ptable_selected)
         else:
             pt=rc
         if active:
             pt.show()
+            self.ui.ac_scaling.set_active(True)
         else:
             pt.hide()
+
+    def on_scaling_toggled(self, widget, *args):
+        if widget.get_active():
+            print "Scaling started"
+        else:
+            print "Scaling stopped"
+            self.ui.ac_ptable.set_active(False)
+
+    def on_ptable_selected(self, table, list):
+        pass
 
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
@@ -914,17 +928,21 @@ class ProjectView(View):
     def on_row_activated(self, tree_view, path, column, data=None):
         #print 'Clicked:', tree_view, path, column, data
         lp=len(path)
+        self.ui.ac_scaling.set_active(False)
         if lp==1:
             # root clicked
+            self.ui.ag_process.set_sensitive(False)
             return
         file_no=path[1]-1 # Minus info node
         filename, sp=self.model.spectral_data.items()[file_no]
         if lp==2:
             #file clicked
             self.emit('file-clicked', filename, sp)
+            self.ui.ag_process.set_sensitive(False)
             return
         else:
             spec_no=path[-1]
+            self.ui.ag_process.set_sensitive(True)
             self.emit('spectrum-clicked', filename, sp.data[spec_no], (sp, spec_no))
 
     def on_project_tree_selection_changed(self, selection):
@@ -1021,6 +1039,7 @@ gobject.type_register(ProjectView)
 class PeriodicTableWindow(View):
     __gsignals__ = {
         'window-hide': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
+        'selected': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
     }
     implements(IPeriodicTableView)
     template = "ui/periodic_table_window.glade"
@@ -1066,6 +1085,7 @@ class PeriodicTableWindow(View):
             self.model.elset.remove(symbol)
 
         self.ui.input_list.set_text(','.join(self.model.elset))
+        self.emit("selected", self.model.elset)
 
     #def on_input_list_changed(self, ib):
     #    self.ui.input_list.
@@ -1078,6 +1098,11 @@ class PeriodicTableWindow(View):
         list=list.replace(';',',').strip().split(',')
         list=[l.strip() for l in list]
         bad=self.ui.table.select(list, active=True, only=True)
+        """
+        if bad:
+            ib.modify_bg(gtk.)
+            style = el.get_style().copy()
+        """
         self._list_block=False
 
     def on_delete_event(self, window, event):
