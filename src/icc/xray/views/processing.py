@@ -45,15 +45,21 @@ class Parameters(threading.Thread):
     def show(self):
         if not self.stopthread.isSet() :
             par=self.model.parameters
+            par.set_figure(self.view.ui.ax)
+            elements=self.model.elements
             ls = ldb.as_deltafun(order_by="keV", element=elements,
                     where="not l.name like 'M%' and keV<20.0")
             ls=list(ls)
+            gtk.threads_enter()
+            par.line_plot(ls)
+            gtk.threads_leave()
 
     def refine(self):
         if not self.stopthread.isSet() :
             par=self.model.parameters
             self.scaling()
             elements=self.model.elements
+            par.line_plot(ls)
 
             ls = ldb.as_deltafun(order_by="keV", element=elements,
                     where="not l.name like 'M%' and keV<20.0")

@@ -788,16 +788,19 @@ class ProjectView(View):
             if self.p_thread == None:
                 self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
             self.p_thread.scaling()
+            self.p_thread.show()
+            self.active_view.ui.canvas.draw()
         else:
             print "Scaling stopped"
             if self.p_thread:
                 self.p_thread.stop()
             self.ui.ac_ptable.set_active(False)
-            if self.p_thread == None:
-                self.p_thread.show()
 
     def on_ptable_selected(self, table, list):
         self.active_view.model[0].elements=list
+        if self.p_thread != None:
+            self.p_thread.show()
+            self.active_view.ui.canvas.draw()
 
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects

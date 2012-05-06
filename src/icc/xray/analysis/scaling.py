@@ -67,6 +67,10 @@ class Parameters(object):
         self.line_db_conn=None
 
         self.set_active_channels(self.channels)
+        self.fig=p
+
+    def set_figure(self, fig):
+        self.fig=fig
 
     def set_line_db_conn(self, conn):
         self.line_db_conn=conn
@@ -1177,6 +1181,7 @@ class Parameters(object):
     REL_NC=5
 
     def line_plot(self, lines):
+        fig=self.fig
         ym=0.8
         #L1={'A':ym, "B":ym * 0.6, "G":ym*0.3}
         L2={'K':(0,0,1), "L":(0,0,0.5)}
@@ -1194,14 +1199,13 @@ class Parameters(object):
             col=L2[lname[0]]
             ri=self.REL_INT.get(lname, self.REL_NC)
             #ymax=L1[lname[1]]
-            #p.axvline(ch, ymax=ymax, color=col)
-            p.axvline(ch, ymax=ym*ri/100., color=col)
+            fig.axvline(ch, ymax=ym*ri/100., color=col)
             if ch>lc:
                 continue
             y=self.active_channels[ch] * 1.
             #if y < 0.3 * chmax:
             #    y=chmax
-            p.text(ch, y, "%s %s"  % (line.element, line.name),
+            fig.text(ch, y, "%s %s"  % (line.element, line.name),
                 horizontalalignment='right',
                 verticalalignment='bottom',
                 family='monospace', size=8,
