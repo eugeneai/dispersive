@@ -138,21 +138,34 @@ class PTToggleWidget(PTWidget):
             self.ui.eldict[el]=Z
             el.connect("toggled", self.on_toggled)
 
-    def select(self, elements, active=True):
+    def select(self, elements, active=True, only=False):
         """ Select or unselect an element denoted by
             their list of Zs or symbols."""
 
         if elements == None:
-            return
+            return []
 
         if len(elements)==0:
             for e in self.ui.elements:
                 e.set_active(not active)
-            return
+            return []
 
+        bad=[]
+        good=set()
         for e in elements:
-            el=self.ui.eldict[e]
-            el.set_active(active)
+            el=self.ui.eldict.get(e, None)
+            if el==None:
+                bad.append(e)
+            else:
+                el.set_active(active)
+                good.add(el)
+        if only:
+            for el in self.ui.elements:
+                if el in good:
+                    continue
+                el.set_active(not active)
+
+        return bad
 
     def selected(self, symbols=False):
         """Return a set of the selected elements as
