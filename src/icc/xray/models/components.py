@@ -312,6 +312,12 @@ class SpectraOfProject(Spectra):
     spectra = property(get_spectra)
 
     #@-others
+
+class AnalysisTask(object):
+    def __init__(self, elset=[]):
+        self.elset=set(elset)
+
+
 #@+node:eugeneai.20110116171118.1360: ** test0
 PLOT_CMD='''
 source('%s')
