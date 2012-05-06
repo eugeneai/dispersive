@@ -49,6 +49,8 @@ from matplotlib.backends.backend_gtk import FileChooserDialog
 import matplotlib
 import matplotlib.pyplot as pyplot
 
+import processing as proc
+
 CHANNEL_NO=4096
 CALIBR_ZERO=90
 CALIBR_KEV=20./(CHANNEL_NO-CALIBR_ZERO)
@@ -737,6 +739,7 @@ class ProjectView(View):
         self.project_tree_selection.connect('changed',self.on_project_tree_selection_changed)
 
         self.ui.ag_process.set_sensitive(False)
+        self.p_thread=None
 
     def do_destroy_view(self, self_widget, data=None):
         self.del_actions_from_menu(self.ui.ag_spectra)
@@ -782,12 +785,19 @@ class ProjectView(View):
     def on_scaling_toggled(self, widget, *args):
         if widget.get_active():
             print "Scaling started"
+            if self.p_thread == None:
+                self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
+            self.p_thread.scaling()
         else:
             print "Scaling stopped"
+            if self.p_thread:
+                self.p_thread.stop()
             self.ui.ac_ptable.set_active(False)
+            if self.p_thread == None:
+                self.p_thread.show()
 
     def on_ptable_selected(self, table, list):
-        pass
+        self.active_view.model[0].elements=list
 
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
@@ -927,6 +937,9 @@ class ProjectView(View):
 
     def on_row_activated(self, tree_view, path, column, data=None):
         #print 'Clicked:', tree_view, path, column, data
+        if self.p_thread:
+            self.p_thread.stop()
+            self.p_thread=None
         lp=len(path)
         self.ui.ac_scaling.set_active(False)
         if lp==1:
@@ -960,6 +973,9 @@ class ProjectView(View):
             [p.set_position(pos) for p in self.ui.hpaned_list if p!=paned] # recursion breaks due to position property: it can be unchanged.
 
     def on_spectra_close(self, widget, data=None):
+        if self.p_thread:
+            self.p_thread.stop()
+            self.p_thread=None
         if self.active_fpath == None:
             return
         rc,path=self.active_fpath

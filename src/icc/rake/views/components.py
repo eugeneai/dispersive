@@ -11,6 +11,9 @@ pygtk.require('2.0')
 import gtk, sys
 import goocanvas, gobject
 
+gtk.threads_init()
+print "Threads init."
+
 if __name__=="__main__":
     sys.path.append("..")
 
