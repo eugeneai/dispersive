@@ -774,9 +774,6 @@ class ProjectView(View):
             pt.show()
         else:
             pt.hide()
-        #connect
-
-
 
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
@@ -1044,6 +1041,14 @@ class PeriodicTableWindow(View):
         self.ui.pt_place.add(self.ui.table)
         self.ui.table.connect('toggled', self.on_table_toggled)
         self.ui.pt_window.connect('delete-event', self.on_delete_event)
+        label=self.ui.label=gtk.Label("Elements:")
+        self.ui.table.ui.pt.attach(label, 0, 2, 7,8)
+        label.set_alignment(1., 0.5)
+        in_list=self.ui.input_list=gtk.Entry()
+        in_list.connect('changed', self.on_input_list_changed)
+        #in_list.connect('activate', self.on_input_list_activate)
+        self.ui.table.ui.pt.attach(in_list, 2, 18, 7,8)
+        self._list_block=False
 
     def show(self):
         self.ui.pt_window.show_all()
@@ -1060,7 +1065,20 @@ class PeriodicTableWindow(View):
         else:
             self.model.elset.remove(symbol)
 
-        print self.model.elset
+        self.ui.input_list.set_text(','.join(self.model.elset))
+
+    #def on_input_list_changed(self, ib):
+    #    self.ui.input_list.
+
+    def on_input_list_changed(self, ib, *args):
+        if self._list_block:
+            return
+        self._list_block=True
+        list=ib.get_text()
+        list=list.replace(';',',').strip().split(',')
+        list=[l.strip() for l in list]
+        bad=self.ui.table.select(list, active=True, only=True)
+        self._list_block=False
 
     def on_delete_event(self, window, event):
         window.hide()
