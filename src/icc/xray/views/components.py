@@ -697,7 +697,9 @@ class ProjectView(View):
                     "project_tree_view", "main_vbox", "common_label",
                     "project_list_model", "project_tree_model", "paned_top", "paned_bottom",
                     "ag_spectra", "ag_process",
-                    "ag_other", "ac_convert_to"]
+                    "ag_other", "ac_convert_to",
+                    'ac_ptable'
+                    ]
     implements(rakeints.IProjectView)
     ZC.adapts(mdli.IProject, rakeints.IView)
     #@+others
@@ -739,6 +741,10 @@ class ProjectView(View):
         self.del_actions_from_toolbar(self.ui.ag_spectra, self.ui.tb_widgets)
         self.del_actions_from_menu(self.ui.ag_process)
         self.del_actions_from_toolbar(self.ui.ag_process, self.ui.tb_widgets2)
+        rc=gsm().queryUtility(IPeriodicTableView)
+        if rc:
+            rc.destroy()
+            gsm().unregisterUtility(rc, IPeriodicTableView)
 
     def on_file_open(self, app, filename, data=None):
         try:
@@ -759,6 +765,9 @@ class ProjectView(View):
             #factory=gsm().queryUtility(IPeriodicTableView, 'periodic-table-factory')
             pt=ZC.createObject('periodic-table-factory')
             gsm().registerUtility(pt, IPeriodicTableView)
+            pt.connect("window-hide",
+                lambda x: self.ui.ac_ptable.set_active(False)
+            )
         else:
             pt=rc
         if active:
@@ -766,6 +775,7 @@ class ProjectView(View):
         else:
             pt.hide()
         #connect
+
 
 
 
@@ -1009,7 +1019,12 @@ class ProjectView(View):
 
     #@-others
 
+gobject.type_register(ProjectView)
+
 class PeriodicTableWindow(View):
+    __gsignals__ = {
+        'window-hide': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
+    }
     implements(IPeriodicTableView)
     template = "ui/periodic_table_window.glade"
     widget_names = ["pt_window",
@@ -1022,9 +1037,13 @@ class PeriodicTableWindow(View):
     #                "ag_other", "ac_convert_to"
     ]
     def __init__(self, model=None):
+        if model == None:
+            model=mdl.AnalysisTask()
         View.__init__(self, model=model)
         self.ui.table=ptwidget.PTToggleWidget()
         self.ui.pt_place.add(self.ui.table)
+        self.ui.table.connect('toggled', self.on_table_toggled)
+        self.ui.pt_window.connect('delete-event', self.on_delete_event)
 
     def show(self):
         self.ui.pt_window.show_all()
@@ -1032,7 +1051,23 @@ class PeriodicTableWindow(View):
     def hide(self):
         self.ui.pt_window.hide()
 
-gobject.type_register(ProjectView)
+    def destroy(self):
+        self.ui.pt_window.destroy()
+
+    def on_table_toggled(self, table, Z, symbol, button):
+        if button.get_active():
+            self.model.elset.add(symbol)
+        else:
+            self.model.elset.remove(symbol)
+
+        print self.model.elset
+
+    def on_delete_event(self, window, event):
+        window.hide()
+        self.emit("window-hide")
+        return True
+
+gobject.type_register(PeriodicTableWindow)
 
 if __name__=="__main__":
     import icc.icc_xray_app
