@@ -27,14 +27,39 @@ class Parameters(threading.Thread):
     def set_progressbar(self, pb):
         self.progressbar=pb
 
+    def set_max_step(self, steps):
+        self.pb_max=steps
+        self.set_fraction(0., steps)
+
+    def set_step(self, step):
+        self.pb_step=step
+        self.set_fraction(step, self.pb_max)
+
+    def reset_progress(self, steps=None):
+        self.pb_step=0
+        if steps:
+            self.set_max_step(steps)
+        else:
+            self.set_fraction(step, self.pb_max)
+
+    def next_step(self):
+        self.pb_step+=1
+        self.set_fraction(self.pb_step, self.pb_max)
+
+    def set_fraction(self, step, steps=None):
+        if steps != None:
+            frac=float(step)/steps
+        else:
+            frac=step
+        gtk.threads_enter()
+        #print step, "of", steps
+        self.progressbar.set_fraction(frac)
+        gtk.threads_leave()
+
     def scaling(self):
         #While the stopthread event isn't setted, the thread keeps going on
         if not self.stopthread.isSet() :
-            self.pb_no=0
-            self.pb_max=9
-            def _pb():
-                self.pb_no+=1
-                print self.pb_no*100/self.pb_max
+            self.reset_progress(9)
 
             par=self.model.parameters
             pb=self.progressbar
@@ -49,7 +74,7 @@ class Parameters(threading.Thread):
             ##time.sleep(0.1)
 
             par.set_scale_lines_kev([self.e_0, self.e_mo])
-            par.calculate(plot=False, pb=_pb)
+            par.calculate(plot=False, pb=self.next_step)
             #par.scan_peakes_cwt(plot=True)
 
     def show(self):
