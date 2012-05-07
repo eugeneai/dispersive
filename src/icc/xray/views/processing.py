@@ -24,10 +24,20 @@ class Parameters(threading.Thread):
 
     stopthread = threading.Event()
 
+    def set_progressbar(self, pb):
+        self.progressbar=pb
+
     def scaling(self):
         #While the stopthread event isn't setted, the thread keeps going on
         if not self.stopthread.isSet() :
+            self.pb_no=0
+            self.pb_max=9
+            def _pb():
+                self.pb_no+=1
+                print self.pb_no*100/self.pb_max
+
             par=self.model.parameters
+            pb=self.progressbar
             # Acquiring the gtk global mutex
             ##gtk.threads_enter()
             #Setting a random value for the fraction
@@ -39,11 +49,12 @@ class Parameters(threading.Thread):
             ##time.sleep(0.1)
 
             par.set_scale_lines_kev([self.e_0, self.e_mo])
-            par.calculate(plot=False)
+            par.calculate(plot=False, pb=_pb)
             #par.scan_peakes_cwt(plot=True)
 
     def show(self):
         if not self.stopthread.isSet() :
+            return
             par=self.model.parameters
             par.set_figure(self.view.ui.ax)
             elements=self.model.elements

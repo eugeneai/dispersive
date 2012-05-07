@@ -701,6 +701,7 @@ class ProjectView(View):
                     "ag_spectra", "ag_process",
                     "ag_other", "ac_convert_to",
                     'ac_ptable','ac_scaling',
+                    'progressbar',
                     ]
     implements(rakeints.IProjectView)
     ZC.adapts(mdli.IProject, rakeints.IView)
@@ -787,6 +788,7 @@ class ProjectView(View):
             print "Scaling started"
             if self.p_thread == None:
                 self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
+                self.p_thread.set_progressbar(self.ui.progressbar)
             self.p_thread.scaling()
             self.p_thread.show()
             self.active_view.ui.canvas.draw()

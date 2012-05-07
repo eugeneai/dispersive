@@ -100,7 +100,7 @@ class Parameters(object):
         else:
             return RuntimeError, "scale did not calculated"
 
-    def calc_scale(self, plot=False, force=False):
+    def calc_scale(self, plot=False, force=False, pb=None):
         if self.scale.done and not force:
             return self.scale
         y=np.array(self.channels)
@@ -114,6 +114,7 @@ class Parameters(object):
         order=1
         _order=int(order*2)
         b, a = sig.butter(order, 0.1, btype='low')
+        if pb: pb()
         yfiltered = sig.lfilter(b, a, y)
         y_e=yfiltered[-1]
         #yfiltered[:-_order]=yfiltered[_order:]  # Shift the result (works not fine).
@@ -129,6 +130,7 @@ class Parameters(object):
         y_e=yfilteredlb[-1]
         #yfilteredlb[:-_order]=yfilteredlb[_order:]
         #yfilteredlb[-_order:]=np.zeros(_order)+y_e
+        if pb: pb()
 
         #Find left Zero pike
         chst=-1
@@ -191,6 +193,7 @@ class Parameters(object):
                         raise_on_warn=True, iters=iters,
                         mask=mask, xtol=xtol
                         )
+                    if pb: pb()
                 except FittingWarning, w:
                     print "Fit Warning step", step
                     fail_iter=True
@@ -214,6 +217,7 @@ class Parameters(object):
         def scale((k,b), x, y):
             return y-((x*k)+b)
         k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y))[0]
+        if pb: pb()
 
         print "K, B:", k_scale, b_scale
         self.scale.k=k_scale
@@ -305,7 +309,7 @@ class Parameters(object):
 
         return self.scale
 
-    def calculate_fwhm(self, peakes):
+    def calculate_fwhm(self, peakes, pb=None):
         pprint.pprint(peakes)
         _y=np.array([0.]+[w.fwhm for w in peakes])
         _x0=np.array([self.scale.peakes[0].x0]+[w.x0 for w in peakes])
@@ -316,6 +320,7 @@ class Parameters(object):
         k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y))[0]
 
         print "FWHM scale:", k_scale, b_scale
+        if pb: pb()
 
         self.scale.fwhm.k=k_scale
         self.scale.fwhm.b=b_scale
@@ -437,7 +442,7 @@ class Parameters(object):
         return
 
 
-    def calc_fwhm_scale(self, plot=False):
+    def calc_fwhm_scale(self, plot=False, pb=None):
         scale=self.calc_scale
 
     def nearest_peake(self, x0, peaks):
@@ -481,9 +486,9 @@ class Parameters(object):
         self.cwt.done=True
         return self.cwt
 
-    def calculate(self, plot=False):
-        self.calc_scale(plot=plot)
-        self.calc_fwhm_scale(plot=plot)
+    def calculate(self, plot=False, pb=None):
+        self.calc_scale(plot=plot, pb=pb)
+        self.calc_fwhm_scale(plot=plot, pb=pb)
         return
 
     def model_spectra(self, elements, plot=False):
