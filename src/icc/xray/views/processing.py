@@ -5,15 +5,16 @@ import pygtk
 pygtk.require('2.0')
 import gtk, gobject, sys, os
 
-if os.name!="nt":
-    ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
-else:
-    ldb=lines.Lines(dbname='C:\\dispersive\\data\\EdxData1.sqlite3')
+def line_db_conn():
+    if os.name!="nt":
+        ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
+    else:
+        ldb=lines.Lines(dbname='C:\\dispersive\\data\\EdxData1.sqlite3')
+    return ldb
 
 
 class Parameters(threading.Thread):
     e_0 = 0.0086
-    e_mo= 17.48
     def __init__(self, model, view):
         threading.Thread.__init__(self)
         self.model = model
@@ -21,7 +22,6 @@ class Parameters(threading.Thread):
         if self.model.parameters == None:
             self.model.parameters = scaling.Parameters(model.channels)
         par=self.model.parameters
-        par.set_line_db_conn(ldb)
         self._methods=[]
         self._active=False
 
@@ -85,20 +85,27 @@ class Parameters(threading.Thread):
         #Delaying 100ms until the next iteration
         ##time.sleep(0.1)
 
-        par.set_scale_lines_kev([self.e_0, self.e_mo])
+        par.set_scale_lines(self.e_0, ['Mo'], 20.) # 20 keV max
+        ldb=line_db_conn()
+        par.set_line_db_conn(ldb)
         par.calculate(plot=False, pb=self.next_step)
         #par.scan_peakes_cwt(plot=True)
 
     def show(self):
-        return
         par=self.model.parameters
-        par.set_figure(self.view.ui.ax)
         elements=self.model.elements
-        ls = ldb.as_deltafun(order_by="keV", element=elements,
-                where="not l.name like 'M%' and keV<20.0")
-        ls=list(ls)
+        le=len(elements)
+        if le:
+            ldb=line_db_conn()
+            ls = ldb.as_deltafun(order_by="keV", element=elements,
+                    where="not l.name like 'M%' and keV<20.0")
+            ls=list(ls)
         gtk.threads_enter()
-        par.line_plot(ls)
+        self.view.paint_model([self.model], draw=False)
+        par.set_figure(self.view.ui.ax)
+        if le:
+            par.line_plot(ls)
+        self.view.ui.canvas.draw()
         gtk.threads_leave()
 
     def refine(self):

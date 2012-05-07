@@ -558,6 +558,9 @@ class PlottingView(View):
         #self.ui.canvas.draw()
 
     def on_model_changed(self, model):
+        self.paint_model(model)
+
+    def paint_model(self, model, draw=True):
         if not hasattr(self.ui,'fig'):
             return
         fig = self.ui.fig
@@ -568,8 +571,6 @@ class PlottingView(View):
         ax = self.ui.ax
         ax2 = self.ui.ax2
         ay2 = self.ui.ay2
-
-
         ax.set_ylabel(self.axis.x_lab)
         ax.set_xlabel(self.axis.y_lab) #k$e$V
         if not model:
@@ -628,7 +629,8 @@ class PlottingView(View):
             #top.set_xlabels(ax.get_xlabels())
             for tick in ax2.get_xticklabels():
                 tick.set_fontsize(5)
-        self.ui.canvas.draw()
+        if draw:
+            self.ui.canvas.draw()
 
     #@+node:eugeneai.20110116171118.1394: *3* on_click
     def on_click(self, event, data=None):

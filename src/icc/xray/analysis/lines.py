@@ -4,7 +4,7 @@ import os, os.path, types
 import csv
 import numpy as np
 
-DEBUG=True
+DEBUG=False
 
 fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_2th, LLD, ULD"
 
@@ -218,10 +218,13 @@ class Lines(object):
     def select(self, Z=None, element=None, line=None, kev=None,
         where=None, order_by=None, analytical=False):
         def _expand(x, ex):
-            if x == None:
+            if x == None :
                 return ' 1 '
             if type(x) in [types.TupleType, types.ListType, types.GeneratorType, type(set())]:
-                rc=[ex % _ for _ in x]
+                if len(x)==0:
+                    return ' 1 '
+                else:
+                    rc=[ex % _ for _ in x]
             else:
                 return " ( " + ex % x + " ) "
             return ' ( '+' or '.join(rc)+' ) '
