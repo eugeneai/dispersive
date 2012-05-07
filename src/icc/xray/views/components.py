@@ -788,12 +788,11 @@ class ProjectView(View):
     def on_scaling_toggled(self, widget, *args):
         if widget.get_active():
             print "Scaling started"
-            if self.p_thread == None:
+            if self.p_thread == None or not self.p_thread.is_active():
                 self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
                 self.p_thread.set_progressbar(self.ui.progressbar)
-            self.p_thread.scaling()
-            self.p_thread.show()
-            self.active_view.ui.canvas.draw()
+                self.p_thread.methods(['scaling', 'show'])
+                self.p_thread.start()
         else:
             print "Scaling stopped"
             if self.p_thread:
@@ -802,10 +801,10 @@ class ProjectView(View):
 
     def on_ptable_selected(self, table, list):
         self.active_view.model[0].elements=list
-        if self.p_thread != None:
-            self.p_thread.show()
-            self.active_view.ui.canvas.draw()
-
+        if self.p_thread != None and not self.p_thread.is_active():
+            self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
+            self.p_thread.methods(['show'])
+            self.p_thread.start()
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
     def get_objects(self):
