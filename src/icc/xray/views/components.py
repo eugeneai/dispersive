@@ -943,9 +943,10 @@ class ProjectView(View):
 
     def on_row_activated(self, tree_view, path, column, data=None):
         #print 'Clicked:', tree_view, path, column, data
-        if self.p_thread:
+        if self.p_thread and self.p_thread.is_alive():
             self.p_thread.stop()
             self.p_thread=None
+        self.ui.progressbar.set_fraction(0.)
         lp=len(path)
         self.ui.ac_scaling.set_active(False)
         if lp==1:

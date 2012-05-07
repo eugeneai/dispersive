@@ -138,7 +138,7 @@ class Parameters(threading.Thread):
 
     def stop(self):
         """Stop method, sets the event to terminate the thread's main loop"""
-        self.stopthread.set()
+        #self.stopthread.set()
 
     def is_active(self):
         return self._active
