@@ -504,6 +504,11 @@ class View(rakeviews.View):
 
 #@+node:eugeneai.20110116171118.1392: ** class PlottingView
 class PlottingView(View):
+    __gsignals__ = {
+        'spectrum-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+            (gobject.TYPE_PYOBJECT,
+            gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT)),
+    }
     implements(IPlottingView)
     #ZC.adapts(mdli.ISpectra, rakeints.IView)
     ZC.adapts(rakeints.IView)
@@ -566,11 +571,11 @@ class PlottingView(View):
         fig = self.ui.fig
         fig.clear()
         self.ui.ax = fig.add_subplot(111)
-        self.ui.ax2=self.ui.ax.twinx()
-        self.ui.ay2=self.ui.ax.twiny()
+        #self.ui.ax2=self.ui.ax.twinx()
+        #self.ui.ay2=self.ui.ax.twiny()
         ax = self.ui.ax
-        ax2 = self.ui.ax2
-        ay2 = self.ui.ay2
+        #ax2 = self.ui.ax2
+        #ay2 = self.ui.ay2
         ax.set_ylabel(self.axis.x_lab)
         ax.set_xlabel(self.axis.y_lab) #k$e$V
         if not model:
@@ -620,15 +625,15 @@ class PlottingView(View):
             for tick in ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(5)
             #ax2=ax.twinx()
-            ax2.set_xticklabels(["0", r"$\frac{1}{2}\pi$",
-                     r"$\pi$", r"$\frac{3}{2}\pi$", r"$2\pi$"])
-            ax.set_xticklabels(["0", r"$\frac{1}{2}\pi$",
-                     r"$\pi$", r"$\frac{3}{2}\pi$", r"$2\pi$"])
-            ax2.set_xlim(ax.get_xlim())
+            #ax2.set_xticklabels(["0", r"$\frac{1}{2}\pi$",
+            #         r"$\pi$", r"$\frac{3}{2}\pi$", r"$2\pi$"])
+            #ax.set_xticklabels(["0", r"$\frac{1}{2}\pi$",
+            #         r"$\pi$", r"$\frac{3}{2}\pi$", r"$2\pi$"])
+            #ax2.set_xlim(ax.get_xlim())
             #pyplot.setp(ax2, xticklabels=['1', '2'])
             #top.set_xlabels(ax.get_xlabels())
-            for tick in ax2.get_xticklabels():
-                tick.set_fontsize(5)
+            #for tick in ax2.get_xticklabels():
+            #    tick.set_fontsize(5)
         if draw:
             self.ui.canvas.draw()
 
@@ -644,6 +649,8 @@ class PlottingView(View):
             s=' '.join([str(x) for x in [event.button, event.x, event.y, event.xdata, event.ydata]])
 
         local.msg_id=self.ui.sb.push(local.ctx_id, s)
+
+        self.emit('spectrum-clicked', event.button, event.x, event.y, event.xdata, event.ydata)
 
     #@+node:eugeneai.20110116171118.1395: *3* on_spectra_clicked
     def on_spectra_clicked(self, project_view):
@@ -685,6 +692,7 @@ class PlottingView(View):
         line.set(alpha=newalpha)
         spec['alpha']=newalpha
 
+gobject.type_register(PlottingView)
 
     #@-others
 #@+node:eugeneai.20110116171118.1399: ** class ProjectView
@@ -722,6 +730,7 @@ class ProjectView(View):
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split('|')]
 
         self.active_view = ZC.getMultiAdapter((self,), IPlottingView)
+        self.active_view.connect('spectrum-clicked', self.on_plot_spectrum_clicked)
         #self.connect('spectrum-clicked', self.active_view.on_spectrum_clicked)
         #self.connect('file-clicked', self.active_view.on_spectra_clicked)
         self.connect('spectrum-clicked', self.on_spectrum_clicked)
@@ -781,6 +790,7 @@ class ProjectView(View):
             )
             pt.connect("selected", self.on_ptable_selected)
             pt.connect("refine", self.on_refine_scaling)
+            pt.connect('interval-changed', self.on_interval_changed)
         else:
             pt=rc
         if active:
@@ -809,6 +819,38 @@ class ProjectView(View):
             self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
             self.p_thread.methods(['show'])
             self.p_thread.start()
+
+    def on_plot_spectrum_clicked(self, plot, button, x,y, xdata, ydata):
+        if self.ui.ac_ptable.get_active():
+            pt = gsm().queryUtility(IPeriodicTableView)
+            pt.cursor_clicked=(button, x,y, xdata, ydata)
+            self.show_local_lines(pt)
+
+    def on_interval_changed(self, widget, value):
+        pt = widget
+        if pt.cursor_clicked != None:
+            self.show_local_lines(pt)
+
+    def show_local_lines(self, pt):
+        if pt != None:
+            model=self.active_view.model[0]
+            params=model.parameters
+            if params==None:
+                return
+            conn=proc.line_db_conn()
+            line_list=pt.ui.line_list
+            line_list.clear()
+            (button, x,y, xdata, ydata)=pt.cursor_clicked
+            interval=pt.ui.interval.get_value()
+            x0=model.parameters.channel_to_keV(xdata)
+            gen=conn.select(
+                    where="abs(keV-(%f))<(%f)" % (x0,interval),
+                    order_by="abs(keV-(%f))" % (x0)
+                )
+            lines=list(gen)
+            lines.sort(key=lambda l: abs(l.keV - x0))
+            for l in lines:
+                line_list.append((l.element, l.name, l.keV, l.Z))
 
     def on_refine_scaling(self, table):
         print "Refine scaling..."
@@ -1076,6 +1118,7 @@ class PeriodicTableWindow(View):
         'window-hide': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
         'refine': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
         'selected': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
+        'interval-changed': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_FLOAT,)),
     }
     implements(IPeriodicTableView)
     template = "ui/periodic_table_window.glade"
@@ -1083,10 +1126,7 @@ class PeriodicTableWindow(View):
             "hbox",
             "lines_view", 'line_list',
             'pt_place', 'refine_scaling_button',
-    #                "project_tree_view", "main_vbox", "common_label",
-    #                "project_list_model", "project_tree_model", "paned_top", "paned_bottom",
-    #                "ag_spectra", "ag_process",
-    #                "ag_other", "ac_convert_to"
+            'interval'
     ]
     def __init__(self, model=None):
         if model == None:
@@ -1106,6 +1146,16 @@ class PeriodicTableWindow(View):
         self.ui.table.ui.pt.attach(in_list, 2, 18, 7,8)
         self._list_block=False
         self.ui.refine_scaling_button.set_sensitive(False)
+
+        it=self.ui.interval
+        it.set_range(0., 2.)
+        it.set_increments(0.05, 0.1)
+        it.set_value(0.1)
+
+        self.cursor_clicked=None # Last cursor clicked here. Modified by a superior widget.
+
+    def on_interval_changed(self, spb, scrolltype):
+        self.emit('interval-changed', spb.get_value())
 
     def show(self):
         self.ui.pt_window.show_all()
