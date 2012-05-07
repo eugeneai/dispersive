@@ -51,10 +51,10 @@ class Parameters(threading.Thread):
             frac=float(step)/steps
         else:
             frac=step
-        gtk.threads_enter()
+        #gtk.threads_enter()
         #print step, "of", steps
-        self.progressbar.set_fraction(frac)
-        gtk.threads_leave()
+        #self.progressbar.set_fraction(frac)
+        #gtk.threads_leave()
 
     def scaling(self):
         #While the stopthread event isn't setted, the thread keeps going on

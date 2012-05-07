@@ -12,6 +12,8 @@ import gtk, gobject, sys
 
 if __name__=="__main__":
     sys.path.append("..")
+    gtk.threads_init()
+    print "Threads init locally!!!."
 
 from icc.xray.views.interfaces import *
 from zope.interface import implements, implementsOnly

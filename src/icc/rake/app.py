@@ -4,6 +4,15 @@
 #@@tabwidth -4
 #@+others
 #@+node:eugeneai.20110116171118.1424: ** app declarations
+
+import pygtk
+pygtk.require('2.0')
+import gtk
+
+#Initializing the gtk's thread engine
+gtk.threads_init()
+print "Gtk threads initized in", __file__
+
 from zope.configuration.xmlconfig import xmlconfig
 import zope.component as ZC
 from pkg_resources import resource_stream, resource_string
