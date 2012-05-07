@@ -1092,6 +1092,7 @@ class PeriodicTableWindow(View):
         if model == None:
             model=mdl.AnalysisTask()
         View.__init__(self, model=model)
+        self.ui.pt_window.set_keep_above(True)
         self.ui.table=ptwidget.PTToggleWidget()
         self.ui.pt_place.add(self.ui.table)
         self.ui.table.connect('toggled', self.on_table_toggled)
