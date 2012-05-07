@@ -1082,7 +1082,7 @@ class PeriodicTableWindow(View):
     widget_names = ["pt_window",
             "hbox",
             "lines_view", 'line_list',
-            'pt_place',
+            'pt_place', 'refine_scaling_button',
     #                "project_tree_view", "main_vbox", "common_label",
     #                "project_list_model", "project_tree_model", "paned_top", "paned_bottom",
     #                "ag_spectra", "ag_process",
@@ -1104,6 +1104,7 @@ class PeriodicTableWindow(View):
         #in_list.connect('activate', self.on_input_list_activate)
         self.ui.table.ui.pt.attach(in_list, 2, 18, 7,8)
         self._list_block=False
+        self.ui.refine_scaling_button.set_sensitive(False)
 
     def show(self):
         self.ui.pt_window.show_all()
@@ -1140,6 +1141,12 @@ class PeriodicTableWindow(View):
             ib.modify_bg(gtk.)
             style = el.get_style().copy()
         """
+        ls=len(list)
+        lb=len(bad)
+        if ls-lb>=2:
+            self.ui.refine_scaling_button.set_sensitive(True)
+        else:
+            self.ui.refine_scaling_button.set_sensitive(False)
         self._list_block=False
         self.emit("selected", self.model.elset)
 
