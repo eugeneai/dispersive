@@ -725,6 +725,7 @@ class ProjectView(View):
         #self.connect('spectrum-clicked', self.active_view.on_spectrum_clicked)
         #self.connect('file-clicked', self.active_view.on_spectra_clicked)
         self.connect('spectrum-clicked', self.on_spectrum_clicked)
+        self.connect('spectrum-clicked', self.on_refine_scaling)
         self.connect('file-clicked', self.on_file_clicked)
         self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
         self.ui.hpaned_list=[self.ui.paned_top, self.ui.paned_bottom]
@@ -779,6 +780,7 @@ class ProjectView(View):
                 lambda x: self.ui.ac_ptable.set_active(False)
             )
             pt.connect("selected", self.on_ptable_selected)
+            pt.connect("refine", self.on_refine_scaling)
         else:
             pt=rc
         if active:
@@ -806,6 +808,14 @@ class ProjectView(View):
         if self.p_thread != None and not self.p_thread.is_active():
             self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
             self.p_thread.methods(['show'])
+            self.p_thread.start()
+
+    def on_refine_scaling(self, table):
+        print "Refine scaling..."
+        if self.p_thread != None and not self.p_thread.is_active():
+            self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
+            self.p_thread.set_progressbar(self.ui.progressbar)
+            self.p_thread.methods(['refine','show'])
             self.p_thread.start()
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
@@ -1064,6 +1074,7 @@ gobject.type_register(ProjectView)
 class PeriodicTableWindow(View):
     __gsignals__ = {
         'window-hide': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
+        'refine': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
         'selected': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
     }
     implements(IPeriodicTableView)
@@ -1110,7 +1121,8 @@ class PeriodicTableWindow(View):
             self.model.elset.remove(symbol)
 
         self.ui.input_list.set_text(','.join(self.model.elset))
-        self.emit("selected", self.model.elset)
+        if not self._list_block:
+            self.emit("selected", self.model.elset)
 
     #def on_input_list_changed(self, ib):
     #    self.ui.input_list.
@@ -1129,11 +1141,24 @@ class PeriodicTableWindow(View):
             style = el.get_style().copy()
         """
         self._list_block=False
+        self.emit("selected", self.model.elset)
 
     def on_delete_event(self, window, event):
         window.hide()
         self.emit("window-hide")
         return True
+
+    def on_refine_scaling_button_activate(self, window, event):
+        print "Refine"
+        self.emit('refine')
+
+    def on_clear_all_button_clicked(self, window, event):
+        if self._list_block:
+            return
+        self._list_block=True
+        self.ui.table.select([], active=True, only=True)
+        self._list_block=False
+        self.emit("selected", self.model.elset)
 
 gobject.type_register(PeriodicTableWindow)
 

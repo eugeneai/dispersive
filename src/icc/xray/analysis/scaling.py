@@ -254,7 +254,7 @@ class Parameters(object):
         self.scale.done=True
         return self.scale
 
-    def refine_scale(self, elements, plot=False, background=True):
+    def refine_scale(self, elements, plot=False, background=True, pb=None):
         ws=[]
         # Select analytical lines (the brightest ones) from the database.
         max_keV=self.channel_to_keV(len(self.channels))
@@ -263,6 +263,7 @@ class Parameters(object):
             where="keV < %3.5f" % max_keV,
             analytical=True, order_by="e.Z")
         ls=list(ls)
+        if pb: pb()
 
         ls1=[]
         ls2=[]
@@ -296,6 +297,7 @@ class Parameters(object):
             p=self.iter_r_line(x0, plot=plot, fwhm=self.scale.peakes[0].fwhm, background=background)
             if p:
                 ws.append((p, l1, l2))
+        if pb: pb()
         if len(ws)<1:
             raise RuntimeError, 'not enough data to graduation, sorry'
         pprint.pprint(ws)
@@ -306,6 +308,7 @@ class Parameters(object):
         def scale((k,b), x, y):
             return y-((x*k)+b)
 
+        if pb: pb()
         k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y),
             #diag=_diag)[0]
             )[0]

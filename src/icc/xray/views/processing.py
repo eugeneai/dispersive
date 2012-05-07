@@ -94,6 +94,7 @@ class Parameters(threading.Thread):
     def show(self):
         par=self.model.parameters
         elements=self.model.elements
+        print "EL:", elements
         le=len(elements)
         if le:
             ldb=line_db_conn()
@@ -111,20 +112,11 @@ class Parameters(threading.Thread):
     def refine(self):
         par=self.model.parameters
         self.scaling()
+        self.reset_progress(3)
         elements=self.model.elements
-        par.line_plot(ls)
+        par.refine_scale(elements=elements, pb=self.next_step)
 
-        ls = ldb.as_deltafun(order_by="keV", element=elements,
-                where="not l.name like 'M%' and keV<20.0")
-                #where="not l.name like 'M%' and keV<20.0", analytical=True)
-        ls=list(ls)
-        #pprint.pprint(ls)
-
-        #par.refine_scale(elements=elements-set(['Mo']))
-        par.refine_scale(elements=set(['As', 'V']))
-        #par.scale.k=0.005004
-        #par.scale.b=-0.4843
-        par.line_plot(ls)
+    def other(self):
         ybkg = par.approx_background(elements=elements, plot=True)
 
         p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6,)
@@ -135,13 +127,6 @@ class Parameters(threading.Thread):
         par.model_spectra(elements=elements)
 
         p.plot(par.x, par.channels-ybkg, color=(0,0,0))
-        p.axis('tight')
-        ax=list(p.axis())
-        ax[2]=-ax[-1]/100.
-        ax[-1]=ax[-1]*1.1
-        p.axis(ax)
-        p.axhline(y=0, xmin=0, xmax=1, color=(0,0,0), alpha=0.3, linestyle='--')
-        p.show()
 
     def stop(self):
         """Stop method, sets the event to terminate the thread's main loop"""
