@@ -1219,6 +1219,11 @@ class PeriodicTableWindow(View):
         self._list_block=False
         self.emit("selected", self.model.elset)
 
+    def on_list_row_activated(self, list, path, view_column, *args):
+        m=list.get_model()
+        symbol = m[path[0]][0]
+        self.ui.table.select([symbol], active=True)
+
 gobject.type_register(PeriodicTableWindow)
 
 if __name__=="__main__":
