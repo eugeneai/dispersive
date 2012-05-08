@@ -8,7 +8,7 @@
       <!-- column-name line -->
       <column type="gchararray"/>
       <!-- column-name keV -->
-      <column type="gfloat"/>
+      <column type="gchararray"/>
       <!-- column-name Z -->
       <column type="guint"/>
     </columns>
@@ -189,7 +189,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="hscrollbar_policy">never</property>
-                <property name="vscrollbar_policy">always</property>
                 <child>
                   <object class="GtkViewport" id="viewport1">
                     <property name="visible">True</property>
