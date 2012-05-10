@@ -10,8 +10,8 @@ pygtk.require('2.0')
 import gtk
 
 #Initializing the gtk's thread engine
-gtk.threads_init()
-print "Gtk threads initized in", __file__
+#gtk.threads_init()
+#print "Gtk threads initized in", __file__
 
 from zope.configuration.xmlconfig import xmlconfig
 import zope.component as ZC
