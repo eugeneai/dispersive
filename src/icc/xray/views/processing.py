@@ -1,6 +1,6 @@
 import icc.xray.analysis.scaling as scaling
 import icc.xray.analysis.lines as lines
-import threading
+import gevent
 import pygtk
 pygtk.require('2.0')
 import gtk, gobject, sys, os
