@@ -1228,7 +1228,9 @@ gobject.type_register(PeriodicTableWindow)
 
 if __name__=="__main__":
     import icc.icc_xray_app
+    gtk.threads_enter()
     icc.icc_xray_app.main()
+    gtk.threads_leave()
 
 #@-others
 #@-leo
