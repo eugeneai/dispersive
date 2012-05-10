@@ -5,6 +5,8 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
+import gobject
+
 #Initializing the gtk's thread engine
 gtk.threads_init()
 
@@ -61,5 +63,11 @@ window.connect('destroy', main_quit)
 #Creating and starting the thread
 fs = FractionSetter()
 fs.start()
+
+def test_idle():
+    print "+",
+    return True
+
+gobject.idle_add(test_idle)
 
 gtk.main()
