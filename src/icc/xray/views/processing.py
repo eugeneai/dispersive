@@ -113,7 +113,7 @@ class Parameters(threading.Thread):
         par=self.model.parameters
         self.scaling()
         self.reset_progress(3)
-        elements=self.model.elements
+        elements=self.model.ptelements
         par.refine_scale(elements=elements, pb=self.next_step)
 
     def other(self):

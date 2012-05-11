@@ -946,7 +946,7 @@ class ProjectView(View):
         if not spec:
             return
         (sp, spec_no) = sp_and_no
-
+        return #FIXME
         for el in spec.elements.values():
             row=(int(el.Atom), 'Xx', el.XLine,
                 -1, int(el.Cycles), float(el.NetIntens), float(el.Background),

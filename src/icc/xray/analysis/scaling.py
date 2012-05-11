@@ -184,6 +184,8 @@ class Parameters(object):
                 chst=_y
             i-=1
         tube=i+1
+        #FIXME
+        tube=3579
 
         if plot:
             p.plot(x,yfiltered, color=(0,1,0), linewidth=3, alpha=0.5)
