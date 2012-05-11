@@ -155,6 +155,8 @@ class Parameters(object):
         order=5
         _order=int(order*2)
         b, a = sig.butter(order, [0.0003, 0.9], btype='bandstop')
+        _y=np.array(y)
+        _y[:160]=0.
         yfilteredlb = sig.lfilter(b, a, y)
         y_e=yfilteredlb[-1]
         #yfilteredlb[:-_order]=yfilteredlb[_order:]

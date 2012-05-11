@@ -93,7 +93,7 @@ class Parameters(threading.Thread):
 
     def show(self):
         par=self.model.parameters
-        elements=self.model.elements
+        elements=self.model.ptelements
         print "EL:", elements
         le=len(elements)
         if le:

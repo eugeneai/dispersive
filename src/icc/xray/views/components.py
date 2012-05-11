@@ -814,7 +814,7 @@ class ProjectView(View):
             self.ui.ac_ptable.set_active(False)
 
     def on_ptable_selected(self, table, list):
-        self.active_view.model[0].elements=list
+        self.active_view.model[0].ptelements=list
         if self.p_thread != None and not self.p_thread.is_active():
             self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
             self.p_thread.methods(['show'])

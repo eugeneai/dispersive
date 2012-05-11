@@ -146,6 +146,7 @@ class Spectrum(object):
         if elements == None:
             elements=OrderedDict()
         self.elements=elements
+        self.ptelements=[]
         self.parameters=None
 
 class SpectralData(object):

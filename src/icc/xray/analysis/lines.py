@@ -4,7 +4,7 @@ import os, os.path, types
 import csv
 import numpy as np
 
-DEBUG=False
+DEBUG=True
 
 fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_2th, LLD, ULD"
 
