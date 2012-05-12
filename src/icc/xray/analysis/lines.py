@@ -196,7 +196,9 @@ class Lines(object):
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Z INTEGER,
                 Name TEXT,
-                keV REAL
+                keV REAL,
+                Line Text,
+                rel FLOAT
         );
         ''')
 
