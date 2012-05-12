@@ -1207,7 +1207,8 @@ class Parameters(object):
         fig=self.fig
         ym=0.8
         #L1={'A':ym, "B":ym * 0.6, "G":ym*0.3}
-        L2={'K':(0,0,1), "L":(0,0,0.5)}
+        #L2={'K':(0,0,1), "L":(0,0,0.5)}
+        L2={'K':'black', "L":'red', "M":'green'}
 
         self.calc_scale()
         channels=[]
@@ -1220,7 +1221,8 @@ class Parameters(object):
             channels.append(ch)
             lname=line.name
             col=L2[lname[0]]
-            ri=self.REL_INT.get(lname, self.REL_NC)
+            #ri=self.REL_INT.get(lname, self.REL_NC)
+            ri=line.rel
             #ymax=L1[lname[1]]
             fig.axvline(ch, ymax=ym*ri/100., color=col)
             if ch>lc:
