@@ -851,7 +851,7 @@ class ProjectView(View):
             #lines.sort(key=lambda l: abs(l.keV - x0))
             lines.sort(key=lambda l: l.name)
             for l in lines:
-                line_list.append((l.element, l.name, "%6.3f" % l.keV, l.Z))
+                line_list.append((l.element, l.line, "%6.3f" % l.keV, l.Z))
 
     def on_refine_scaling(self, table):
         print "Refine scaling..."
