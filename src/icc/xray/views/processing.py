@@ -7,9 +7,9 @@ import gtk, gobject, sys, os
 
 def line_db_conn():
     if os.name!="nt":
-        ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
+        ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/lines.sqlite3')
     else:
-        ldb=lines.Lines(dbname='C:\\dispersive\\data\\EdxData1.sqlite3')
+        ldb=lines.Lines(dbname='C:\\dispersive\\data\\lines.sqlite3')
     return ldb
 
 

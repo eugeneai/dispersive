@@ -40,7 +40,7 @@ def arccot(x):
 Pike=namedtuple('Line','x0, A, fwhm, bkg, slope, chisq')
 
 zero_pike=Pike._make((0, 1., 1., 0., 0., None))
-zero_line=lines.Line._make((0, '', '', 0.0086))
+zero_line=lines.Line._make((0, '', '', 0.0086, 'Zero', 100))
 
 
 _LL={"L":0.12, "K":0.5}
