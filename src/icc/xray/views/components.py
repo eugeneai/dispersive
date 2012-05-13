@@ -516,6 +516,7 @@ class PlottingView(View):
     #@+node:eugeneai.20110116171118.1393: *3* __init__
     def __init__(self, parent=None, model=None):
         View.__init__(self, model, parent=parent)
+        self.plot_options={'show-lines':True}
         self.set_axis_labels()
         self.ui=rakeviews.Ui()
         self.ui.win=gtk.Frame()
@@ -537,8 +538,8 @@ class PlottingView(View):
          )
         self.ui.fig = fig
         self.ui.ax = fig.add_subplot(111)
-        self.ui.ax2=self.ui.ax.twinx()
-        self.ui.ay2=self.ui.ax.twiny()
+        #self.ui.ax2=self.ui.ax.twinx()
+        #self.ui.ay2=self.ui.ax.twiny()
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         self.ui.canvas = canvas
@@ -564,6 +565,10 @@ class PlottingView(View):
 
     def on_model_changed(self, model):
         self.paint_model(model)
+
+    def set_plot_options(self, options):
+        self.plot_options=options
+        self.paint_model(self.model)
 
     def paint_model(self, model, draw=True):
         if not hasattr(self.ui,'fig'):
@@ -601,12 +606,14 @@ class PlottingView(View):
                 kwargs.update(ssp)
                 #del kwargs['spectrum']
                 #pl, = ax.plot(kevs, spectrum, **kwargs)
-                pl, = ax.plot(X, spectrum, **kwargs)
-                ax.axis('tight')
-                _ax=list(ax.axis())
-                _ax[2]=-_ax[-1]/100.
-                _ax[-1]=_ax[-1]*1.1
-                ax.axis(_ax)
+                po=self.plot_options
+                if po.get('channels', True):
+                    pl, = ax.plot(X, spectrum, **kwargs)
+                    ax.axis('tight')
+                    _ax=list(ax.axis())
+                    _ax[2]=-_ax[-1]/100.
+                    _ax[-1]=_ax[-1]*1.1
+                    ax.axis(_ax)
                 ax.axhline(y=0, xmin=0, xmax=1, color=(0,0,0), alpha=0.3, linestyle='--')
                 #ax.set_yticklabels([])
                 #ax.set_xticklabels([])
@@ -790,7 +797,11 @@ class ProjectView(View):
             )
             pt.connect("selected", self.on_ptable_selected)
             pt.connect("refine", self.on_refine_scaling)
+            pt.connect('clear-scaling', self.on_clear_scaling)
+            pt.connect('external-scaling', self.on_external_scaling)
             pt.connect('interval-changed', self.on_interval_changed)
+            pt.connect('show-lines', self.on_adjust_graphics)
+            pt.connect('background', self.on_show_background)
         else:
             pt=rc
         if active:
@@ -812,6 +823,19 @@ class ProjectView(View):
             if self.p_thread:
                 self.p_thread.stop()
             self.ui.ac_ptable.set_active(False)
+
+    def on_external_scaling(self, widget, active):
+        print "External scaling", active
+
+    def on_clear_scaling(self, widget):
+        print "Clear scaling"
+
+    def on_show_background(self, widget, active):
+        print "Background", active
+
+    def on_adjust_graphics(self, widget, options):
+        print "Graphix adjustemnent", options
+        self.active_view.set_plot_options(options)
 
     def on_ptable_selected(self, table, list):
         self.active_view.model[0].ptelements=list
@@ -1118,6 +1142,10 @@ class PeriodicTableWindow(View):
     __gsignals__ = {
         'window-hide': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
         'refine': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
+        'clear-scaling': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
+        'external-scaling': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
+        'background': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
+        'show-lines': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
         'selected': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
         'interval-changed': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_FLOAT,)),
     }
@@ -1126,8 +1154,12 @@ class PeriodicTableWindow(View):
     widget_names = ["pt_window",
             "hbox",
             "lines_view", 'line_list',
-            'pt_place', 'refine_scaling_button',
-            'interval'
+            'pt_place',
+            'interval',
+            'ac_refine_scaling', 'ac_clear',
+            'ac_k', 'ac_l', 'ac_m', 'ac_peakes',
+            'ac_show_lines', 'ac_an_lines',
+            'ac_channels', 'ac_clean_channels',
     ]
     def __init__(self, model=None):
         if model == None:
@@ -1146,7 +1178,7 @@ class PeriodicTableWindow(View):
         #in_list.connect('activate', self.on_input_list_activate)
         self.ui.table.ui.pt.attach(in_list, 2, 18, 7,8)
         self._list_block=False
-        self.ui.refine_scaling_button.set_sensitive(False)
+        self.ui.ac_refine_scaling.set_sensitive(False)
 
         it=self.ui.interval
         it.set_range(0., 2.)
@@ -1196,9 +1228,9 @@ class PeriodicTableWindow(View):
         ls=len(list)
         lb=len(bad)
         if ls-lb>=2:
-            self.ui.refine_scaling_button.set_sensitive(True)
+            self.ui.ac_refine_scaling.set_sensitive(True)
         else:
-            self.ui.refine_scaling_button.set_sensitive(False)
+            self.ui.ac_refine_scaling.set_sensitive(False)
         self._list_block=False
         self.emit("selected", self.model.elset)
 
@@ -1207,16 +1239,22 @@ class PeriodicTableWindow(View):
         self.emit("window-hide")
         return True
 
-    def on_refine_scaling_button_activate(self, window, event):
-        print "Refine"
+    def on_refine_scaling(self, window, event):
         self.emit('refine')
 
-    def on_clear_all_button_clicked(self, window, event):
+    def on_clear_scaling(self, window, event):
+        self.emit('clear-scaling')
+
+    def on_use_ext_scaling(self, window, event):
+        self.emit('external-scaling', window.get_active())
+
+    def on_clear_all(self, window, event):
         if self._list_block:
             return
         self._list_block=True
         self.ui.table.select([], active=True, only=True)
         self._list_block=False
+        self.ui.ac_refine_scaling.set_sensitive(False)
         self.emit("selected", self.model.elset)
 
     def on_list_row_activated(self, list, path, view_column, *args):
@@ -1224,13 +1262,32 @@ class PeriodicTableWindow(View):
         symbol = m[path[0]][0]
         self.ui.table.select([symbol], active=True)
 
+    def on_show_line_toggled(self, widget, *args):
+        d={}
+        d['k']=self.ui.ac_k.get_active()
+        d['l']=self.ui.ac_l.get_active()
+        d['m']=self.ui.ac_m.get_active()
+        d['analytical']=self.ui.ac_an_lines.get_active()
+        d['peakes']=self.ui.ac_peakes.get_active()
+        d['channels']=self.ui.ac_channels.get_active()
+        d['clean-channels']=self.ui.ac_clean_channels.get_active()
+        sl=d['show-lines']=self.ui.ac_show_lines.get_active()
+        self.ui.ac_k.set_sensitive(sl)
+        self.ui.ac_l.set_sensitive(sl)
+        self.ui.ac_m.set_sensitive(sl)
+        self.ui.ac_an_lines.set_sensitive(sl)
+        self.emit('show-lines', d)
+
 gobject.type_register(PeriodicTableWindow)
 
 if __name__=="__main__":
+    print "Cannot run without external support!!"
+    '''
     import icc.icc_xray_app
     gtk.threads_enter()
     icc.icc_xray_app.main()
     gtk.threads_leave()
+    '''
 
 #@-others
 #@-leo
