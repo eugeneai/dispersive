@@ -111,10 +111,17 @@ class Parameters(threading.Thread):
 
     def refine(self):
         par=self.model.parameters
+        elements=self.model.ptelements
         self.scaling()
         self.reset_progress(3)
-        elements=self.model.ptelements
         par.refine_scale(elements=elements, pb=self.next_step)
+
+    def background(self):
+        par=self.model.parameters
+        elements=self.model.ptelements
+        self.scaling()
+        self.reset_progress(11)
+        par.approx_background(elements=elements, pb=self.next_step)
 
     def other(self):
         ybkg = par.approx_background(elements=elements, plot=True)

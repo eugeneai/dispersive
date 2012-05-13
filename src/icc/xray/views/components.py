@@ -593,6 +593,8 @@ class PlottingView(View):
             else:
                 m=model
 
+            po=self.plot_options
+            print 'bkg plot:', po.get('background', None)
             for i, spec in enumerate(m):
                 spectrum = spec.channels
                 sp_len = len(spectrum)
@@ -606,7 +608,6 @@ class PlottingView(View):
                 kwargs.update(ssp)
                 #del kwargs['spectrum']
                 #pl, = ax.plot(kevs, spectrum, **kwargs)
-                po=self.plot_options
                 if po.get('channels', True):
                     pl, = ax.plot(X, spectrum, **kwargs)
                     ax.axis('tight')
@@ -614,6 +615,15 @@ class PlottingView(View):
                     _ax[2]=-_ax[-1]/100.
                     _ax[-1]=_ax[-1]*1.1
                     ax.axis(_ax)
+                if spec.parameters:
+                    print "PBG:", spec.parameters.bkg
+                if spec.parameters and po.get('background', False) and spec.parameters.bkg!=None:
+                    kwbkg={}
+                    kwbkg.update(kwargs)
+                    kwbkg['alpha']=0.6
+                    kwbkg['color']='blue'
+                    pl, = ax.plot(X, spec.parameters.bkg, **kwbkg)
+
                 ax.axhline(y=0, xmin=0, xmax=1, color=(0,0,0), alpha=0.3, linestyle='--')
                 #ax.set_yticklabels([])
                 #ax.set_xticklabels([])
@@ -831,15 +841,16 @@ class ProjectView(View):
             self.active_view.model[0].parameters.scale.done=False
             self.p_thread_tasks(['scaling', 'show'])
 
-
     def on_clear_scaling(self, widget):
         print "Clear scaling"
 
     def on_show_background(self, widget, active):
+        self.active_view.plot_options['background']=active
+        if active:
+            self.p_thread_tasks(['scaling','background','show'])
         print "Background", active
 
     def on_adjust_graphics(self, widget, options):
-        print "Graphix adjustemnent", options
         self.active_view.set_plot_options(options, draw=False)
         self.p_thread_tasks(['show'])
 
@@ -1157,6 +1168,7 @@ class PeriodicTableWindow(View):
     }
     implements(IPeriodicTableView)
     template = "ui/periodic_table_window.glade"
+    'Cl,Mo,Si,S,P,As,W,V,Zr,Ar,Hf'
     widget_names = ["pt_window",
             "hbox",
             "lines_view", 'line_list',
@@ -1166,6 +1178,7 @@ class PeriodicTableWindow(View):
             'ac_k', 'ac_l', 'ac_m', 'ac_peakes',
             'ac_show_lines', 'ac_an_lines',
             'ac_channels', 'ac_clean_channels',
+            'ac_background'
     ]
     def __init__(self, model=None):
         if model == None:
@@ -1268,7 +1281,11 @@ class PeriodicTableWindow(View):
         symbol = m[path[0]][0]
         self.ui.table.select([symbol], active=True)
 
-    def on_show_line_toggled(self, widget, *args):
+    def on_ac_background_toggled(self, widget, *args):
+        #self.on_show_line_toggled(widget=widget, emit=True)
+        self.emit("background", widget.get_active())
+
+    def on_show_line_toggled(self, widget, emit=True, *args):
         d={}
         d['k']=self.ui.ac_k.get_active()
         d['l']=self.ui.ac_l.get_active()
@@ -1277,12 +1294,14 @@ class PeriodicTableWindow(View):
         d['peakes']=self.ui.ac_peakes.get_active()
         d['channels']=self.ui.ac_channels.get_active()
         d['clean-channels']=self.ui.ac_clean_channels.get_active()
+        d['background']=self.ui.ac_background.get_active()
         sl=d['show-lines']=self.ui.ac_show_lines.get_active()
         self.ui.ac_k.set_sensitive(sl)
         self.ui.ac_l.set_sensitive(sl)
         self.ui.ac_m.set_sensitive(sl)
         self.ui.ac_an_lines.set_sensitive(sl)
-        self.emit('show-lines', d)
+        if emit:
+            self.emit('show-lines', d)
 
 gobject.type_register(PeriodicTableWindow)
 

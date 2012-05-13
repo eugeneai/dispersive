@@ -75,6 +75,8 @@ class Parameters(object):
         self.scale.fwhm=Object()
         self.scale.fwhm.done=False
 
+        self.bkg=None
+
         self.cwt=Object()
         self.cwt.peakes=OrderedDict() # Map peake x (integer) to its fwhm calculated from CWT
         self.cwt.done=False
@@ -350,15 +352,27 @@ class Parameters(object):
         x0=self.keV_to_channel(keV)
         return np.sqrt(x0)*self.scale.fwhm.k+self.scale.fwhm.b
 
+    def invalidate_background(self):
+        self.bkg=None
 
     def approx_background(self, elements, plot=False,
             sw=((3.9, 0.2), (3.18, 0.)), s=9e7,
-                deeping=1., noice=000, relax=0.9):
+                deeping=1., noice=000, relax=0.9,
+                pb=None,
+                proceed=True):
+        if not proceed:
+            return
+        #if self.bkg!=None:
+        #    print "Cached"
+        #    return self.bkg
+        if not elements:
+            return
         max_keV=self.channel_to_keV(len(self.channels))
         els=elements # sorted(list(elements))
         ls=self.line_db_conn.select(element=els,
             where="keV < %3.5f" % max_keV,
             order_by="e.Z")
+        if pb: pb()
         ls=list(ls)
         xl=len(self.channels)
         ws=np.ones(xl)
@@ -405,7 +419,9 @@ class Parameters(object):
 
             if plot:
                 p.plot(self.x, ys, color=(1,0,1), linewidth=3., alpha=0.3)
+            if pb: pb()
 
+        self.bkg=ys
         return ys
 
 
