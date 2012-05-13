@@ -813,11 +813,7 @@ class ProjectView(View):
     def on_scaling_toggled(self, widget, *args):
         if widget.get_active():
             print "Scaling started"
-            if self.p_thread == None or not self.p_thread.is_active():
-                self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
-                self.p_thread.set_progressbar(self.ui.progressbar)
-                self.p_thread.methods(['scaling', 'show'])
-                self.p_thread.start()
+            self.p_thread_tasks(['scaling', 'show'])
         else:
             print "Scaling stopped"
             if self.p_thread:
@@ -825,7 +821,16 @@ class ProjectView(View):
             self.ui.ac_ptable.set_active(False)
 
     def on_external_scaling(self, widget, active):
-        print "External scaling", active
+        if active:
+            amp=self.active_view.model[0].parameters
+            eamp=self.active_view.model[0].extparams
+            amp.scale.b=eamp.scale.b
+            amp.scale.k=eamp.scale.k
+            self.p_thread_tasks(['show'])
+        else:
+            self.active_view.model[0].parameters.scale.done=False
+            self.p_thread_tasks(['scaling', 'show'])
+
 
     def on_clear_scaling(self, widget):
         print "Clear scaling"
@@ -843,8 +848,9 @@ class ProjectView(View):
         self.p_thread_tasks(['show'])
 
     def p_thread_tasks(self, tasks):
-        if self.p_thread != None and not self.p_thread.is_active():
+        if self.p_thread == None or not self.p_thread.is_active():
             self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
+            self.p_thread.set_progressbar(self.ui.progressbar)
             self.p_thread.methods(tasks)
             self.p_thread.start()
 
@@ -883,11 +889,7 @@ class ProjectView(View):
 
     def on_refine_scaling(self, table):
         print "Refine scaling..."
-        if self.p_thread != None and not self.p_thread.is_active():
-            self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
-            self.p_thread.set_progressbar(self.ui.progressbar)
-            self.p_thread.methods(['refine','show'])
-            self.p_thread.start()
+        self.p_thread_tasks(['refine','show'])
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
     def get_objects(self):

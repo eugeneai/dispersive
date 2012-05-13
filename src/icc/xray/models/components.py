@@ -148,6 +148,7 @@ class Spectrum(object):
         self.elements=elements
         self.ptelements=[]
         self.parameters=None
+        self.extparams=Stub()
 
 class SpectralData(object):
     def __init__(self, name, data=[], filename=None, scale=None):
@@ -212,6 +213,11 @@ class SpectralData(object):
                     setattr(rc, a.tag, a.text.replace(',','.'))
                 els[rc.Atom]=rc
             sp=Spectrum(channels,sname,elements=els)
+            b=float(s.xpath("//CalibAbs/text()")[0].replace(',','.'))
+            k=float(s.xpath("//CalibLin/text()")[0].replace(',','.'))
+            sp.extparams.scale=Stub()
+            sp.extparams.scale.b=b
+            sp.extparams.scale.k=k
             nsp.append(sp)
         self.data=nsp
         return self
