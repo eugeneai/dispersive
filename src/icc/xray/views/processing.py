@@ -105,7 +105,7 @@ class Parameters(threading.Thread):
         self.view.paint_model([self.model], draw=False)
         par.set_figure(self.view.ui.ax)
         if le:
-            par.line_plot(ls)
+            par.line_plot(ls, self.view.plot_options)
         self.view.ui.canvas.draw()
         gtk.threads_leave()
 

@@ -566,9 +566,9 @@ class PlottingView(View):
     def on_model_changed(self, model):
         self.paint_model(model)
 
-    def set_plot_options(self, options):
+    def set_plot_options(self, options, draw=True):
         self.plot_options=options
-        self.paint_model(self.model)
+        self.paint_model(self.model, draw=draw)
 
     def paint_model(self, model, draw=True):
         if not hasattr(self.ui,'fig'):
@@ -835,13 +835,17 @@ class ProjectView(View):
 
     def on_adjust_graphics(self, widget, options):
         print "Graphix adjustemnent", options
-        self.active_view.set_plot_options(options)
+        self.active_view.set_plot_options(options, draw=False)
+        self.p_thread_tasks(['show'])
 
     def on_ptable_selected(self, table, list):
         self.active_view.model[0].ptelements=list
+        self.p_thread_tasks(['show'])
+
+    def p_thread_tasks(self, tasks):
         if self.p_thread != None and not self.p_thread.is_active():
             self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
-            self.p_thread.methods(['show'])
+            self.p_thread.methods(tasks)
             self.p_thread.start()
 
     def on_plot_spectrum_clicked(self, plot, button, x,y, xdata, ydata):

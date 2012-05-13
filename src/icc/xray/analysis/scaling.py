@@ -1203,7 +1203,9 @@ class Parameters(object):
 
     REL_NC=5
 
-    def line_plot(self, lines):
+    def line_plot(self, lines, options):
+        if not options.get('show-lines', True):
+            return
         fig=self.fig
         ym=0.8
         #L1={'A':ym, "B":ym * 0.6, "G":ym*0.3}
@@ -1215,7 +1217,25 @@ class Parameters(object):
         chmax = max(self.active_channels)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.8, linewidth=0)
         lc=len(self.active_channels)
+        k=options.get('k',True)
+        l=options.get('l',True)
+        m=options.get('m',False)
+        anl=options.get('analytical',False)
         for line in lines:
+            if not k and line.name.startswith('K'):
+                continue
+            if not l and line.name.startswith('L'):
+                continue
+            if not m and line.name.startswith('M'):
+                continue
+            if anl:
+                if line.name[1] != "A":
+                    continue
+                if line.Z<=50 and line.name.startswith('L'):
+                    continue
+                if line.Z>50 and line.name.startswith('K'):
+                    continue
+
             #print line
             ch = self.keV_to_channel(line.keV)
             channels.append(ch)
@@ -1281,7 +1301,7 @@ def test1():
     par.refine_scale(elements=set(['As', 'V']))
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
-    par.line_plot(ls)
+    par.line_plot(ls, {'analytical':True})
     ybkg = par.approx_background(elements=elements, plot=True)
 
     p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6,)
