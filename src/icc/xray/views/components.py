@@ -594,7 +594,6 @@ class PlottingView(View):
                 m=model
 
             po=self.plot_options
-            print 'bkg plot:', po.get('background', None)
             for i, spec in enumerate(m):
                 spectrum = spec.channels
                 sp_len = len(spectrum)
@@ -612,11 +611,11 @@ class PlottingView(View):
                     pl, = ax.plot(X, spectrum, **kwargs)
                     ax.axis('tight')
                     _ax=list(ax.axis())
+                    print "A", _ax
+                    _ax[-1]=np.max(spectrum[150:])
                     _ax[2]=-_ax[-1]/100.
                     _ax[-1]=_ax[-1]*1.1
                     ax.axis(_ax)
-                if spec.parameters:
-                    print "PBG:", spec.parameters.bkg
                 if spec.parameters and po.get('background', False) and spec.parameters.bkg!=None:
                     kwbkg={}
                     kwbkg.update(kwargs)
@@ -847,8 +846,10 @@ class ProjectView(View):
     def on_show_background(self, widget, active):
         self.active_view.plot_options['background']=active
         if active:
+            self.active_view.plot_options
             self.p_thread_tasks(['scaling','background','show'])
-        print "Background", active
+        else:
+            self.p_thread_tasks(['show'])
 
     def on_adjust_graphics(self, widget, options):
         self.active_view.set_plot_options(options, draw=False)

@@ -220,6 +220,7 @@
               <object class="GtkExpander" id="action_expander">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="expanded">True</property>
                 <child>
                   <object class="GtkVBox" id="box5">
                     <property name="visible">True</property>
