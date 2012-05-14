@@ -7,9 +7,9 @@ import gtk, gobject, sys, os
 
 def line_db_conn():
     if os.name!="nt":
-        ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
+        ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/lines.sqlite3')
     else:
-        ldb=lines.Lines(dbname='C:\\dispersive\\data\\EdxData1.sqlite3')
+        ldb=lines.Lines(dbname='C:\\dispersive\\data\\lines.sqlite3')
     return ldb
 
 
@@ -93,7 +93,7 @@ class Parameters(threading.Thread):
 
     def show(self):
         par=self.model.parameters
-        elements=self.model.elements
+        elements=self.model.ptelements
         print "EL:", elements
         le=len(elements)
         if le:
@@ -105,16 +105,23 @@ class Parameters(threading.Thread):
         self.view.paint_model([self.model], draw=False)
         par.set_figure(self.view.ui.ax)
         if le:
-            par.line_plot(ls)
+            par.line_plot(ls, self.view.plot_options)
         self.view.ui.canvas.draw()
         gtk.threads_leave()
 
     def refine(self):
         par=self.model.parameters
+        elements=self.model.ptelements
         self.scaling()
         self.reset_progress(3)
-        elements=self.model.elements
         par.refine_scale(elements=elements, pb=self.next_step)
+
+    def background(self):
+        par=self.model.parameters
+        elements=self.model.ptelements
+        self.scaling()
+        self.reset_progress(11)
+        par.approx_background(elements=elements, pb=self.next_step)
 
     def other(self):
         ybkg = par.approx_background(elements=elements, plot=True)

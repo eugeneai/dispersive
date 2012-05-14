@@ -182,6 +182,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="resize_mode">queue</property>
+                    <property name="vscroll_policy">natural</property>
                     <child>
                       <object class="GtkTreeView" id="project_tree_view">
                         <property name="width_request">100</property>
@@ -289,7 +290,6 @@
               <object class="GtkVBox" id="box1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow2">
                     <property name="width_request">200</property>

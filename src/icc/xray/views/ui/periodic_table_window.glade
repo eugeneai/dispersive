@@ -1,6 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkActionGroup" id="ag_background">
+    <child>
+      <object class="GtkToggleAction" id="ac_background">
+        <property name="label" translatable="yes">Background</property>
+        <property name="short_label" translatable="yes">Background</property>
+        <property name="tooltip" translatable="yes">Show/calculate background.</property>
+        <property name="stock_id">gtk-jump-to</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="toggled" handler="on_ac_background_toggled" swapped="no"/>
+      </object>
+    </child>
+  </object>
+  <object class="GtkActionGroup" id="ag_calculate">
+    <child>
+      <object class="GtkAction" id="ac_auto">
+        <property name="label" translatable="yes">Auto Indent</property>
+        <property name="short_label" translatable="yes">Auto Indent</property>
+        <property name="tooltip" translatable="yes">Automaticali identify the lines of the spectrum.</property>
+        <property name="stock_id">gtk-execute</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="activate" handler="on_ac_autoindent" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="ac_clear_scaling">
+        <property name="label" translatable="yes">Clear Scaling</property>
+        <property name="short_label" translatable="yes">Clear Scaling</property>
+        <property name="tooltip" translatable="yes">Clear the caluculated scaling and reset the identification.</property>
+        <property name="stock_id">gtk-delete</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="activate" handler="on_ac_clear_scaling" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="ac_refine_scaling">
+        <property name="label" translatable="yes">Refine Scaling</property>
+        <property name="short_label" translatable="yes">Refine Scaling</property>
+        <property name="tooltip" translatable="yes">Refine the previous scaling with the selected elements.</property>
+        <property name="stock_id">gtk-refresh</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="activate" handler="on_refine_scaling" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_use_ext_scaling">
+        <property name="label" translatable="yes">Use Ext. Scaling</property>
+        <property name="short_label" translatable="yes">Ext. Scaling</property>
+        <property name="tooltip" translatable="yes">Use external scaling if any taken from the input data file.</property>
+        <property name="stock_id">gtk-about</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="toggled" handler="on_use_ext_scaling" swapped="no"/>
+      </object>
+    </child>
+  </object>
+  <object class="GtkActionGroup" id="ag_show_lines">
+    <child>
+      <object class="GtkToggleAction" id="ac_k">
+        <property name="label" translatable="yes">K-</property>
+        <property name="short_label" translatable="yes">K-</property>
+        <property name="tooltip" translatable="yes">Show the K-lines.</property>
+        <property name="stock_id">gtk-discard</property>
+        <property name="is_important">True</property>
+        <property name="active">True</property>
+        <signal name="toggled" handler="on_show_line_toggled" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_l">
+        <property name="label" translatable="yes">L-</property>
+        <property name="short_label" translatable="yes">L-</property>
+        <property name="tooltip" translatable="yes">Show L-lines.</property>
+        <property name="is_important">True</property>
+        <property name="active">True</property>
+        <signal name="toggled" handler="on_show_line_toggled" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_m">
+        <property name="label" translatable="yes">M-</property>
+        <property name="short_label" translatable="yes">M-</property>
+        <property name="tooltip" translatable="yes">Show M-lines.</property>
+        <property name="is_important">True</property>
+        <signal name="toggled" handler="on_show_line_toggled" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_peakes">
+        <property name="label" translatable="yes">Peakes</property>
+        <property name="short_label" translatable="yes">Peakes</property>
+        <property name="tooltip" translatable="yes">Show recognized peakes and modelled spectrum.</property>
+        <property name="stock_id">gtk-dialog-warning</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="toggled" handler="on_show_line_toggled" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_show_lines">
+        <property name="label" translatable="yes">Show Lines</property>
+        <property name="short_label" translatable="yes">Show Lines</property>
+        <property name="tooltip" translatable="yes">Show any lines at all.</property>
+        <property name="stock_id">gtk-info</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <property name="active">True</property>
+        <signal name="toggled" handler="on_show_line_toggled" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_an_lines">
+        <property name="label" translatable="yes">Analytic</property>
+        <property name="short_label" translatable="yes">Analytic</property>
+        <property name="tooltip" translatable="yes">Show only the analytic lines.</property>
+        <property name="stock_id">gtk-edit</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="toggled" handler="on_show_line_toggled" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_channels">
+        <property name="label" translatable="yes">Channels</property>
+        <property name="short_label" translatable="yes">Channels</property>
+        <property name="tooltip" translatable="yes">Show the digitized channels.</property>
+        <property name="stock_id">gtk-media-record</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <property name="active">True</property>
+        <signal name="toggled" handler="on_show_line_toggled" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_clean_channels">
+        <property name="label" translatable="yes">Clean Channels</property>
+        <property name="short_label" translatable="yes">Clean Channels</property>
+        <property name="tooltip" translatable="yes">Show the channels with the background subtracted.</property>
+        <property name="stock_id">gtk-apply</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="toggled" handler="on_show_line_toggled" swapped="no"/>
+      </object>
+    </child>
+  </object>
+  <object class="GtkActionGroup" id="ag_table">
+    <child>
+      <object class="GtkAction" id="ac_clear">
+        <property name="label" translatable="yes">Clear All</property>
+        <property name="short_label" translatable="yes">Clear</property>
+        <property name="tooltip" translatable="yes">Clear all selections of the elements in the table</property>
+        <property name="stock_id">gtk-clear</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="activate" handler="on_clear_scaling" swapped="no"/>
+      </object>
+    </child>
+  </object>
   <object class="GtkListStore" id="line_list">
     <columns>
       <!-- column-name symbol -->
@@ -56,72 +217,279 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="box4">
+              <object class="GtkExpander" id="action_expander">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="spacing">3</property>
-                <property name="homogeneous">True</property>
+                <property name="can_focus">True</property>
+                <property name="expanded">True</property>
                 <child>
-                  <object class="GtkButton" id="clear_all_button">
-                    <property name="label" translatable="yes">Clear All</property>
-                    <property name="use_action_appearance">False</property>
+                  <object class="GtkVBox" id="box5">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
-                    <signal name="clicked" handler="on_clear_all_button_clicked" swapped="no"/>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkToolbar" id="toolbar">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="toolbar_style">icons</property>
+                        <property name="show_arrow">False</property>
+                        <child>
+                          <object class="GtkToolButton" id="clear_toolbutton">
+                            <property name="related_action">ac_clear</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="has_tooltip">True</property>
+                            <property name="related_action">ac_clear</property>
+                            <property name="is_important">True</property>
+                            <property name="label" translatable="yes">Clear All</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorToolItem" id="toolbutton1">
+                            <property name="use_action_appearance">False</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="use_action_appearance">False</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToolButton" id="toolbutton2">
+                            <property name="related_action">ac_auto</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_auto</property>
+                            <property name="label" translatable="yes">toolbutton2</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToolButton" id="tb_refine_scaling">
+                            <property name="related_action">ac_refine_scaling</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_refine_scaling</property>
+                            <property name="is_important">True</property>
+                            <property name="label" translatable="yes">toolbutton3</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleToolButton" id="toolbutton4">
+                            <property name="related_action">ac_use_ext_scaling</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_use_ext_scaling</property>
+                            <property name="label" translatable="yes">toolbutton4</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToolButton" id="toolbutton5">
+                            <property name="related_action">ac_clear_scaling</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_clear_scaling</property>
+                            <property name="label" translatable="yes">toolbutton5</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorToolItem" id="toolbutton6">
+                            <property name="use_action_appearance">False</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="use_action_appearance">False</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleToolButton" id="toolbutton7">
+                            <property name="related_action">ac_peakes</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_peakes</property>
+                            <property name="label" translatable="yes">toolbutton7</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleToolButton" id="toolbutton8">
+                            <property name="related_action">ac_show_lines</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_show_lines</property>
+                            <property name="label" translatable="yes">toolbutton8</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleToolButton" id="toolbutton9">
+                            <property name="use_action_appearance">False</property>
+                            <property name="related_action">ac_k</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_k</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="is_important">True</property>
+                            <property name="label" translatable="yes">K-</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleToolButton" id="toolbutton10">
+                            <property name="use_action_appearance">False</property>
+                            <property name="related_action">ac_l</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_l</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="is_important">True</property>
+                            <property name="label" translatable="yes">L-</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleToolButton" id="toolbutton11">
+                            <property name="use_action_appearance">False</property>
+                            <property name="related_action">ac_m</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_m</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="is_important">True</property>
+                            <property name="label" translatable="yes">M-</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleToolButton" id="toolbutton12">
+                            <property name="related_action">ac_an_lines</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_an_lines</property>
+                            <property name="label" translatable="yes">toolbutton12</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSeparatorToolItem" id="toolbutton13">
+                            <property name="use_action_appearance">False</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="use_action_appearance">False</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleToolButton" id="toolbutton14">
+                            <property name="related_action">ac_background</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_background</property>
+                            <property name="label" translatable="yes">toolbutton14</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleToolButton" id="toolbutton3">
+                            <property name="related_action">ac_channels</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_channels</property>
+                            <property name="label" translatable="yes">toolbutton3</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToggleToolButton" id="toolbutton15">
+                            <property name="related_action">ac_clean_channels</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="related_action">ac_clean_channels</property>
+                            <property name="label" translatable="yes">toolbutton15</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
                 </child>
-                <child>
-                  <object class="GtkButton" id="auto_button">
-                    <property name="label" translatable="yes">Auto Ident</property>
-                    <property name="use_action_appearance">False</property>
+                <child type="label">
+                  <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Actions</property>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="clear_scaling_button">
-                    <property name="label" translatable="yes">Clear Scaling</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="refine_scaling_button">
-                    <property name="label" translatable="yes">Refine Scaling</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
-                    <signal name="clicked" handler="on_refine_scaling_button_activate" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">3</property>
-                  </packing>
                 </child>
               </object>
               <packing>
