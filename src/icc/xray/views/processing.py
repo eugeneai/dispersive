@@ -4,8 +4,6 @@ import sys
 #import pygtk
 #pygtk.require('2.0')
 #import gtk, gobject, sys, os
-from rpyc.core import SlaveService
-from rpyc.utils.server import ThreadedServer, ForkingServer
 
 def line_db_conn():
     if os.name!="nt":
@@ -20,31 +18,46 @@ if __name__=="__main__" and len(sys.argv)==2 and sys.argv[1]=='server':
     from rpyc.core import SlaveService
     from rpyc.utils.server import ThreadedServer, ForkingServer
     SERVER = True
-    CBase=object
 else:
     SERVER = False
     import rpyc
-    server=rpyc.classic.connect(HOST, PORT)
-    print "Client:", server
-    sprocessing = server.modules['icc.xray.views.processing']
-    CBase=sprocessing.Parameters
+    import os
+    if not sys.argv[0].endswith('rpyc_classic.py'):
+        server=rpyc.classic.connect(HOST, PORT)
+        sprocessing = server.modules['icc.xray.views.processing']
+        print "Client:", server, sprocessing
 
+class Stub:
+    pass
 
-class Parameters(CBase):
+class Parameters():
     e_0 = 0.0086
-    def __init__(self, model, view):
+    def __init__(self, model=None, view=None, client=None):
         #threading.Thread.__init__(self)
         global SERVER
         self.SERVER=SERVER
-        if SERVER:
-            CBase.__init__(self, model, view)
-        self.model = model
-        self.view = view
-        if self.model.parameters == None:
-            self.model.parameters = scaling.Parameters(model.channels)
-        par=self.model.parameters
-        self._methods=[]
-        self._active=False
+        if client:
+            self.model = client.model
+            self.view = client.view
+            self._methods=client._methods
+            self._active=client._active
+        else:
+            self.model = model
+            self.view = view
+            if model == None:
+                model=Stub()
+                model.parameters=Stub()
+                self.model=model
+            if self.model.parameters == None:
+                self.model.parameters = scaling.Parameters(model.channels)
+            self._methods=[]
+            self._active=False
+
+    def reself(self):
+        if not SERVER:
+            print "Here1"
+            self.obj=sprocessing.Parameters(client=self)
+            print "Here2"
 
     def set_progressbar(self, pb):
         self.progressbar=pb
@@ -157,6 +170,4 @@ if SERVER:
         )
     t.logger.quiet = True
     t.start()
-
-
 
