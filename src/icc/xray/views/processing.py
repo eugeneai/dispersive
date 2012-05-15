@@ -1,9 +1,11 @@
 import icc.xray.analysis.scaling as scaling
 import icc.xray.analysis.lines as lines
-import threading
-import pygtk
-pygtk.require('2.0')
-import gtk, gobject, sys, os
+import sys
+#import pygtk
+#pygtk.require('2.0')
+#import gtk, gobject, sys, os
+from rpyc.core import SlaveService
+from rpyc.utils.server import ThreadedServer, ForkingServer
 
 def line_db_conn():
     if os.name!="nt":
@@ -12,11 +14,30 @@ def line_db_conn():
         ldb=lines.Lines(dbname='C:\\dispersive\\data\\lines.sqlite3')
     return ldb
 
+HOST='localhost'
+PORT=12211
+if __name__=="__main__" and len(sys.argv)==2 and sys.argv[1]=='server':
+    from rpyc.core import SlaveService
+    from rpyc.utils.server import ThreadedServer, ForkingServer
+    SERVER = True
+    CBase=object
+else:
+    SERVER = False
+    import rpyc
+    server=rpyc.classic.connect(HOST, PORT)
+    print "Client:", server
+    sprocessing = server.modules['icc.xray.views.processing']
+    CBase=sprocessing.Parameters
 
-class Parameters(threading.Thread):
+
+class Parameters(CBase):
     e_0 = 0.0086
     def __init__(self, model, view):
-        threading.Thread.__init__(self)
+        #threading.Thread.__init__(self)
+        global SERVER
+        self.SERVER=SERVER
+        if SERVER:
+            CBase.__init__(self, model, view)
         self.model = model
         self.view = view
         if self.model.parameters == None:
@@ -24,8 +45,6 @@ class Parameters(threading.Thread):
         par=self.model.parameters
         self._methods=[]
         self._active=False
-
-    stopthread = threading.Event()
 
     def set_progressbar(self, pb):
         self.progressbar=pb
@@ -54,10 +73,10 @@ class Parameters(threading.Thread):
             frac=float(step)/steps
         else:
             frac=step
-        gtk.threads_enter()
-        #print step, "of", steps
-        self.progressbar.set_fraction(frac)
-        gtk.threads_leave()
+        #gtk.threads_enter()
+        #self.progressbar.set_fraction(frac)
+        #gtk.threads_leave()
+        print "SET frac:",  frac
 
     def methods(self, names):
         self._methods=names
@@ -123,22 +142,21 @@ class Parameters(threading.Thread):
         self.reset_progress(11)
         par.approx_background(elements=elements, pb=self.next_step)
 
-    def other(self):
-        ybkg = par.approx_background(elements=elements, plot=True)
-
-        p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6,)
-        p.plot(par.x, ybkg, color=(0,1,1), alpha=0.5, linestyle='-')
-        par.set_active_channels(par.channels-ybkg)
-
-        par.refine_scale(elements=set(['As', 'V', 'W', 'Mo', 'Zr']), background=False, plot=False)
-        par.model_spectra(elements=elements)
-
-        p.plot(par.x, par.channels-ybkg, color=(0,0,0))
-
     def stop(self):
         """Stop method, sets the event to terminate the thread's main loop"""
         #self.stopthread.set()
 
     def is_active(self):
         return self._active
+
+if SERVER:
+    t = ThreadedServer(SlaveService, hostname = 'localhost',
+        port = PORT, #reuse_addr = True, # ipv6 = options.ipv6,
+        #authenticator = options.authenticator, registrar = options.registrar,
+        #auto_register = options.auto_register
+        )
+    t.logger.quiet = True
+    t.start()
+
+
 
