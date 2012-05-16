@@ -52,9 +52,6 @@ class Parameters(object):
                 self.model.parameters = scaling.Parameters(model.channels)
             self._methods=[]
             self._active=False
-
-    def reself(self):
-        if not SERVER:
             self.obj=sprocessing.Parameters(client=self)
 
     def set_progressbar(self, pb):
@@ -89,8 +86,11 @@ class Parameters(object):
         #gtk.threads_leave()
         print "SET frac:",  frac
 
-    def methods(self, names):
+    def expose_methods(self, names):
         self._methods=names
+        
+    def methods(self, names):
+        self.obj.methods(names)
 
     def run(self):
         if not self.stopthread.isSet() :
@@ -170,6 +170,5 @@ if SERVER:
     t.start()
 else:
     p=Parameters()
-    p.reself()
     print "OK"
 
