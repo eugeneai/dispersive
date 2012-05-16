@@ -288,7 +288,7 @@ class Lines(object):
 
 
 
-if __name__=='__main__':
+if 0 and __name__=='__main__':
     import os
     import pylab as pl
     import pprint as pp

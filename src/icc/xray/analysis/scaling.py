@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.optimize as op
 import scipy.special as fn
-import pylab as p
+#import pylab as p
 import math
 from collections import OrderedDict, namedtuple
 import lines
