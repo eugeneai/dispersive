@@ -14,6 +14,7 @@ def line_db_conn():
 
 HOST='localhost'
 PORT=12211
+sprocessing=None
 if __name__=="__main__" and len(sys.argv)==2 and sys.argv[1]=='server':
     from rpyc.core import SlaveService
     from rpyc.utils.server import ThreadedServer, ForkingServer
@@ -21,13 +22,18 @@ if __name__=="__main__" and len(sys.argv)==2 and sys.argv[1]=='server':
     SERVER = True
 else:
     SERVER = False
+    test_case=False
     import rpyc
     import os
     print "Client", sys.argv
     if not sys.argv[0].endswith('rpyc_classic.py'):
+        print "here"
         server=rpyc.classic.connect(HOST, PORT)
+        print "here"
         sprocessing = server.modules['icc.xray.views.processing']
         print "Client:", server, sprocessing
+        test_case=True
+
 
 class Stub:
     pass
@@ -36,7 +42,7 @@ class Parameters(object):
     e_0 = 0.0086
     def __init__(self, model=None, view=None, client=None):
         #threading.Thread.__init__(self)
-        global SERVER
+        global SERVER,sprocessing
         self.SERVER=SERVER
         print "Client-dat", client
         if client:
@@ -91,16 +97,16 @@ class Parameters(object):
 
     def expose_methods(self, names):
         self._methods=names
-        
+
     def methods(self, names):
         self.obj.methods(names)
 
     def start(self):
         self.run()
-        
+
     def run(self):
         self.obj.run()
-        
+
     def expose_run(self):
         self._active=True
         o=self
@@ -181,7 +187,7 @@ if SERVER:
         )
     t.logger.quiet = True
     t.start()
-else:
+elif test_case:
     p=Parameters()
     print "OK"
 
