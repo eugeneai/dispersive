@@ -17,11 +17,13 @@ PORT=12211
 if __name__=="__main__" and len(sys.argv)==2 and sys.argv[1]=='server':
     from rpyc.core import SlaveService
     from rpyc.utils.server import ThreadedServer, ForkingServer
+    print "Server", sys.argv
     SERVER = True
 else:
     SERVER = False
     import rpyc
     import os
+    print "Client", sys.argv
     if not sys.argv[0].endswith('rpyc_classic.py'):
         server=rpyc.classic.connect(HOST, PORT)
         sprocessing = server.modules['icc.xray.views.processing']
@@ -36,6 +38,7 @@ class Parameters(object):
         #threading.Thread.__init__(self)
         global SERVER
         self.SERVER=SERVER
+        print "Client-dat", client
         if client:
             self.model = client.model
             self.view = client.view
@@ -92,14 +95,24 @@ class Parameters(object):
     def methods(self, names):
         self.obj.methods(names)
 
+    def start(self):
+        self.run()
+        
     def run(self):
-        if not self.stopthread.isSet() :
-            self._active=True
-            for m in self._methods:
-                getattr(self, m)()
-            self._active=False
+        self.obj.run()
+        
+    def expose_run(self):
+        self._active=True
+        o=self
+        if not self.SERVER:
+            o=self.obj
+        for m in o._methods:
+            getattr(o, m)()
+        self._active=False
 
     def scaling(self):
+        return self.obj.scaling()
+    def expose_scaling(self):
         #While the stopthread event isn't setted, the thread keeps going on
         self.reset_progress(9)
 

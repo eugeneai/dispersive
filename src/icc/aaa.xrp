@@ -6,5 +6,8 @@
     <file name="G-2.spx" filename="C:\dispersive\data\Coumpton\G-2.spx">
       <scale zero="0" scale="1"/>
     </file>
+    <file name="Compton-peak 23.03.12.rtx" filename="C:\dispersive\data\Coumpton\Compton-peak 23.03.12.rtx">
+      <scale zero="0" scale="1"/>
+    </file>
   </files>
 </XRF_Project>

@@ -83,7 +83,7 @@ class Parameters(object):
         self.line_db_conn=None
 
         self.set_active_channels(self.channels)
-        self.fig=p
+        #self.fig=p
 
     def set_figure(self, fig):
         self.fig=fig
