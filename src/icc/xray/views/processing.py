@@ -30,7 +30,7 @@ else:
 class Stub:
     pass
 
-class Parameters():
+class Parameters(object):
     e_0 = 0.0086
     def __init__(self, model=None, view=None, client=None):
         #threading.Thread.__init__(self)
@@ -55,9 +55,7 @@ class Parameters():
 
     def reself(self):
         if not SERVER:
-            print "Here1"
             self.obj=sprocessing.Parameters(client=self)
-            print "Here2"
 
     def set_progressbar(self, pb):
         self.progressbar=pb
@@ -170,4 +168,8 @@ if SERVER:
         )
     t.logger.quiet = True
     t.start()
+else:
+    p=Parameters()
+    p.reself()
+    print "OK"
 
