@@ -21,12 +21,13 @@ if __name__=="__main__" and len(sys.argv)==2 and sys.argv[1]=='server':
     print "Server", sys.argv
     SERVER = True
 else:
-    SERVER = False
+    SERVER = True
     test_case=False
     import rpyc
     import os
     print "Client", sys.argv
     if not sys.argv[0].endswith('rpyc_classic.py'):
+        SERVER = False
         print "here"
         server=rpyc.classic.connect(HOST, PORT)
         print "here"
@@ -95,35 +96,43 @@ class Parameters(object):
         #gtk.threads_leave()
         print "SET frac:",  frac
 
-    def expose_methods(self, names):
+    def server_methods(self, names):
         self._methods=names
 
     def methods(self, names):
-        self.obj.methods(names)
+        print self.SERVER
+        self.obj.server_methods(names)
 
     def start(self):
+        print "SERVER", self.SERVER
         self.run()
 
     def run(self):
-        self.obj.run()
+        self.obj.server_run()
 
-    def expose_run(self):
+    def server_run(self):
         self._active=True
         o=self
+        pref='server_'
         if not self.SERVER:
             o=self.obj
+            pref=''
         for m in o._methods:
+            m=pref+m
+            print "PRG:", m
             getattr(o, m)()
         self._active=False
 
     def scaling(self):
-        return self.obj.scaling()
-    def expose_scaling(self):
+        print "SERVER::", self.SERVER
+        return self.obj.server_scaling()
+
+    def server_scaling(self):
         #While the stopthread event isn't setted, the thread keeps going on
         self.reset_progress(9)
 
         par=self.model.parameters
-        pb=self.progressbar
+        ######pb=self.progressbar
         # Acquiring the gtk global mutex
         ##gtk.threads_enter()
         #Setting a random value for the fraction
@@ -139,6 +148,9 @@ class Parameters(object):
         par.set_line_db_conn(ldb)
         par.calculate(plot=False, pb=self.next_step)
         #par.scan_peakes_cwt(plot=True)
+
+    def server_show(self):
+        pass
 
     def show(self):
         par=self.model.parameters
@@ -180,6 +192,7 @@ class Parameters(object):
         return self._active
 
 if SERVER:
+    '''
     t = ThreadedServer(SlaveService, hostname = 'localhost',
         port = PORT, #reuse_addr = True, # ipv6 = options.ipv6,
         #authenticator = options.authenticator, registrar = options.registrar,
@@ -187,6 +200,7 @@ if SERVER:
         )
     t.logger.quiet = True
     t.start()
+    '''
 elif test_case:
     p=Parameters()
     print "OK"
