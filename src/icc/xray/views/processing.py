@@ -28,9 +28,10 @@ else:
     print "Client", sys.argv
     if not sys.argv[0].endswith('rpyc_classic.py'):
         SERVER = False
-        print "here"
+        import pygtk
+        pygtk.require('2.0')
+        import gtk, gobject, sys, os
         server=rpyc.classic.connect(HOST, PORT)
-        print "here"
         sprocessing = server.modules['icc.xray.views.processing']
         print "Client:", server, sprocessing
         test_case=True
@@ -91,10 +92,12 @@ class Parameters(object):
             frac=float(step)/steps
         else:
             frac=step
-        #gtk.threads_enter()
-        #self.progressbar.set_fraction(frac)
-        #gtk.threads_leave()
-        print "SET frac:",  frac
+        if hasattr(self, 'client_obj'):
+            self.client_obj.set_fraction(frac)
+        else:
+            gtk.threads_enter()
+            self.progressbar.set_fraction(frac)
+            gtk.threads_leave()
 
     def server_methods(self, names):
         self._methods=names
@@ -108,10 +111,11 @@ class Parameters(object):
         self.run()
 
     def run(self):
-        self.obj.server_run()
+        self.obj.server_run(self)
 
-    def server_run(self):
+    def server_run(self, client):
         self._active=True
+        self.client_obj=client
         o=self
         pref='server_'
         if not self.SERVER:
@@ -119,12 +123,12 @@ class Parameters(object):
             pref=''
         for m in o._methods:
             m=pref+m
-            print "PRG:", m
             getattr(o, m)()
+        self.client_obj=None
+        del self.client_obj
         self._active=False
 
     def scaling(self):
-        print "SERVER::", self.SERVER
         return self.obj.server_scaling()
 
     def server_scaling(self):
@@ -133,15 +137,6 @@ class Parameters(object):
 
         par=self.model.parameters
         ######pb=self.progressbar
-        # Acquiring the gtk global mutex
-        ##gtk.threads_enter()
-        #Setting a random value for the fraction
-        ##progressbar.set_fraction(random.random())
-        # Releasing the gtk global mutex
-        ##gtk.threads_leave()
-
-        #Delaying 100ms until the next iteration
-        ##time.sleep(0.1)
 
         par.set_scale_lines(self.e_0, ['Mo'], 20.) # 20 keV max
         ldb=line_db_conn()
@@ -150,7 +145,7 @@ class Parameters(object):
         #par.scan_peakes_cwt(plot=True)
 
     def server_show(self):
-        pass
+        self.client_obj.show()
 
     def show(self):
         par=self.model.parameters
@@ -171,16 +166,22 @@ class Parameters(object):
         gtk.threads_leave()
 
     def refine(self):
+        self.obj.refine()
+
+    def server_refine(self):
         par=self.model.parameters
-        elements=self.model.ptelements
-        self.scaling()
+        elements=list(self.model.ptelements)
+        self.server_scaling()
         self.reset_progress(3)
         par.refine_scale(elements=elements, pb=self.next_step)
 
     def background(self):
+        self.obj.server_background()
+
+    def server_background(self):
         par=self.model.parameters
-        elements=self.model.ptelements
-        self.scaling()
+        elements=list(self.model.ptelements)
+        self.server_scaling()
         self.reset_progress(11)
         par.approx_background(elements=elements, pb=self.next_step)
 
