@@ -27,5 +27,10 @@ class IProject(IModel):
     """Interface denoting a Project.
     Structure, based on XML.
     """
+
+class IAnalysisTask(IModel):
+    """Selection of the elements, methods,
+    graduation, etc.
+    """
 #@-others
 #@-leo

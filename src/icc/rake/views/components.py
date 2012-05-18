@@ -11,6 +11,9 @@ pygtk.require('2.0')
 import gtk, sys
 import goocanvas, gobject
 
+#gtk.threads_init()
+#print "Threads init."
+
 if __name__=="__main__":
     sys.path.append("..")
 
@@ -350,8 +353,8 @@ class View(gtk.Object):
                 tb.insert(ti, -1)
                 widgets.append(ti)
                 ti.show()
-            else:
-                print a, 'did not created', a.get_is_important()
+            #else:
+            #    print a, 'did not created', a.get_is_important()
 
         return widgets
 

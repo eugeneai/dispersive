@@ -14,5 +14,8 @@ from icc.rake.views.interfaces import IView
 class IPlottingView(IView):
     pass
 
+class IPeriodicTableView(IView):
+    pass
+
 #@-others
 #@-leo

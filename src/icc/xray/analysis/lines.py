@@ -9,7 +9,7 @@ DEBUG=True
 fields="Z, Line_Name, Comment, line_keV, tube_KV, Filter, Ref_Sample, Ref_Line, Calib, Collimator, Crystal, Detector, Peak_2th, Bkg_2th, LLD, ULD"
 
 CSVLine=namedtuple('CSVLine', fields)
-Line=namedtuple('Line', 'Z, element, name, keV')
+Line=namedtuple('Line', 'Z, element, name, keV, line, rel')
 Element=namedtuple('Element', 'Z, Name')
 
 def _float(x):
@@ -196,7 +196,9 @@ class Lines(object):
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Z INTEGER,
                 Name TEXT,
-                keV REAL
+                keV REAL,
+                Line Text,
+                rel FLOAT
         );
         ''')
 
@@ -218,10 +220,13 @@ class Lines(object):
     def select(self, Z=None, element=None, line=None, kev=None,
         where=None, order_by=None, analytical=False):
         def _expand(x, ex):
-            if x == None:
+            if x == None :
                 return ' 1 '
             if type(x) in [types.TupleType, types.ListType, types.GeneratorType, type(set())]:
-                rc=[ex % _ for _ in x]
+                if len(x)==0:
+                    return ' 1 '
+                else:
+                    rc=[ex % _ for _ in x]
             else:
                 return " ( " + ex % x + " ) "
             return ' ( '+' or '.join(rc)+' ) '
@@ -236,7 +241,7 @@ class Lines(object):
         if analytical:
             c.append("((e.Z<=50 and l.name like 'KA%') or (e.Z>50 and l.name like 'LA%'))")
         stmt="""
-        SELECT e.Z, e.Name as element, l.Name as line, l.keV as kev
+        SELECT e.Z, e.Name as element, l.Name as line, l.keV as kev, l.line as line, l.rel as rel
         FROM elements e INNER JOIN lines l ON e.Z=l.Z
         WHERE
         %s
@@ -259,22 +264,59 @@ class Lines(object):
         print ls
         return ls
 
+    def update_rel(self, filename):
+        cur=self.db.cursor()
+        cur.execute("DELETE FROM lines;")
+        self.db.commit();
+        reader=csv.reader(open(filename), delimiter=';')
+        header = reader.next()
+        for row in reader:
+            (ev, el, line, rel, name) = row
+            ev=ev.replace(' ','').replace(',','.')
+            ev=ev.decode('utf8').replace(u'\xa0',u'')
+            #print repr(ev)
+            ev=float(ev)
+            Z, symbol=el.split()
+            rel=int(rel)
+            line=line.decode('utf-8')
+            nrow=(Z, name, ev*1e-3, line, rel)
+            cur.execute('INSERT INTO lines (Z, Name, keV, line, rel) VALUES (?,?,?,?,?)', nrow)
+
+        self.db.commit();
+        print "Update succsessful."
 
 
-if __name__=='__main__':
+
+
+if 0 and __name__=='__main__':
     import os
     import pylab as pl
     import pprint as pp
     import numpy as np
 
+<<<<<<< HEAD
     
     #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/data/EdxData1.csv', v=2)
     
+=======
+    if os.name!="nt":
+        ldb=Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/lines.sqlite3')
+    else:
+        ldb=Lines(dbname='C:\\dispersive\\data\\lines.sqlite3')
+
+    #ldb.update_rel('/home/eugeneai/Development/codes/dispersive/data/rel_lines.csv')
+
+    #asd
+    #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/data/EdxData1.csv', v=2)
+    """
+>>>>>>> db348dc9990fbf9124d5442276b8c4a00631474f
     if os.name!="nt":
         lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
     else:
         lines=Lines(dbname=r'C:\dispersive\data\EdxData1.sqlite3')
     
+
+    lines=ldb
 
     L1={'A':0.8, "B":0.8/6.}
     L2={'K':(0,0,0), "L":(1,0,0)}

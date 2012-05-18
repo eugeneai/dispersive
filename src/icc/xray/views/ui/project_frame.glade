@@ -15,16 +15,6 @@
   </object>
   <object class="GtkActionGroup" id="ag_process">
     <child>
-      <object class="GtkAction" id="ac_scaling">
-        <property name="label" translatable="yes">Scaling</property>
-        <property name="short_label" translatable="yes">Scaling</property>
-        <property name="tooltip" translatable="yes">Relate the channels to their keV</property>
-        <property name="stock_id">gtk-color-picker</property>
-        <property name="always_show_image">True</property>
-      </object>
-      <accelerator key="s" modifiers="GDK_MOD1_MASK"/>
-    </child>
-    <child>
       <object class="GtkAction" id="ac_coupton">
         <property name="label" translatable="yes">Coumpton</property>
         <property name="short_label" translatable="yes">Coumpton</property>
@@ -43,6 +33,30 @@
         <property name="always_show_image">True</property>
       </object>
       <accelerator key="f" modifiers="GDK_MOD1_MASK"/>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_scaling">
+        <property name="label" translatable="yes">Scaling</property>
+        <property name="short_label" translatable="yes">Scaling</property>
+        <property name="tooltip" translatable="yes">Relate the channels to their keV</property>
+        <property name="stock_id">gtk-color-picker</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="toggled" handler="on_scaling_toggled" swapped="no"/>
+      </object>
+      <accelerator key="s" modifiers="GDK_MOD1_MASK"/>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="ac_ptable">
+        <property name="label" translatable="yes">Periodic Table</property>
+        <property name="short_label" translatable="yes">Periodic Table</property>
+        <property name="tooltip" translatable="yes">Select elements with periodic table.</property>
+        <property name="stock_id">gtk-justify-fill</property>
+        <property name="is_important">True</property>
+        <property name="always_show_image">True</property>
+        <signal name="toggled" handler="on_periodic_table" swapped="no"/>
+      </object>
+      <accelerator key="p" modifiers="GDK_MOD1_MASK"/>
     </child>
   </object>
   <object class="GtkActionGroup" id="ag_spectra">
@@ -168,6 +182,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="resize_mode">queue</property>
+                    <property name="vscroll_policy">natural</property>
                     <child>
                       <object class="GtkTreeView" id="project_tree_view">
                         <property name="width_request">100</property>
@@ -272,34 +287,56 @@
             <property name="can_focus">True</property>
             <signal name="notify" handler="on_paned_notify" swapped="no"/>
             <child>
-              <object class="GtkScrolledWindow" id="scrolledwindow2">
-                <property name="width_request">200</property>
-                <property name="height_request">200</property>
+              <object class="GtkVBox" id="box1">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkViewport" id="viewport2">
+                  <object class="GtkScrolledWindow" id="scrolledwindow2">
+                    <property name="width_request">200</property>
+                    <property name="height_request">200</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="resize_mode">queue</property>
+                    <property name="can_focus">True</property>
                     <child>
-                      <object class="GtkLabel" id="common_label">
-                        <property name="width_request">100</property>
-                        <property name="height_request">100</property>
+                      <object class="GtkViewport" id="viewport2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
-                        <property name="yalign">0</property>
-                        <property name="xpad">5</property>
-                        <property name="ypad">5</property>
-                        <property name="label" translatable="yes">General &lt;b&gt;area&lt;/b&gt; for screen the information.</property>
-                        <property name="use_markup">True</property>
-                        <property name="wrap">True</property>
-                        <property name="selectable">True</property>
-                        <property name="ellipsize">start</property>
+                        <property name="resize_mode">queue</property>
+                        <child>
+                          <object class="GtkLabel" id="common_label">
+                            <property name="width_request">100</property>
+                            <property name="height_request">100</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="xalign">0</property>
+                            <property name="yalign">0</property>
+                            <property name="xpad">5</property>
+                            <property name="ypad">5</property>
+                            <property name="label" translatable="yes">General &lt;b&gt;area&lt;/b&gt; for screen the information.</property>
+                            <property name="use_markup">True</property>
+                            <property name="wrap">True</property>
+                            <property name="selectable">True</property>
+                            <property name="ellipsize">start</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkProgressBar" id="progressbar">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>

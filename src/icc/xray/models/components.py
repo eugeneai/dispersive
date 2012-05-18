@@ -146,6 +146,9 @@ class Spectrum(object):
         if elements == None:
             elements=OrderedDict()
         self.elements=elements
+        self.ptelements=[]
+        self.parameters=None
+        self.extparams=Stub()
 
 class SpectralData(object):
     def __init__(self, name, data=[], filename=None, scale=None):
@@ -210,6 +213,11 @@ class SpectralData(object):
                     setattr(rc, a.tag, a.text.replace(',','.'))
                 els[rc.Atom]=rc
             sp=Spectrum(channels,sname,elements=els)
+            b=float(s.xpath("//CalibAbs/text()")[0].replace(',','.'))
+            k=float(s.xpath("//CalibLin/text()")[0].replace(',','.'))
+            sp.extparams.scale=Stub()
+            sp.extparams.scale.b=b
+            sp.extparams.scale.k=k
             nsp.append(sp)
         self.data=nsp
         return self
@@ -312,6 +320,12 @@ class SpectraOfProject(Spectra):
     spectra = property(get_spectra)
 
     #@-others
+
+class AnalysisTask(object):
+    def __init__(self, elset=[]):
+        self.elset=set(elset)
+
+
 #@+node:eugeneai.20110116171118.1360: ** test0
 PLOT_CMD='''
 source('%s')

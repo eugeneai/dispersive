@@ -10,5 +10,12 @@
 <adapter
     factory=".components.ProjectView"
     />
+
+<utility
+    component=".components.PeriodicTableWindow"
+    provides="zope.component.interfaces.IFactory"
+    name="periodic-table-factory"
+    />
+
 </configure>
 <!--@-leo-->
