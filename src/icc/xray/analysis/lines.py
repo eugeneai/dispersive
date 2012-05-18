@@ -267,13 +267,14 @@ if __name__=='__main__':
     import pprint as pp
     import numpy as np
 
-    lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/data/EdxData1.csv', v=2)
-    """
+    
+    #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/data/EdxData1.csv', v=2)
+    
     if os.name!="nt":
         lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
     else:
-        lines=Lines(dbname='C:\\dispersive\\SPECPLUS\\DATA\\lines.sqlite3')
-    """
+        lines=Lines(dbname=r'C:\dispersive\data\EdxData1.sqlite3')
+    
 
     L1={'A':0.8, "B":0.8/6.}
     L2={'K':(0,0,0), "L":(1,0,0)}
