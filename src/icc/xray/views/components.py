@@ -468,7 +468,7 @@ class Cursor(widgets.Cursor):
             self.lineh.set_visible(False)
 
             if self.needclear:
-                self.canvas.draw()
+                self.canvas.draw_idle()
                 self.needclear = False
             return
         self.needclear = True
@@ -561,19 +561,21 @@ class PlottingView(View):
         self.axis.x_lab=x
         self.axis.y_lab=y
         self.invalidate_model(self.model)
-        #self.ui.canvas.draw()
+        #self.ui.canvas.draw_idel()
 
     def on_model_changed(self, model):
-        self.paint_model(model)
+        self.paint_model(model, conserve=False)
 
     def set_plot_options(self, options, draw=True):
         self.plot_options=options
         self.paint_model(self.model, draw=draw)
 
-    def paint_model(self, model, draw=True):
+    def paint_model(self, model, draw=True, conserve=True):
         if not hasattr(self.ui,'fig'):
             return
         fig = self.ui.fig
+        if conserve:
+            lims, pos= self._scan_view(fig)
         fig.clear()
         self.ui.ax = fig.add_subplot(111)
         #self.ui.ax2=self.ui.ax.twinx()
@@ -650,8 +652,31 @@ class PlottingView(View):
             #top.set_xlabels(ax.get_xlabels())
             #for tick in ax2.get_xticklabels():
             #    tick.set_fontsize(5)
+        if conserve:
+            self._update_view(fig, lims, pos)
         if draw:
-            self.ui.canvas.draw()
+            self.ui.canvas.draw_idle()
+
+    def _update_view(self, figure, lims,  pos):
+        for i, a in enumerate(figure.get_axes()):
+            xmin, xmax, ymin, ymax = lims[i]
+            a.set_xlim((xmin, xmax))
+            a.set_ylim((ymin, ymax))
+            # Restore both the original and modified positions
+            a.set_position( pos[i][0], 'original' )
+            a.set_position( pos[i][1], 'active' )
+
+    def _scan_view(self, figure):
+        lims = []; pos = []
+        for a in figure.get_axes():
+            xmin, xmax = a.get_xlim()
+            ymin, ymax = a.get_ylim()
+            lims.append( (xmin, xmax, ymin, ymax) )
+            # Store both the original and modified positions
+            pos.append( (
+                    a.get_position(True).frozen(),
+                    a.get_position().frozen() ) )
+        return lims, pos
 
     #@+node:eugeneai.20110116171118.1394: *3* on_click
     def on_click(self, event, data=None):
@@ -677,7 +702,7 @@ class PlottingView(View):
             if alpha>0.1:
                 any_vis = True
         [self._set(sp, not any_vis) for sp in self.model.spectra]
-        self.ui.canvas.draw()
+        self.ui.canvas.draw_idle()
 
     #@+node:eugeneai.20110116171118.1396: *3* on_spectrum_clicked
     def on_spectrum_clicked(self, project_view, spectrum_data, user_data=None):
@@ -692,7 +717,7 @@ class PlottingView(View):
 
         # print spec
         self._toggle(spec)
-        self.ui.canvas.draw()
+        self.ui.canvas.draw_idle()
 
     #@+node:eugeneai.20110116171118.1397: *3* _toggle
     def _toggle(self, spec):
@@ -1090,7 +1115,7 @@ class ProjectView(View):
             pm.remove(pm.get_iter(path))
             self.set_model(self.model)
             self.emit('model-changed', self.model)
-            #self.active_view.canvas.draw()
+            #self.active_view.canvas.draw_idle()
             print "removed"
 
     def on_spectra_export(self, widget, data=None):
@@ -1150,7 +1175,7 @@ class ProjectView(View):
         self.model.add_spectral_data_source(file_name)
         self.set_model(self.model)
         self.emit('model-changed', self.model)
-        #self.active_view.canvas.draw()
+        #self.active_view.canvas.draw_idel()
 
     #@-others
 
