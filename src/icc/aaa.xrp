@@ -1,23 +1,10 @@
-<<<<<<< HEAD
 <XRF_Project>
   <files>
     <file name="Compton-peak 23.03.12.rtx" filename="C:\dispersive\data\Coumpton\Compton-peak 23.03.12.rtx">
-      <scale zero="0" scale="1"/>
-    </file>
-  </files>
-</XRF_Project>
-=======
-<XRF_Project>
-  <files>
-    <file name="sns228-02.spx" filename="C:\dispersive\data\Test\sns228-02.spx">
       <scale zero="0" scale="1"/>
     </file>
     <file name="G-2.spx" filename="C:\dispersive\data\Coumpton\G-2.spx">
       <scale zero="0" scale="1"/>
     </file>
-    <file name="Compton-peak 23.03.12.rtx" filename="C:\dispersive\data\Coumpton\Compton-peak 23.03.12.rtx">
-      <scale zero="0" scale="1"/>
-    </file>
   </files>
 </XRF_Project>
->>>>>>> db348dc9990fbf9124d5442276b8c4a00631474f

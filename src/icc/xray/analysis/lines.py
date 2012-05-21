@@ -294,27 +294,12 @@ if 0 and __name__=='__main__':
     import pprint as pp
     import numpy as np
 
-<<<<<<< HEAD
-    
-    #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/data/EdxData1.csv', v=2)
-    
-=======
     if os.name!="nt":
         ldb=Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/lines.sqlite3')
     else:
         ldb=Lines(dbname='C:\\dispersive\\data\\lines.sqlite3')
 
     #ldb.update_rel('/home/eugeneai/Development/codes/dispersive/data/rel_lines.csv')
-
-    #asd
-    #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/data/EdxData1.csv', v=2)
-    """
->>>>>>> db348dc9990fbf9124d5442276b8c4a00631474f
-    if os.name!="nt":
-        lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
-    else:
-        lines=Lines(dbname=r'C:\dispersive\data\EdxData1.sqlite3')
-    
 
     lines=ldb
 
