@@ -162,7 +162,7 @@ class Parameters(object):
         par.set_figure(self.view.ui.ax)
         if le:
             par.line_plot(ls, self.view.plot_options)
-        self.view.ui.canvas.draw()
+        self.view.ui.canvas.draw_idle()
         gtk.threads_leave()
 
     def refine(self):
