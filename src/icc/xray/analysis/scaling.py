@@ -9,7 +9,7 @@ import pprint
 import scipy.interpolate as ip
 import scipy.signal as sig
 import lines, os
-
+import parser
 
 DEBUG=True
 
@@ -18,7 +18,8 @@ sqrt_2pi=math.sqrt(2.*math.pi)
 sqrt_2 = math.sqrt(2.)
 pi_d_2 = math.pi/2.
 
-e_0 = 0.0086
+#e_0 = 0.0086
+e_0 = 0.0
 e_mo= 17.48
 
 def gauss(x, x0, A, fwhm):
@@ -528,7 +529,55 @@ class Parameters(object):
 
     def model_spectra(self, elements, plot=False, bkg=None):
         if bkg==None:
-        pass
+            bkg=lambda x: 0
+        y=np.array(self.channels)
+        ly=len(y)
+        x=np.arange(ly)
+        x=self.channel_to_keV(x)
+
+        print "x:", x
+
+        max_keV=max(x)
+
+        ls=self.line_db_conn.select(element=elements,
+            where="keV < %3.5f" % max_keV,
+            order_by="e.Z")
+        lines=list(ls)
+
+        const, exp, ampc=self.gen_equation(elements=elements, lines=lines, x=x)
+        s_fun="""
+def approx_func(Params, x):
+    %s = Params
+    _1 = %s
+    return _1
+""" % (','.join(const), '\n    '.join(exp))
+        amp=y[ampc]
+        print s_fun
+        ast=compile(s_fun, '<string-gen>', 'exec')
+        print repr(ast.co_code)
+        asd
+
+    def gen_equation(self, elements, lines, x):
+        const=[]
+        sum=[]
+        ampc=[]
+        for line in lines:
+            rel=line.rel
+            keV=line.keV
+            c_name="C_"+line.element+"_"+line.name[0]
+            fwhm=self.keV_to_fwhm(line.keV)
+            sum.append("%s*%f*gauss(x,%f,%f)+ \\" % (c_name, rel, keV,fwhm))
+            #sum.append("%s*%f*gauss(x,%f,%f)+ \ # %s" % (c_name, rel, keV,fwhm, line))
+            if not c_name in const:
+                const.append(c_name)
+            ampc.append(self.keV_to_channel(keV)) # initial state approx
+
+        sum.append('0.')
+
+        #sum='\n'.join(sum)
+
+        return const, sum, ampc
+
 
     def trash(self):
 
