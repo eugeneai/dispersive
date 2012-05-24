@@ -1400,7 +1400,7 @@ def test1():
     par.calculate(plot=False)
     #par.scan_peakes_cwt(plot=True)
 
-    elements=set("Mo,Ne,Ni,Rb,Cl,Os,Ca,Ir,Si,S,P,As,Ar,Fe,W,V,Hf,Zr,Br".split(','))
+    elements=set("Ni,Ir,Cl,S,Mo,Yb,Si,P,As,Ar,Zr,W,V,Hf,Tl".split(','))
     #elements=set(["W", "As"])
 
     ls = ldb.as_deltafun(order_by="keV", element=elements,
