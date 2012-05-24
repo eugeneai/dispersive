@@ -1410,7 +1410,7 @@ def test1():
     #pprint.pprint(ls)
 
     #par.refine_scale(elements=elements-set(['Mo']))
-    par.refine_scale(elements=set(['As', 'V']))
+    par.refine_scale(elements=set(['As', 'V', "W"]))
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
     par.line_plot(ls, {'analytical':True})
