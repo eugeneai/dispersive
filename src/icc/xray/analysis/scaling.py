@@ -22,13 +22,16 @@ pi_d_2 = math.pi/2.
 e_0 = 0.0
 e_mo= 17.48
 
-def gauss(x, x0, A, fwhm):
+def gauss_(x, x0, fwhm):
     sigma = fwhm/fwhm_coef
-    _c=A  #/(sigma*sqrt_2pi)
     _=((x-x0)**2)/(2*sigma**2)
     # print _, _c
-    _=np.exp(-_)*_c
+    _=np.exp(-_)
     return _
+
+def gauss(x, x0, A, fwhm):
+    return gauss_(x,x0,fwhm)*A
+
 
 def gauss_square(A, fwhm):
     sigma = fwhm/fwhm_coef
@@ -45,13 +48,24 @@ zero_line=lines.Line._make((0, '', '', 0.0086, 'Zero', 100))
 
 
 _LL={"L":0.12, "K":0.5}
-def wgt(e1, e2):
-    if e1==e2:
-        return e1
+def wgt(e1, e2=None):
+    if e2==None:
+        return e1.keV
+    if e1.name==e2.name:
+        return e1.keV
 
+    """
     K=_LL[e1.name[0]]
 
+    l=[e1,e2]
+    l.sort(key=lambda x: x.name)
+    e1,e2=l
+
     return (e1.keV+K*e2.keV)/(1+K)
+    """
+
+    return (e1.keV*e1.rel+e2.keV*e2.rel)/(e1.rel+e2.rel)
+
     #return (e1+e2)/2.
 
 
@@ -532,8 +546,8 @@ class Parameters(object):
             bkg=lambda x: 0
         y=np.array(self.channels)
         ly=len(y)
-        x=np.arange(ly)
-        x=self.channel_to_keV(x)
+        xc=np.arange(ly)
+        x=self.channel_to_keV(xc)
 
         print "x:", x
 
@@ -552,25 +566,55 @@ def approx_func(Params, x):
     return _1
 """ % (','.join(const), '\n    '.join(exp))
         amp=y[ampc]
-        print s_fun
         ast=compile(s_fun, '<string-gen>', 'exec')
-        print repr(ast.co_code)
-        asd
+        g={"gauss":gauss_}
+        l={}
+        exec ast in g,l
+        approx_func=l['approx_func']
+        mdl=approx_func(amp, xc)
+
+        def fopt(X, *args):
+            x, y=args
+            X_=X[1:]
+            dx=X[0]
+            _=approx_func(X_, x-dx)
+            return sum((y-_)**2)
+
+        """
+        Xopt, fval, iterations, fcalls, warnflag =op.fmin(fopt, X, args=(x,y),
+            xtol=xtol, maxiter=iters,
+            maxfun=iters,
+            disp=False, full_output=1)
+        """
+
+        def _cb(x):
+            print x
+
+        X0=[0]
+        X0.extend(amp)
+        print X0
+        Copt, fval, iterations, fcalls, warnflag =op.fmin(fopt, X0, args=(xc,y), full_output=1, callback=_cb,
+            xtol=1, ftol=1, maxiter=10000, maxfun=10000)
+
+        mdl=approx_func(Copt[1:], xc-Copt[0])
+
+        return mdl, Copt, const
 
     def gen_equation(self, elements, lines, x):
         const=[]
         sum=[]
         ampc=[]
         for line in lines:
-            rel=line.rel
+            rel=line.rel/100.
             keV=line.keV
+            chan_=self.keV_to_channel(keV)
             c_name="C_"+line.element+"_"+line.name[0]
             fwhm=self.keV_to_fwhm(line.keV)
-            sum.append("%s*%f*gauss(x,%f,%f)+ \\" % (c_name, rel, keV,fwhm))
+            sum.append("%s*%f*gauss(x,%f,%f)+ \\" % (c_name, rel, chan_,fwhm))
             #sum.append("%s*%f*gauss(x,%f,%f)+ \ # %s" % (c_name, rel, keV,fwhm, line))
             if not c_name in const:
                 const.append(c_name)
-            ampc.append(self.keV_to_channel(keV)) # initial state approx
+                ampc.append(chan_) # initial state approx
 
         sum.append('0.')
 
@@ -1356,7 +1400,7 @@ def test1():
     par.calculate(plot=False)
     #par.scan_peakes_cwt(plot=True)
 
-    elements=set("Ne,Ni,Rb,Cl,Os,Ca,Ir,Si,S,P,As,Ar,Fe,W,V,Hf,Zr,Br".split(','))
+    elements=set("Mo,Ne,Ni,Rb,Cl,Os,Ca,Ir,Si,S,P,As,Ar,Fe,W,V,Hf,Zr,Br".split(','))
     #elements=set(["W", "As"])
 
     ls = ldb.as_deltafun(order_by="keV", element=elements,
@@ -1377,8 +1421,9 @@ def test1():
     par.set_active_channels(par.channels-ybkg)
 
     par.refine_scale(elements=set(['As', 'V', 'W']), background=False, plot=False)
-    par.model_spectra(elements=elements)
+    mdl, XC, CVars=par.model_spectra(elements=elements)
 
+    p.plot(par.x, mdl, color=(0.5,0.5,0.2), linestyle='--')
     p.plot(par.x, par.channels-ybkg, color=(0,0,0))
     p.axis('tight')
     ax=list(p.axis())
