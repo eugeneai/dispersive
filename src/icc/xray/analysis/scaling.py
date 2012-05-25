@@ -575,9 +575,7 @@ def approx_func(Params, x):
 
         def fopt(X, *args):
             x, y=args
-            X_=X[1:]
-            dx=X[0]
-            _=approx_func(X_, x-dx)
+            _=approx_func(X, x)
             return sum((y-_)**2)
 
         """
@@ -590,13 +588,14 @@ def approx_func(Params, x):
         def _cb(x):
             print x
 
-        X0=[0]
-        X0.extend(amp)
+        X0=amp
         print X0
         Copt, fval, iterations, fcalls, warnflag =op.fmin(fopt, X0, args=(xc,y), full_output=1, callback=_cb,
-            xtol=1, ftol=1, maxiter=10000, maxfun=10000)
+            xtol=1, ftol=1, 
+            maxiter=100000, maxfun=100000
+            )
 
-        mdl=approx_func(Copt[1:], xc-Copt[0])
+        mdl=approx_func(Copt, xc)
 
         return mdl, Copt, const
 
