@@ -551,8 +551,6 @@ class Parameters(object):
         xc=np.arange(ly)
         x=self.channel_to_keV(xc)
 
-        print "x:", x
-
         max_keV=max(x)
 
         ls=self.line_db_conn.select(element=elements,
