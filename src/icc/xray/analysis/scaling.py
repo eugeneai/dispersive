@@ -48,6 +48,13 @@ def keV_to_channel(keV, k,b):
 def channel_to_keV(channel, k, b):
     return channel*k+b
 
+def keV_to_fwhm(keV, k,b, k_x, b_x):
+    x0=keV_to_channel(keV, k_x, b_x)
+    return np.sqrt(x0)*k+b
+
+def channel_to_fwhm(chan, k,b):
+    return np.sqrt(chan)*k+b
+
 
 Pike=namedtuple('Line','x0, A, fwhm, bkg, slope, chisq')
 
@@ -294,10 +301,17 @@ class Parameters(object):
         ls=list(ls)
         if pb: pb()
 
-        mdl=self.model_spectra(elements=elements, lines=ls, params={'A':True, 'x0':True, 'fwhm':True})
+        mdl,Xopt, Const=self.model_spectra(elements=elements, lines=ls, params={'A':True, 'x0':True, 'fwhm':True},
+            iters=10000)
+
+        self.fig.plot(self.x, mdl)
+        self.fig.plot(self.x, self.channels)
+
+        return
+
 
         if len(ws)<1:
-            raise RuntimeError, 'not enough data to graduation, sorry'
+            raise RuntimeError, 'not enough data to scaling, sorry'
         pprint.pprint(ws)
 
 
@@ -549,7 +563,7 @@ class Parameters(object):
         for k,v in map_x.iteritems():
             s_f.append("    %s=scale_chan(%f, k_x, b_x)" % (k,v))
         for k,v in map_fwhm.iteritems():
-            s_f.append("    %s=scale_fwhm(%f, k_fwhm, b_fwhm)" % (k,v))
+            s_f.append("    %s=scale_fwhm(%f, k_fwhm, b_fwhm, k_x, b_x)" % (k,v))
 
         s_fs='\n'.join(s_f)
 
@@ -564,7 +578,11 @@ def approx_func(Params, x):
 """ % (','.join(const), s_fs, '\n    '.join(exp))
         print s_fun
         ast=compile(s_fun, '<string-gen>', 'exec')
-        g={"gauss":gauss_,'scale_chan':keV_to_channel}
+        g={
+            "gauss":gauss_,
+            'scale_chan':keV_to_channel,
+            'scale_fwhm':keV_to_fwhm,
+            }
         l={}
         exec ast in g,l
         approx_func=l['approx_func']
@@ -1444,6 +1462,8 @@ def test1():
 
     #par.refine_scale(elements=elements-set(['Mo']))
     par.refine_scale(elements=set(['As', 'V', "W"]))
+    p.show()
+    asd
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
     #par.line_plot(ls, {'analytical':True})
