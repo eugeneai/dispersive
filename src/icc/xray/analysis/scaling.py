@@ -41,6 +41,14 @@ def gauss_square(A, fwhm):
 def arccot(x):
     return pi_d_2-np.arctan(x)
 
+
+def keV_to_channel(keV, k,b):
+    return (keV-b)/k
+
+def channel_to_keV(channel, k, b):
+    return channel*k+b
+
+
 Pike=namedtuple('Line','x0, A, fwhm, bkg, slope, chisq')
 
 zero_pike=Pike._make((0, 1., 1., 0., 0., None))
@@ -123,13 +131,13 @@ class Parameters(object):
 
     def keV_to_channel(self, keV):
         if self.scale.done:
-            return (keV-self.scale.b)/self.scale.k
+            return keV_to_channel(keV, self.scale.k, self.scale.b)
         else:
             return RuntimeError, "scale did not calculated"
 
     def channel_to_keV(self, channel):
         if self.scale.done:
-            return channel*self.scale.k+self.scale.b
+            return channel_to_keV(channel, self.scale.k, self.scale.b)
         else:
             return RuntimeError, "scale did not calculated"
 
@@ -286,46 +294,19 @@ class Parameters(object):
         ls=list(ls)
         if pb: pb()
 
-        ls1=[]
-        ls2=[]
-        i=0
-        lls=len(ls)
-        print lls
-        while i<lls:
-            l=ls[i]
-            z=l.Z
-            lp=l
-            ls1.append(l)
-            i+=1
-            if i<lls:
-                l=ls[i]
-            else:
-                ls2.append(lp)
-                break
-            if l.Z!=z:
-                ls2.append(lp)
-            else:
-                ls2.append(l)
-                i+=1
+        mdl=self.model_spectra(elements=elements, lines=ls, params={'A':True, 'x0':True, 'fwhm':True})
 
-        for l1, l2 in zip(ls1, ls2):
-            print l1
-            print l2
-            print "-----"
-            x0=self.keV_to_channel(wgt(l1,l2))
-            if plot:
-                print "Fitting line at x0=", x0
-            p=self.iter_r_line(x0, plot=plot, fwhm=self.scale.peakes[0].fwhm, background=background)
-            if p:
-                ws.append((p, l1, l2))
-        if pb: pb()
         if len(ws)<1:
             raise RuntimeError, 'not enough data to graduation, sorry'
         pprint.pprint(ws)
-        pass
+
+
+
+
         _y=np.array([wgt(w[1],w[2]) for w in ws])
         _x0=np.array([w[0].x0 for w in ws])
         _diag=np.array([w[0].A for w in ws])
+
         def scale((k,b), x, y):
             return y-((x*k)+b)
 
@@ -342,6 +323,7 @@ class Parameters(object):
         self.scale.peakes.extend([w[0] for w in ws])
         self.calculate_fwhm(self.scale.peakes)
 
+        asd
         return self.scale
 
     def calculate_fwhm(self, peakes, pb=None):
@@ -541,9 +523,10 @@ class Parameters(object):
         self.calc_fwhm_scale(plot=plot, pb=pb)
         return
 
-    def model_spectra(self, elements, plot=False, bkg=None, iters=1000, params=None):
+    def model_spectra(self, elements, lines=None, plot=False, bkg=None, iters=1000, params=None):
         if params==None:
-            params={'A':True} # A means amplitude is a free variable, other values of the parameter are: fwhm, x0, x0-shift, bkg
+            params={'A':True} # A means amplitude is a free variable,
+                #other values of the parameter are: fwhm, x0, bkg
         if bkg==None:
             bkg=lambda x: 0
         y=np.array(self.channels)
@@ -553,20 +536,35 @@ class Parameters(object):
 
         max_keV=max(x)
 
-        ls=self.line_db_conn.select(element=elements,
-            where="keV < %3.5f" % max_keV,
-            order_by="e.Z")
+        if lines:
+            ls=lines
+        else:
+            ls=self.line_db_conn.select(element=elements,
+                where="keV < %3.5f" % max_keV,
+                order_by="e.Z")
         lines=list(ls)
 
-        const, exp, Xstart=self.gen_equation(elements=elements, lines=lines, x=x, y=y, params=params)
+        const, exp, Xstart, map_x, map_fwhm=self.gen_equation(elements=elements, lines=lines, x=x, y=y, params=params)
+        s_f=[]
+        for k,v in map_x.iteritems():
+            s_f.append("    %s=scale_chan(%f, k_x, b_x)" % (k,v))
+        for k,v in map_fwhm.iteritems():
+            s_f.append("    %s=scale_fwhm(%f, k_fwhm, b_fwhm)" % (k,v))
+
+        s_fs='\n'.join(s_f)
+
         s_fun="""
 def approx_func(Params, x):
     %s = Params
+
+%s
+
     _1 = %s
     return _1
-""" % (','.join(const), '\n    '.join(exp))
+""" % (','.join(const), s_fs, '\n    '.join(exp))
+        print s_fun
         ast=compile(s_fun, '<string-gen>', 'exec')
-        g={"gauss":gauss_}
+        g={"gauss":gauss_,'scale_chan':keV_to_channel}
         l={}
         exec ast in g,l
         approx_func=l['approx_func']
@@ -602,41 +600,60 @@ def approx_func(Params, x):
 
         const=[]
         X0=[]
-        def app(v, val):
-            if v in const:
-                return
-            const.append(v)
-            X0.append(val)
+        def app(v, val=None, map_=None):
+            if map_!=None:
+                if not v in map_:
+                    map_[v]=val
+            else:
+                if v in const:
+                    return
+                const.append(v)
+                X0.append(val)
+
+        if params.get('fwhm', False):
+            app('k_fwhm', 1.)
+            app('b_fwhm', 0.)
+
+        if params.get('x0', False):
+            app('k_x', self.scale.k)
+            app('b_x', self.scale.b)
 
         sum=[]
+        map_x={}
+        map_fwhm={}
         for line in lines:
             rel=line.rel/100.
             keV=line.keV
             chan_=self.keV_to_channel(keV)
             name_part='_'+line.element+"_"+line.name[0]
+            name_part_det='_'+line.element+"_"+line.name.replace(',','_')
             c_name="C"+name_part
-            fwhm_name="fwhm"+name_part
-            x0_name="x0"+name_part
+            fwhm_name="fwhm"+name_part_det
+            x0_name="x0"+name_part_det
 
-            fwhm=self.keV_to_fwhm(line.keV)
+            try:
+                fwhm=self.keV_to_fwhm(line.keV)
+            except AttributeError:
+                fwhm=fwhm_name
 
             if params.get('fwhm', False):
-                app(fwhm_name, fwhm)
+                app(fwhm_name, keV, map_=map_fwhm)
 
             if params.get('A', False):
                 app(c_name, y[chan_])
 
             if params.get('x0', False):
-                app(c_name, chan_)
+                app(x0_name, keV, map_=map_x)
+                chan_=x0_name
 
-            sum.append("%s*%f*gauss(x,%f,%f)+ \\" % (c_name, rel, chan_,fwhm))
+            sum.append("%s*%f*gauss(x,%s,%s)+ \\" % (c_name, rel, chan_,fwhm))
             #sum.append("%s*%f*gauss(x,%f,%f)+ \ # %s" % (c_name, rel, keV,fwhm, line))
 
         sum.append('0.')
 
         #sum='\n'.join(sum)
 
-        return const, sum, X0
+        return const, sum, X0, map_x, map_fwhm
 
 
     def trash(self):
