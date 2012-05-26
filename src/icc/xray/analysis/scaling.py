@@ -561,12 +561,30 @@ class Parameters(object):
                 order_by="e.Z")
         lines=list(ls)
 
-        const, exp, Xstart, map_x, map_fwhm=self.gen_equation(elements=elements, lines=lines, x=x, y=y, params=params)
+        const, exp, Xstart, map_x, map_fwhm, m_bkg=self.gen_equation(elements=elements, lines=lines, x=x, y=y, params=params)
         s_f=[]
         for k,v in map_x.iteritems():
             s_f.append("    %s=scale_chan(%f, k_x, b_x)" % (k,v))
         for k,v in map_fwhm.iteritems():
             s_f.append("    %s=scale_fwhm(%f, k_fwhm, b_fwhm, k_x, b_x)" % (k,v))
+        lbx=["0."]
+        lby=["0."]
+        bkg_vals = m_bkg.values()
+        bkg_vals.sort(key=lambda x:x[-1])
+        for k,v, _ in bkg_vals:
+            lby.append(k)
+            lbx.append(v)
+        lbx.append("%s" % (ly))
+        lby.append("0.")
+        if m_bkg:
+            s_f.append("    poly_x=np.array([%s])" % ','.join(lbx))
+            s_f.append("    poly_y=np.array([%s])" % ','.join(lby))
+            #s_f.append("    print poly_x, poly_y")
+            s_f.append("    spl = ip.splrep(poly_x, poly_y, s=0)")
+            s_f.append("    bkg = ip.splev(x, spl)")
+            exp[-1]='bkg'
+
+
 
         s_fs='\n'.join(s_f)
 
@@ -580,8 +598,11 @@ def approx_func(Params, x):
     return _1
 """ % (','.join(const), s_fs, '\n    '.join(exp))
         print s_fun
+
         ast=compile(s_fun, '<string-gen>', 'exec')
         g={
+            "np":np,
+            "ip":ip,
             "gauss":gauss_,
             'scale_chan':keV_to_channel,
             'scale_fwhm':keV_to_fwhm,
@@ -602,10 +623,9 @@ def approx_func(Params, x):
             maxfun=iters,
             disp=False, full_output=1)
         """
-
         def _cb(x):
-            print "Delta:",
-            pprint.pprint(x-Xstart)
+            print "x_curr:",
+            pprint.pprint(x)
 
         print Xstart
         Xopt, fval, iterations, fcalls, warnflag =op.fmin(fopt, Xstart, args=(xc,y), full_output=1, callback=_cb,
@@ -652,6 +672,7 @@ def approx_func(Params, x):
         sum=[]
         map_x={}
         map_fwhm={}
+        m_bkg={}
         for line in lines:
             rel=line.rel/100.
             keV=line.keV
@@ -679,19 +700,17 @@ def approx_func(Params, x):
                 chan_=x0_name
 
             if params.get('bkg', False):
-                app(bkg_name, 14000.)
-                bkg_s=bkg_name+'+'
-            else:
-                bkg_s=''
+                app(bkg_name, 0.)
+                app(bkg_name, (bkg_name, x0_name,keV) , map_=m_bkg)
 
-            sum.append("%s*%f*gauss(x,%s,%s)+%s \\" % (c_name, rel, chan_,fwhm, bkg_s))
+            sum.append("%s*%f*gauss(x,%s,%s)+ \\" % (c_name, rel, chan_,fwhm))
             #sum.append("%s*%f*gauss(x,%f,%f)+ \ # %s" % (c_name, rel, keV,fwhm, line))
 
         sum.append('0.')
 
         #sum='\n'.join(sum)
 
-        return const, sum, X0, map_x, map_fwhm
+        return const, sum, X0, map_x, map_fwhm, m_bkg
 
 
     def trash(self):
@@ -1481,7 +1500,7 @@ def test1():
     #pprint.pprint(ls)
 
     #par.refine_scale(elements=elements-set(['Mo']))
-    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr"]))
+    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']))
     p.show()
     asd
     #par.scale.k=0.005004
