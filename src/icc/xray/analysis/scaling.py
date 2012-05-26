@@ -541,7 +541,9 @@ class Parameters(object):
         self.calc_fwhm_scale(plot=plot, pb=pb)
         return
 
-    def model_spectra(self, elements, plot=False, bkg=None):
+    def model_spectra(self, elements, plot=False, bkg=None, iters=1000, params=None):
+        if params==None:
+            params={'A':True} # A means amplitude is a free variable, other values of the parameter are: fwhm, x0, x0-shift, bkg
         if bkg==None:
             bkg=lambda x: 0
         y=np.array(self.channels)
@@ -558,20 +560,19 @@ class Parameters(object):
             order_by="e.Z")
         lines=list(ls)
 
-        const, exp, ampc=self.gen_equation(elements=elements, lines=lines, x=x)
+        const, exp, Xstart=self.gen_equation(elements=elements, lines=lines, x=x, y=y, params=params)
         s_fun="""
 def approx_func(Params, x):
     %s = Params
     _1 = %s
     return _1
 """ % (','.join(const), '\n    '.join(exp))
-        amp=y[ampc]
         ast=compile(s_fun, '<string-gen>', 'exec')
         g={"gauss":gauss_}
         l={}
         exec ast in g,l
         approx_func=l['approx_func']
-        mdl=approx_func(amp, xc)
+        #mdl=approx_func(Xstart, xc)
 
         def fopt(X, *args):
             x, y=args
@@ -586,40 +587,58 @@ def approx_func(Params, x):
         """
 
         def _cb(x):
-            print x
+            print "Delta:",
+            pprint.pprint(x-Xstart)
 
-        X0=amp
-        print X0
-        Copt, fval, iterations, fcalls, warnflag =op.fmin(fopt, X0, args=(xc,y), full_output=1, callback=_cb,
-            xtol=1, ftol=1, 
-            maxiter=100000, maxfun=100000
+        print Xstart
+        Xopt, fval, iterations, fcalls, warnflag =op.fmin(fopt, Xstart, args=(xc,y), full_output=1, callback=_cb,
+            xtol=1, ftol=1,
+            maxiter=iters, maxfun=iters
             )
 
-        mdl=approx_func(Copt, xc)
+        mdl=approx_func(Xopt, xc)
 
-        return mdl, Copt, const
+        return mdl, Xopt, const
 
-    def gen_equation(self, elements, lines, x):
+    def gen_equation(self, elements, lines, x, y, params):
+
         const=[]
+        X0=[]
+        def app(v, val):
+            if v in const:
+                return
+            const.append(v)
+            X0.append(val)
+
         sum=[]
-        ampc=[]
         for line in lines:
             rel=line.rel/100.
             keV=line.keV
             chan_=self.keV_to_channel(keV)
-            c_name="C_"+line.element+"_"+line.name[0]
+            name_part='_'+line.element+"_"+line.name[0]
+            c_name="C"+name_part
+            fwhm_name="fwhm"+name_part
+            x0_name="x0"+name_part
+
             fwhm=self.keV_to_fwhm(line.keV)
+
+            if params.get('fwhm', False):
+                app(fwhm_name, fwhm)
+
+            if params.get('A', False):
+                app(c_name, y[chan_])
+
+            if params.get('x0', False):
+                app(c_name, chan_)
+
             sum.append("%s*%f*gauss(x,%f,%f)+ \\" % (c_name, rel, chan_,fwhm))
             #sum.append("%s*%f*gauss(x,%f,%f)+ \ # %s" % (c_name, rel, keV,fwhm, line))
-            if not c_name in const:
-                const.append(c_name)
-                ampc.append(chan_) # initial state approx
 
         sum.append('0.')
 
         #sum='\n'.join(sum)
 
-        return const, sum, ampc
+        return const, sum, X0
 
 
     def trash(self):
@@ -1412,7 +1431,8 @@ def test1():
     par.refine_scale(elements=set(['As', 'V', "W"]))
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
-    par.line_plot(ls, {'analytical':True})
+    #par.line_plot(ls, {'analytical':True})
+    par.line_plot(ls, {'analytical':False})
     ybkg = par.approx_background(elements=elements, plot=True, iters=2)
 
     p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6,)
@@ -1420,10 +1440,10 @@ def test1():
     par.set_active_channels(par.channels-ybkg)
 
     par.refine_scale(elements=set(['As', 'V', 'W']), background=False, plot=False)
-    mdl, XC, CVars=par.model_spectra(elements=elements)
+    mdl, XC, CVars=par.model_spectra(elements=elements, iters=100)
 
     p.plot(par.x, mdl, color=(0.5,0.5,0.2), linestyle='--')
-    p.plot(par.x, par.channels-ybkg, color=(0,0,0))
+    p.plot(par.x, par.channels, color=(0,0,0))
     p.axis('tight')
     ax=list(p.axis())
     ax[2]=-ax[-1]/100.
