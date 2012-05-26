@@ -567,19 +567,23 @@ class Parameters(object):
             s_f.append("    %s=scale_chan(%f, k_x, b_x)" % (k,v))
         for k,v in map_fwhm.iteritems():
             s_f.append("    %s=scale_fwhm(%f, k_fwhm, b_fwhm, k_x, b_x)" % (k,v))
-        lbx=["0."]
-        lby=["0."]
+        lbx=[]
+        lby=[]
+        lbx.append("0.")
+        lby.append("0.")
         bkg_vals = m_bkg.values()
         bkg_vals.sort(key=lambda x:x[-1])
         for k,v, _ in bkg_vals:
             lby.append(k)
             lbx.append(v)
-        lbx.append("%s" % (ly))
+        lbx.append("%s" % ly*2)
         lby.append("0.")
+        print "Lx:",lbx
+        print "Ly:",lby
         if m_bkg:
             s_f.append("    poly_x=np.array([%s])" % ','.join(lbx))
             s_f.append("    poly_y=np.array([%s])" % ','.join(lby))
-            #s_f.append("    print poly_x, poly_y")
+            #s_f.append("    print '------>', poly_x, poly_y")
             s_f.append("    spl = ip.splrep(poly_x, poly_y, s=0)")
             s_f.append("    bkg = ip.splev(x, spl)")
             exp[-1]='bkg'
