@@ -301,7 +301,10 @@ class Parameters(object):
         ls=list(ls)
         if pb: pb()
 
-        mdl,Xopt, Const=self.model_spectra(elements=elements, lines=ls, params={'A':True, 'x0':True, 'fwhm':True},
+        print "Els:", elements
+
+        mdl,Xopt, Const=self.model_spectra(elements=elements, lines=ls,
+            params={'A':True, 'x0':True, 'fwhm':True, 'bkg':True},
             iters=10000)
 
         self.fig.plot(self.x, mdl)
@@ -611,6 +614,9 @@ def approx_func(Params, x):
             )
 
         mdl=approx_func(Xopt, xc)
+        print "RC-----",
+        for x, c in zip(Xopt, const):
+            print c,"=",x
 
         return mdl, Xopt, const
 
@@ -628,13 +634,20 @@ def approx_func(Params, x):
                 const.append(v)
                 X0.append(val)
 
-        if params.get('fwhm', False):
-            app('k_fwhm', 1.)
-            app('b_fwhm', 0.)
-
         if params.get('x0', False):
             app('k_x', self.scale.k)
             app('b_x', self.scale.b)
+
+        if params.get('fwhm', False):
+            try:
+                f_k = self.scale_fwhm.k
+                f_b = self.scale_fwhm.b
+            except AttributeError:
+                f_k = 1.
+                f_b = 0.
+
+            app('k_fwhm', f_k)
+            app('b_fwhm', f_b)
 
         sum=[]
         map_x={}
@@ -648,6 +661,7 @@ def approx_func(Params, x):
             c_name="C"+name_part
             fwhm_name="fwhm"+name_part_det
             x0_name="x0"+name_part_det
+            bkg_name="bkg"+name_part_det
 
             try:
                 fwhm=self.keV_to_fwhm(line.keV)
@@ -664,7 +678,13 @@ def approx_func(Params, x):
                 app(x0_name, keV, map_=map_x)
                 chan_=x0_name
 
-            sum.append("%s*%f*gauss(x,%s,%s)+ \\" % (c_name, rel, chan_,fwhm))
+            if params.get('bkg', False):
+                app(bkg_name, 14000.)
+                bkg_s=bkg_name+'+'
+            else:
+                bkg_s=''
+
+            sum.append("%s*%f*gauss(x,%s,%s)+%s \\" % (c_name, rel, chan_,fwhm, bkg_s))
             #sum.append("%s*%f*gauss(x,%f,%f)+ \ # %s" % (c_name, rel, keV,fwhm, line))
 
         sum.append('0.')
@@ -1461,7 +1481,7 @@ def test1():
     #pprint.pprint(ls)
 
     #par.refine_scale(elements=elements-set(['Mo']))
-    par.refine_scale(elements=set(['As', 'V', "W"]))
+    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr"]))
     p.show()
     asd
     #par.scale.k=0.005004
@@ -1474,7 +1494,8 @@ def test1():
     p.plot(par.x, ybkg, color=(0,1,1), alpha=0.5, linestyle='-')
     par.set_active_channels(par.channels-ybkg)
 
-    par.refine_scale(elements=set(['As', 'V', 'W']), background=False, plot=False)
+    #par.refine_scale(elements=set(['As', 'V', 'W']), background=False, plot=False)
+    par.refine_scale(elements=set(['As', 'V', ]), background=False, plot=False)
     mdl, XC, CVars=par.model_spectra(elements=elements, iters=100)
 
     p.plot(par.x, mdl, color=(0.5,0.5,0.2), linestyle='--')
