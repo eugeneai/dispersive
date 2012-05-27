@@ -1500,7 +1500,8 @@ def test1():
     par.calculate(plot=False)
     #par.scan_peakes_cwt(plot=True)
 
-    elements=set("Ni,Ir,Cl,S,Mo,Yb,Si,P,As,Ar,Zr,W,V,Hf,Tl".split(','))
+    #elements=set("Ni,Ir,Cl,S,Mo,Yb,Si,P,As,Ar,Zr,W,V,Hf,Tl".split(','))
+    elements=set("Ni,Cl,S,Mo,Si,P,As,Ar,Zr,W,V,Hf".split(','))
     #elements=set(["W", "As"])
 
     ls = ldb.as_deltafun(order_by="keV", element=elements,
@@ -1510,7 +1511,7 @@ def test1():
     #pprint.pprint(ls)
 
     #par.refine_scale(elements=elements-set(['Mo']))
-    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']), debug=True)
+    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']), debug=False)
 
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
@@ -1525,9 +1526,9 @@ def test1():
 
     #par.refine_scale(elements=set(['As', 'V', 'W']), background=False, plot=False)
     #par.refine_scale(elements=set(['As', 'V', ]), background=False, plot=False)
-    mdl, XC, CVars=par.model_spectra(elements=elements, iters=10000, debug=True, params={"A":True})
+    mdl, XC, CVars=par.model_spectra(elements=elements, iters=10000, debug=False, params={"A":True})
 
-    p.plot(par.x, mdl, color=(0.5,0.5,0.2), linestyle='--')
+    p.plot(par.x, mdl+ybkg, color=(0.5,0.5,0.2), linestyle='--', alpha=0.7, linewidth=3)
     p.plot(par.x, par.channels, color=(0,0,0))
     p.axis('tight')
     ax=list(p.axis())
