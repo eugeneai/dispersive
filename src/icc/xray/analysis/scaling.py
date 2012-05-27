@@ -290,7 +290,7 @@ class Parameters(object):
         self.scale.done=True
         return self.scale
 
-    def refine_scale(self, elements, plot=False, background=True, pb=None):
+    def refine_scale(self, elements, plot=False, background=True, pb=None, debug=False):
         ws=[]
         # Select analytical lines (the brightest ones) from the database.
         max_keV=self.channel_to_keV(len(self.channels))
@@ -301,53 +301,37 @@ class Parameters(object):
         ls=list(ls)
         if pb: pb()
 
-        print "Els:", elements
+        if debug:
+            print "Els:", elements
 
         mdl,Xopt, Const=self.model_spectra(elements=elements, lines=ls,
             params={'A':True, 'x0':True, 'fwhm':True},
             iters=10000,
-            debug=True,
-            xtol=100000000, # FIXME ... = 1
-            ftol=100000000,
+            debug=debug,
+            xtol=1, # FIXME ... = 1
+            ftol=1,
             )
 
-        print Const
-        print Xopt
+        if debug:
+            print Const
+            print Xopt
+
+        X=Xopt
+
+        self.scale.k=X[0]
+        self.scale.b=X[1]
+
+        self.scale.fwhm.k=X[2]
+        self.scale.fwhm.b=X[3]
+        self.scale.fwhm.done=True
 
         self.fig.plot(self.x, mdl)
         self.fig.plot(self.x, self.channels)
 
         return
 
+        # self.scale.peakes.extend([w[0] for w in ws])
 
-        if len(ws)<1:
-            raise RuntimeError, 'not enough data to scaling, sorry'
-        pprint.pprint(ws)
-
-
-
-
-        _y=np.array([wgt(w[1],w[2]) for w in ws])
-        _x0=np.array([w[0].x0 for w in ws])
-        _diag=np.array([w[0].A for w in ws])
-
-        def scale((k,b), x, y):
-            return y-((x*k)+b)
-
-        if pb: pb()
-        k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y),
-            #diag=_diag)[0]
-            )[0]
-
-        print "K, B:", k_scale, b_scale
-
-        self.scale.k=k_scale
-        self.scale.b=b_scale
-        self.scale.done=True
-        self.scale.peakes.extend([w[0] for w in ws])
-        self.calculate_fwhm(self.scale.peakes)
-
-        asd
         return self.scale
 
     def calculate_fwhm(self, peakes, pb=None):
@@ -574,6 +558,12 @@ class Parameters(object):
 
         const, exp, Xstart, map_x, map_fwhm, m_bkg=self.gen_equation(elements=elements, lines=lines, x=x, y=y, params=params)
         s_f=[]
+        if not params.get("x0", False):
+            s_f.append("    k_x=%f" % self.scale.k)
+            s_f.append("    b_x=%f" % self.scale.b)
+        if not params.get("fwhm", False):
+            s_f.append("    k_fwhm=%f" % self.scale.fwhm.k)
+            s_f.append("    b_fwhm=%f" % self.scale.fwhm.b)
         for k,v in map_x.iteritems():
             s_f.append("    %s=scale_chan(%f, k_x, b_x)" % (k,v))
         for k,v in map_fwhm.iteritems():
@@ -715,7 +705,7 @@ def approx_func(Params, x):
             if params.get('A', False):
                 app(c_name, y[chan_])
 
-            if params.get('x0', False):
+            if params.get('x0', False) or params.get('bkg', False):
                 app(x0_name, keV, map_=map_x)
                 chan_=x0_name
 
@@ -1520,9 +1510,8 @@ def test1():
     #pprint.pprint(ls)
 
     #par.refine_scale(elements=elements-set(['Mo']))
-    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']))
-    p.show()
-    asd
+    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']), debug=True)
+
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
     #par.line_plot(ls, {'analytical':True})
@@ -1531,11 +1520,12 @@ def test1():
 
     p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6,)
     p.plot(par.x, ybkg, color=(0,1,1), alpha=0.5, linestyle='-')
-    par.set_active_channels(par.channels-ybkg)
+
+    #par.set_active_channels(par.channels-ybkg)
 
     #par.refine_scale(elements=set(['As', 'V', 'W']), background=False, plot=False)
-    par.refine_scale(elements=set(['As', 'V', ]), background=False, plot=False)
-    mdl, XC, CVars=par.model_spectra(elements=elements, iters=100)
+    #par.refine_scale(elements=set(['As', 'V', ]), background=False, plot=False)
+    mdl, XC, CVars=par.model_spectra(elements=elements, iters=10000, debug=True, params={"A":True, "bkg":True})
 
     p.plot(par.x, mdl, color=(0.5,0.5,0.2), linestyle='--')
     p.plot(par.x, par.channels, color=(0,0,0))
