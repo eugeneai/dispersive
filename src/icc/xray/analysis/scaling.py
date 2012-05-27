@@ -1521,11 +1521,11 @@ def test1():
     p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6,)
     p.plot(par.x, ybkg, color=(0,1,1), alpha=0.5, linestyle='-')
 
-    #par.set_active_channels(par.channels-ybkg)
+    par.set_active_channels(par.channels-ybkg)
 
     #par.refine_scale(elements=set(['As', 'V', 'W']), background=False, plot=False)
     #par.refine_scale(elements=set(['As', 'V', ]), background=False, plot=False)
-    mdl, XC, CVars=par.model_spectra(elements=elements, iters=10000, debug=True, params={"A":True, "bkg":True})
+    mdl, XC, CVars=par.model_spectra(elements=elements, iters=10000, debug=True, params={"A":True})
 
     p.plot(par.x, mdl, color=(0.5,0.5,0.2), linestyle='--')
     p.plot(par.x, par.channels, color=(0,0,0))
