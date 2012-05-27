@@ -304,8 +304,15 @@ class Parameters(object):
         print "Els:", elements
 
         mdl,Xopt, Const=self.model_spectra(elements=elements, lines=ls,
-            params={'A':True, 'x0':True, 'fwhm':True, 'bkg':True},
-            iters=10000)
+            params={'A':True, 'x0':True, 'fwhm':True},
+            iters=10000,
+            debug=True,
+            xtol=100000000, # FIXME ... = 1
+            ftol=100000000,
+            )
+
+        print Const
+        print Xopt
 
         self.fig.plot(self.x, mdl)
         self.fig.plot(self.x, self.channels)
@@ -540,7 +547,11 @@ class Parameters(object):
         self.calc_fwhm_scale(plot=plot, pb=pb)
         return
 
-    def model_spectra(self, elements, lines=None, plot=False, bkg=None, iters=1000, params=None):
+    def model_spectra(self, elements, lines=None, plot=False,
+            bkg=None, iters=1000, xtol=1, ftol=1,
+            params=None,
+            debug=False
+            ):
         if params==None:
             params={'A':True} # A means amplitude is a free variable,
                 #other values of the parameter are: fwhm, x0, bkg
@@ -578,8 +589,9 @@ class Parameters(object):
             lbx.append(v)
         lbx.append("%s" % ly*2)
         lby.append("0.")
-        print "Lx:",lbx
-        print "Ly:",lby
+        if debug:
+            print "Lx:",lbx
+            print "Ly:",lby
         if m_bkg:
             s_f.append("    poly_x=np.array([%s])" % ','.join(lbx))
             s_f.append("    poly_y=np.array([%s])" % ','.join(lby))
@@ -601,7 +613,8 @@ def approx_func(Params, x):
     _1 = %s
     return _1
 """ % (','.join(const), s_fs, '\n    '.join(exp))
-        print s_fun
+        if debug:
+            print s_fun
 
         ast=compile(s_fun, '<string-gen>', 'exec')
         g={
@@ -628,19 +641,22 @@ def approx_func(Params, x):
             disp=False, full_output=1)
         """
         def _cb(x):
-            print "x_curr:",
-            pprint.pprint(x)
+            if debug:
+                print "x_curr:",
+                pprint.pprint(x)
 
-        print Xstart
+        if debug:
+            print Xstart
         Xopt, fval, iterations, fcalls, warnflag =op.fmin(fopt, Xstart, args=(xc,y), full_output=1, callback=_cb,
-            xtol=1, ftol=1,
+            xtol=xtol, ftol=ftol,
             maxiter=iters, maxfun=iters
             )
 
         mdl=approx_func(Xopt, xc)
-        print "RC-----",
-        for x, c in zip(Xopt, const):
-            print c,"=",x
+        if debug:
+            print "RC-----",
+            for x, c in zip(Xopt, const):
+                print c,"=",x
 
         return mdl, Xopt, const
 
