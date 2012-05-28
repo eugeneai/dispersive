@@ -602,7 +602,7 @@ class PlottingView(View):
                 ssp={}
                 ssp.setdefault('aa', True)
                 #ssp.setdefault('linewidth', 1)
-                ssp.setdefault('alpha',0.3)
+                ssp.setdefault('alpha',0.6)
                 kwargs = {}
                 kwargs.update(ssp)
                 #del kwargs['spectrum']

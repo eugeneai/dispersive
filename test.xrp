@@ -3,17 +3,5 @@
     <file name="Compton-peak 23.03.12.rtx" filename="/home/eugeneai/Development/codes/dispersive/data/Coumpton/Compton-peak 23.03.12.rtx">
       <scale zero="0" scale="1"/>
     </file>
-    <file name="clean_25.04.12_silic.rtx" filename="/home/eugeneai/Development/codes/dispersive/data/Clean/clean_25.04.12_silic.rtx">
-      <scale zero="0" scale="1"/>
-    </file>
-    <file name="clean_25.04.12.rtx" filename="/home/eugeneai/Development/codes/dispersive/data/Clean/clean_25.04.12.rtx">
-      <scale zero="0" scale="1"/>
-    </file>
-    <file name="clean_new.rtx" filename="/home/eugeneai/Development/codes/dispersive/data/Clean/clean_new.rtx">
-      <scale zero="0" scale="1"/>
-    </file>
-    <file name="clean_new_04.05.rtx" filename="/home/eugeneai/Development/codes/dispersive/data/Clean/clean_new_04.05.rtx">
-      <scale zero="0" scale="1"/>
-    </file>
   </files>
 </XRF_Project>
