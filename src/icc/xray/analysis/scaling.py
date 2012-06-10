@@ -322,7 +322,7 @@ class Parameters(object):
         if debug:
             print "Els:", elements
 
-        params={'A':True, 'x0':True, 'fwhm':False}
+        params={'A':True, 'x0':True, 'fwhm':True}
 
         mdl,Xopt, Const=self.model_spectra(elements=elements, lines=ls,
             params=params,
@@ -564,15 +564,15 @@ class Parameters(object):
         const, exp, Xstart, map_x, map_fwhm, m_bkg=self.gen_equation(elements=elements, lines=lines, x=x, y=y, params=params)
         s_f=[]
         if not params.get("x0", False):
-            s_f.append("    k_x=%f" % self.scale.A[1])
-            s_f.append("    b_x=%f" % self.scale.A[0])
+            s_f.append("    a1_x=%f" % self.scale.A[1])
+            s_f.append("    a0_x=%f" % self.scale.A[0])
         if not params.get("fwhm", False):
-            s_f.append("    k_fwhm=%f" % self.scale.fwhm.A[1])
-            s_f.append("    b_fwhm=%f" % self.scale.fwhm.A[0])
+            s_f.append("    a1_fwhm=%f" % self.scale.fwhm.A[1])
+            s_f.append("    a0_fwhm=%f" % self.scale.fwhm.A[0])
         for k,v in map_x.iteritems():
-            s_f.append("    %s=scale_chan(%f, [b_x, k_x, 0])" % (k,v))
+            s_f.append("    %s=scale_chan(%f, [a0_x, a1_x, 0])" % (k,v))
         for k,v in map_fwhm.iteritems():
-            s_f.append("    %s=scale_fwhm(%f, [b_fwhm, k_fwhm, 0])" % (k,v))
+            s_f.append("    %s=scale_fwhm(%f, [a0_fwhm, a1_fwhm, 0])" % (k,v))
         lbx=[]
         lby=[]
         lbx.append("0.")
@@ -670,8 +670,8 @@ def approx_func(Params, x):
                 X0.append(val)
 
         if params.get('x0', False):
-            app('k_x', self.scale.A[1])
-            app('b_x', self.scale.A[0])
+            app('a1_x', self.scale.A[1])
+            app('a0_x', self.scale.A[0])
 
         if params.get('fwhm', False):
             try:
@@ -681,8 +681,8 @@ def approx_func(Params, x):
                 f_k = 1.
                 f_b = 0.
 
-            app('k_fwhm', f_k)
-            app('b_fwhm', f_b)
+            app('a1_fwhm', f_k)
+            app('a0_fwhm', f_b)
 
         sum=[]
         map_x={}
@@ -1517,7 +1517,7 @@ def test1():
     #pprint.pprint(ls)
 
     #par.refine_scale(elements=elements-set(['Mo']))
-    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']), debug=False)
+    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']), debug=True)
 
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
