@@ -17,21 +17,20 @@ fwhm_coef=2.*math.sqrt(2.*math.log(2.))
 sqrt_2pi=math.sqrt(2.*math.pi)
 sqrt_2 = math.sqrt(2.)
 pi_d_2 = math.pi/2.
+ga_fwhm_coef=2./(fwhm_coef**2)
 
 #e_0 = 0.0086
 e_0 = 0.0
 e_mo= 17.48
 
 def gauss_(x, x0, fwhm):
-    sigma = fwhm/fwhm_coef
-    _=((x-x0)**2)/(2*sigma**2)
+    _=((x-x0)**2)/(ga_fwhm_coef*fwhm*fwhm)
     # print _, _c
     _=np.exp(-_)
     return _
 
 def gauss(x, x0, A, fwhm):
     return gauss_(x,x0,fwhm)*A
-
 
 def gauss_square(A, fwhm):
     sigma = fwhm/fwhm_coef
@@ -41,19 +40,22 @@ def gauss_square(A, fwhm):
 def arccot(x):
     return pi_d_2-np.arctan(x)
 
+def keV_to_channel(keV, A):
+    a0, a1, a2 = A
+    if a2!=0:
+        raise ValueError("I'm stupid, i cannot calculate that")
+    return (keV-a0)/a1
 
-def keV_to_channel(keV, k,b):
-    return (keV-b)/k
+def channel_to_keV(channel, A):
+    a0, a1, a2 = A
+    if a2==0:
+        return channel*a1+a0
+    else:
+        return a2*channel**2+channel*a1+a0
 
-def channel_to_keV(channel, k, b):
-    return channel*k+b
-
-def keV_to_fwhm(keV, k,b, k_x, b_x):
-    x0=keV_to_channel(keV, k_x, b_x)
-    return np.sqrt(x0)*k+b
-
-def channel_to_fwhm(chan, k,b):
-    return np.sqrt(chan)*k+b
+def keV_to_fwhm(keV, A):
+    a0, a1, a2 = A
+    return np.sqrt(keV)*a1+a0+keV*a2
 
 
 Pike=namedtuple('Line','x0, A, fwhm, bkg, slope, chisq')
@@ -101,9 +103,11 @@ class Parameters(object):
         self.scale.zero_e=None
         self.scale.max_keV=None
         self.scale.done=False
+        self.scale.A=[0,0,0]
         self.scale.peakes=[]
         self.scale.fwhm=Object()
         self.scale.fwhm.done=False
+        self.scale.fwhm.A=[0,0,0]
 
         self.bkg=None
 
@@ -138,13 +142,13 @@ class Parameters(object):
 
     def keV_to_channel(self, keV):
         if self.scale.done:
-            return keV_to_channel(keV, self.scale.k, self.scale.b)
+            return keV_to_channel(keV, self.scale.A)
         else:
             return RuntimeError, "scale did not calculated"
 
     def channel_to_keV(self, channel):
         if self.scale.done:
-            return channel_to_keV(channel, self.scale.k, self.scale.b)
+            return channel_to_keV(channel, self.scale.A)
         else:
             return RuntimeError, "scale did not calculated"
 
@@ -285,9 +289,23 @@ class Parameters(object):
         if pb: pb()
 
         print "K, B:", k_scale, b_scale
-        self.scale.k=k_scale
-        self.scale.b=b_scale
+        self.scale.A=[b_scale,k_scale,0]
         self.scale.done=True
+
+
+        _yw=np.array([w.fwhm for w in ws])
+        def scalew((k,b), x, y):
+            return y-((np.sqrt(x)*k)+b)
+
+        k_scale, b_scale = op.leastsq(scalew, [1., 0.], args=(lines,_yw))[0]
+
+        print "FWHM scale:", k_scale, b_scale
+        if pb: pb()
+
+        self.scale.fwhm.A=[b_scale, k_scale, 0]
+        self.scale.fwhm.done=True
+
+
         return self.scale
 
     def refine_scale(self, elements, plot=False, background=True, pb=None, debug=False):
@@ -304,8 +322,10 @@ class Parameters(object):
         if debug:
             print "Els:", elements
 
+        params={'A':True, 'x0':True, 'fwhm':False}
+
         mdl,Xopt, Const=self.model_spectra(elements=elements, lines=ls,
-            params={'A':True, 'x0':True, 'fwhm':True},
+            params=params,
             iters=10000,
             debug=debug,
             xtol=1, # FIXME ... = 1
@@ -318,12 +338,16 @@ class Parameters(object):
 
         X=Xopt
 
-        self.scale.k=X[0]
-        self.scale.b=X[1]
+        idx=0
+        if params.get("x0", False):
+            self.scale.A=[X[idx+1], X[idx], 0]
+            self.scale.done=True
+            idx+=2
 
-        self.scale.fwhm.k=X[2]
-        self.scale.fwhm.b=X[3]
-        self.scale.fwhm.done=True
+        if params.get("fwhm", False):
+            self.scale.fwhm.A=[X[idx+1], X[idx], 0]
+            self.scale.fwhm.done=True
+            idx+=2
 
         self.fig.plot(self.x, mdl)
         self.fig.plot(self.x, self.channels)
@@ -334,28 +358,8 @@ class Parameters(object):
 
         return self.scale
 
-    def calculate_fwhm(self, peakes, pb=None):
-        pprint.pprint(peakes)
-        _y=np.array([0.]+[w.fwhm for w in peakes])
-        _x0=np.array([self.scale.peakes[0].x0]+[w.x0 for w in peakes])
-
-        def scale((k,b), x, y):
-            return y-((np.sqrt(x)*k)+b)
-
-        k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y))[0]
-
-        print "FWHM scale:", k_scale, b_scale
-        if pb: pb()
-
-        self.scale.fwhm.k=k_scale
-        self.scale.fwhm.b=b_scale
-        self.scale.fwhm.done=True
-
-        return self.scale.fwhm
-
     def keV_to_fwhm(self, keV):
-        x0=self.keV_to_channel(keV)
-        return np.sqrt(x0)*self.scale.fwhm.k+self.scale.fwhm.b
+        return keV_to_fwhm(keV, self.scale.fwhm.A)
 
     def invalidate_background(self):
         self.bkg=None
@@ -388,6 +392,7 @@ class Parameters(object):
                 for l in ls:
                     x0=self.keV_to_channel(l.keV)
                     fwhm=self.keV_to_fwhm(l.keV)
+                    print "FFFFFFFF:", fwhm, l.keV, self.scale.fwhm.A
                     hwidth=fwhm*_s/2.
                     xmin,xmax=self.cut(x0, hwidth, xl)
                     ws[xmin:xmax]=w
@@ -528,7 +533,7 @@ class Parameters(object):
 
     def calculate(self, plot=False, pb=None):
         self.calc_scale(plot=plot, pb=pb)
-        self.calc_fwhm_scale(plot=plot, pb=pb)
+        #self.calc_fwhm_scale(plot=plot, pb=pb)
         return
 
     def model_spectra(self, elements, lines=None, plot=False,
@@ -559,15 +564,15 @@ class Parameters(object):
         const, exp, Xstart, map_x, map_fwhm, m_bkg=self.gen_equation(elements=elements, lines=lines, x=x, y=y, params=params)
         s_f=[]
         if not params.get("x0", False):
-            s_f.append("    k_x=%f" % self.scale.k)
-            s_f.append("    b_x=%f" % self.scale.b)
+            s_f.append("    k_x=%f" % self.scale.A[1])
+            s_f.append("    b_x=%f" % self.scale.A[0])
         if not params.get("fwhm", False):
-            s_f.append("    k_fwhm=%f" % self.scale.fwhm.k)
-            s_f.append("    b_fwhm=%f" % self.scale.fwhm.b)
+            s_f.append("    k_fwhm=%f" % self.scale.fwhm.A[1])
+            s_f.append("    b_fwhm=%f" % self.scale.fwhm.A[0])
         for k,v in map_x.iteritems():
-            s_f.append("    %s=scale_chan(%f, k_x, b_x)" % (k,v))
+            s_f.append("    %s=scale_chan(%f, [b_x, k_x, 0])" % (k,v))
         for k,v in map_fwhm.iteritems():
-            s_f.append("    %s=scale_fwhm(%f, k_fwhm, b_fwhm, k_x, b_x)" % (k,v))
+            s_f.append("    %s=scale_fwhm(%f, [b_fwhm, k_fwhm, 0])" % (k,v))
         lbx=[]
         lby=[]
         lbx.append("0.")
@@ -665,13 +670,13 @@ def approx_func(Params, x):
                 X0.append(val)
 
         if params.get('x0', False):
-            app('k_x', self.scale.k)
-            app('b_x', self.scale.b)
+            app('k_x', self.scale.A[1])
+            app('b_x', self.scale.A[0])
 
         if params.get('fwhm', False):
             try:
-                f_k = self.scale_fwhm.k
-                f_b = self.scale_fwhm.b
+                f_k = self.scale.fwhm.A[1]
+                f_b = self.scale.fwhm.A[0]
             except AttributeError:
                 f_k = 1.
                 f_b = 0.
@@ -696,6 +701,7 @@ def approx_func(Params, x):
 
             try:
                 fwhm=self.keV_to_fwhm(line.keV)
+                print "F:", fwhm, self.scale.fwhm.A
             except AttributeError:
                 fwhm=fwhm_name
 
