@@ -42,8 +42,14 @@ def arccot(x):
 
 def keV_to_channel(keV, A):
     a0, a1, a2 = A
+    #c, b, a
     if a2!=0:
-        raise ValueError("I'm stupid, i cannot calculate that")
+        c,b,a=(a0-keV),a1,a2
+        d=b*b-4*a*c
+        #print "D:", d
+        if d<0:
+            raise ValueError("discriminant < 0")
+        return (-b+np.sqrt(d))/(2*a)
     return (keV-a0)/a1
 
 def channel_to_keV(channel, A):
@@ -51,7 +57,7 @@ def channel_to_keV(channel, A):
     if a2==0:
         return channel*a1+a0
     else:
-        return a2*channel**2+channel*a1+a0
+        return a2*channel*channel+channel*a1+a0
 
 def keV_to_fwhm(keV, A):
     a0, a1, a2 = A
@@ -140,9 +146,12 @@ class Parameters(object):
         y=channels
         y[xmin:xmax]=y[xmin:xmax]-gauss(x[xmin:xmax], line.x0, line.A, line.fwhm)
 
-    def keV_to_channel(self, keV):
+    def keV_to_channel(self, keV, ignore_b=False):
+        a0,a1,a2=self.scale.A
+        if ignore_b:
+            a0=0.
         if self.scale.done:
-            return keV_to_channel(keV, self.scale.A)
+            return keV_to_channel(keV, [a0,a1,a2])
         else:
             return RuntimeError, "scale did not calculated"
 
@@ -284,7 +293,7 @@ class Parameters(object):
         _y=np.array(lines)
         _x0=np.array([_.x0 for _ in ws])
         def scale((k,b), x, y):
-            return y-((x*k)+b)
+            return (y-((x*k)+b))**2
         k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y))[0]
         if pb: pb()
 
@@ -293,9 +302,9 @@ class Parameters(object):
         self.scale.done=True
 
 
-        _yw=np.array([w.fwhm for w in ws])
+        _yw=np.array([w.fwhm*k_scale for w in ws]) # FWHM are scaled to keV
         def scalew((k,b), x, y):
-            return y-((np.sqrt(x)*k)+b)
+            return (y-((np.sqrt(x)*k)+b))**2
 
         k_scale, b_scale = op.leastsq(scalew, [1., 0.], args=(lines,_yw))[0]
 
@@ -340,14 +349,14 @@ class Parameters(object):
 
         idx=0
         if params.get("x0", False):
-            self.scale.A=[X[idx+1], X[idx], 0]
+            self.scale.A=[X[idx+1], X[idx], X[idx+2]]
             self.scale.done=True
-            idx+=2
+            idx+=3
 
         if params.get("fwhm", False):
-            self.scale.fwhm.A=[X[idx+1], X[idx], 0]
+            self.scale.fwhm.A=[X[idx+1], X[idx], X[idx+2]]
             self.scale.fwhm.done=True
-            idx+=2
+            idx+=3
 
         self.fig.plot(self.x, mdl)
         self.fig.plot(self.x, self.channels)
@@ -387,13 +396,13 @@ class Parameters(object):
         xl=len(self.channels)
         ws=np.ones(xl)
         deeper=np.zeros(xl)
+        sc_x=self.channel_to_keV(self.x)
         for _deep_count in range(iters):
             for _s, w in sw:
                 for l in ls:
                     x0=self.keV_to_channel(l.keV)
                     fwhm=self.keV_to_fwhm(l.keV)
-                    print "FFFFFFFF:", fwhm, l.keV, self.scale.fwhm.A
-                    hwidth=fwhm*_s/2.
+                    hwidth=self.keV_to_channel(fwhm*_s/2., ignore_b=True)
                     xmin,xmax=self.cut(x0, hwidth, xl)
                     ws[xmin:xmax]=w
 
@@ -418,9 +427,12 @@ class Parameters(object):
                     ny.append(self.channels[_x])
                     nw.append(ws[_x])
 
-
-            spline=ip.splrep(nx,ny,nw, k=3, s=s)
-            ys=ip.splev(self.x,spline)
+            nx=np.array(nx)
+            ny=np.array(ny)
+            nw=np.array(nw)
+            sc_nx=self.channel_to_keV(nx)
+            spline=ip.splrep(sc_nx,ny,nw, k=3, s=s)
+            ys=ip.splev(sc_x,spline)
             y=np.array(self.channels)
             for _x in self.x:
                 if ys[_x]<0:
@@ -566,13 +578,16 @@ class Parameters(object):
         if not params.get("x0", False):
             s_f.append("    a1_x=%f" % self.scale.A[1])
             s_f.append("    a0_x=%f" % self.scale.A[0])
+            s_f.append("    a2_x=%f" % self.scale.A[2])
         if not params.get("fwhm", False):
             s_f.append("    a1_fwhm=%f" % self.scale.fwhm.A[1])
             s_f.append("    a0_fwhm=%f" % self.scale.fwhm.A[0])
+            s_f.append("    a2_fwhm=%f" % self.scale.fwhm.A[2])
         for k,v in map_x.iteritems():
-            s_f.append("    %s=scale_chan(%f, [a0_x, a1_x, 0])" % (k,v))
+            #s_f.append("    %s=scale_chan(%f, [a0_x, a1_x, a2_x])" % (k,v))
+            s_f.append("    %s=%f" % (k,v))
         for k,v in map_fwhm.iteritems():
-            s_f.append("    %s=scale_fwhm(%f, [a0_fwhm, a1_fwhm, 0])" % (k,v))
+            s_f.append("    %s=scale_fwhm(%f, [a0_fwhm, a1_fwhm, a2_fwhm])" % (k,v))
         lbx=[]
         lby=[]
         lbx.append("0.")
@@ -600,10 +615,12 @@ class Parameters(object):
         s_fs='\n'.join(s_f)
 
         s_fun="""
-def approx_func(Params, x):
+def approx_func(Params, channels):
     %s = Params
 
 %s
+
+    x=scale_chan(channels, [a0_x, a1_x, a2_x])
 
     _1 = %s
     return _1
@@ -616,7 +633,7 @@ def approx_func(Params, x):
             "np":np,
             "ip":ip,
             "gauss":gauss_,
-            'scale_chan':keV_to_channel,
+            'scale_chan':channel_to_keV,
             'scale_fwhm':keV_to_fwhm,
             }
         l={}
@@ -672,17 +689,21 @@ def approx_func(Params, x):
         if params.get('x0', False):
             app('a1_x', self.scale.A[1])
             app('a0_x', self.scale.A[0])
+            app('a2_x', self.scale.A[2])
 
         if params.get('fwhm', False):
             try:
                 f_k = self.scale.fwhm.A[1]
                 f_b = self.scale.fwhm.A[0]
+                f_a2 = self.scale.fwhm.A[2]
             except AttributeError:
                 f_k = 1.
                 f_b = 0.
+                f_a2 = 0.
 
             app('a1_fwhm', f_k)
             app('a0_fwhm', f_b)
+            app('a2_fwhm', f_a2)
 
         sum=[]
         map_x={}
@@ -701,12 +722,12 @@ def approx_func(Params, x):
 
             try:
                 fwhm=self.keV_to_fwhm(line.keV)
-                print "F:", fwhm, self.scale.fwhm.A
             except AttributeError:
                 fwhm=fwhm_name
 
             if params.get('fwhm', False):
                 app(fwhm_name, keV, map_=map_fwhm)
+                fwhm=fwhm_name
 
             if params.get('A', False):
                 app(c_name, y[chan_])
@@ -1507,7 +1528,8 @@ def test1():
     #par.scan_peakes_cwt(plot=True)
 
     #elements=set("Ni,Ir,Cl,S,Mo,Yb,Si,P,As,Ar,Zr,W,V,Hf,Tl".split(','))
-    elements=set("Ni,Cl,S,Mo,Si,P,As,Ar,Zr,W,V,Hf".split(','))
+    #elements=set("Ni,Cl,S,Mo,Si,P,As,Ar,Zr,W,V,Hf".split(','))
+    elements=set("Mo,V,W".split(','))
     #elements=set(["W", "As"])
 
     ls = ldb.as_deltafun(order_by="keV", element=elements,
@@ -1517,6 +1539,7 @@ def test1():
     #pprint.pprint(ls)
 
     #par.refine_scale(elements=elements-set(['Mo']))
+    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']), debug=True)
     par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']), debug=True)
 
     #par.scale.k=0.005004
@@ -1529,12 +1552,13 @@ def test1():
 
     par.set_active_channels(par.channels-ybkg)
 
-    """
-    mdl, XC, CVars=par.model_spectra(elements=elements, iters=10000, debug=False, params={"A":True})
 
+    mdl, XC, CVars=par.model_spectra(elements=elements, iters=10000, debug=True, params={"A":True})
     p.plot(par.x, mdl, color=(0.5,0.5,0.2), linestyle='--', alpha=0.7, linewidth=3)
+
+
     p.plot(par.x, par.active_channels, color=(0,0,0), linewidth=3, alpha=0.4)
-    """
+
     par.line_plot(ls, {'analytical':False})
     p.axis('tight')
     ax=list(p.axis())
