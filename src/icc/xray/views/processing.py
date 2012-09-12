@@ -1,31 +1,69 @@
 import icc.xray.analysis.scaling as scaling
 import icc.xray.analysis.lines as lines
-import threading
-import pygtk
-pygtk.require('2.0')
-import gtk, gobject, sys, os
+import sys
+#import pygtk
+#pygtk.require('2.0')
+#import gtk, gobject, sys, os
 
 def line_db_conn():
     if os.name!="nt":
-        ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/EdxData1.sqlite3')
+        ldb=lines.Lines(dbname='/home/eugeneai/Development/codes/dispersive/data/lines.sqlite3')
     else:
-        ldb=lines.Lines(dbname='C:\\dispersive\\data\\EdxData1.sqlite3')
+        ldb=lines.Lines(dbname='C:\\dispersive\\data\\lines.sqlite3')
     return ldb
 
+HOST='localhost'
+PORT=12211
+sprocessing=None
+if __name__=="__main__" and len(sys.argv)==2 and sys.argv[1]=='server':
+    from rpyc.core import SlaveService
+    from rpyc.utils.server import ThreadedServer, ForkingServer
+    print "Server", sys.argv
+    SERVER = True
+else:
+    SERVER = True
+    test_case=False
+    import rpyc
+    import os
+    print "Client", sys.argv
+    if not sys.argv[0].endswith('rpyc_classic.py'):
+        SERVER = False
+        import pygtk
+        pygtk.require('2.0')
+        import gtk, gobject, sys, os
+        server=rpyc.classic.connect(HOST, PORT)
+        sprocessing = server.modules['icc.xray.views.processing']
+        print "Client:", server, sprocessing
+        test_case=True
 
-class Parameters(threading.Thread):
+
+class Stub:
+    pass
+
+class Parameters(object):
     e_0 = 0.0086
-    def __init__(self, model, view):
-        threading.Thread.__init__(self)
-        self.model = model
-        self.view = view
-        if self.model.parameters == None:
-            self.model.parameters = scaling.Parameters(model.channels)
-        par=self.model.parameters
-        self._methods=[]
-        self._active=False
-
-    stopthread = threading.Event()
+    def __init__(self, model=None, view=None, client=None):
+        #threading.Thread.__init__(self)
+        global SERVER,sprocessing
+        self.SERVER=SERVER
+        print "Client-dat", client
+        if client:
+            self.model = client.model
+            self.view = client.view
+            self._methods=client._methods
+            self._active=client._active
+        else:
+            self.model = model
+            self.view = view
+            if model == None:
+                model=Stub()
+                model.parameters=Stub()
+                self.model=model
+            if self.model.parameters == None:
+                self.model.parameters = scaling.Parameters(model.channels)
+            self._methods=[]
+            self._active=False
+            self.obj=sprocessing.Parameters(client=self)
 
     def set_progressbar(self, pb):
         self.progressbar=pb
@@ -54,36 +92,51 @@ class Parameters(threading.Thread):
             frac=float(step)/steps
         else:
             frac=step
-        gtk.threads_enter()
-        #print step, "of", steps
-        self.progressbar.set_fraction(frac)
-        gtk.threads_leave()
+        if hasattr(self, 'client_obj'):
+            self.client_obj.set_fraction(frac)
+        else:
+            gtk.threads_enter()
+            self.progressbar.set_fraction(frac)
+            gtk.threads_leave()
 
-    def methods(self, names):
+    def server_methods(self, names):
         self._methods=names
 
+    def methods(self, names):
+        print self.SERVER
+        self.obj.server_methods(names)
+
+    def start(self):
+        print "SERVER", self.SERVER
+        self.run()
+
     def run(self):
-        if not self.stopthread.isSet() :
-            self._active=True
-            for m in self._methods:
-                getattr(self, m)()
-            self._active=False
+        self.obj.server_run(self)
+
+    def server_run(self, client):
+        self._active=True
+        self.client_obj=client
+        o=self
+        pref='server_'
+        if not self.SERVER:
+            o=self.obj
+            pref=''
+        for m in o._methods:
+            m=pref+m
+            getattr(o, m)()
+        self.client_obj=None
+        del self.client_obj
+        self._active=False
 
     def scaling(self):
+        return self.obj.server_scaling()
+
+    def server_scaling(self):
         #While the stopthread event isn't setted, the thread keeps going on
         self.reset_progress(9)
 
         par=self.model.parameters
-        pb=self.progressbar
-        # Acquiring the gtk global mutex
-        ##gtk.threads_enter()
-        #Setting a random value for the fraction
-        ##progressbar.set_fraction(random.random())
-        # Releasing the gtk global mutex
-        ##gtk.threads_leave()
-
-        #Delaying 100ms until the next iteration
-        ##time.sleep(0.1)
+        ######pb=self.progressbar
 
         par.set_scale_lines(self.e_0, ['Mo'], 20.) # 20 keV max
         ldb=line_db_conn()
@@ -91,9 +144,12 @@ class Parameters(threading.Thread):
         par.calculate(plot=False, pb=self.next_step)
         #par.scan_peakes_cwt(plot=True)
 
+    def server_show(self):
+        self.client_obj.show()
+
     def show(self):
         par=self.model.parameters
-        elements=self.model.elements
+        elements=self.model.ptelements
         print "EL:", elements
         le=len(elements)
         if le:
@@ -105,28 +161,29 @@ class Parameters(threading.Thread):
         self.view.paint_model([self.model], draw=False)
         par.set_figure(self.view.ui.ax)
         if le:
-            par.line_plot(ls)
-        self.view.ui.canvas.draw()
+            par.line_plot(ls, self.view.plot_options)
+        self.view.ui.canvas.draw_idle()
         gtk.threads_leave()
 
     def refine(self):
+        self.obj.refine()
+
+    def server_refine(self):
         par=self.model.parameters
-        self.scaling()
+        elements=list(self.model.ptelements)
+        self.server_scaling()
         self.reset_progress(3)
-        elements=self.model.elements
         par.refine_scale(elements=elements, pb=self.next_step)
 
-    def other(self):
-        ybkg = par.approx_background(elements=elements, plot=True)
+    def background(self):
+        self.obj.server_background()
 
-        p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6,)
-        p.plot(par.x, ybkg, color=(0,1,1), alpha=0.5, linestyle='-')
-        par.set_active_channels(par.channels-ybkg)
-
-        par.refine_scale(elements=set(['As', 'V', 'W', 'Mo', 'Zr']), background=False, plot=False)
-        par.model_spectra(elements=elements)
-
-        p.plot(par.x, par.channels-ybkg, color=(0,0,0))
+    def server_background(self):
+        par=self.model.parameters
+        elements=list(self.model.ptelements)
+        self.server_scaling()
+        self.reset_progress(11)
+        par.approx_background(elements=elements, pb=self.next_step)
 
     def stop(self):
         """Stop method, sets the event to terminate the thread's main loop"""
@@ -134,4 +191,18 @@ class Parameters(threading.Thread):
 
     def is_active(self):
         return self._active
+
+if SERVER:
+    '''
+    t = ThreadedServer(SlaveService, hostname = 'localhost',
+        port = PORT, #reuse_addr = True, # ipv6 = options.ipv6,
+        #authenticator = options.authenticator, registrar = options.registrar,
+        #auto_register = options.auto_register
+        )
+    t.logger.quiet = True
+    t.start()
+    '''
+elif test_case:
+    p=Parameters()
+    print "OK"
 

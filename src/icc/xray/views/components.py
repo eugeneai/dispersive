@@ -468,7 +468,7 @@ class Cursor(widgets.Cursor):
             self.lineh.set_visible(False)
 
             if self.needclear:
-                self.canvas.draw()
+                self.canvas.draw_idle()
                 self.needclear = False
             return
         self.needclear = True
@@ -516,6 +516,7 @@ class PlottingView(View):
     #@+node:eugeneai.20110116171118.1393: *3* __init__
     def __init__(self, parent=None, model=None):
         View.__init__(self, model, parent=parent)
+        self.plot_options={'show-lines':True}
         self.set_axis_labels()
         self.ui=rakeviews.Ui()
         self.ui.win=gtk.Frame()
@@ -537,8 +538,8 @@ class PlottingView(View):
          )
         self.ui.fig = fig
         self.ui.ax = fig.add_subplot(111)
-        self.ui.ax2=self.ui.ax.twinx()
-        self.ui.ay2=self.ui.ax.twiny()
+        #self.ui.ax2=self.ui.ax.twinx()
+        #self.ui.ay2=self.ui.ax.twiny()
 
         canvas = FigureCanvas(fig)  # a gtk.DrawingArea
         self.ui.canvas = canvas
@@ -560,15 +561,21 @@ class PlottingView(View):
         self.axis.x_lab=x
         self.axis.y_lab=y
         self.invalidate_model(self.model)
-        #self.ui.canvas.draw()
+        #self.ui.canvas.draw_idel()
 
     def on_model_changed(self, model):
-        self.paint_model(model)
+        self.paint_model(model, conserve=False)
 
-    def paint_model(self, model, draw=True):
+    def set_plot_options(self, options, draw=True):
+        self.plot_options=options
+        self.paint_model(self.model, draw=draw)
+
+    def paint_model(self, model, draw=True, conserve=True):
         if not hasattr(self.ui,'fig'):
             return
         fig = self.ui.fig
+        if conserve:
+            lims, pos= self._scan_view(fig)
         fig.clear()
         self.ui.ax = fig.add_subplot(111)
         #self.ui.ax2=self.ui.ax.twinx()
@@ -588,6 +595,7 @@ class PlottingView(View):
             else:
                 m=model
 
+            po=self.plot_options
             for i, spec in enumerate(m):
                 spectrum = spec.channels
                 sp_len = len(spectrum)
@@ -601,12 +609,22 @@ class PlottingView(View):
                 kwargs.update(ssp)
                 #del kwargs['spectrum']
                 #pl, = ax.plot(kevs, spectrum, **kwargs)
-                pl, = ax.plot(X, spectrum, **kwargs)
-                ax.axis('tight')
-                _ax=list(ax.axis())
-                _ax[2]=-_ax[-1]/100.
-                _ax[-1]=_ax[-1]*1.1
-                ax.axis(_ax)
+                if po.get('channels', True):
+                    pl, = ax.plot(X, spectrum, **kwargs)
+                    ax.axis('tight')
+                    _ax=list(ax.axis())
+                    print "A", _ax
+                    _ax[-1]=np.max(spectrum[150:])
+                    _ax[2]=-_ax[-1]/100.
+                    _ax[-1]=_ax[-1]*1.1
+                    ax.axis(_ax)
+                if spec.parameters and po.get('background', False) and spec.parameters.bkg!=None:
+                    kwbkg={}
+                    kwbkg.update(kwargs)
+                    kwbkg['alpha']=0.6
+                    kwbkg['color']='blue'
+                    pl, = ax.plot(X, spec.parameters.bkg, **kwbkg)
+
                 ax.axhline(y=0, xmin=0, xmax=1, color=(0,0,0), alpha=0.3, linestyle='--')
                 #ax.set_yticklabels([])
                 #ax.set_xticklabels([])
@@ -634,8 +652,31 @@ class PlottingView(View):
             #top.set_xlabels(ax.get_xlabels())
             #for tick in ax2.get_xticklabels():
             #    tick.set_fontsize(5)
+        if conserve:
+            self._update_view(fig, lims, pos)
         if draw:
-            self.ui.canvas.draw()
+            self.ui.canvas.draw_idle()
+
+    def _update_view(self, figure, lims,  pos):
+        for i, a in enumerate(figure.get_axes()):
+            xmin, xmax, ymin, ymax = lims[i]
+            a.set_xlim((xmin, xmax))
+            a.set_ylim((ymin, ymax))
+            # Restore both the original and modified positions
+            a.set_position( pos[i][0], 'original' )
+            a.set_position( pos[i][1], 'active' )
+
+    def _scan_view(self, figure):
+        lims = []; pos = []
+        for a in figure.get_axes():
+            xmin, xmax = a.get_xlim()
+            ymin, ymax = a.get_ylim()
+            lims.append( (xmin, xmax, ymin, ymax) )
+            # Store both the original and modified positions
+            pos.append( (
+                    a.get_position(True).frozen(),
+                    a.get_position().frozen() ) )
+        return lims, pos
 
     #@+node:eugeneai.20110116171118.1394: *3* on_click
     def on_click(self, event, data=None):
@@ -661,7 +702,7 @@ class PlottingView(View):
             if alpha>0.1:
                 any_vis = True
         [self._set(sp, not any_vis) for sp in self.model.spectra]
-        self.ui.canvas.draw()
+        self.ui.canvas.draw_idle()
 
     #@+node:eugeneai.20110116171118.1396: *3* on_spectrum_clicked
     def on_spectrum_clicked(self, project_view, spectrum_data, user_data=None):
@@ -676,7 +717,7 @@ class PlottingView(View):
 
         # print spec
         self._toggle(spec)
-        self.ui.canvas.draw()
+        self.ui.canvas.draw_idle()
 
     #@+node:eugeneai.20110116171118.1397: *3* _toggle
     def _toggle(self, spec):
@@ -790,7 +831,11 @@ class ProjectView(View):
             )
             pt.connect("selected", self.on_ptable_selected)
             pt.connect("refine", self.on_refine_scaling)
+            pt.connect('clear-scaling', self.on_clear_scaling)
+            pt.connect('external-scaling', self.on_external_scaling)
             pt.connect('interval-changed', self.on_interval_changed)
+            pt.connect('show-lines', self.on_adjust_graphics)
+            pt.connect('background', self.on_show_background)
         else:
             pt=rc
         if active:
@@ -802,22 +847,48 @@ class ProjectView(View):
     def on_scaling_toggled(self, widget, *args):
         if widget.get_active():
             print "Scaling started"
-            if self.p_thread == None or not self.p_thread.is_active():
-                self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
-                self.p_thread.set_progressbar(self.ui.progressbar)
-                self.p_thread.methods(['scaling', 'show'])
-                self.p_thread.start()
+            self.p_thread_tasks(['scaling', 'show'])
         else:
             print "Scaling stopped"
             if self.p_thread:
                 self.p_thread.stop()
             self.ui.ac_ptable.set_active(False)
 
+    def on_external_scaling(self, widget, active):
+        if active:
+            amp=self.active_view.model[0].parameters
+            eamp=self.active_view.model[0].extparams
+            amp.scale.b=eamp.scale.b
+            amp.scale.k=eamp.scale.k
+            self.p_thread_tasks(['show'])
+        else:
+            self.active_view.model[0].parameters.scale.done=False
+            self.p_thread_tasks(['scaling', 'show'])
+
+    def on_clear_scaling(self, widget):
+        print "Clear scaling"
+
+    def on_show_background(self, widget, active):
+        self.active_view.plot_options['background']=active
+        if active:
+            self.active_view.plot_options
+            self.p_thread_tasks(['scaling','background','show'])
+        else:
+            self.p_thread_tasks(['show'])
+
+    def on_adjust_graphics(self, widget, options):
+        self.active_view.set_plot_options(options, draw=False)
+        self.p_thread_tasks(['show'])
+
     def on_ptable_selected(self, table, list):
-        self.active_view.model[0].elements=list
-        if self.p_thread != None and not self.p_thread.is_active():
+        self.active_view.model[0].ptelements=list
+        self.p_thread_tasks(['show'])
+
+    def p_thread_tasks(self, tasks):
+        if self.p_thread == None or not self.p_thread.is_active():
             self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
-            self.p_thread.methods(['show'])
+            self.p_thread.set_progressbar(self.ui.progressbar)
+            self.p_thread.methods(tasks)
             self.p_thread.start()
 
     def on_plot_spectrum_clicked(self, plot, button, x,y, xdata, ydata):
@@ -851,15 +922,11 @@ class ProjectView(View):
             #lines.sort(key=lambda l: abs(l.keV - x0))
             lines.sort(key=lambda l: l.name)
             for l in lines:
-                line_list.append((l.element, l.name, "%6.3f" % l.keV, l.Z))
+                line_list.append((l.element, l.line, "%6.3f" % l.keV, l.Z))
 
     def on_refine_scaling(self, table):
         print "Refine scaling..."
-        if self.p_thread != None and not self.p_thread.is_active():
-            self.p_thread=proc.Parameters(self.active_view.model[0], self.active_view) # adapter ??
-            self.p_thread.set_progressbar(self.ui.progressbar)
-            self.p_thread.methods(['refine','show'])
-            self.p_thread.start()
+        self.p_thread_tasks(['refine','show'])
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
     def get_objects(self):
@@ -946,7 +1013,7 @@ class ProjectView(View):
         if not spec:
             return
         (sp, spec_no) = sp_and_no
-
+        return #FIXME
         for el in spec.elements.values():
             row=(int(el.Atom), 'Xx', el.XLine,
                 -1, int(el.Cycles), float(el.NetIntens), float(el.Background),
@@ -998,7 +1065,8 @@ class ProjectView(View):
 
     def on_row_activated(self, tree_view, path, column, data=None):
         #print 'Clicked:', tree_view, path, column, data
-        if self.p_thread and self.p_thread.is_alive():
+        #if self.p_thread and self.p_thread.is_alive():
+        if self.p_thread:
             self.p_thread.stop()
             self.p_thread=None
         self.ui.progressbar.set_fraction(0.)
@@ -1048,7 +1116,7 @@ class ProjectView(View):
             pm.remove(pm.get_iter(path))
             self.set_model(self.model)
             self.emit('model-changed', self.model)
-            #self.active_view.canvas.draw()
+            #self.active_view.canvas.draw_idle()
             print "removed"
 
     def on_spectra_export(self, widget, data=None):
@@ -1108,7 +1176,7 @@ class ProjectView(View):
         self.model.add_spectral_data_source(file_name)
         self.set_model(self.model)
         self.emit('model-changed', self.model)
-        #self.active_view.canvas.draw()
+        #self.active_view.canvas.draw_idel()
 
     #@-others
 
@@ -1118,16 +1186,26 @@ class PeriodicTableWindow(View):
     __gsignals__ = {
         'window-hide': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
         'refine': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
+        'clear-scaling': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
+        'external-scaling': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
+        'background': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
+        'show-lines': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
         'selected': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
         'interval-changed': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_FLOAT,)),
     }
     implements(IPeriodicTableView)
     template = "ui/periodic_table_window.glade"
+    'Cl,Mo,Si,S,P,As,W,V,Zr,Ar,Hf'
     widget_names = ["pt_window",
             "hbox",
             "lines_view", 'line_list',
-            'pt_place', 'refine_scaling_button',
-            'interval'
+            'pt_place',
+            'interval',
+            'ac_refine_scaling', 'ac_clear',
+            'ac_k', 'ac_l', 'ac_m', 'ac_peakes',
+            'ac_show_lines', 'ac_an_lines',
+            'ac_channels', 'ac_clean_channels',
+            'ac_background'
     ]
     def __init__(self, model=None):
         if model == None:
@@ -1146,7 +1224,7 @@ class PeriodicTableWindow(View):
         #in_list.connect('activate', self.on_input_list_activate)
         self.ui.table.ui.pt.attach(in_list, 2, 18, 7,8)
         self._list_block=False
-        self.ui.refine_scaling_button.set_sensitive(False)
+        self.ui.ac_refine_scaling.set_sensitive(False)
 
         it=self.ui.interval
         it.set_range(0., 2.)
@@ -1196,9 +1274,9 @@ class PeriodicTableWindow(View):
         ls=len(list)
         lb=len(bad)
         if ls-lb>=2:
-            self.ui.refine_scaling_button.set_sensitive(True)
+            self.ui.ac_refine_scaling.set_sensitive(True)
         else:
-            self.ui.refine_scaling_button.set_sensitive(False)
+            self.ui.ac_refine_scaling.set_sensitive(False)
         self._list_block=False
         self.emit("selected", self.model.elset)
 
@@ -1207,16 +1285,22 @@ class PeriodicTableWindow(View):
         self.emit("window-hide")
         return True
 
-    def on_refine_scaling_button_activate(self, window, event):
-        print "Refine"
+    def on_refine_scaling(self, window, event):
         self.emit('refine')
 
-    def on_clear_all_button_clicked(self, window, event):
+    def on_clear_scaling(self, window, event):
+        self.emit('clear-scaling')
+
+    def on_use_ext_scaling(self, window, event):
+        self.emit('external-scaling', window.get_active())
+
+    def on_clear_all(self, window, event):
         if self._list_block:
             return
         self._list_block=True
         self.ui.table.select([], active=True, only=True)
         self._list_block=False
+        self.ui.ac_refine_scaling.set_sensitive(False)
         self.emit("selected", self.model.elset)
 
     def on_list_row_activated(self, list, path, view_column, *args):
@@ -1224,11 +1308,38 @@ class PeriodicTableWindow(View):
         symbol = m[path[0]][0]
         self.ui.table.select([symbol], active=True)
 
+    def on_ac_background_toggled(self, widget, *args):
+        #self.on_show_line_toggled(widget=widget, emit=True)
+        self.emit("background", widget.get_active())
+
+    def on_show_line_toggled(self, widget, emit=True, *args):
+        d={}
+        d['k']=self.ui.ac_k.get_active()
+        d['l']=self.ui.ac_l.get_active()
+        d['m']=self.ui.ac_m.get_active()
+        d['analytical']=self.ui.ac_an_lines.get_active()
+        d['peakes']=self.ui.ac_peakes.get_active()
+        d['channels']=self.ui.ac_channels.get_active()
+        d['clean-channels']=self.ui.ac_clean_channels.get_active()
+        d['background']=self.ui.ac_background.get_active()
+        sl=d['show-lines']=self.ui.ac_show_lines.get_active()
+        self.ui.ac_k.set_sensitive(sl)
+        self.ui.ac_l.set_sensitive(sl)
+        self.ui.ac_m.set_sensitive(sl)
+        self.ui.ac_an_lines.set_sensitive(sl)
+        if emit:
+            self.emit('show-lines', d)
+
 gobject.type_register(PeriodicTableWindow)
 
 if __name__=="__main__":
+    print "Cannot run without external support!!"
+    '''
     import icc.icc_xray_app
+    gtk.threads_enter()
     icc.icc_xray_app.main()
+    gtk.threads_leave()
+    '''
 
 #@-others
 #@-leo

@@ -18,12 +18,13 @@ setup(
                     #@+<< requirenments >>
                     #@+node:eugeneai.20110116000634.1304: *3* << requirenments >>
                     "distribute",
+                    "rpyc",
                     "zope.component [zcml]",
                     "cfgparse",
                     "numpy",
                     "scipy",
                     "lxml",
-                    "periodictable",
+                    #"periodictable",
                     #"matplotlib",
                     #"rsvg",
                     # "numpy",

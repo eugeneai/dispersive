@@ -162,3 +162,5 @@ src/gelemental/src/.deps/
 src/gelemental/src/elwidget.o
 /data/.~lock.pt-data1.csv#
 /src/gelemental/m4/lt~obsolete.m4
+/data/.~lock.rel_lines.csv#
+/src/icc/xray/analysis/_.py
