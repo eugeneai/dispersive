@@ -541,7 +541,7 @@ class Parameters(object):
                 #other values of the parameter are: fwhm, x0, bkg
         if bkg==None:
             bkg=lambda x: 0
-        y=np.array(self.channels)
+        y=np.array(self.active_channels)
         ly=len(y)
         xc=np.arange(ly)
         x=self.channel_to_keV(xc)
@@ -1516,26 +1516,26 @@ def test1():
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
     #par.line_plot(ls, {'analytical':True})
-    par.line_plot(ls, {'analytical':False})
     ybkg = par.approx_background(elements=elements, plot=True, iters=2)
 
-    p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6,)
-    p.plot(par.x, ybkg, color=(0,1,1), alpha=0.5, linestyle='-')
+    p.plot(par.x, par.channels, color=(0,0,1), alpha=0.6)
+    p.plot(par.x, ybkg, color=(0,1,1), alpha=0.5)
 
     par.set_active_channels(par.channels-ybkg)
 
-    #par.refine_scale(elements=set(['As', 'V', 'W']), background=False, plot=False)
-    #par.refine_scale(elements=set(['As', 'V', ]), background=False, plot=False)
-    mdl, XC, CVars=par.model_spectra(elements=elements, iters=10000, debug=True, params={"A":True})
+    """
+    mdl, XC, CVars=par.model_spectra(elements=elements, iters=10000, debug=False, params={"A":True})
 
     p.plot(par.x, mdl, color=(0.5,0.5,0.2), linestyle='--', alpha=0.7, linewidth=3)
-    p.plot(par.x, par.channels, color=(0,0,0))
+    p.plot(par.x, par.active_channels, color=(0,0,0), linewidth=3, alpha=0.4)
+    """
+    par.line_plot(ls, {'analytical':False})
     p.axis('tight')
     ax=list(p.axis())
     ax[2]=-ax[-1]/100.
     ax[-1]=ax[-1]*1.1
     p.axis(ax)
-    p.axhline(y=0, xmin=0, xmax=1, color=(0,0,0), alpha=0.3, linestyle='--')
+    p.axhline(y=0, xmin=0, xmax=1, color=(0,0,0), alpha=0.3)
     p.show()
 
 def test2():

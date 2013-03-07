@@ -11,14 +11,8 @@ import icc.rake.app as app
 #@-node:eugeneai.20110116171118.1319:imports
 #@+node:eugeneai.20110116171118.1316:main proceudre
 
-#raise SystemExit, "as"
-
 if __name__=="__main__":
-    sys.exit(app.main())
-
-
-
-
+    app.main()
 #@-node:eugeneai.20110116171118.1316:main proceudre
 #@-others
 #@-node:eugeneai.20110116171118.1315:@shadow icc_rake_app.py
