@@ -4,8 +4,14 @@
 #@@tabwidth -4
 #@+others
 #@+node:eugeneai.20110115235621.1289: ** distribute imports
-from setuptools import setup, find_packages
+from ez_setup import use_setuptools
+use_setuptools()
+from setuptools import setup, find_packages, Extension
+from distutils import log
 #@+node:eugeneai.20110115235621.1288: ** setup
+
+log.set_verbosity(100)
+
 setup(
     zip_safe = True,
     name="icc.xray",
@@ -25,10 +31,9 @@ setup(
                     "scipy",
                     "lxml",
                     #"periodictable",
-                    #"matplotlib",
+                    "matplotlib",
                     #"rsvg",
-                    # "numpy",
-                    # "PyGTK"
+                    #"PyGTK"
                     #@-<< requirenments >>
                       ],
     package_data = {

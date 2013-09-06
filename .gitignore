@@ -14,7 +14,7 @@ D_unknown.csv
 D_Монголия_№13.csv
 D_Почвы_№16_(Акулова).csv
 SRSC.csv
-python/
+python*/
 /hack.el
 /hack.el~
 /src/icc/Project.ede
@@ -166,3 +166,6 @@ src/gelemental/src/elwidget.o
 /src/icc/xray/analysis/_.py
 /python-old/*
 /Bair/pike-*.png
+/src/icc/.emacs.desktop
+/site.cfg
+*~
