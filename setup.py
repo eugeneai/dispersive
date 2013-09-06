@@ -23,7 +23,7 @@ setup(
     install_requires=[
                     #@+<< requirenments >>
                     #@+node:eugeneai.20110116000634.1304: *3* << requirenments >>
-                    "distribute",
+                    "setuptools",
                     "rpyc",
                     "zope.component [zcml]",
                     "cfgparse",

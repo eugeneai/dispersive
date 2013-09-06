@@ -164,5 +164,8 @@ src/gelemental/src/elwidget.o
 /src/gelemental/m4/lt~obsolete.m4
 /data/.~lock.rel_lines.csv#
 /src/icc/xray/analysis/_.py
+/python-old/*
+/Bair/pike-*.png
 /src/icc/.emacs.desktop
 /site.cfg
+*~

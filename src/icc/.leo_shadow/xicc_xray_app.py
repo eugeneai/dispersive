@@ -11,16 +11,16 @@ import icc.rake.app as app
 #@-node:eugeneai.20110116171118.1319:imports
 #@+node:eugeneai.20110116171118.1318:main procedure
 
+def main():
+    app.main('icc.xray')
+
 if __name__=="__main__":
     #@    << run >>
     #@+node:eugeneai.20110116171118.1320:<< run >>
-    sys.exit(app.main('icc.xray'))
+    main()
     #@nonl
     #@-node:eugeneai.20110116171118.1320:<< run >>
     #@nl
-
-
-
 #@-node:eugeneai.20110116171118.1318:main procedure
 #@-others
 #@-node:eugeneai.20110116171118.1317:@shadow icc_xray_app.py

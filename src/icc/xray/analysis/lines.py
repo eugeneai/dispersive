@@ -310,7 +310,7 @@ if 0 and __name__=='__main__':
     elements=['Mo']
 
     ls=list(lines.as_deltafun(order_by="keV", element=elements,
-        where="not l.name like 'M%' and keV<20.0"))
+        where="keV<20.0"))
     pp.pprint(ls)
     print len(ls)
     x=np.array([0, ls[-1].keV*1.03])

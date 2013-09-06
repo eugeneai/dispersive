@@ -5,9 +5,7 @@
 #@+others
 #@+node:eugeneai.20110116171118.1424: ** app declarations
 
-import pygtk
-pygtk.require('2.0')
-import gtk
+from gi.repository import Gtk
 
 #Initializing the gtk's thread engine
 #gtk.threads_init()
@@ -61,9 +59,9 @@ def main(package=None):
         if lp_fn:
             app.emit("startup-open", lp_fn)
 
-    gtk.threads_enter()
+    Gtk.threads_enter()
     rc = app.main()
-    gtk.threads_leave()
+    Gtk.threads_leave()
 
     if user_conf: user_conf.write(user_config_file)
 

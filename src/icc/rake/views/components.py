@@ -6,12 +6,13 @@
 #@+node:eugeneai.20110116171118.1454: ** components declarations
 #!/usr/bin/python
 
-import pygtk
-pygtk.require('2.0')
-import gtk, sys
-import goocanvas, gobject
+from gi.repository import Gtk, GObject
 
-#gtk.threads_init()
+import sys
+
+#import goocanvas, gobject
+
+#Gtk.threads_init()
 #print "Threads init."
 
 if __name__=="__main__":
@@ -32,7 +33,7 @@ from icc.rake.views import *
 import os, os.path
 
 import cairo, math
-import rsvg
+#import rsvg
 
 import types
 
@@ -59,21 +60,21 @@ def InputDialog(message, value='', field='Name:', secondary=''):
         dialog.response(response)
     def getText(value):
         #base this on a message dialog
-        dialog = gtk.MessageDialog(
+        dialog = Gtk.MessageDialog(
             None,
-            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-            gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_OK,
+            Gtk.DialogType.MODAL | Gtk.DialogType.DESTROY_WITH_PARENT,
+            Gtk.MessageType.QUESTION,
+            Gtk.ButtonsTypeOK,
             None)
         dialog.set_markup(message)
         #create the text input field
-        entry = gtk.Entry()
+        entry = Gtk.Entry()
         #allow the user to press enter to do ok
-        entry.connect("activate", responseToDialog, dialog, gtk.RESPONSE_OK)
+        entry.connect("activate", responseToDialog, dialog, Gtk.ResponseType.OK)
         #create a horizontal box to pack the entry and a label
         entry.set_text(value)
-        hbox = gtk.HBox()
-        hbox.pack_start(gtk.Label(field), False, 5, 5)
+        hbox = Gtk.HBox()
+        hbox.pack_start(Gtk.Label(field), False, 5, 5)
         hbox.pack_end(entry)
         #some secondary text
         dialog.format_secondary_markup(secondary)
@@ -82,7 +83,7 @@ def InputDialog(message, value='', field='Name:', secondary=''):
         dialog.show_all()
         #go go go
         result = dialog.run()
-        if result == gtk.RESPONSE_OK:
+        if result == Gtk.ResponseType.OK:
             value = entry.get_text()
         dialog.destroy()
         return value
@@ -90,26 +91,26 @@ def InputDialog(message, value='', field='Name:', secondary=''):
 
 #@+node:eugeneai.20110116171118.1457: ** ConfirmationDialog
 def ConfirmationDialog(message, secondary=''):
-    dialog = gtk.MessageDialog(
+    dialog = Gtk.MessageDialog(
             None,
-            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-            gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_YES_NO,
+            Gtk.DialogType.MODAL | Gtk.DialogType.DESTROY_WITH_PARENT,
+            Gtk.MessageType.QUESTION,
+            Gtk.ButtonsTypeOK.YES_NO,
             None)
     dialog.set_markup(message)
     dialog.format_secondary_markup(secondary)
-    rc = dialog.run() == gtk.RESPONSE_YES
+    rc = dialog.run() == Gtk.ResponseType.YES
     dialog.destroy()
     return rc
 
 #@+node:eugeneai.20110116171118.1458: ** class View
-class View(gtk.Object):
+class View(GObject.GObject):
     __gsignals__ = {
-        'get-widget': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_BOOLEAN,
-                       (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT,)),
-        'destroy-view': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                       (gobject.TYPE_PYOBJECT,)),
-        'model-changed': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
+        'get-widget': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_BOOLEAN,
+                       (GObject.TYPE_STRING, GObject.TYPE_PYOBJECT,)),
+        'destroy-view': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE,
+                       (GObject.TYPE_PYOBJECT,)),
+        'model-changed': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT,)),
     }
     template = None
     widget_names = None
@@ -121,7 +122,7 @@ class View(gtk.Object):
     #@+others
     #@+node:eugeneai.20110116171118.1459: *3* __init__
     def __init__(self, model = None, parent=None):
-        gtk.Object.__init__(self)
+        GObject.GObject.__init__(self)
         self.ui=Ui()
         self.model=None
         self.set_parent(parent)
@@ -201,7 +202,7 @@ class View(gtk.Object):
     #@+node:eugeneai.20110116171118.1465: *3* load_ui
     def load_ui(self, template, widget_names = None):
         if template:
-            builder=self.ui._builder = gtk.Builder()
+            builder=self.ui._builder = Gtk.Builder()
             builder.add_from_string(resource_string(self.resource, template))
             builder.connect_signals(self, builder)
             if widget_names:
@@ -248,7 +249,7 @@ class View(gtk.Object):
         self.emit('destroy-view', self)
         self.get_main_frame().destroy()
         self.ui=None
-        gtk.Object.destroy(self)
+        Gtk.Object.destroy(self)
 
     def remove_from(self, box):
         box.remove(self.get_main_frame())
@@ -285,11 +286,11 @@ class View(gtk.Object):
                 new_menu=False
                 m=mi.get_submenu()
         if mi == None:
-            mi = gtk.MenuItem(label=label)
+            mi = Gtk.MenuItem(label=label)
             mi.set_name(menu_name)
 
             #Create menu
-            m=gtk.Menu()
+            m=Gtk.Menu()
             mi.set_submenu(m)
 
         for a in a_group.list_actions():
@@ -342,7 +343,7 @@ class View(gtk.Object):
         widgets = []
 
         if separator:
-            separator = gtk.SeparatorToolItem()
+            separator = Gtk.SeparatorToolItem()
             tb.insert(separator, -1)
             widgets.append(separator)
             separator.show()
@@ -374,22 +375,22 @@ class View(gtk.Object):
         if save:
             msg = save_msg
             # msg="Save the project..."
-            ac = gtk.FILE_CHOOSER_ACTION_SAVE
-            icon = gtk.STOCK_SAVE
+            ac = Gtk.FileChooserAction.SAVE
+            icon = Gtk.StockType.SAVE
         else:
             msg = open_msg
             # msg="Open a project..."
-            ac = gtk.FILE_CHOOSER_ACTION_OPEN
-            icon = gtk.STOCK_OPEN
+            ac = Gtk.FileChooser.OPEN
+            icon = Gtk.StockType.OPEN
 
-        chooser = gtk.FileChooserDialog(msg, self.locate_widget('main_window'),
+        chooser = Gtk.FileChooserDialog(msg, self.locate_widget('main_window'),
             ac,
-            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                icon, gtk.RESPONSE_OK))
-        chooser.set_default_response(gtk.RESPONSE_OK)
+            (Gtk.StockType.CANCEL, Gtk.ResponseType.CANCEL,
+                icon, Gtk.ResponseType.OK))
+        chooser.set_default_response(Gtk.ResponseType.OK)
         chooser.set_current_folder('.')
 
-        ffilter = gtk.FileFilter()
+        ffilter = Gtk.FileFilter()
         ffilter.set_name(filter_name)
         #print "Patterns:", patterns
         for pattern, name in patterns:
@@ -400,12 +401,12 @@ class View(gtk.Object):
         if len(patterns)>1:
             for pattern, name in patterns:
                 p="*"+pattern
-                ffilter = gtk.FileFilter()
+                ffilter = Gtk.FileFilter()
                 ffilter.add_pattern(p)
                 ffilter.set_name(name+" "+p)
                 chooser.add_filter(ffilter)
 
-        ffilter = gtk.FileFilter()
+        ffilter = Gtk.FileFilter()
         ffilter.set_name("All Files")
         ffilter.add_pattern("*")
         chooser.add_filter(ffilter)
@@ -413,7 +414,7 @@ class View(gtk.Object):
         if filename:
             chooser.set_current_name(filename)
         response = chooser.run()
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             filename = chooser.get_filename()
         chooser.destroy()
 
@@ -434,18 +435,18 @@ class View(gtk.Object):
 
 
 
-gobject.type_register(View)
+GObject.type_register(View)
 
     #@-others
 #@+node:eugeneai.20110116171118.1466: ** class Application
 class Application(View):
     __gsignals__ = {
-        'startup-open': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,)),
-        'project-open': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_BOOLEAN, (gobject.TYPE_STRING,)),
-        'project-save': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_BOOLEAN, (gobject.TYPE_STRING,)),
+        'startup-open': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_STRING,)),
+        'project-open': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_BOOLEAN, (GObject.TYPE_STRING,)),
+        'project-save': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_BOOLEAN, (GObject.TYPE_STRING,)),
     }
     implements(IApplication)
-    template = "ui/main_win_gtk.glade"
+    template = "ui/main_win_Gtk.glade"
     widget_names = ['main_window', 'statusbar', 'toolbar', 'menubar',
              "main_vbox", 'ac_close', 'ac_save',
                     "menu_file", "menu_edit", "menu_view", "menu_help"]
@@ -485,7 +486,7 @@ class Application(View):
     #@+node:eugeneai.20110116171118.1469: *3* main_window_delete_event_cb
     # Signal connection is linked in the glade XML file
     def main_window_delete_event_cb(self, widget, data1=None, data2=None):
-        gtk.main_quit()
+        Gtk.main_quit()
     #@+node:eugeneai.20110116171118.1470: *3* default_view
     m_quit_activate_cb=main_window_delete_event_cb
 
@@ -560,9 +561,9 @@ class Application(View):
         # print message
 
         # create an error message dialog and display modally to the user
-        dialog = gtk.MessageDialog(None,
-                                   gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, message)
+        dialog = Gtk.MessageDialog(None,
+                                   Gtk.DialogType.MODAL | Gtk.DialogType.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.ERROR, Gtk.ButtonsTypeOK.OK, message)
 
         dialog.run()
         dialog.destroy()
@@ -607,183 +608,15 @@ class Application(View):
 
     #@+node:eugeneai.20110116171118.1480: *3* main
     def main(self):
-        return gtk.main()
+        return Gtk.main()
 
     #@-others
     run = main
 
-gobject.type_register(Application)
+GObject.type_register(Application)
 
 #@+node:eugeneai.20110117171340.1635: ** Pictogramm machinery
 #@+node:eugeneai.20110123122541.1648: *3* class SVGImage
-class SVGImage(goocanvas.Image):
-    """SVGImage, that can be rendered from SVG.
-    """
-    #@+others
-    #@+node:eugeneai.20110123122541.1649: *4* __init__
-    def __init__(self, svg, **kwargs):
-        self.svg=svg
-        self.kwargs=kwargs
-        #pattern = self.render_pattern(**kwargs)
-        d={}
-        d.update(kwargs)
-        #d['pattern']=pattern
-        self.kwargs=d
-        #print "P:", pattern
-
-        goocanvas.Image.__init__(self, **d)
-        pattern = self.render_pattern(**kwargs)
-        self.set_property("pattern", pattern)
-
-    #@+node:eugeneai.20110123122541.1650: *4* render_pattern
-    def render_pattern(self, **kwargs):
-        def convert_rsvg(resource):
-            if type(resource) in [types.StringType, types.UnicodeType]:
-                icon_registry=ZC.getUtility(IIconRegistry, 'svg')
-                return icon_registry.resource(resource)
-            return resource
-
-        width, height = self.kwargs['width'], self.kwargs['height']
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
-        canvas = cairo.Context(surface)
-        canvas.set_antialias(cairo.ANTIALIAS_NONE)
-        canvas.set_source_rgb(0,1,0)
-        canvas.set_line_width(4.0)
-        if self.svg == None:
-            canvas.rectangle(0,0, width,height)
-            canvas.stroke()
-        else:
-            if type(self.svg) in (types.TupleType, types.ListType):
-                self.svg = map(convert_rsvg, self.svg)
-                for svg in self.svg:
-                    svg.render_cairo(canvas)
-            else:
-                self.svg=convert_rsvg(self.svg)
-                svg.render_cairo(canvas)
-
-        return cairo.SurfacePattern(surface)
-
-    #@-others
-#@+node:eugeneai.20110117171340.1634: *3* class PicItem
-class PicItem(goocanvas.ItemSimple, goocanvas.Item):
-    #@+others
-    #@+node:eugeneai.20110117171340.1637: *4* __init__
-    def __init__(self, module, graph, **kwargs):
-        """Icon driwer for module, using main graph canvas view `graph`
-        """
-        super(PicItem, self).__init__(**kwargs)
-        self.graph=graph
-        self.module = module
-        x,y = self.graph.get_position(module)
-        self.x=x-16
-        self.y=y-16
-        self.width=32
-        self.height=32
-        #self.bounds = goocanvas.Bounds()
-
-
-    #@+node:eugeneai.20110117171340.1642: *4* _do_update
-    def _do_update(self, entire_tree, cr):
-        x, y = self.graph.get_position(self.module)
-        self.bounds.x1 = x - 16.
-        self.bounds.y1 = y - 16.
-        self.bounds.x2 = x + 16.
-        self.bounds.y2 = y + 16.
-        return self.bounds
-
-    #@+node:eugeneai.20110117171340.1645: *4* _do_paint
-    def _do_paint(self, canvas, bounds, scale):
-        #print bounds.x1, bounds.y1, bounds.x2, bounds.y2
-        #return
-        canvas.set_line_width(1.0)
-        m = canvas.get_matrix()
-
-        module = self.module
-
-        x, y = self.graph.get_position(module)
-
-        canvas.translate(x,y)
-        canvas.translate(-16,-16)
-
-        selected = False
-
-        if selected:
-            self.graph.module_icon_toolboxed.render_cairo(canvas)
-        else:
-            self.graph.module_icon_background.render_cairo(canvas)
-        if module:
-            view=IModuleCanvasView(module)
-            view.set_parent(self.graph)
-            view.render_on_canvas(canvas)
-            canvas.set_source_rgb(0,0,0)
-            if module.inputs:
-                canvas.arc(-2, 16, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.outputs:
-                canvas.arc(34, 16, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.controls:
-                canvas.arc(16, 34, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.implementors:
-                canvas.arc(16, -2, 2, 0, M_2PI)
-                canvas.stroke()
-
-        canvas.set_matrix(m)
-
-    #@+node:eugeneai.20110122224638.1646: *4* do_simple_create_path
-    def do_simple_create_path(self, canvas):
-        #print bounds.x1, bounds.y1, bounds.x2, bounds.y2
-        #return
-        canvas.set_line_width(1.0)
-        m = canvas.get_matrix()
-
-        module = self.module
-        print "Paint", module
-
-        x, y = self.graph.get_position(module)
-
-        canvas.translate(x,y)
-        canvas.translate(-16,-16)
-
-        #canvas.rectangle(0,0,32,32)
-        #canvas.stroke()
-
-
-        selected = False
-
-        if selected:
-            self.graph.module_icon_toolboxed.render_cairo(canvas)
-        else:
-            self.graph.module_icon_background.render_cairo(canvas)
-        if module:
-            view=IModuleCanvasView(module)
-            view.set_parent(self.graph)
-            #view.render_on_canvas(canvas)
-            #we will draw text ourselves
-            canvas.set_source_rgb(0,0,0)
-            if module.inputs:
-                canvas.arc(-2, 16, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.outputs:
-                canvas.arc(34, 16, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.controls:
-                canvas.arc(16, 34, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.implementors:
-                canvas.arc(16, -2, 2, 0, M_2PI)
-                canvas.stroke()
-
-        canvas.set_matrix(m)
-
-    #@+node:eugeneai.20110117171340.1644: *4* _do_get_bounds
-    def _do_get_bounds(self):
-        print "!"
-        return self.bounds
-    #@-others
-#@+node:eugeneai.20110117171340.1636: *3* register PicItem in gobject
-gobject.type_register(PicItem)
 #@+node:eugeneai.20110116171118.1481: ** class Canvas
 TBL_ACTIONS=[
     ( 1,-1, "remove", 'ui/pics/close.svg', True),
@@ -797,599 +630,6 @@ TBL_ACTIONS=[
     ( 0, 1, "down", 'ui/pics/down.svg', False),
     ]
 
-class Canvas(View):
-    implements(ICanvasView)
-    ZC.adapts(mdli.ICanvas, IView)
-
-    template = "ui/canvas_view.glade"
-    widget_names = ['vbox', 'main_frame']
-
-    #@+others
-    #@+node:eugeneai.20110116171118.1482: *3* __init__
-    def __init__(self, model = None, app=None, parent=None):
-        View.__init__(self, model=None, parent=parent)
-        self.state=Ui()
-        self.selected_module=None # module and its
-        self.selected_item = None # corresponding icon
-        self.selected_tool = None # and icon's tool icon
-        self.module_movement=False
-        self.tmp_toolbox = [] # Temporary local toolbox group
-        self.paths=[]
-
-        self.active_group = None  # active icon group, where mouse entered.
-        self.active_area = None   # active area in the icon group, where mouse entered.
-        self.area_conn_ids = None
-
-        self.new_connection = None # Widget used to track new connction creation
-        self.connect_to=None # used during tracking new connection to track possible modules to connect to
-
-        self.ui.canvas=canvas=goocanvas.Canvas()
-        canvas.set_size_request(1024,768)
-        canvas.set_bounds(0,0, 2000, 2000)
-        canvas.connect_after('motion-notify-event', self.on_canvas_motion)
-        root=canvas.get_root_item()
-        root.connect('motion-notify-event', self.on_root_motion)
-        root.connect('button-release-event', self.on_root_press_release)
-
-        #root.connect('enter-notify-event', self.on_root_enter_leave)
-        #root.connect('leave-notify-event', self.on_root_enter_leave)
-
-        self.ui.vbox.add(canvas)
-        self.set_model(model)
-
-    #@+node:eugeneai.20110116171118.1483: *3* get_position
-    def get_position(self, module):
-        return self.model.get_position(module)
-
-    #@+node:eugeneai.20110117171340.1641: *3* set_model
-    def set_model(self, model):
-        View.set_model(self, model)
-        if model == None:
-            return
-        root = self.ui.canvas.get_root_item()
-        self.paths=[]
-
-        for mf, l in self.model.forwards.iteritems():
-            for mt in l:
-                b,f = self.create_connection(mf, mt, state=None)
-
-
-
-        for m in self.model.modules:
-            self.create_module(m)
-
-
-    #@+node:eugeneai.20110116171118.1484: *3* init_resources
-    def init_resources(self):
-        View.init_resources(self)
-        icon_registry=ZC.getUtility(IIconRegistry, name='svg')
-        self.module_icon_background = icon_registry.resource("ui/pics/background.svg")
-        self.module_icon_selected = icon_registry.resource("ui/pics/selected.svg")
-        self.module_icon_toolboxed = icon_registry.resource("ui/pics/toolboxed.svg")
-        self.toolbox_background = self.module_icon_toolboxed = icon_registry.resource("ui/pics/tool-bkg.svg")
-
-    #@+node:eugeneai.20110116171118.1485: *3* _module
-    def _module(self, module, selected=False):
-        h=w=44
-
-        pattern=self.draw_module_pattern(module, bheight=h, bwidth=w, fheight=32, fwidth=32, selected=selected)
-
-        img = goocanvas.Image(x=-w/2., y=-h/2., width=w, height=h, pattern=pattern)
-        text = goocanvas.Text(text=module.name, x=0, y=22, anchor=gtk.ANCHOR_NORTH, fill_color="black", font='Sans 8', ) # XXX change name to title and edit both
-        img.text = text
-
-        return img, text
-
-    #@+node:eugeneai.20110123122541.1644: *3* draw_module_pattern
-    def draw_module_pattern(self, module, bheight=44, bwidth=44, fheight=32, fwidth=32, selected=False):
-        h,w=bheight,bwidth
-
-        sx,sy=(bwidth-fwidth)/2., (bheight-fheight)/2.
-
-        surface=cairo.ImageSurface(cairo.FORMAT_ARGB32,h,w)
-        canvas=cairo.Context(surface)
-        canvas.set_line_width(1.0)
-
-        canvas.translate(sx,sy)
-
-        if selected:
-            #self.module_icon_toolboxed.render_cairo(canvas)
-            self.module_icon_selected.render_cairo(canvas)
-        else:
-            self.module_icon_background.render_cairo(canvas)
-        if module:
-            view=IModuleCanvasView(module)
-            view.set_parent(self)
-            view.render_on_canvas(canvas)
-            canvas.set_source_rgb(0,0,0)
-            if module.inputs:
-                canvas.arc(-2, 16, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.outputs:
-                canvas.arc(34, 16, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.controls:
-                canvas.arc(16, 34, 2, 0, M_2PI)
-                canvas.stroke()
-            if module.implementors:
-                canvas.arc(16, -2, 2, 0, M_2PI)
-                canvas.stroke()
-        return cairo.SurfacePattern(surface)
-    #@+node:eugeneai.20110116171118.1486: *3* _connection
-    def _connection(self, x1, y1, x2, y2, selected=False, absolute = (False, False)):
-
-        data=self.draw_curve(x1,y1, x2,y2, absolute)
-
-        bkg_path = goocanvas.Path(data=data, line_width=6.0, stroke_color='white')
-
-        frg_path = goocanvas.Path(data=data, line_width=4.0, stroke_color='brown')
-
-        frg_path.bkg_path=bkg_path
-
-        return (bkg_path, frg_path)
-
-
-    #@+node:eugeneai.20110123122541.1647: *3* draw_curve
-    def draw_curve(self, x1, y1, x2, y2, absolute = (False, False)):
-        dx=x2-x1
-        dy=y2-y1
-        sc=100
-        dx=sc # sc*sign(dx)
-        dy=sc*sign(dy)
-        _dsx=16+2
-        sx1=sx2=0.0
-        if not absolute[0]:
-            sx1=_dsx
-        if not absolute[1]:
-            sx2=_dsx
-        return 'M%s,%s C%s,%s %s,%s %s,%s' % (x1+sx1, y1,  x1+sx1+dx, y1,  x2-sx2-dx, y2,  x2-sx2, y2)
-
-    #@+node:eugeneai.20110123122541.1670: *3* on_canvas_motion
-    def on_canvas_motion(self, canvas, event):
-        if not self.module_movement and not self.new_connection and self.active_group and not self.active_area:
-            # disconnecting events from area, which will be not active anymore
-            for i in self.area_conn_ids:
-                self.active_group.disconnect(i)
-
-            self.active_group=None
-            self.remove_selection()
-
-    #@+node:eugeneai.20110117171340.1633: *3* on_text_enter_notify_event
-    def on_text_enter_notify_event(self, item, target, event):
-        #print "Enter", item, target, event
-        item.rotate(10, 300, 300)
-        #pass
-    #@+node:eugeneai.20110117171340.1646: *3* on_module_enter_leave
-    def on_module_enter_leave(self, item, target, event):
-        # print "Module:", event.type
-        if event.type==gtk.gdk.ENTER_NOTIFY:
-            if not self.selected_module and not self.tmp_toolbox:
-                module=self.selected_module = item.module
-                self.selected_item=item
-                self.tmp_toolbox_group = item.get_parent()
-                group=self.active_group = item.get_parent()
-                id1 = group.connect('leave-notify-event', self.on_module_group_enter_leave)
-                id2 = group.connect('enter-notify-event', self.on_module_group_enter_leave)
-                self.area_conn_ids = (id1, id2)
-
-                """
-                _it=self.tmp_toolbox_group
-                for pspec in _it.props:
-                    pname=pspec.name
-                    print dir(pspec)
-                    print pname
-                    if not pname in ['transform', 'stroke-pattern', 'fill-pattern', 'stroke-color', 'stroke-pixbuf',]:
-                        _it.get_property(pspec.name)
-                """
-
-
-                self.tmp_toolbox=[]
-                for (dx, dy, name, ui, cond) in TBL_ACTIONS:
-                    if type(cond) == types.StringType:
-                        if hasattr(module,cond):
-                            cond=getattr(module, cond)
-                        else:
-                            cond=False
-                    if cond:
-                        px, py = 20*dx-7, 20*dy-7 # XXX monkey patch.
-                        tool=SVGImage([self.toolbox_background, ui], height=12, width=12, x=px, y=py)
-                        tool.item=item # Whose tool it is.
-                        tool.name=name
-                        self.tmp_toolbox_group.add_child(tool, -1)
-                        self.tmp_toolbox.append(tool)
-                        tool.connect('button-press-event', self.on_tool_pressed_released)
-                        tool.connect('button-release-event', self.on_tool_pressed_released)
-
-                item.set_property('pattern', self.draw_module_pattern(item.module, selected = self.selected_module))
-                item.get_parent().raise_(None)
-                self.tmp_toolbox_group.raise_(None)
-    #@+node:eugeneai.20110123122541.1658: *3* on_module_press_release
-    def on_module_press_release(self, item, target, event):
-        if event.type==gtk.gdk.BUTTON_PRESS:
-            self.module_movement=True
-            self.smx=event.x_root
-            self.smy=event.y_root
-            x,y = self.get_position(item.module)
-
-            # shift from the center of the image
-            self.dx=self.smx - x
-            self.dy=self.smy - y
-
-
-            self.paths_from=[p for p in self.paths if p.mfrom==item.module]
-            self.paths_to  =[p for p in self.paths if p.mto  ==item.module]
-            for p in self.paths_from+self.paths_to:
-                p.bkg_path.raise_(None)
-                p.raise_(None)
-                self.set_curve_state(p, "on_move")
-
-            item.raise_(None)
-            item.get_parent().raise_(None)
-        elif event.type==gtk.gdk.BUTTON_RELEASE:
-            x,y = self.get_position(item.module)
-            mx,my=event.x_root, event.y_root
-            dx=mx-self.smx
-            dy=my-self.smy
-            x=mx-self.dx
-            y=my-self.dy
-            self.model.place(item.module, x,y)
-            self.module_movement=False
-            self.smx=None
-            self.smy=None
-            item.lower(None)
-            for p in self.paths_from+self.paths_to:
-                self.set_curve_state(p, None)
-            self.paths_from = []
-            self.paths_to   = []
-
-    #@+node:eugeneai.20110123122541.1659: *3* on_module_motion
-    def on_module_motion(self, item, target, event):
-        #print dir(event)
-        pass
-    #@+node:eugeneai.20110123122541.1662: *3* on_module_text_clicked
-    def on_module_text_clicked(self, item, target, event):
-        if event.type == gtk.gdk.BUTTON_RELEASE:
-            self.set_module_name(self.selected_item)
-
-    #@+node:eugeneai.20110117171340.1649: *3* on_curve_enter_leave
-    def on_curve_enter_leave(self, item, target, event, fore_path):
-        #print "Enter:", item, target, event
-        if self.new_connection:
-            return
-        state=None
-        if event.type==gtk.gdk.ENTER_NOTIFY:
-            state='selected'
-        self.set_curve_state(fore_path, state)
-
-    def on_curve_press_release(self, item, target, event, fore_path):
-        #print "Enter:", item, target, event
-        if self.new_connection:
-            return
-        state=None
-        if event.type==gtk.gdk.BUTTON_RELEASE:
-            state='selected'
-            self.set_curve_state(fore_path, state)
-            d=InputDialog("test")
-            state=None
-            self.set_curve_state(fore_path, state)
-
-
-    #@+node:eugeneai.20110123122541.1663: *3* on_tool_pressed_released
-    def on_tool_pressed_released(self, item, target, event):
-        if event.type == gtk.gdk.BUTTON_PRESS:
-            if event.button==1:
-                item.button_pressed=True
-            if item.name=="right":
-                root = self.ui.canvas.get_root_item()
-                (x, y) = self.get_position(self.selected_module)
-                b, self.new_connection = self._connection(x,y, event.x_root,event.y_root, absolute=(False, True))
-                root.add_child(b, -1)
-                root.add_child(self.new_connection)
-                self.set_curve_state(self.new_connection,'on_move')
-
-
-        elif event.type == gtk.gdk.BUTTON_RELEASE:
-            try:
-                item.button_pressed
-            except AttributeError:
-                return
-            if item.button_pressed:
-                self.on_tool_clicked(item, target, event=event)
-                del item.button_pressed
-
-
-    #@+node:eugeneai.20110124104607.1655: *3* on_tool_clicked
-    def on_tool_clicked(self, item, target, event):
-        mitem=item.item # Module item
-        m=mitem.module
-        if item.name=='remove':
-            self.remove_selection()
-            rem=[]
-            for p in self.paths:
-                if m in [p.mfrom, p.mto]:
-                    p.bkg_path.remove()
-                    p.remove()
-                    rem.append(p)
-            for p in rem:
-                self.paths.remove(p)
-            mitem.get_parent().remove()
-        elif item.name=="rename":
-            self.set_module_name(self.selected_item)
-        elif item.name=="edit":
-            #editor=None
-            view=IAdjustenmentView(self.selected_module)
-            view.set_parent(self)
-    #@+node:eugeneai.20110123122541.1664: *3* on_tool_enter_leave
-    def on_tool_enter_leave(self, item, target, event):
-        if event.type == gtk.gdk.ENTER_NOTIFY:
-            self.selected_tool = item
-        elif event.type == gtk.gdk.LEAVE_NOTIFY:
-            self.selected_tool = None
-        #print "Tool:", event.type, self.selected_tool
-        pass
-    #@+node:eugeneai.20110123122541.1665: *3* on_root_enter_leave
-    def on_root_enter_leave(self, item, target, event):
-        #print "Root", event, "Item:", self.selected_item, "Tool:", self.selected_tool
-        if self.selected_item and self.tmp_toolbox and not self.selected_tool:
-            if self.tmp_toolbox!=None:
-                self.tmp_toolbox_group.remove()
-                self.tmp_toolbox = []
-
-            self.remove_selection()
-        else:
-            pass
-
-
-    #@+node:eugeneai.20110215120545.1660: *3* on_root_press_release
-    def on_root_press_release(self, item, target, event):
-        if self.new_connection:
-            self.new_connection.bkg_path.remove()
-            self.new_connection.remove()
-            self.new_connection=None # release the tracking process
-            mt=None
-            if self.connect_to:
-                mt=self.connect_to.module
-                self.connect_to.set_property('pattern', self.draw_module_pattern(mt, selected = False))
-
-                self.connect_to=None
-
-            else:
-                # There shoul be a dialog for module choice.
-                m_name = self.choose_module(event, 'inputs')
-                if m_name:
-                    mt=self.create_module(m_name, event.x_root, event.y_root)
-                else:
-                    mt=None
-            if mt:
-                self.create_connection(self.selected_module, mt)
-                self.model.connect(self.selected_module, mt)
-            self.selected_item.get_parent().raise_(None)
-            self.remove_selection()
-        elif not self.selected_module:
-            m_name = self.choose_module(event, 'outputs')
-            if m_name:
-                mt=self.create_module(m_name, event.x_root, event.y_root)
-            else:
-                mt=None
-
-
-    def choose_module(self, event, kind):
-        name=ModuleChooseDialog(message='Choose a module',
-                                filter=lambda x: getattr(x, kind))
-        return name
-
-    #@+node:eugeneai.20110213211825.1656: *3* on_root_motion
-    def on_root_motion(self, group, target, event):
-        if self.selected_module:
-            item=self.selected_item
-            module=self.selected_module
-            x,y = self.get_position(module)
-            mx,my=event.x_root, event.y_root
-            parent = item.get_parent()
-            root=self.ui.canvas.get_root_item()
-
-        if self.module_movement:
-            dx=mx-self.smx
-            dy=my-self.smy
-            x=mx-self.dx
-            y=my-self.dy
-            self.smx=mx
-            self.smy=my
-            self.model.place(module, x, y)
-            item.get_parent().translate(dx, dy)
-
-            for p in self.paths_from:
-                m = p.mto
-                x2,y2 = self.get_position(m)
-                curve = self.draw_curve(x,y, x2,y2)
-                p.set_property('data', curve)
-                p.bkg_path.set_property('data', curve)
-
-            for p in self.paths_to:
-                m = p.mfrom
-                x2,y2 = self.get_position(m)
-                curve = self.draw_curve(x2,y2, x,y)
-                p.set_property('data', curve)
-                p.bkg_path.set_property('data', curve)
-
-        if self.new_connection:
-            p=self.new_connection
-
-            # This is workaround, as enter and leave events do not work while a button pressed.
-            i=None
-            its=self.ui.canvas.get_items_at(mx, my, is_pointer_event=False)
-
-            if its:
-                for _i in its:
-                    if _i == self.selected_item:
-                        continue
-                    if _i.__class__!=goocanvas.Image:
-                        continue
-                    if hasattr(_i,'module') and _i.module.inputs:
-                        i=_i
-                        break
-
-            if i:
-                self.connect_to=i
-                i.set_property('pattern', self.draw_module_pattern(item.module, selected = True))
-                mx,my = self.get_position(i.module)
-            else:
-                if self.connect_to:
-                    self.connect_to.set_property('pattern', self.draw_module_pattern(item.module, selected = False))
-                    self.connect_to=None
-            # end of the workaround
-
-            curve = self.draw_curve(x,y, mx, my, absolute=(False, i == None))
-            p.set_property('data', curve)
-            p.bkg_path.set_property('data', curve)
-
-    #@+node:eugeneai.20110123122541.1669: *3* on_module_group_enter_leave
-    def on_module_group_enter_leave(self, item, target, event):
-        if event.type == gtk.gdk.ENTER_NOTIFY:
-            self.active_area = target
-        elif event.type == gtk.gdk.LEAVE_NOTIFY:
-            self.active_area = None
-        self.active_group = item
-    #@+node:eugeneai.20110116171118.1491: *3* leaved_selection
-    def leaved_selection(self, module, x, y):
-        return not self.is_spotted(module, x,y, 26)
-
-    #@+node:eugeneai.20110116171118.1494: *3* draw_model_on
-    def draw_model_on(self, canvas, exc_mod=None, selected=False):
-        """Draw logics on the cairo canvas.
-        Specially process exc_mod and its connections.
-        The procedding of the exc_mod depends on selected.
-        """
-        for (mf, l) in self.model.forwards.iteritems():
-            (x1, y1) = self.model.get_position(mf)
-            emph = False
-            if mf == exc_mod:
-                if not selected:
-                    continue
-                else:
-                    emph = True
-            for mt in l:
-                emph1=emph
-                (x2, y2) = self.model.get_position(mt)
-                if mt == exc_mod:
-                    if not selected:
-                        continue
-                    else:
-                        emph1 = True
-                if exc_mod == None or not selected or emph1:
-                    self._connection(canvas, x1, y1, x2, y2, selected=emph1)
-        for m in self.model.modules:
-            if m == exc_mod:
-                if selected:
-                    self._module(canvas, m, selected = True)
-            else:
-                if not selected:
-                    self._module(canvas, m)
-
-
-    #@+node:eugeneai.20110125174013.1654: *3* remove_selection
-    def remove_selection(self):
-        if self.selected_item:
-            self.selected_item.set_property('pattern', self.draw_module_pattern(self.selected_module))
-            for tool in self.tmp_toolbox:
-                tool.remove()
-
-        self.tmp_toolbox=[]
-        self.tmp_toolbox_group=None
-
-        self.movement_mode = False
-        self.selected_module = None
-        self.selected_item = None
-    #@+node:eugeneai.20110213211825.1661: *3* set_module_name
-    def set_module_name(self, item):
-        module = item.module
-        name = InputDialog(
-                message='Enter the block <b>indetifier</b> (name)',
-                value=module.name,
-                field='Name:',
-                secondary='It could be used for Your convenience as a comment.')
-        module.modified = module.modified or name != module.name
-        module.name = name
-        item.text.set_property("text", name)
-
-    #@+node:eugeneai.20110215215529.1657: *3* set_curve_state
-    def set_curve_state(self, link, state=None):
-        if state == None:
-            stroke_color='brown'
-            bkg_stroke_color='white'
-        elif state=='on_move':
-            #stroke_color= 'white'
-            #bkg_stroke_color= 'brown'
-            stroke_color= 'green'
-            bkg_stroke_color= 'black'
-        elif state=='selected':
-            stroke_color='yellow'
-            bkg_stroke_color='brown'
-
-        link.set_property('stroke-color',stroke_color)
-        link.bkg_path.set_property('stroke-color',bkg_stroke_color)
-
-    #@+node:eugeneai.20110217131909.1658: *3* create_connection
-    def create_connection(self, mf, mt, state=None):
-        x1,y1 = self.get_position(mf)
-        x2,y2 = self.get_position(mt)
-        b,f = self._connection(x1,y1,x2,y2)
-        self.set_curve_state(f, None)
-        f.mfrom, f.mto = mf, mt
-        self.paths.append(f)
-        f.connect('enter-notify-event', self.on_curve_enter_leave, f)
-        f.connect('leave-notify-event', self.on_curve_enter_leave, f)
-        f.connect('button-press-event', self.on_curve_press_release, f)
-        f.connect('button-release-event', self.on_curve_press_release, f)
-        root=self.ui.canvas.get_root_item()
-        root.add_child(b,-1)
-        root.add_child(f,-1)
-        return b,f
-    #@+node:eugeneai.20110217131909.1661: *3* create_module
-
-    def create_module(self, module, x=None, y=None):
-        """x=y=None means that the coordinates are taken
-        from model.
-        """
-
-        if type(module) in [types.UnicodeType, types.StringType]:
-            module = ZC.createObject(module)
-
-        if module in self.model.modules:
-
-            if x == None or y == None and module in self.model.modules:
-                x,y = self.get_position(module)
-
-        else:
-            # XXX x and y should be checked on nonNone.
-            self.model.place(module, x, y)
-
-
-        group=goocanvas.Group(x=x, y=y)
-        #pic = PicItem(m, self)
-        pic, text=self._module(module)
-        pic.module = module
-        text.module = module
-        group.add_child(pic, -1)
-        group.add_child(text, -1)
-        pic.connect('enter-notify-event', self.on_module_enter_leave)
-        pic.connect('leave-notify-event', self.on_module_enter_leave)
-        pic.connect('motion-notify-event', self.on_module_motion)
-        pic.connect('button-press-event', self.on_module_press_release)
-        pic.connect('button-release-event', self.on_module_press_release)
-        text.connect('button-press-event',self.on_module_text_clicked)
-        text.connect('button-release-event',self.on_module_text_clicked)
-        root=self.ui.canvas.get_root_item()
-        root.add_child(group, -1)
-
-        return module
-    #@+node:eugeneai.20110311095959.1663: *3* _dbm (debug module)
-    def _dbm(self, event=None, x=None, y=None):
-        if event:
-            x=event.x
-            y=event.y
-        mt=self.create_module(mdl.LmModule(), x, y)
-    #@-others
 #@+node:eugeneai.20110116171118.1495: ** class ModuleCanvasView
 class ModuleCanvasView(View):
     ZC.adapts(mdli.IModule, IView)
@@ -1475,7 +715,7 @@ class DialogView(View):
 
     def run(self):
         result = self.ui.dialog.run()
-        if result == gtk.RESPONSE_OK:
+        if result == Gtk.RESPONSE_OK:
             value = self.get_value()
         else:
             value = None
@@ -1529,8 +769,8 @@ class ModuleChooseDialogView(DialogView):
         if message:
             self.ui.title.set_markup("<b>"+message+"</b>")
 
-        self.ui.button_cancel=self.ui.dialog.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT)
-        self.ui.button_ok=self.ui.dialog.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
+        self.ui.button_cancel=self.ui.dialog.add_button(Gtk.STOCK_CANCEL, Gtk.RESPONSE_REJECT)
+        self.ui.button_ok=self.ui.dialog.add_button(Gtk.STOCK_OK, Gtk.RESPONSE_OK)
         ok=self.ui.button_ok
         ok.set_sensitive(False)
 
@@ -1628,8 +868,6 @@ class IconRegistry(object):
         return s
 
 
-icon_registry = IconRegistry(conv=rsvg.Handle, attr='data')
-
 def to_pixbuf(handle=None):
     w=h=32
     s=cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
@@ -1637,11 +875,9 @@ def to_pixbuf(handle=None):
     bg = icon_registry.resource(name='selected')
     bg.render_cairo(c)
     handle.render_cairo(c)
-    pm=gtk.gdk.pixbuf_new_from_data(s.get_data(),gtk.gdk.COLORSPACE_RGB, True, 8,
+    pm=Gtk.gdk.pixbuf_new_from_data(s.get_data(),Gtk.gdk.COLORSPACE_RGB, True, 8,
                                     s.get_width(), s.get_height(), s.get_stride())
     return pm
-
-pixbuf_registry = IconRegistry(conv=to_pixbuf, attr='handle', parent=icon_registry)
 
 #@-others
 #@-leo

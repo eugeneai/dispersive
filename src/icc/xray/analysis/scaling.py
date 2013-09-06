@@ -1540,7 +1540,6 @@ def test1():
 
     #par.refine_scale(elements=elements-set(['Mo']))
     par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']), debug=True)
-    par.refine_scale(elements=set(['As', 'V', "W", "Cl", "Zr", 'Mo']), debug=True)
 
     #par.scale.k=0.005004
     #par.scale.b=-0.4843
