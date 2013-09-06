@@ -10,11 +10,6 @@
     />
 
 <adapter
-    factory=".components.Canvas"
-    provides="icc.rake.views.interfaces.IProjectView"
-    />
-
-<adapter
     factory=".components.ModuleCanvasView"
     provides="icc.rake.views.interfaces.IModuleCanvasView"
     />
@@ -22,17 +17,6 @@
 <adapter
     factory=".components.AdjustenmentView"
     provides="icc.rake.views.interfaces.IAdjustenmentView"     />
-
-<utility
-    component=".components.icon_registry"
-    name="svg"
-    />
-
-<utility
-    component=".components.pixbuf_registry"
-    name="pixbuf"
-    />
-
 
 </configure>
 <!--@-leo-->

@@ -6,9 +6,8 @@
 #@+node:eugeneai.20110116171118.1371: ** components declarations
 #!/usr/bin/python
 
-import pygtk
-pygtk.require('2.0')
-import gtk, gobject, sys
+import sys
+from gi.repository import Gtk
 
 if __name__=="__main__":
     sys.path.append("..")
