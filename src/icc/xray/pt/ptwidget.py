@@ -1,6 +1,4 @@
-import pygtk
-pygtk.require('2.0')
-import gtk, gobject
+from gi.repository import Gtk, GObject
 import sys
 import data
 
@@ -46,16 +44,16 @@ PAL_GRP={
 class UI:
     pass
 
-class PTWidget(gtk.VBox):
-    def __init__(self, factory=gtk.Button, palette=PAL_GROUP):
-        gtk.VBox.__init__(self)
-        b=gtk.Button("asd")
+class PTWidget(Gtk.VBox):
+    def __init__(self, factory=Gtk.Button, palette=PAL_GROUP):
+        Gtk.VBox.__init__(self)
+        b=Gtk.Button("asd")
         self.ui=UI()
-        self.ui.pt=gtk.Table(rows=10, columns=18, homogeneous=True)
+        self.ui.pt=Gtk.Table(rows=10, columns=18, homogeneous=True)
         self.pack_start(self.ui.pt, expand=True, fill=True)
         self.ui.elements=[]
-        white=gtk.gdk.color_parse('white')
-        black=gtk.gdk.color_parse('black')
+        white=Gtk.gdk.color_parse('white')
+        black=Gtk.gdk.color_parse('black')
         for i in range(118):
             j=i+1
             T=TABLE[j]
@@ -64,41 +62,41 @@ class PTWidget(gtk.VBox):
             if palette > PAL_NONE:
                 if palette==PAL_CFK:
                     try:
-                        color=gtk.gdk.color_parse("#"+T[4])
+                        color=Gtk.gdk.color_parse("#"+T[4])
                     except ValueError:
-                        color = gtk.gdk.Color("#eee")
+                        color = Gtk.gdk.Color("#eee")
                 elif palette==PAL_GROUP:
                     grp=T[-2]
-                    color=gtk.gdk.color_parse("#"+PAL_GRP.get(grp, 'eee'))
+                    color=Gtk.gdk.color_parse("#"+PAL_GRP.get(grp, 'eee'))
                 if color != None:
                     col =color.red_float,color.green_float,color.blue_float
                     ccol=[1.-_c for _c in col]
-                    compcolor=apply(gtk.gdk.Color, ccol)
+                    compcolor=apply(Gtk.gdk.Color, ccol)
 
                     dcol = [_c*70/100 for _c in col]
-                    darkcolor=apply(gtk.gdk.Color, dcol)
+                    darkcolor=apply(Gtk.gdk.Color, dcol)
 
                     bcol = [min(1., _c*100/70) for _c in col]
-                    brightcolor=apply(gtk.gdk.Color, bcol)
+                    brightcolor=apply(Gtk.gdk.Color, bcol)
 
-                    el.modify_bg(gtk.STATE_NORMAL, color)
-                    #el.modify_bg(gtk.STATE_ACTIVE, darkcolor)
-                    el.modify_bg(gtk.STATE_ACTIVE, black)
-                    el.modify_bg(gtk.STATE_PRELIGHT, brightcolor)
-                    #el.modify_bg(gtk.STATE_PRELIGHT, compcolor)
-                    el.modify_bg(gtk.STATE_SELECTED, color)
+                    el.modify_bg(Gtk.STATE_NORMAL, color)
+                    #el.modify_bg(Gtk.STATE_ACTIVE, darkcolor)
+                    el.modify_bg(Gtk.STATE_ACTIVE, black)
+                    el.modify_bg(Gtk.STATE_PRELIGHT, brightcolor)
+                    #el.modify_bg(Gtk.STATE_PRELIGHT, compcolor)
+                    el.modify_bg(Gtk.STATE_SELECTED, color)
 
                     style = el.get_style().copy()
-                    style.bg[gtk.STATE_NORMAL] = color
-                    style.bg[gtk.STATE_ACTIVE] = black
-                    style.bg[gtk.STATE_PRELIGHT] = brightcolor
-                    style.bg[gtk.STATE_SELECTED] = color
+                    style.bg[Gtk.STATE_NORMAL] = color
+                    style.bg[Gtk.STATE_ACTIVE] = black
+                    style.bg[Gtk.STATE_PRELIGHT] = brightcolor
+                    style.bg[Gtk.STATE_SELECTED] = color
                        #set the button's style to the one you created
                     el.set_style(style)
 
                     lab=el.get_child()
-                    lab.modify_fg(gtk.STATE_ACTIVE, white)
-                    lab.modify_fg(gtk.STATE_NORMAL, black)
+                    lab.modify_fg(Gtk.STATE_ACTIVE, white)
+                    lab.modify_fg(Gtk.STATE_NORMAL, black)
 
 
             for l, r in ROWS:
@@ -121,13 +119,13 @@ class PTWidget(gtk.VBox):
 class PTToggleWidget(PTWidget):
     __gsignals__ = {
         'toggled': (
-            gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE,
-            (gobject.TYPE_INT, gobject.TYPE_STRING, gobject.TYPE_PYOBJECT)
+            GObject.SIGNAL_RUN_LAST,
+            GObject.TYPE_NONE,
+            (GObject.TYPE_INT, GObject.TYPE_STRING, GObject.TYPE_PYOBJECT)
             # Atomic number, Symbol, and the button itself
         ),
     }
-    def __init__(self, factory=gtk.ToggleButton, palette=PAL_GROUP):
+    def __init__(self, factory=Gtk.ToggleButton, palette=PAL_GROUP):
         PTWidget.__init__(self, factory=factory, palette=palette)
         self.ui.eldict={}
         for i, el in enumerate(self.ui.elements):
@@ -185,7 +183,7 @@ class PTToggleWidget(PTWidget):
         Z=self.ui.eldict[button]
         self.emit('toggled', Z, TABLE[Z][1], button)
 
-gobject.type_register(PTToggleWidget)
+GObject.type_register(PTToggleWidget)
 
 
 
@@ -237,18 +235,17 @@ def import_data(filename, module_name):
 def test():
     def action(ptw, Z, N, b):
         print "Toggled:", ptw, Z, N, b, b.get_active()
-    testw = gtk.Window(gtk.WINDOW_TOPLEVEL)
-    testw.connect("destroy", gtk.main_quit)
+    testw = Gtk.Window(Gtk.WINDOW_TOPLEVEL)
+    testw.connect("destroy", Gtk.main_quit)
     pt=PTToggleWidget()
     pt.connect('toggled', action)
     testw.add(pt)
     testw.show_all()
     pt.select(['Zn', 'Zr', 'Y'], active=True)
-    gtk.main()
+    Gtk.main()
     print pt.selected(symbols=True)
 
 if __name__=="__main__":
     #import_data("/home/eugeneai/Development/codes/dispersive/data/pt-data1.csv",
     #    "data_.py")
     test()
-

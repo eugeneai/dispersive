@@ -39,14 +39,14 @@ import icc.xray.pt.ptwidget as ptwidget
 
 # uncomment to select /GTK/GTKAgg/GTKCairo
 #from matplotlib.backends.backend_gtk import FigureCanvasGTK as FigureCanvas
-from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
+from matplotlib.backends.backend_gtk3agg import FigureCanvasGTK3Agg as FigureCanvas
 #from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
 
 # or NavigationToolbar for classic
 #from matplotlib.backends.backend_gtk import NavigationToolbar2GTK as NavigationToolbar
 from matplotlib.backend_bases import NavigationToolbar2
-from matplotlib.backends.backend_gtkagg import NavigationToolbar2GTK, NavigationToolbar2GTKAgg
-from matplotlib.backends.backend_gtk import FileChooserDialog
+from matplotlib.backends.backend_gtk3 import NavigationToolbar2GTK3
+from matplotlib.backends.backend_gtk3 import FileChooserDialog
 import matplotlib
 import matplotlib.pyplot as pyplot
 
@@ -244,7 +244,7 @@ def gsm():
     return ZC.getGlobalSiteManager()
 
 #@+node:eugeneai.20110116171118.1373: ** class TXRFNavigationToolbar
-class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
+class TXRFNavigationToolbar(NavigationToolbar2GTK3):
     toolitems = (
         (False, 'Home', 'Reset original view', 'home.png', 'home', 'gtk-zoom-fit'),
         (False, 'Back', 'Back to  previous view','back.png', 'back', 'gtk-go-back'),
@@ -384,12 +384,12 @@ class TXRFNavigationToolbar(NavigationToolbar2GTKAgg):
     #@+node:eugeneai.20110116171118.1382: *3* pan
     def pan(self, *args, **kwargs):
         self.zoom_button.set_active(False)
-        return NavigationToolbar2GTKAgg.pan(self, *args, **kwargs)
+        return NavigationToolbar2GTK.pan(self, *args, **kwargs)
 
     #@+node:eugeneai.20110116171118.1383: *3* zoom
     def zoom(self, *args, **kwargs):
         self.pan_button.set_active(False)
-        return NavigationToolbar2GTKAgg.zoom(self, *args, **kwargs)
+        return NavigationToolbar2GTK.zoom(self, *args, **kwargs)
 
     #@+node:eugeneai.20110116171118.1384: *3* explore_channels
     def explore_channels(self, widget, data=None):
