@@ -345,9 +345,9 @@ class TXRFNavigationToolbar(NavigationToolbar2GTK3):
         if self.toolbar: self.toolbar.show_all()
 
     #@+node:eugeneai.20110116171118.1379: *3* draw_rubberband
-    def draw_rubberband(self, event, x0, y0, x1, y1):
+    def draw_rubberband_(self, event, x0, y0, x1, y1):
         'adapted from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/189744'
-        drawable = self.canvas.window
+        drawable = self.canvas
         if drawable is None:
             return
 
@@ -386,12 +386,12 @@ class TXRFNavigationToolbar(NavigationToolbar2GTK3):
     #@+node:eugeneai.20110116171118.1382: *3* pan
     def pan(self, *args, **kwargs):
         self.zoom_button.set_active(False)
-        return NavigationToolbar2GTK.pan(self, *args, **kwargs)
+        return NavigationToolbar2GTK3.pan(self, *args, **kwargs)
 
     #@+node:eugeneai.20110116171118.1383: *3* zoom
     def zoom(self, *args, **kwargs):
         self.pan_button.set_active(False)
-        return NavigationToolbar2GTK.zoom(self, *args, **kwargs)
+        return NavigationToolbar2GTK3.zoom(self, *args, **kwargs)
 
     #@+node:eugeneai.20110116171118.1384: *3* explore_channels
     def explore_channels(self, widget, data=None):
@@ -682,7 +682,7 @@ class PlottingView(View):
     def on_click(self, event, data=None):
         local = self.local
         if local.msg_id is not None:
-            self.ui.sb.remove_message(local.ctx_id, local.msg_id)
+            self.ui.sb.remove(local.ctx_id, local.msg_id)
         if event.xdata and event.ydata:
             s='button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
                 event.button, event.x, event.y, event.xdata, event.ydata)
@@ -819,7 +819,7 @@ class ProjectView(View):
         self.model.save(filename)
         return True
 
-    def on_periodic_table(self, widget, _):
+    def on_periodic_table(self, widget):
         active = widget.get_active()
         rc=gsm().queryUtility(IPeriodicTableView)
         if rc==None:
@@ -915,8 +915,8 @@ class ProjectView(View):
             interval=pt.ui.interval.get_value()
             x0=model.parameters.channel_to_keV(xdata)
             gen=conn.select(
-                    where="abs(keV-(%f))<(%f)" % (x0,interval),
-                    order_by="abs(keV-(%f))" % (x0)
+                    where="abs(keV-(%f))<(%f)" % (x0, interval),
+                    order_by="abs(keV-(%f))" % x0,
                 )
             lines=list(gen)
             #lines.sort(key=lambda l: abs(l.keV - x0))
@@ -924,7 +924,9 @@ class ProjectView(View):
             for l in lines:
                 line_list.append((l.element, l.line, "%6.3f" % l.keV, l.Z))
 
-    def on_refine_scaling(self, table):
+    def on_refine_scaling(self, table, spectral_data, sp_data, _):
+        (sp, spec_no) = sp_data
+        filename = table
         print "Refine scaling..."
         self.p_thread_tasks(['refine','show'])
 
@@ -1233,7 +1235,7 @@ class PeriodicTableWindow(View):
 
         self.cursor_clicked=None # Last cursor clicked here. Modified by a superior widget.
 
-    def on_interval_changed(self, spb, scrolltype):
+    def on_interval_changed(self, spb):
         self.emit('interval-changed', spb.get_value())
 
     def show(self):
@@ -1285,7 +1287,7 @@ class PeriodicTableWindow(View):
         self.emit("window-hide")
         return True
 
-    def on_refine_scaling(self, window, event):
+    def on_refine_scaling(self, window, event, _):
         self.emit('refine')
 
     def on_clear_scaling(self, window, event):
