@@ -14,8 +14,6 @@ from gi.repository.GdkPixbuf import Pixbuf
 
 if __name__=="__main__":
     sys.path.append("..")
-    Gtk.threads_init()
-    print "Threads init locally!!!."
 
 from icc.xray.views.interfaces import *
 from zope.interface import implements, implementsOnly
@@ -275,7 +273,6 @@ class TXRFNavigationToolbar(NavigationToolbar2GTK3):
 
     #@+node:eugeneai.20110116171118.1375: *3* on_destroy
     def on_destroy(self, widget, data=None):
-        # print self._widgets
         for w in self._widgets:
             if w and self.toolbar:
                 self.toolbar.remove(w)
@@ -924,11 +921,12 @@ class ProjectView(View):
             for l in lines:
                 line_list.append((l.element, l.line, "%6.3f" % l.keV, l.Z))
 
-    def on_refine_scaling(self, table, spectral_data, sp_data, _):
-        (sp, spec_no) = sp_data
-        filename = table
+    def on_refine_scaling(self, view, filename=None, spectrum=None, sp_data=None):
+        if sp_data != None:
+            (sp, spec_no) = sp_data
         print "Refine scaling..."
-        self.p_thread_tasks(['refine','show'])
+        # self.p_thread_tasks(['refine','show'])
+        print "Refine scaling ended."
 
     #@+node:eugeneai.20110116171118.1401: *3* get_objects
     def get_objects(self):
@@ -977,7 +975,7 @@ class ProjectView(View):
         self.ui.ps_style= ps
         root = t.append(None, ('Project', pb, False, False, pn))
         meta = t.append(root, ('Info', pm, False, False, pn))
-        print self.model.spectral_data
+        #print self.model.spectral_data
         for name, sd in self.model.spectral_data.iteritems():
            f = t.append(root, (sd.name, pf, False, False, pn))
            for sp in sd().data:
@@ -1095,7 +1093,7 @@ class ProjectView(View):
         path = pm.get_path(it)
         rc=self.interp_path(path)
         self.active_fpath=(rc, path)
-        print "Selection", self.active_fpath
+        # print "Selection", self.active_fpath
 
     #Horizontal paned synchronisation.
 
@@ -1111,7 +1109,7 @@ class ProjectView(View):
         if self.active_fpath == None:
             return
         rc,path=self.active_fpath
-        print rc
+        # print rc
         if rc[0]=='file':
             del self.model.spectral_data[rc[1]]
             pm=self.ui.project_tree_model
@@ -1119,7 +1117,7 @@ class ProjectView(View):
             self.set_model(self.model)
             self.emit('model-changed', self.model)
             #self.active_view.canvas.draw_idle()
-            print "removed"
+            # print "removed"
 
     def on_spectra_export(self, widget, data=None):
         print "On spectra export", widget, data
@@ -1287,7 +1285,7 @@ class PeriodicTableWindow(View):
         self.emit("window-hide")
         return True
 
-    def on_refine_scaling(self, window, event, _):
+    def on_refine_scaling(self, window, *args):
         self.emit('refine')
 
     def on_clear_scaling(self, window, event):
@@ -1335,11 +1333,10 @@ class PeriodicTableWindow(View):
 GObject.type_register(PeriodicTableWindow)
 
 if __name__=="__main__":
-    print "Cannot run without external support!!"
-    '''
+    # print "Cannot run without external support!!"
     import icc.icc_xray_app
     icc.icc_xray_app.main()
-    '''
+
 
 #@-others
 #@-leo
