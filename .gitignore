@@ -169,3 +169,5 @@ src/gelemental/src/elwidget.o
 /src/icc/.emacs.desktop
 /site.cfg
 *~
+/err.log
+/src/icc/app
