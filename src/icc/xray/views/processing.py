@@ -91,9 +91,9 @@ class Parameters(object):
         if hasattr(self, 'client_obj'):
             self.client_obj.set_fraction(frac)
         else:
-            Gtk.threads_enter()
+            # Gtk.threads_enter()
             self.progressbar.set_fraction(frac)
-            Gtk.threads_leave()
+            # Gtk.threads_leave()
 
     def server_methods(self, names):
         self._methods=names
@@ -153,13 +153,13 @@ class Parameters(object):
             ls = ldb.as_deltafun(order_by="keV", element=elements,
                     where="not l.name like 'M%' and keV<20.0")
             ls=list(ls)
-        Gtk.threads_enter()
+        # Gtk.threads_enter()
         self.view.paint_model([self.model], draw=False)
         par.set_figure(self.view.ui.ax)
         if le:
             par.line_plot(ls, self.view.plot_options)
         self.view.ui.canvas.draw_idle()
-        Gtk.threads_leave()
+        # Gtk.threads_leave()
 
     def refine(self):
         self.obj.refine()
