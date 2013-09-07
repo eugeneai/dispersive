@@ -7,11 +7,14 @@
 #!/usr/bin/python
 
 import sys
-from gi.repository import Gtk
+from gi.repository import Gtk,GObject
+from gi.repository.GdkPixbuf import Pixbuf
+
+
 
 if __name__=="__main__":
     sys.path.append("..")
-    gtk.threads_init()
+    Gtk.threads_init()
     print "Threads init locally!!!."
 
 from icc.xray.views.interfaces import *
@@ -265,7 +268,7 @@ class TXRFNavigationToolbar(NavigationToolbar2GTK3):
         self.toolbar = view.locate_widget('toolbar')
         self.statusbar = view.locate_widget('statusbar')
         self.subplots = subplots
-        #gtk.Toolbar.__init__(self)
+        #Gtk.Toolbar.__init__(self)
         NavigationToolbar2.__init__(self, canvas)
         self._idle_draw_id = 0
         view.ui.main_frame.connect('destroy', self.on_destroy)
@@ -280,7 +283,7 @@ class TXRFNavigationToolbar(NavigationToolbar2GTK3):
 
     #@+node:eugeneai.20110116171118.1376: *3* _init_toolbar
     def _init_toolbar(self):
-        self.toolbar.set_style(gtk.TOOLBAR_ICONS)
+        #self.toolbar.set_style(Gtk.StyleType.ICONS)
         self._init_toolbar2_4()
 
     #@+node:eugeneai.20110116171118.1377: *3* insert
@@ -296,48 +299,47 @@ class TXRFNavigationToolbar(NavigationToolbar2GTK3):
     #@+node:eugeneai.20110116171118.1378: *3* _init_toolbar2_4
     def _init_toolbar2_4(self):
         basedir = os.path.join(matplotlib.rcParams['datapath'],'images')
-        self.tooltips = gtk.Tooltips()
 
 
-        toolitem = gtk.SeparatorToolItem()
+        toolitem = Gtk.SeparatorToolItem()
         self.insert(toolitem, -1)
         for toggled, text, tooltip_text, image_file, callback, stock in self.toolitems:
             if text is None:
-                self.insert( gtk.SeparatorToolItem(), -1 )
+                self.insert( Gtk.SeparatorToolItem(), -1 )
                 continue
             if text=='Subplots' and not self.subplots:
                 continue
             if stock is None:
                 fname = os.path.join(basedir, image_file)
-                image = gtk.Image()
+                image = Gtk.Image()
                 image.set_from_file(fname)
                 if toggled:
-                    tbutton = gtk.ToggleToolButton(image, text)
+                    tbutton = Gtk.ToggleToolButton(image, text)
                 else:
-                    tbutton = gtk.ToolButton(image, text)
+                    tbutton = Gtk.ToolButton(image, text)
             else:
                 if toggled:
-                    tbutton = gtk.ToggleToolButton(stock)
+                    tbutton = Gtk.ToggleToolButton(stock)
                 else:
-                    tbutton = gtk.ToolButton(stock)
+                    tbutton = Gtk.ToolButton(stock)
             self.insert(tbutton, -1)
             if toggled:
                 tbutton.connect('toggled', getattr(self, callback))
             else:
                 tbutton.connect('clicked', getattr(self, callback))
             setattr(self, callback+'_button', tbutton)
-            tbutton.set_tooltip(self.tooltips, tooltip_text, 'Private')
+            tbutton.set_tooltip_text(tooltip_text)
 
-        #toolitem = gtk.SeparatorToolItem()
+        #toolitem = Gtk.SeparatorToolItem()
         #self.insert(toolitem, -1)
         # set_draw() not making separator invisible,
         # bug #143692 fixed Jun 06 2004, will be in GTK+ 2.6
         #toolitem.set_draw(False)
         #toolitem.set_expand(True)
 
-        #toolitem = gtk.ToolItem()
+        #toolitem = Gtk.ToolItem()
         #self.insert(toolitem, -1)
-        #self.message = gtk.Label()
+        #self.message = Gtk.Label()
         #toolitem.add(self.message)
 
         if self.toolbar: self.toolbar.show_all()
@@ -350,8 +352,8 @@ class TXRFNavigationToolbar(NavigationToolbar2GTK3):
             return
 
         gc = drawable.new_gc()
-        gc.function = gtk.gdk.INVERT
-        gc.foreground = gtk.gdk.color_parse("#FFFFFFFFFFFF")
+        gc.function = Gtk.gdk.INVERT
+        gc.foreground = Gtk.gdk.color_parse("#FFFFFFFFFFFF")
         height = self.canvas.figure.bbox.height
         y1 = height - y1
         y0 = height - y0
@@ -504,9 +506,9 @@ class View(rakeviews.View):
 #@+node:eugeneai.20110116171118.1392: ** class PlottingView
 class PlottingView(View):
     __gsignals__ = {
-        'spectrum-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-            (gobject.TYPE_PYOBJECT,
-            gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT)),
+        'spectrum-clicked': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE,
+            (GObject.TYPE_PYOBJECT,
+            GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT)),
     }
     implements(IPlottingView)
     #ZC.adapts(mdli.ISpectra, rakeints.IView)
@@ -518,7 +520,7 @@ class PlottingView(View):
         self.plot_options={'show-lines':True}
         self.set_axis_labels()
         self.ui=rakeviews.Ui()
-        self.ui.win=gtk.Frame()
+        self.ui.win=Gtk.Frame()
 
         #parent_ui= ui = parent.ui #gsm().getUtility(rakeints.IApplication).ui
         parent_ui= ui = gsm().getUtility(rakeints.IApplication).ui
@@ -527,9 +529,9 @@ class PlottingView(View):
         self.local=local
 
         self.ui.main_frame = win = self.ui.win
-        win.set_shadow_type(gtk.SHADOW_NONE)
+        win.set_shadow_type(Gtk.ShadowType.NONE)
 
-        vbox = gtk.VBox()
+        vbox = Gtk.VBox()
         win.add(vbox)
 
         fig = Figure(figsize=(5,4), dpi=120,
@@ -540,12 +542,11 @@ class PlottingView(View):
         #self.ui.ax2=self.ui.ax.twinx()
         #self.ui.ay2=self.ui.ax.twiny()
 
-        canvas = FigureCanvas(fig)  # a gtk.DrawingArea
+        canvas = FigureCanvas(fig)  # a Gtk.DrawingArea
         self.ui.canvas = canvas
         canvas.set_size_request(600, 400)
-        vbox.pack_start(canvas, True, True)
+        vbox.pack_start(canvas, True, True, 0)
         toolbar_ = TXRFNavigationToolbar(canvas, self)
-        # vbox.pack_start(toolbar, False, False)
 
         self.ui.sb=ui.statusbar
         local.msg_id=None
@@ -732,7 +733,7 @@ class PlottingView(View):
         line.set(alpha=newalpha)
         spec['alpha']=newalpha
 
-gobject.type_register(PlottingView)
+GObject.type_register(PlottingView)
 
     #@-others
 #@+node:eugeneai.20110116171118.1399: ** class ProjectView
@@ -741,10 +742,10 @@ gobject.type_register(PlottingView)
 
 class ProjectView(View):
     __gsignals__ = {
-        'spectrum-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-            (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT)), # filename and spectrum choosen
-        'file-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-            (gobject.TYPE_STRING, gobject.TYPE_PYOBJECT)), # filename and all its spectra
+        'spectrum-clicked': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE,
+            (GObject.TYPE_STRING, GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT)), # filename and spectrum choosen
+        'file-clicked': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE,
+            (GObject.TYPE_STRING, GObject.TYPE_PYOBJECT)), # filename and all its spectra
     }
     template = "ui/project_frame.glade"
     widget_names = ["project_frame",
@@ -776,7 +777,7 @@ class ProjectView(View):
         self.connect('spectrum-clicked', self.on_spectrum_clicked)
         self.connect('spectrum-clicked', self.on_refine_scaling)
         self.connect('file-clicked', self.on_file_clicked)
-        self.ui.main_vbox.pack_start(self.active_view.ui.main_frame)
+        self.ui.main_vbox.pack_start(self.active_view.ui.main_frame, True, True, 0)
         self.ui.hpaned_list=[self.ui.paned_top, self.ui.paned_bottom]
 
         self.add_actions_to_menu(self.ui.ag_spectra, label='Spectra')
@@ -959,17 +960,17 @@ class ProjectView(View):
 
         d = self.get_objects()
 
-        pb = gtk.gdk.pixbuf_new_from_xpm_data(XPM_PROJECT)
-        pm = gtk.gdk.pixbuf_new_from_xpm_data(XPM_META)
-        pc = gtk.gdk.pixbuf_new_from_xpm_data(XPM_SPECTRUM)
-        ps = gtk.gdk.pixbuf_new_from_xpm_data(XPM_STYLE)
-        pn = gtk.gdk.pixbuf_new_from_xpm_data(XPM_NONE)
-        pf = gtk.gdk.pixbuf_new_from_xpm_data(XPM_FILE)
+        pb = Pixbuf.new_from_xpm_data(XPM_PROJECT)
+        pm = Pixbuf.new_from_xpm_data(XPM_META)
+        pc = Pixbuf.new_from_xpm_data(XPM_SPECTRUM)
+        ps = Pixbuf.new_from_xpm_data(XPM_STYLE)
+        pn = Pixbuf.new_from_xpm_data(XPM_NONE)
+        pf = Pixbuf.new_from_xpm_data(XPM_FILE)
         self.ui.pb_project = pb
         self.ui.pb_meta = pm
         self.ui.pb_file = pf
         self.ui.pb_spectrum = pc
-        self.ui.pb_empty = gtk.gdk.pixbuf_new_from_xpm_data(XPM_EMPTY)
+        self.ui.pb_empty = Pixbuf.new_from_xpm_data(XPM_EMPTY)
         self.ui.pb_none = pn
         self.ui.ps_style= ps
         root = t.append(None, ('Project', pb, False, False, pn))
@@ -1179,18 +1180,18 @@ class ProjectView(View):
 
     #@-others
 
-gobject.type_register(ProjectView)
+GObject.type_register(ProjectView)
 
 class PeriodicTableWindow(View):
     __gsignals__ = {
-        'window-hide': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
-        'refine': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
-        'clear-scaling': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, tuple()),
-        'external-scaling': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
-        'background': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
-        'show-lines': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
-        'selected': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
-        'interval-changed': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_FLOAT,)),
+        'window-hide': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, tuple()),
+        'refine': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, tuple()),
+        'clear-scaling': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, tuple()),
+        'external-scaling': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT,)),
+        'background': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT,)),
+        'show-lines': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT,)),
+        'selected': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT,)),
+        'interval-changed': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_FLOAT,)),
     }
     implements(IPeriodicTableView)
     template = "ui/periodic_table_window.glade"
@@ -1215,10 +1216,10 @@ class PeriodicTableWindow(View):
         self.ui.pt_place.add(self.ui.table)
         self.ui.table.connect('toggled', self.on_table_toggled)
         self.ui.pt_window.connect('delete-event', self.on_delete_event)
-        label=self.ui.label=gtk.Label("Elements:")
+        label=self.ui.label=Gtk.Label("Elements:")
         self.ui.table.ui.pt.attach(label, 0, 2, 7,8)
         label.set_alignment(1., 0.5)
-        in_list=self.ui.input_list=gtk.Entry()
+        in_list=self.ui.input_list=Gtk.Entry()
         in_list.connect('changed', self.on_input_list_changed)
         #in_list.connect('activate', self.on_input_list_activate)
         self.ui.table.ui.pt.attach(in_list, 2, 18, 7,8)
@@ -1267,7 +1268,7 @@ class PeriodicTableWindow(View):
         bad=self.ui.table.select(list, active=True, only=True)
         """
         if bad:
-            ib.modify_bg(gtk.)
+            ib.modify_bg(Gtk.)
             style = el.get_style().copy()
         """
         ls=len(list)
@@ -1329,15 +1330,13 @@ class PeriodicTableWindow(View):
         if emit:
             self.emit('show-lines', d)
 
-gobject.type_register(PeriodicTableWindow)
+GObject.type_register(PeriodicTableWindow)
 
 if __name__=="__main__":
     print "Cannot run without external support!!"
     '''
     import icc.icc_xray_app
-    gtk.threads_enter()
     icc.icc_xray_app.main()
-    gtk.threads_leave()
     '''
 
 #@-others

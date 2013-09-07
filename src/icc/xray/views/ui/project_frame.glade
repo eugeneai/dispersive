@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.24"/>
+  <!-- interface-requires gtk+ 3.6 -->
   <object class="GtkActionGroup" id="ag_other">
     <child>
       <object class="GtkAction" id="ac_convert_to">
@@ -156,6 +156,8 @@
     </columns>
   </object>
   <object class="GtkFrame" id="project_frame">
+    <property name="width_request">600</property>
+    <property name="height_request">500</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="label_xalign">0</property>

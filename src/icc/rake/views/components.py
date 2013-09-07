@@ -74,7 +74,7 @@ def InputDialog(message, value='', field='Name:', secondary=''):
         #create a horizontal box to pack the entry and a label
         entry.set_text(value)
         hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(field), False, 5, 5)
+        hbox.pack_start(Gtk.Label(field), False, True, 5)
         hbox.pack_end(entry)
         #some secondary text
         dialog.format_secondary_markup(secondary)
@@ -204,7 +204,7 @@ class View(GObject.GObject):
         if template:
             builder=self.ui._builder = Gtk.Builder()
             builder.add_from_string(resource_string(self.resource, template))
-            builder.connect_signals(self, builder)
+            builder.connect_signals(self)
             if widget_names:
                 for name in widget_names:
                     widget = builder.get_object(name)
@@ -255,7 +255,7 @@ class View(GObject.GObject):
         box.remove(self.get_main_frame())
 
     def insert_into(self, box):
-        box.pack_start(self.get_main_frame(), True, True)
+        box.pack_start(self.get_main_frame(), True, True, 0)
 
     def get_main_frame(self):
         main_widget_name = self.__class__.main_widget_name
@@ -446,7 +446,7 @@ class Application(View):
         'project-save': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_BOOLEAN, (GObject.TYPE_STRING,)),
     }
     implements(IApplication)
-    template = "ui/main_win_Gtk.glade"
+    template = "ui/main_win_gtk.glade"
     widget_names = ['main_window', 'statusbar', 'toolbar', 'menubar',
              "main_vbox", 'ac_close', 'ac_save',
                     "menu_file", "menu_edit", "menu_view", "menu_help"]
