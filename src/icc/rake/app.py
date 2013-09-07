@@ -59,9 +59,9 @@ def main(package=None):
         if lp_fn:
             app.emit("startup-open", lp_fn)
 
-    Gtk.threads_enter()
+    #Gtk.threads_enter()
     rc = app.main()
-    Gtk.threads_leave()
+    #Gtk.threads_leave()
 
     if user_conf: user_conf.write(user_config_file)
 
