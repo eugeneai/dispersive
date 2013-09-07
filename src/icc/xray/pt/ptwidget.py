@@ -1,4 +1,4 @@
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk, GObject, Gdk
 import sys
 import data
 
@@ -50,10 +50,10 @@ class PTWidget(Gtk.VBox):
         b=Gtk.Button("asd")
         self.ui=UI()
         self.ui.pt=Gtk.Table(rows=10, columns=18, homogeneous=True)
-        self.pack_start(self.ui.pt, expand=True, fill=True)
+        self.pack_start(self.ui.pt, True, True, 0)
         self.ui.elements=[]
-        white=Gtk.gdk.color_parse('white')
-        black=Gtk.gdk.color_parse('black')
+        white=Gdk.color_parse('white')
+        black=Gdk.color_parse('black')
         for i in range(118):
             j=i+1
             T=TABLE[j]
@@ -62,41 +62,42 @@ class PTWidget(Gtk.VBox):
             if palette > PAL_NONE:
                 if palette==PAL_CFK:
                     try:
-                        color=Gtk.gdk.color_parse("#"+T[4])
+                        color=Gdk.color_parse("#"+T[4])
                     except ValueError:
                         color = Gtk.gdk.Color("#eee")
                 elif palette==PAL_GROUP:
                     grp=T[-2]
-                    color=Gtk.gdk.color_parse("#"+PAL_GRP.get(grp, 'eee'))
+                    color=Gdk.color_parse("#"+PAL_GRP.get(grp, 'eee'))
                 if color != None:
                     col =color.red_float,color.green_float,color.blue_float
                     ccol=[1.-_c for _c in col]
-                    compcolor=apply(Gtk.gdk.Color, ccol)
+                    compcolor=apply(Gdk.Color, ccol)
 
                     dcol = [_c*70/100 for _c in col]
-                    darkcolor=apply(Gtk.gdk.Color, dcol)
+                    darkcolor=apply(Gdk.Color, dcol)
 
                     bcol = [min(1., _c*100/70) for _c in col]
-                    brightcolor=apply(Gtk.gdk.Color, bcol)
+                    brightcolor=apply(Gdk.Color, bcol)
 
-                    el.modify_bg(Gtk.STATE_NORMAL, color)
-                    #el.modify_bg(Gtk.STATE_ACTIVE, darkcolor)
-                    el.modify_bg(Gtk.STATE_ACTIVE, black)
-                    el.modify_bg(Gtk.STATE_PRELIGHT, brightcolor)
-                    #el.modify_bg(Gtk.STATE_PRELIGHT, compcolor)
-                    el.modify_bg(Gtk.STATE_SELECTED, color)
+                    el.modify_bg(Gtk.StateType.NORMAL, color)
+                    #el.modify_bg(Gtk.StateType.ACTIVE, darkcolor)
+                    el.modify_bg(Gtk.StateType.ACTIVE, black)
+                    el.modify_bg(Gtk.StateType.PRELIGHT, brightcolor)
+                    #el.modify_bg(Gtk.StateType.PRELIGHT, compcolor)
+                    el.modify_bg(Gtk.StateType.SELECTED, color)
 
-                    style = el.get_style().copy()
-                    style.bg[Gtk.STATE_NORMAL] = color
-                    style.bg[Gtk.STATE_ACTIVE] = black
-                    style.bg[Gtk.STATE_PRELIGHT] = brightcolor
-                    style.bg[Gtk.STATE_SELECTED] = color
+                    #style = el.get_style().copy()
+                    #print ">>>>>>>>>>>>>", style
+                    #style.bg[Gtk.StateType.NORMAL] = color
+                    #style.bg[Gtk.StateType.ACTIVE] = black
+                    #style.bg[Gtk.StateType.PRELIGHT] = brightcolor
+                    #style.bg[Gtk.StateType.SELECTED] = color
                        #set the button's style to the one you created
-                    el.set_style(style)
+                    #el.set_style(style)
 
                     lab=el.get_child()
-                    lab.modify_fg(Gtk.STATE_ACTIVE, white)
-                    lab.modify_fg(Gtk.STATE_NORMAL, black)
+                    lab.modify_fg(Gtk.StateType.ACTIVE, white)
+                    lab.modify_fg(Gtk.StateType.NORMAL, black)
 
 
             for l, r in ROWS:
