@@ -171,3 +171,5 @@ src/gelemental/src/elwidget.o
 *~
 /err.log
 /src/icc/app
+/src/icc/sys
+/stdout.log
