@@ -249,17 +249,22 @@ class View(GObject.GObject):
         self.emit('destroy-view', self)
         self.get_main_frame().destroy()
         self.ui=None
-        Gtk.Object.destroy(self)
+        GObject.GObject.destroy(self)
 
     def remove_from(self, box):
-        box.remove(self.get_main_frame())
+        widget = self.get_main_frame()
+        if widget != None:
+            box.remove(widget)
 
     def insert_into(self, box):
         box.pack_start(self.get_main_frame(), True, True, 0)
 
     def get_main_frame(self):
         main_widget_name = self.__class__.main_widget_name
-        return getattr(self.ui, main_widget_name)
+        if self.ui != None: # TODO: Strange bug one appeared.
+            return getattr(self.ui, main_widget_name)
+        else:
+            return None
 
     def on_parent_destroy(self, parent, data=None):
         self.destroy()
@@ -376,16 +381,16 @@ class View(GObject.GObject):
             msg = save_msg
             # msg="Save the project..."
             ac = Gtk.FileChooserAction.SAVE
-            icon = Gtk.StockType.SAVE
+            icon = Gtk.STOCK_SAVE
         else:
             msg = open_msg
             # msg="Open a project..."
-            ac = Gtk.FileChooser.OPEN
-            icon = Gtk.StockType.OPEN
+            ac = Gtk.FileChooserAction.OPEN
+            icon = Gtk.STOCK_OPEN
 
         chooser = Gtk.FileChooserDialog(msg, self.locate_widget('main_window'),
             ac,
-            (Gtk.StockType.CANCEL, Gtk.ResponseType.CANCEL,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 icon, Gtk.ResponseType.OK))
         chooser.set_default_response(Gtk.ResponseType.OK)
         chooser.set_current_folder('.')
