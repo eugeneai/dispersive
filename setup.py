@@ -37,7 +37,14 @@ setup(
                     #@-<< requirenments >>
                       ],
     package_data = {
-        'icc.xray.views': ['ui/*.glade', "ui/icons/tango/16x16/*/*.png"],
+        'icc.rake': ['configure.zcml', 'application.ini'],
+        'icc.rake.models': ['configure.zcml'],
+        'icc.rake.views': ['configure.zcml', 'ui/*.glade', "ui/icons/tango/*/*/*.png"],
+        'icc.rake.modules': ['configure.zcml'],
+
+        'icc.xray': ['configure.zcml', 'application.ini'],
+        'icc.xray.models': ['configure.zcml'],
+        'icc.xray.views': ['configure.zcml'],
         },
     author = "Evgeny Cherkashin",
     author_email = "eugene@irnok.net",
