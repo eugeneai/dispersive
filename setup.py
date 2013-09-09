@@ -24,10 +24,10 @@ setup(
                     #@+<< requirenments >>
                     #@+node:eugeneai.20110116000634.1304: *3* << requirenments >>
                     "setuptools",
+                    "numpy",
                     "rpyc",
                     "zope.component [zcml]",
                     "cfgparse",
-                    "numpy",
                     "scipy",
                     "lxml",
                     #"periodictable",

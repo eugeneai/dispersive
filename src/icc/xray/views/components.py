@@ -51,7 +51,7 @@ from matplotlib.backends.backend_gtk3 import FileChooserDialog
 import matplotlib
 import matplotlib.pyplot as pyplot
 
-import processing as proc
+#import processing as proc
 
 CHANNEL_NO=4096
 CALIBR_ZERO=90

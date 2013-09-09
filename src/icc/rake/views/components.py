@@ -247,7 +247,9 @@ class View(GObject.GObject):
 
     def destroy(self):
         self.emit('destroy-view', self)
-        self.get_main_frame().destroy()
+        main_frame = self.get_main_frame()
+        if main_frame != None :
+            main_frame.destroy()
         self.ui=None
         GObject.GObject.destroy(self)
 
