@@ -15,7 +15,7 @@ log.set_verbosity(100)
 setup(
     zip_safe = False,
     name="icc.xray",
-    version="0.0.5",
+    version="0.0.6",
     packages=find_packages("src"),
     package_dir={"": "src"},
     namespace_packages=["icc"],
@@ -44,7 +44,7 @@ setup(
 
         'icc.xray': ['configure.zcml', 'application.ini'],
         'icc.xray.models': ['configure.zcml'],
-        'icc.xray.views': ['configure.zcml'],
+        'icc.xray.views': ['configure.zcml', 'ui/*.glade'],
         },
     author = "Evgeny Cherkashin",
     author_email = "eugene@irnok.net",
