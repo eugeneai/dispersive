@@ -13,7 +13,7 @@ from distutils import log
 log.set_verbosity(100)
 
 setup(
-    zip_safe = True,
+    zip_safe = False,
     name="icc.xray",
     version="0.0.5",
     packages=find_packages("src"),

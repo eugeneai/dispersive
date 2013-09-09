@@ -173,3 +173,4 @@ src/gelemental/src/elwidget.o
 /src/icc/app
 /src/icc/sys
 /stdout.log
+/src/icc.xray.egg-info/not-zip-safe
