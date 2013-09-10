@@ -249,6 +249,8 @@ class TXRFNavigationToolbar(drawing.NavigationToolbar):
 #@+node:eugeneai.20110116171118.1391: ** class View
 class View(rakeviews.View):
     resource=__name__
+    def __init__(self, model=None, parent=None):
+        View.__init__(self, model=model, parent=parent)
 
 #@+node:eugeneai.20110116171118.1392: ** class PlottingView
 class PlottingView(View):
@@ -262,11 +264,11 @@ class PlottingView(View):
     ZC.adapts(rakeints.IView)
     #@+others
     #@+node:eugeneai.20110116171118.1393: *3* __init__
-    def __init__(self, parent=None, model=None):
-        View.__init__(self, model, parent=parent)
+    def __init__(self, model=None, parent=None):
+        View.__init__(self, model=model, parent=parent)
         self.plot_options={'show-lines':True}
         self.set_axis_labels()
-        self.ui=rakeviews.Ui()
+        #self.ui=rakeviews.Ui()
         self.ui.win=Gtk.Frame()
 
         #parent_ui= ui = parent.ui #gsm().getUtility(rakeints.IApplication).ui

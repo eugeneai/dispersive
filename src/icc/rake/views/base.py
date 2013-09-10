@@ -114,8 +114,14 @@ class View(GObject.GObject):
 
     #@+others
     #@+node:eugeneai.20110116171118.1459: *3* __init__
-    def __init__(self, model = None, parent=None):
+    def __init__(self, model = None, parent = None):
         GObject.GObject.__init__(self)
+        if parent != None:
+            if not icc.rake.views.interfaces.IView.providedBy(parent):
+                raise ValueError, "Parent does not implement icc.rake.views.interfaces.IView interface."
+        if model != None:
+            if icc.rake.views.interfaces.IView.providedBy(model):
+                raise ValueError, "Model implements icc.rake.views.interfaces.IView interface. It seems You swapped the parameters."
         self.ui=Ui()
         self.model=None
         self.set_parent(parent)
@@ -178,7 +184,7 @@ class View(GObject.GObject):
         except AttributeError:
             pass
 
-        if IView.providedBy(view):
+        if icc.rake.views.interfaces.IView.providedBy(view):
             self.parent_view=view
             view.connect('destroy-view', self.on_parent_destroy)
 
@@ -232,6 +238,7 @@ class View(GObject.GObject):
             return getattr(ui,widget_name)
         except AttributeError:
             pass
+
         if self.parent_view != None:
             return self.parent_view.locate_widget(widget_name)
 
@@ -604,7 +611,7 @@ class Application(View):
     #    self.insert_active_view(view)
 
     def insert_project_view(self, ui):
-        view = ZC.getMultiAdapter((self.model, self), IProjectView)
+        view = ZC.getMultiAdapter((self.model, self), icc.rake.views.interfaces.IProjectView)
         self.insert_active_view(view)
 
     #@+node:eugeneai.20110116171118.1480: *3* main
