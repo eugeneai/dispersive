@@ -250,7 +250,7 @@ class TXRFNavigationToolbar(drawing.NavigationToolbar):
 class View(rakeviews.View):
     resource=__name__
     def __init__(self, model=None, parent=None):
-        View.__init__(self, model=model, parent=parent)
+        rakeviews.View.__init__(self, model=model, parent=parent)
 
 #@+node:eugeneai.20110116171118.1392: ** class PlottingView
 class PlottingView(View):
@@ -260,11 +260,13 @@ class PlottingView(View):
             GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT)),
     }
     implements(IPlottingView)
-    #ZC.adapts(mdli.ISpectra, rakeints.IView)
-    ZC.adapts(rakeints.IView)
+    ZC.adapts(mdli.IProject, rakeints.IView)
     #@+others
     #@+node:eugeneai.20110116171118.1393: *3* __init__
     def __init__(self, model=None, parent=None):
+        #View.__init__(self, model=model, parent=parent)
+        if mdli.IProject.providedBy(model):
+            model=None
         View.__init__(self, model=model, parent=parent)
         self.plot_options={'show-lines':True}
         self.set_axis_labels()
@@ -519,7 +521,7 @@ class ProjectView(View):
         opt=_conf.add_option('spectra_file_ext', default='.*:All Files', keys='app')
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split('|')]
 
-        self.active_view = ZC.getMultiAdapter((self,), IPlottingView)
+        self.active_view = ZC.getMultiAdapter((self.model, self), IPlottingView)
         self.active_view.connect('spectrum-clicked', self.on_plot_spectrum_clicked)
         #self.connect('spectrum-clicked', self.active_view.on_spectrum_clicked)
         #self.connect('file-clicked', self.active_view.on_spectra_clicked)
