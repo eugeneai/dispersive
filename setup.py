@@ -15,7 +15,7 @@ log.set_verbosity(100)
 setup(
     zip_safe = False,
     name="icc.xray",
-    version="0.0.6",
+    version="0.0.7",
     packages=find_packages("src"),
     package_dir={"": "src"},
     namespace_packages=["icc"],
@@ -39,7 +39,7 @@ setup(
     package_data = {
         'icc.rake': ['configure.zcml', 'application.ini'],
         'icc.rake.models': ['configure.zcml'],
-        'icc.rake.views': ['configure.zcml', 'ui/*.glade', "ui/icons/tango/*/*/*.png"],
+        'icc.rake.views': ['*.zcml', 'ui/*.glade', "ui/icons/tango/*/*/*.png"],
         'icc.rake.modules': ['configure.zcml'],
 
         'icc.xray': ['configure.zcml', 'application.ini'],
