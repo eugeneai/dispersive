@@ -164,11 +164,12 @@ class View(GObject.GObject):
         if self.model != model:
             self.model=model
             # some update needed???
+            # emit signal?
 
     def on_model_changed(self, model):
         pass
 
-    def do_model_changed(self, sender, model):
+    def do_model_changed(self, model):
         self.on_model_changed(model)
 
     def invalidate_model(self, model):
@@ -251,7 +252,7 @@ class View(GObject.GObject):
         if main_frame != None :
             main_frame.destroy()
         self.ui=None
-        GObject.GObject.destroy(self)
+        # GObject.GObject.destroy(self)
 
     def remove_from(self, box):
         widget = self.get_main_frame()
