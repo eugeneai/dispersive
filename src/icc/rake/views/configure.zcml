@@ -3,11 +3,8 @@
 <!--@+node:eugeneai.20110116171118.1503: * @file configure.zcml-->
 <!--@@language xml-->
 <configure xmlns="http://namespaces.zope.org/zope">
-<utility
-    component=".components.Application"
-    provides="zope.component.interfaces.IFactory"
-    name="Application"
-    />
+
+<include package="." file="base.zcml" />
 
 <adapter
     factory=".components.ModuleCanvasView"
