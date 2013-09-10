@@ -4,7 +4,7 @@
 <!--@@language xml-->
 <configure xmlns="http://namespaces.zope.org/zope">
 <utility
-    component=".components.Application"
+    component=".base.Application"
     provides="zope.component.interfaces.IFactory"
     name="Application"
     />

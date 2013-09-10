@@ -11,7 +11,7 @@ from gi.repository import Gtk, GObject
 import sys
 
 
-from icc.rake.views.interfaces import *
+import icc.rake.views.interfaces
 from zope.interface import implements, implementsOnly
 import zope.component as ZC
 import zope.component.interfaces as ZCI
@@ -110,7 +110,7 @@ class View(GObject.GObject):
     resource = __name__
     main_widget_name = 'main_frame'
     #implements(IView)
-    ZC.adapts(mdli.IModel, IView)
+    ZC.adapts(mdli.IModel, icc.rake.views.interfaces.IView)
 
     #@+others
     #@+node:eugeneai.20110116171118.1459: *3* __init__
@@ -446,7 +446,7 @@ class Application(View):
         'project-open': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_BOOLEAN, (GObject.TYPE_STRING,)),
         'project-save': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_BOOLEAN, (GObject.TYPE_STRING,)),
     }
-    implements(IApplication)
+    implements(icc.rake.views.interfaces.IApplication)
     template = "ui/main_win_gtk.glade"
     widget_names = ['main_window', 'statusbar', 'toolbar', 'menubar',
              "main_vbox", 'ac_close', 'ac_save',
@@ -615,4 +615,3 @@ class Application(View):
     run = main
 
 GObject.type_register(Application)
-
