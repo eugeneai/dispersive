@@ -21,15 +21,17 @@ if __name__=="__main__" and len(sys.argv)==2 and sys.argv[1]=='server':
     print "Server", sys.argv
     SERVER = True
 else:
-    SERVER = False
+    SERVER = True
     test_case=False
     import rpyc
     import os
     print "Client", sys.argv
     if not sys.argv[0].endswith('rpyc_classic.py'):
-        print "here"
+        SERVER = False
+        import pygtk
+        pygtk.require('2.0')
+        import gtk, gobject, sys, os
         server=rpyc.classic.connect(HOST, PORT)
-        print "here"
         sprocessing = server.modules['icc.xray.views.processing']
         print "Client:", server, sprocessing
         test_case=True
@@ -90,55 +92,60 @@ class Parameters(object):
             frac=float(step)/steps
         else:
             frac=step
-        #gtk.threads_enter()
-        #self.progressbar.set_fraction(frac)
-        #gtk.threads_leave()
-        print "SET frac:",  frac
+        if hasattr(self, 'client_obj'):
+            self.client_obj.set_fraction(frac)
+        else:
+            gtk.threads_enter()
+            self.progressbar.set_fraction(frac)
+            gtk.threads_leave()
 
-    def expose_methods(self, names):
+    def server_methods(self, names):
         self._methods=names
 
     def methods(self, names):
-        self.obj.methods(names)
+        print self.SERVER
+        self.obj.server_methods(names)
 
     def start(self):
+        print "SERVER", self.SERVER
         self.run()
 
     def run(self):
-        self.obj.run()
+        self.obj.server_run(self)
 
-    def expose_run(self):
+    def server_run(self, client):
         self._active=True
+        self.client_obj=client
         o=self
+        pref='server_'
         if not self.SERVER:
             o=self.obj
+            pref=''
         for m in o._methods:
+            m=pref+m
             getattr(o, m)()
+        self.client_obj=None
+        del self.client_obj
         self._active=False
 
     def scaling(self):
-        return self.obj.scaling()
-    def expose_scaling(self):
+        return self.obj.server_scaling()
+
+    def server_scaling(self):
         #While the stopthread event isn't setted, the thread keeps going on
         self.reset_progress(9)
 
         par=self.model.parameters
-        pb=self.progressbar
-        # Acquiring the gtk global mutex
-        ##gtk.threads_enter()
-        #Setting a random value for the fraction
-        ##progressbar.set_fraction(random.random())
-        # Releasing the gtk global mutex
-        ##gtk.threads_leave()
-
-        #Delaying 100ms until the next iteration
-        ##time.sleep(0.1)
+        ######pb=self.progressbar
 
         par.set_scale_lines(self.e_0, ['Mo'], 20.) # 20 keV max
         ldb=line_db_conn()
         par.set_line_db_conn(ldb)
         par.calculate(plot=False, pb=self.next_step)
         #par.scan_peakes_cwt(plot=True)
+
+    def server_show(self):
+        self.client_obj.show()
 
     def show(self):
         par=self.model.parameters
@@ -159,16 +166,22 @@ class Parameters(object):
         gtk.threads_leave()
 
     def refine(self):
+        self.obj.refine()
+
+    def server_refine(self):
         par=self.model.parameters
-        elements=self.model.ptelements
-        self.scaling()
+        elements=list(self.model.ptelements)
+        self.server_scaling()
         self.reset_progress(3)
         par.refine_scale(elements=elements, pb=self.next_step)
 
     def background(self):
+        self.obj.server_background()
+
+    def server_background(self):
         par=self.model.parameters
-        elements=self.model.ptelements
-        self.scaling()
+        elements=list(self.model.ptelements)
+        self.server_scaling()
         self.reset_progress(11)
         par.approx_background(elements=elements, pb=self.next_step)
 
@@ -180,6 +193,7 @@ class Parameters(object):
         return self._active
 
 if SERVER:
+    '''
     t = ThreadedServer(SlaveService, hostname = 'localhost',
         port = PORT, #reuse_addr = True, # ipv6 = options.ipv6,
         #authenticator = options.authenticator, registrar = options.registrar,
@@ -187,6 +201,7 @@ if SERVER:
         )
     t.logger.quiet = True
     t.start()
+    '''
 elif test_case:
     p=Parameters()
     print "OK"
