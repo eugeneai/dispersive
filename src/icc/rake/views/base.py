@@ -449,7 +449,6 @@ class View(GObject.GObject):
         l.append((cid, self))
         to._sig_conn[sid]=l
         self._sig_conn[cid]=l
-        print "CConn:", cid, sid, self
         return cid
 
     def disconnect(self, cid):
@@ -457,11 +456,9 @@ class View(GObject.GObject):
         l.remove((cid, self))
         del self._sig_conn[cid]
         rc = GObject.GObject.disconnect(self, cid)
-        print "DConn:", cid, rc
         return rc
 
     def destroy(self):
-        print "Destroy:", self
         self.emit('destroy-view', self)
         main_frame = self.get_main_frame()
         if main_frame != None :
@@ -477,7 +474,6 @@ class View(GObject.GObject):
                 all_sids.extend(v)
         for sid, ob in all_sids:
             GObject.GObject.disconnect(ob, sid)
-            print "GDisconnect:", sid
         del self._sig_conn
 
 GObject.type_register(View)
@@ -659,7 +655,6 @@ class Application(View):
     #@+node:eugeneai.20110116171118.1480: *3* main
     def main(self):
         rc = Gtk.main()
-        #import pdb; pdb.set_trace()
         self.remove_active_view()
         return rc
 
