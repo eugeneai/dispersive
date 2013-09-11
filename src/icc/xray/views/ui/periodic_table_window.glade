@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <!-- interface-requires gtk+ 3.6 -->
   <object class="GtkActionGroup" id="ag_background">
     <child>
       <object class="GtkToggleAction" id="ac_background">
@@ -176,6 +176,7 @@
   </object>
   <object class="GtkWindow" id="pt_window">
     <property name="can_focus">False</property>
+    <property name="opacity">0.69999999999999996</property>
     <property name="margin_left">2</property>
     <property name="margin_right">2</property>
     <property name="margin_top">2</property>
@@ -186,7 +187,6 @@
     <property name="icon_name">format-justify-fill</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="skip_pager_hint">True</property>
-    <property name="opacity">0.69999999999999996</property>
     <child>
       <object class="GtkHBox" id="hbox">
         <property name="visible">True</property>
@@ -237,7 +237,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="has_tooltip">True</property>
-                            <property name="related_action">ac_clear</property>
                             <property name="is_important">True</property>
                             <property name="label" translatable="yes">Clear All</property>
                             <property name="use_underline">True</property>
@@ -249,10 +248,8 @@
                         </child>
                         <child>
                           <object class="GtkSeparatorToolItem" id="toolbutton1">
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="use_action_appearance">False</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -264,7 +261,6 @@
                             <property name="related_action">ac_auto</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_auto</property>
                             <property name="label" translatable="yes">toolbutton2</property>
                             <property name="use_underline">True</property>
                           </object>
@@ -278,7 +274,6 @@
                             <property name="related_action">ac_refine_scaling</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_refine_scaling</property>
                             <property name="is_important">True</property>
                             <property name="label" translatable="yes">toolbutton3</property>
                             <property name="use_underline">True</property>
@@ -293,7 +288,6 @@
                             <property name="related_action">ac_use_ext_scaling</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_use_ext_scaling</property>
                             <property name="label" translatable="yes">toolbutton4</property>
                             <property name="use_underline">True</property>
                           </object>
@@ -307,7 +301,6 @@
                             <property name="related_action">ac_clear_scaling</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_clear_scaling</property>
                             <property name="label" translatable="yes">toolbutton5</property>
                             <property name="use_underline">True</property>
                           </object>
@@ -318,10 +311,8 @@
                         </child>
                         <child>
                           <object class="GtkSeparatorToolItem" id="toolbutton6">
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="use_action_appearance">False</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -333,7 +324,6 @@
                             <property name="related_action">ac_peakes</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_peakes</property>
                             <property name="label" translatable="yes">toolbutton7</property>
                             <property name="use_underline">True</property>
                           </object>
@@ -347,7 +337,6 @@
                             <property name="related_action">ac_show_lines</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_show_lines</property>
                             <property name="label" translatable="yes">toolbutton8</property>
                             <property name="use_underline">True</property>
                           </object>
@@ -362,8 +351,6 @@
                             <property name="related_action">ac_k</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_k</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="is_important">True</property>
                             <property name="label" translatable="yes">K-</property>
                             <property name="use_underline">True</property>
@@ -379,8 +366,6 @@
                             <property name="related_action">ac_l</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_l</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="is_important">True</property>
                             <property name="label" translatable="yes">L-</property>
                             <property name="use_underline">True</property>
@@ -396,8 +381,6 @@
                             <property name="related_action">ac_m</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_m</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="is_important">True</property>
                             <property name="label" translatable="yes">M-</property>
                             <property name="use_underline">True</property>
@@ -412,7 +395,6 @@
                             <property name="related_action">ac_an_lines</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_an_lines</property>
                             <property name="label" translatable="yes">toolbutton12</property>
                             <property name="use_underline">True</property>
                           </object>
@@ -423,10 +405,8 @@
                         </child>
                         <child>
                           <object class="GtkSeparatorToolItem" id="toolbutton13">
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="use_action_appearance">False</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -438,7 +418,6 @@
                             <property name="related_action">ac_background</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_background</property>
                             <property name="label" translatable="yes">toolbutton14</property>
                             <property name="use_underline">True</property>
                           </object>
@@ -452,7 +431,6 @@
                             <property name="related_action">ac_channels</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_channels</property>
                             <property name="label" translatable="yes">toolbutton3</property>
                             <property name="use_underline">True</property>
                           </object>
@@ -466,7 +444,6 @@
                             <property name="related_action">ac_clean_channels</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="related_action">ac_clean_channels</property>
                             <property name="label" translatable="yes">toolbutton15</property>
                             <property name="use_underline">True</property>
                           </object>

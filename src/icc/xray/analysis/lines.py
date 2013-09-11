@@ -301,15 +301,6 @@ if 0 and __name__=='__main__':
 
     #ldb.update_rel('/home/eugeneai/Development/codes/dispersive/data/rel_lines.csv')
 
-    #asd
-    #lines=Lines(csv='/home/eugeneai/Development/codes/dispersive/data/EdxData1.csv', v=2)
-    """
-    if os.name!="nt":
-        lines=Lines(dbname='/home/eugeneai/Development/codes/dispersive/SPECPLUS/DATA/lines.sqlite3')
-    else:
-        lines=Lines(dbname='C:\\dispersive\\SPECPLUS\\DATA\\lines.sqlite3')
-    """
-
     lines=ldb
 
     L1={'A':0.8, "B":0.8/6.}
@@ -319,7 +310,7 @@ if 0 and __name__=='__main__':
     elements=['Mo']
 
     ls=list(lines.as_deltafun(order_by="keV", element=elements,
-        where="not l.name like 'M%' and keV<20.0"))
+        where="keV<20.0"))
     pp.pprint(ls)
     print len(ls)
     x=np.array([0, ls[-1].keV*1.03])

@@ -4,12 +4,18 @@
 #@@tabwidth -4
 #@+others
 #@+node:eugeneai.20110115235621.1289: ** distribute imports
-from setuptools import setup, find_packages
+from ez_setup import use_setuptools
+use_setuptools()
+from setuptools import setup, find_packages, Extension
+from distutils import log
 #@+node:eugeneai.20110115235621.1288: ** setup
+
+log.set_verbosity(100)
+
 setup(
-    zip_safe = True,
+    zip_safe = False,
     name="icc.xray",
-    version="0.0.5",
+    version="0.0.7",
     packages=find_packages("src"),
     package_dir={"": "src"},
     namespace_packages=["icc"],
@@ -17,22 +23,28 @@ setup(
     install_requires=[
                     #@+<< requirenments >>
                     #@+node:eugeneai.20110116000634.1304: *3* << requirenments >>
-                    "distribute",
+                    "setuptools",
+                    "numpy",
                     "rpyc",
                     "zope.component [zcml]",
                     "cfgparse",
-                    "numpy",
                     "scipy",
                     "lxml",
-                    "periodictable",
-                    #"matplotlib",
+                    #"periodictable",
+                    "matplotlib",
                     #"rsvg",
-                    # "numpy",
-                    # "PyGTK"
+                    #"PyGTK"
                     #@-<< requirenments >>
                       ],
     package_data = {
-        'icc.xray.views': ['ui/*.glade', "ui/icons/tango/16x16/*/*.png"],
+        'icc.rake': ['configure.zcml', 'application.ini'],
+        'icc.rake.models': ['configure.zcml'],
+        'icc.rake.views': ['*.zcml', 'ui/*.glade', "ui/icons/tango/*/*/*.png"],
+        'icc.rake.modules': ['configure.zcml'],
+
+        'icc.xray': ['configure.zcml', 'application.ini'],
+        'icc.xray.models': ['configure.zcml'],
+        'icc.xray.views': ['configure.zcml', 'ui/*.glade'],
         },
     author = "Evgeny Cherkashin",
     author_email = "eugene@irnok.net",

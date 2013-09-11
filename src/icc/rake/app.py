@@ -5,9 +5,7 @@
 #@+others
 #@+node:eugeneai.20110116171118.1424: ** app declarations
 
-import pygtk
-pygtk.require('2.0')
-import gtk
+from gi.repository import Gtk
 
 #Initializing the gtk's thread engine
 #gtk.threads_init()
@@ -21,6 +19,7 @@ import cfgparse as cfg
 from icc.rake.interfaces import IConfiguration
 from zope.interface import directlyProvides
 from icc.rake.views import get_user_config_option
+import icc.rake.views.interfaces
 import os.path
 
 #@+node:eugeneai.20110116171118.1425: ** main
@@ -52,8 +51,8 @@ def main(package=None):
     xmlconfig(resource_stream(package, "configure.zcml"))
     app=ZC.createObject("Application")
     view=c.add_option('view', default='application')
-    gsm.registerUtility(app)
-    gsm.registerUtility(app, name=view.get())
+    gsm.registerUtility(app, icc.rake.views.interfaces.IApplication)
+    gsm.registerUtility(app, icc.rake.views.interfaces.IApplication, name=view.get())
 
     #Open last project file if user has configured in their user config file.
     if get_user_config_option('load_last_project', default=0, type='int', keys='startup'):
@@ -61,9 +60,9 @@ def main(package=None):
         if lp_fn:
             app.emit("startup-open", lp_fn)
 
-    gtk.threads_enter()
+    #Gtk.threads_enter()
     rc = app.main()
-    gtk.threads_leave()
+    #Gtk.threads_leave()
 
     if user_conf: user_conf.write(user_config_file)
 

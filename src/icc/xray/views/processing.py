@@ -1,9 +1,6 @@
 import icc.xray.analysis.scaling as scaling
 import icc.xray.analysis.lines as lines
 import sys
-#import pygtk
-#pygtk.require('2.0')
-#import gtk, gobject, sys, os
 
 def line_db_conn():
     if os.name!="nt":
@@ -28,9 +25,8 @@ else:
     print "Client", sys.argv
     if not sys.argv[0].endswith('rpyc_classic.py'):
         SERVER = False
-        import pygtk
-        pygtk.require('2.0')
-        import gtk, gobject, sys, os
+        from gi.repository import Gtk
+        import sys, os
         server=rpyc.classic.connect(HOST, PORT)
         sprocessing = server.modules['icc.xray.views.processing']
         print "Client:", server, sprocessing
@@ -95,9 +91,9 @@ class Parameters(object):
         if hasattr(self, 'client_obj'):
             self.client_obj.set_fraction(frac)
         else:
-            gtk.threads_enter()
+            # Gtk.threads_enter()
             self.progressbar.set_fraction(frac)
-            gtk.threads_leave()
+            # Gtk.threads_leave()
 
     def server_methods(self, names):
         self._methods=names
@@ -157,13 +153,13 @@ class Parameters(object):
             ls = ldb.as_deltafun(order_by="keV", element=elements,
                     where="not l.name like 'M%' and keV<20.0")
             ls=list(ls)
-        gtk.threads_enter()
+        # Gtk.threads_enter()
         self.view.paint_model([self.model], draw=False)
         par.set_figure(self.view.ui.ax)
         if le:
             par.line_plot(ls, self.view.plot_options)
-        self.view.ui.canvas.draw()
-        gtk.threads_leave()
+        self.view.ui.canvas.draw_idle()
+        # Gtk.threads_leave()
 
     def refine(self):
         self.obj.refine()
@@ -205,4 +201,3 @@ if SERVER:
 elif test_case:
     p=Parameters()
     print "OK"
-
