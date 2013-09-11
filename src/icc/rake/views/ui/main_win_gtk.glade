@@ -237,7 +237,6 @@
                 <property name="label" translatable="yes">toolbutton</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-new</property>
-                <signal name="clicked" handler="on_file_new" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

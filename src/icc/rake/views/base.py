@@ -542,6 +542,7 @@ class Application(View):
     def on_file_new(self, widget=None, data=None):
         # print "Created"
         # check wether data has been saved. YYY
+        self.filename=None
         c=get_global_configuration()
         factory_name=c.add_option('factory_name', default='main_model')
         self.set_model(ZC.createObject(factory_name.get().strip()))
