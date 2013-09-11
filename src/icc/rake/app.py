@@ -62,6 +62,7 @@ def main(package=None):
 
     #Gtk.threads_enter()
     rc = app.main()
+    app.destroy()
     #Gtk.threads_leave()
 
     if user_conf: user_conf.write(user_config_file)

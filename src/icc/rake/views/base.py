@@ -86,9 +86,9 @@ def InputDialog(message, value='', field='Name:', secondary=''):
 def ConfirmationDialog(message, secondary=''):
     dialog = Gtk.MessageDialog(
             None,
-            Gtk.DialogType.MODAL | Gtk.DialogType.DESTROY_WITH_PARENT,
+            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
             Gtk.MessageType.QUESTION,
-            Gtk.ButtonsTypeOK.YES_NO,
+            Gtk.ButtonsType.YES_NO,
             None)
     dialog.set_markup(message)
     dialog.format_secondary_markup(secondary)
@@ -134,6 +134,8 @@ class View(GObject.GObject):
         self.set_model(model)
         self.init_resources()
         self.signals = {}
+        #import pdb; pdb.set_trace()
+        #GObject.GObject.connect(self, "get-widget", self.on_get_widget)
         self.connect("get-widget", self.on_get_widget)
         self.connect("destroy-view", self.do_destroy_view)
         self.connect("model-changed", self.do_model_changed)
@@ -246,14 +248,6 @@ class View(GObject.GObject):
         #self.emit('get-widget', widget_name, rv)
         #return rv.value
 
-    def destroy(self):
-        self.emit('destroy-view', self)
-        main_frame = self.get_main_frame()
-        if main_frame != None :
-            main_frame.destroy()
-        self.ui=None
-        # GObject.GObject.destroy(self)
-
     def remove_from(self, box):
         widget = self.get_main_frame()
         if widget != None:
@@ -265,7 +259,10 @@ class View(GObject.GObject):
     def get_main_frame(self):
         main_widget_name = self.__class__.main_widget_name
         if self.ui != None: # TODO: Strange bug one appeared.
-            return getattr(self.ui, main_widget_name)
+            if hasattr(self.ui, main_widget_name):
+                return getattr(self.ui, main_widget_name)
+            else:
+                return None
         else:
             return None
 
@@ -441,7 +438,47 @@ class View(GObject.GObject):
             filename+=def_file_ext
         return filename
 
+    def connect(self, sid, fun, *args):
+        to=fun.__self__
+        cid=GObject.GObject.connect(self, sid, fun, *args)
+        if not hasattr(to, '_sig_conn'):
+            to._sig_conn={}
+        if not hasattr(self, '_sig_conn'):
+            self._sig_conn={}
+        l=to._sig_conn.get(sid,[])
+        l.append((cid, self))
+        to._sig_conn[sid]=l
+        self._sig_conn[cid]=l
+        print "CConn:", cid, sid, self
+        return cid
 
+    def disconnect(self, cid):
+        l=self._sig_conn[cid]
+        l.remove((cid, self))
+        del self._sig_conn[cid]
+        rc = GObject.GObject.disconnect(self, cid)
+        print "DConn:", cid, rc
+        return rc
+
+    def destroy(self):
+        print "Destroy:", self
+        self.emit('destroy-view', self)
+        main_frame = self.get_main_frame()
+        if main_frame != None :
+            main_frame.destroy()
+        self.ui=None
+        # GObject.GObject.destroy(self)
+        if not hasattr(self, '_sig_conn'):
+            return
+        all_sids=[]
+        t1L=type(1L)
+        for k, v in self._sig_conn.iteritems():
+            if not type(k) == t1L:
+                all_sids.extend(v)
+        for sid, ob in all_sids:
+            GObject.GObject.disconnect(ob, sid)
+            print "GDisconnect:", sid
+        del self._sig_conn
 
 GObject.type_register(View)
 
@@ -524,6 +561,7 @@ class Application(View):
             #self.model.load_from(filename_)
             #self.active_view.update()
             if filename == None: # Loaded as result of user file dialog activity
+                print "Writing user file:", filename_
                 set_user_config_option('last_project_file_name', filename_, type='string', keys='startup')
             self.filename=filename_
         else:
@@ -548,6 +586,7 @@ class Application(View):
     def on_file_save(self, widget, data=None):
         if self.filename:
             filename_=self.filename
+            filename_=self.normalize_file_ext(filename_, self.FILE_PATTERNS)
         else:
             filename_=None
         if not filename_:
@@ -559,7 +598,9 @@ class Application(View):
         print "Saving the data of the project to file '%s'" % filename_
         success=self.emit("project-save", filename_)
         self.ui.ac_save.set_sensitive(not success)
-        self.filename=filename_
+        if success:
+            self.filename=filename_
+            set_user_config_option('last_project_file_name', filename_, type='string', keys='startup')
 
 
     #@+node:eugeneai.20110116171118.1475: *3* error_message
@@ -570,7 +611,7 @@ class Application(View):
 
         # create an error message dialog and display modally to the user
         dialog = Gtk.MessageDialog(None,
-                                   Gtk.DialogType.MODAL | Gtk.DialogType.DESTROY_WITH_PARENT,
+                                   Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                                    Gtk.MessageType.ERROR, Gtk.ButtonsTypeOK.OK, message)
 
         dialog.run()
@@ -616,7 +657,10 @@ class Application(View):
 
     #@+node:eugeneai.20110116171118.1480: *3* main
     def main(self):
-        return Gtk.main()
+        rc = Gtk.main()
+        #import pdb; pdb.set_trace()
+        self.remove_active_view()
+        return rc
 
     #@-others
     run = main
