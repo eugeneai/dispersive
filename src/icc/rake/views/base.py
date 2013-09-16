@@ -261,7 +261,16 @@ class View(GObject.GObject):
             box.remove(widget)
 
     def insert_into(self, box):
-        box.pack_start(self.get_main_frame(), True, True, 0)
+        #box.pack_start(self.get_main_frame(), True, True, 0)
+        frame=self.get_main_frame()
+        parent=frame.get_parent()
+        frame.reparent(box)
+        np=parent
+        while np:
+            parent=np
+            np=np.get_parent()
+        if parent:
+            parent.destroy()
 
     def get_main_frame(self):
         main_widget_name = self.__class__.main_widget_name
