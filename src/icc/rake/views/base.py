@@ -134,7 +134,6 @@ class View(GObject.GObject):
         self.set_model(model)
         self.init_resources()
         self.signals = {}
-        #import pdb; pdb.set_trace()
         #GObject.GObject.connect(self, "get-widget", self.on_get_widget)
         self.connect("get-widget", self.on_get_widget)
         self.connect("destroy-view", self.do_destroy_view)
@@ -207,8 +206,12 @@ class View(GObject.GObject):
             builder=self.ui._builder = Gtk.Builder()
             builder.add_from_string(resource_string(self.resource, template))
             builder.connect_signals(self)
-            if widget_names:
-                for name in widget_names:
+            w_n=[]
+            w_n.extend(widget_names)
+            if not self.main_widget_name in w_n and self.main_widget_name:
+                w_n.append(self.main_widget_name)
+            if w_n:
+                for name in w_n:
                     widget = builder.get_object(name)
                     if widget is None:
                         raise ValueError("widget '%s' not found in  template '%s'" % (name, template))
@@ -216,6 +219,8 @@ class View(GObject.GObject):
                         widget.set_name(name)
 
                     setattr(self.ui, name, widget)
+                    print "W:", self.__class__, name, widget
+
 
     def on_get_widget(self, widget, widget_name, ret_val):
         """ Responds on subwidget signal emission like
