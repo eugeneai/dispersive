@@ -214,7 +214,10 @@ class View(GObject.GObject):
                 for name in w_n:
                     widget = builder.get_object(name)
                     if widget is None:
-                        raise ValueError("widget '%s' not found in  template '%s'" % (name, template))
+                        if name != self.main_widget_name:
+                            # I.e. main frame could not be necessarily in the glade source.
+                            # So we tried to find it there.
+                            raise ValueError("widget '%s' not found in  template '%s'" % (name, template))
                     else:
                         widget.set_name(name)
 
