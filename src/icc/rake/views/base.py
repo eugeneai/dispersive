@@ -219,7 +219,6 @@ class View(GObject.GObject):
                         widget.set_name(name)
 
                     setattr(self.ui, name, widget)
-                    print "W:", self.__class__, name, widget
 
 
     def on_get_widget(self, widget, widget_name, ret_val):
@@ -496,10 +495,12 @@ class Application(View):
     widget_names = ['main_window', 'statusbar', 'toolbar', 'menubar',
              "main_vbox", 'ac_close', 'ac_save',
                     "menu_file", "menu_edit", "menu_view", "menu_help"]
+    main_widget_name="main_window"
 
     #@+others
     #@+node:eugeneai.20110116171118.1467: *3* __init__
     def __init__(self, model = None, parent=None):
+
         View.__init__(self, model=model, parent=parent)
         self.ui.window=self.ui.main_window
         self.ui.window.show_all()
