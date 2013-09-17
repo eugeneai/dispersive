@@ -347,10 +347,10 @@ class View(GObject.GObject):
         mi.hide()
         mb.remove(mi)
 
-    def add_actions_to_toolbar(self, a_group, separator=True, important=True):
+    def add_actions_to_toolbar(self, a_group, separator=True, important_only=True):
         """Adds actions of the action group a_group to toolbar.
         If separator is True, a SeparatorToolItem wisget also added before the tool buttons.
-        If important is True, then noimportand actions will not be added to the toolbar."""
+        If important_only is True, then noimportand actions will not be added to the toolbar."""
 
         tb = self.locate_widget('toolbar')
         if tb == None:
@@ -369,7 +369,7 @@ class View(GObject.GObject):
             separator.show()
 
         for a in a_group.list_actions():
-            if not important or a.get_is_important():
+            if not important_only or a.get_is_important():
                 ti = a.create_tool_item()
                 tb.insert(ti, -1)
                 widgets.append(ti)
