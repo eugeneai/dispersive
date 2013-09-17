@@ -137,7 +137,7 @@ class View(GObject.GObject):
         #GObject.GObject.connect(self, "get-widget", self.on_get_widget)
         self.connect("get-widget", self.on_get_widget)
         self.connect("destroy-view", self.do_destroy_view)
-        self.connect("model-changed", self.do_model_changed)
+        self.connect("model-changed", self.on_model_changed)
 
     #@+node:eugeneai.20110116171118.1460: *3* init_resources
     def init_resources(self):
@@ -168,15 +168,11 @@ class View(GObject.GObject):
             # some update needed???
             # emit signal?
 
-    def on_model_changed(self, model):
+    def on_model_changed(self, view, model):
         pass
-
-    def do_model_changed(self, widget, model):
-        self.on_model_changed(model)
 
     def invalidate_model(self, model):
         self.emit('model-changed', model)
-        # self.on_model_changed(model)
 
     #@+node:eugeneai.20110116171118.1464: *3* set_parent
     def set_parent(self, view):
@@ -530,7 +526,6 @@ class Application(View):
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split('|')]
 
         self.connect("startup-open", self.on_startup_open)
-        self.connect("model-changed", self.on_model_changed_)
 
                 #put event to load project.
                 #self.open_project(lo_f)
