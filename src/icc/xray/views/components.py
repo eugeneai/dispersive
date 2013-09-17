@@ -305,7 +305,6 @@ class PlottingView(View):
 
         self.ui.cid = canvas.mpl_connect('button_press_event', self.on_click)
         # self.ui.check_buttons = widgets.CheckButtons(ax, ['1']*20, [True]*20)
-        self.invalidate_model(model)
 
     def set_axis_labels(self, x='', y=''):
         self.axis=rakeviews.Ui()

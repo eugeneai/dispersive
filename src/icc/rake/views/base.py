@@ -163,17 +163,20 @@ class View(GObject.GObject):
     def set_model(self, model):
         if self.model != model:
             self.model=model
+            if hasattr(self, "active_vew") and self.active_view:
+                self.invalidate_model(model)
             # some update needed???
             # emit signal?
 
     def on_model_changed(self, model):
         pass
 
-    def do_model_changed(self, model):
+    def do_model_changed(self, widget, model):
         self.on_model_changed(model)
 
     def invalidate_model(self, model):
-        self.on_model_changed(model)
+        self.emit('model-changed', model)
+        # self.on_model_changed(model)
 
     #@+node:eugeneai.20110116171118.1464: *3* set_parent
     def set_parent(self, view):
@@ -659,6 +662,7 @@ class Application(View):
         self.active_view.insert_into(self.ui.main_vbox)
         view.connect('model-changed', self.on_model_changed_)
         self.ui.ac_close.set_sensitive(True)
+        view.invalidate_model(view.model)
         view.ui.main_frame.show_all()
 
     #@+node:eugeneai.20110116171118.1479: *3* insert_project_view
