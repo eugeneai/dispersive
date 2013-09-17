@@ -313,7 +313,7 @@ class PlottingView(View):
         self.invalidate_model(self.model)
         #self.ui.canvas.draw_idel()
 
-    def on_model_changed(self, model):
+    def on_model_changed(self, view, model):
         self.paint_model(model, conserve=False)
 
     def set_plot_options(self, options, draw=True):
@@ -868,7 +868,6 @@ class ProjectView(View):
             pm=self.ui.project_tree_model
             pm.remove(pm.get_iter(path))
             self.set_model(self.model)
-            self.emit('model-changed', self.model)
             #self.active_view.canvas.draw_idle()
             # print "removed"
 
@@ -928,7 +927,6 @@ class ProjectView(View):
     def load_spectra(self, file_name):
         self.model.add_spectral_data_source(file_name)
         self.set_model(self.model)
-        self.emit('model-changed', self.model)
         #self.active_view.canvas.draw_idel()
 
     #@-others
