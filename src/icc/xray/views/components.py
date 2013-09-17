@@ -327,7 +327,7 @@ class PlottingView(View):
         if conserve:
             lims, pos= self._scan_view(fig)
         fig.clear()
-        self.ui.ax = fig.add_subplot(111)
+
         #self.ui.ax2=self.ui.ax.twinx()
         #self.ui.ay2=self.ui.ax.twiny()
         ax = self.ui.ax
