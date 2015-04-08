@@ -1,7 +1,10 @@
 <XRF_Project>
   <files>
-    <file name="Compton-peak 23.03.12.rtx" filename="/home/eugeneai/Development/codes/dispersive/data/Coumpton/Compton-peak 23.03.12.rtx">
-      <scale zero="0" scale="1"/>
+    <file filename="/home/eugeneai/Development/codes/dispersive/data/Coumpton/Compton-peak 23.03.12.rtx" name="Compton-peak 23.03.12.rtx">
+      <scale scale="1" zero="0"/>
+    </file>
+    <file filename="/home/eugeneai/Development/codes/dispersive/data/GA.spx" name="GA.spx">
+      <scale scale="1" zero="0"/>
     </file>
   </files>
 </XRF_Project>
