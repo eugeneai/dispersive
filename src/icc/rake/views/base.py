@@ -137,7 +137,7 @@ class View(GObject.GObject):
         #GObject.GObject.connect(self, "get-widget", self.on_get_widget)
         self.connect("get-widget", self.on_get_widget)
         self.connect("destroy-view", self.do_destroy_view)
-        self.connect("model-changed", self.do_model_changed)
+        self.connect("model-changed", self.on_model_changed)
 
     #@+node:eugeneai.20110116171118.1460: *3* init_resources
     def init_resources(self):
@@ -163,17 +163,16 @@ class View(GObject.GObject):
     def set_model(self, model):
         if self.model != model:
             self.model=model
+            if hasattr(self, "active_vew") and self.active_view:
+                self.invalidate_model(model)
             # some update needed???
             # emit signal?
 
-    def on_model_changed(self, model):
+    def on_model_changed(self, view, model):
         pass
 
-    def do_model_changed(self, model):
-        self.on_model_changed(model)
-
     def invalidate_model(self, model):
-        self.on_model_changed(model)
+        self.emit('model-changed', model)
 
     #@+node:eugeneai.20110116171118.1464: *3* set_parent
     def set_parent(self, view):
@@ -261,7 +260,16 @@ class View(GObject.GObject):
             box.remove(widget)
 
     def insert_into(self, box):
-        box.pack_start(self.get_main_frame(), True, True, 0)
+        #box.pack_start(self.get_main_frame(), True, True, 0)
+        frame=self.get_main_frame()
+        parent=frame.get_parent()
+        frame.reparent(box)
+        np=parent
+        while np:
+            parent=np
+            np=np.get_parent()
+        if parent:
+            parent.destroy()
 
     def get_main_frame(self):
         main_widget_name = self.__class__.main_widget_name
@@ -339,10 +347,10 @@ class View(GObject.GObject):
         mi.hide()
         mb.remove(mi)
 
-    def add_actions_to_toolbar(self, a_group, separator=True, important=True):
+    def add_actions_to_toolbar(self, a_group, separator=True, important_only=True):
         """Adds actions of the action group a_group to toolbar.
         If separator is True, a SeparatorToolItem wisget also added before the tool buttons.
-        If important is True, then noimportand actions will not be added to the toolbar."""
+        If important_only is True, then noimportand actions will not be added to the toolbar."""
 
         tb = self.locate_widget('toolbar')
         if tb == None:
@@ -361,7 +369,7 @@ class View(GObject.GObject):
             separator.show()
 
         for a in a_group.list_actions():
-            if not important or a.get_is_important():
+            if not important_only or a.get_is_important():
                 ti = a.create_tool_item()
                 tb.insert(ti, -1)
                 widgets.append(ti)
@@ -518,7 +526,6 @@ class Application(View):
         self.FILE_PATTERNS=[e.split(':') for e in opt.get().split('|')]
 
         self.connect("startup-open", self.on_startup_open)
-        self.connect("model-changed", self.on_model_changed_)
 
                 #put event to load project.
                 #self.open_project(lo_f)
@@ -650,6 +657,7 @@ class Application(View):
         self.active_view.insert_into(self.ui.main_vbox)
         view.connect('model-changed', self.on_model_changed_)
         self.ui.ac_close.set_sensitive(True)
+        view.invalidate_model(view.model)
         view.ui.main_frame.show_all()
 
     #@+node:eugeneai.20110116171118.1479: *3* insert_project_view

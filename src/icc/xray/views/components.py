@@ -305,7 +305,6 @@ class PlottingView(View):
 
         self.ui.cid = canvas.mpl_connect('button_press_event', self.on_click)
         # self.ui.check_buttons = widgets.CheckButtons(ax, ['1']*20, [True]*20)
-        self.invalidate_model(model)
 
     def set_axis_labels(self, x='', y=''):
         self.axis=rakeviews.Ui()
@@ -314,7 +313,7 @@ class PlottingView(View):
         self.invalidate_model(self.model)
         #self.ui.canvas.draw_idel()
 
-    def on_model_changed(self, model):
+    def on_model_changed(self, view, model):
         self.paint_model(model, conserve=False)
 
     def set_plot_options(self, options, draw=True):
@@ -328,7 +327,7 @@ class PlottingView(View):
         if conserve:
             lims, pos= self._scan_view(fig)
         fig.clear()
-        self.ui.ax = fig.add_subplot(111)
+
         #self.ui.ax2=self.ui.ax.twinx()
         #self.ui.ay2=self.ui.ax.twiny()
         ax = self.ui.ax
@@ -869,7 +868,6 @@ class ProjectView(View):
             pm=self.ui.project_tree_model
             pm.remove(pm.get_iter(path))
             self.set_model(self.model)
-            self.emit('model-changed', self.model)
             #self.active_view.canvas.draw_idle()
             # print "removed"
 
@@ -929,7 +927,6 @@ class ProjectView(View):
     def load_spectra(self, file_name):
         self.model.add_spectral_data_source(file_name)
         self.set_model(self.model)
-        self.emit('model-changed', self.model)
         #self.active_view.canvas.draw_idel()
 
     #@-others
