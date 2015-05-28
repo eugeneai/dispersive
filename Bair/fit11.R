@@ -243,12 +243,12 @@ png(file = "approx_R&C.png",
   res       = 1200,
   pointsize = 4)
 plot(spec,type='l',col='green') # Spectrum
-lines(spec1,type='l')           #Wo Mo (42)
+lines(spec1,type='l')           #Wo Mo (42) ?
 pikes=data.frame(X0=c(), A=c(), sigma=c())
 aaa(spec1)
 pikes=pikes[with(pikes, order(X0)),]
+print ("Pikes in the 3000:etc localities")
 print(pikes)
-
 
 copy_pikes2=pikes
 spec=ALL_CHANNELS[3000:4096]
@@ -265,11 +265,12 @@ A_prev=spec1[X0_pike]
 pikes=data.frame(X0=c(), A=c(), sigma=c())
 aaa(spec1)
 pikes=pikes[with(pikes, order(X0)),]
+print("Pikes in the Coumpton localitiy:")
 print(pikes)
 dev.off()
 
-result=funcX(c(pikes$X0[nrow(pikes)],pikes$A[nrow(pikes)],pikes$sigma[nrow(pikes)]),X1)+
-   funcX(c(copy_pikes2$X0[nrow(copy_pikes2)],copy_pikes2$A[nrow(copy_pikes2)],copy_pikes2$sigma[nrow(copy_pikes2)]),X1)
+result=funcX(c(pikes$X0[nrow(pikes)],pikes$A[nrow(pikes)],pikes$sigma[nrow(pikes)]),X1)+ # Releigh
+   funcX(c(copy_pikes2$X0[nrow(copy_pikes2)],copy_pikes2$A[nrow(copy_pikes2)],copy_pikes2$sigma[nrow(copy_pikes2)]),X1) # Cou
 png(file = "result_R&C.png",
   width     = 3.25,
   height    = 3.25,
@@ -279,3 +280,18 @@ png(file = "result_R&C.png",
 plot(spec,type='l',col='blue')
 lines(result,type='l',col='red')
 dev.off()
+
+result=result + funcX(c(copy_pikes2$X0[1],copy_pikes2$A[1],copy_pikes2$sigma[1]),X1)
+
+png(file = "result_R&C&Zr.png",
+  width     = 3.25,
+  height    = 3.25,
+  units     = "in",
+  res       = 1200,
+  pointsize = 4)
+plot(spec,type='l',col='blue')
+lines(result,type='l',col='red')
+dev.off()
+
+
+
