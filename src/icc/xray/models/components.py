@@ -9,29 +9,31 @@
 """
 from lxml import etree
 import subprocess as spp
-import os, os.path
-from zope.interface import implements
+import os
+import os.path
+from zope.interface import implementer
 from icc.xray.models.interfaces import *
-import cStringIO as StringIO
+import io as StringIO
 from collections import OrderedDict
 
 DEBUG = True
 
-if os.name=='nt':
-    R_CMD="C:\\Program Files\\R\\R-2.10.1\\bin\\R.exe"
+if os.name == 'nt':
+    R_CMD = "C:\\Program Files\\R\\R-2.10.1\\bin\\R.exe"
 else:
-    R_CMD="R"
+    R_CMD = "R"
 
 if DEBUG:
-    TMP_DIR=os.getcwd()
+    TMP_DIR = os.getcwd()
 else:
-    if os.name=='nt':
-        TMP_DIR="C:\\WINDOWS\\TEMP"
+    if os.name == 'nt':
+        TMP_DIR = "C:\\WINDOWS\\TEMP"
     else:
-        TMP_DIR="/tmp"
+        TMP_DIR = "/tmp"
 
 #@+node:eugeneai.20110116171118.1338: ** class Scale
-#print TMP_DIR
+# print TMP_DIR
+
 
 class Scale(object):
     """This holds scale calibration constants for X axis (Energies):
@@ -40,36 +42,39 @@ class Scale(object):
     """
     #@+others
     #@+node:eugeneai.20110116171118.1339: *3* __init__
+
     def __init__(self, zero=0, scale=1):
         """Constructs the Scale Calibration
         """
         self._scale = scale
-        self._zero  = zero
+        self._zero = zero
 
     #@+node:eugeneai.20110116171118.1340: *3* to_keV
     def to_keV(self, x_array):
         """Given array of channels, e.g., numpy.array([0,...,1024]),
         convert in to enargies.
         """
-        return (x_array-self._zero) * self._scale
+        return (x_array - self._zero) * self._scale
 
-    to_kev=to_keV
+    to_kev = to_keV
 
     #@+node:eugeneai.20110116171118.1341: *3* to_channel
     def to_channel(self, kev_array):
         """Given array of keV values, return their channel
         numbers.
         """
-        return (kev_array/self.scale)+self._zero
+        return (kev_array / self.scale) + self._zero
 
     #@-others
 #@+node:eugeneai.20110116171118.1342: ** class Spectra
-scale_none=Scale()
+scale_none = Scale()
 
+
+@implementer(ISpectra)
 class Spectra(object):
-    implements(ISpectra)
     #@+others
     #@+node:eugeneai.20110116171118.1343: *3* __init__
+
     def __init__(self, spectra=None, name=None):
         """Paramter spectra is a list the following structure:
         (channel_array, showing notation).
@@ -78,33 +83,33 @@ class Spectra(object):
             spectra = []
         self.spectra = spectra
         self.scale = scale_none
-        self.name=name
+        self.name = name
 
     #@+node:eugeneai.20110116171118.1344: *3* set_scale
     def set_scale(self, scale):
-        self.scale=scale
+        self.scale = scale
 
     #@+node:eugeneai.20110116171118.1345: *3* r_vect
     def r_vect(self, spectrum, name):
         return '%s = c(%s)\n' % (name, ','.join(map(str, spectrum)))
 
     #@+node:eugeneai.20110116171118.1346: *3* r_plot
-    def r_plot(self, func = '',type_='l', spectrum=None):
+    def r_plot(self, func='', type_='l', spectrum=None):
         if self.spectra is None:
             self.get_spectra()
         tmp_file = self._get_tmp('R')
-        o=open(tmp_file,'w')
+        o = open(tmp_file, 'w')
         o.write('# Automatically generated, do not edit\n\n')
         o.write(PLOT_PREAMBLE)
         if spectrum is not None:
-            spectra=[self.spectra[spectrum]]
+            spectra = [self.spectra[spectrum]]
         else:
-            spectra=self.spectra
-        o.write('cols=topo.colors(%i)\n' % (len(spectra)+1))
+            spectra = self.spectra
+        o.write('cols=topo.colors(%i)\n' % (len(spectra) + 1))
         i = 0
         names = []
         for sp in spectra:
-            i+=1
+            i += 1
             name = 'spec%i' % i
             ssp = self.r_vect(sp, name)
             o.write(ssp)
@@ -116,55 +121,61 @@ class Spectra(object):
         for name in names:
             Y = '%s(%s)' % (func, name)
             if first:
-                o.write("plot(x=scale_X(X), y=%s, type='%s', col=cols[%i])\n" % (Y, type_, ci))
+                o.write(
+                    "plot(x=scale_X(X), y=%s, type='%s', col=cols[%i])\n" % (Y, type_, ci))
                 first = False
             else:
-                o.write("lines(x=scale_X(X), y=%s, col=cols[%i], type='%s')\n" % (Y, ci, type_))
-            ci+=1
+                o.write(
+                    "lines(x=scale_X(X), y=%s, col=cols[%i], type='%s')\n" % (Y, ci, type_))
+            ci += 1
         o.write('} # plot.spectra\n\n')
         o.write(PLOT_POSTAMBLE)
         o.close()
-        p=spp.Popen([R_CMD, '--no-save'], stdin=spp.PIPE, stdout=spp.PIPE, stderr=None)
-        out,err = p.communicate(PLOT_CMD % tmp_file)
-        print out,err
-
+        p = spp.Popen([R_CMD, '--no-save'], stdin=spp.PIPE,
+                      stdout=spp.PIPE, stderr=None)
+        out, err = p.communicate(PLOT_CMD % tmp_file)
+        print(out, err)
 
     #@+node:eugeneai.20110116171118.1347: *3* _get_tmp
     def _get_tmp(self, ext):
-        return os.path.join(TMP_DIR,'temp.'+ext)
-
+        return os.path.join(TMP_DIR, 'temp.' + ext)
 
     #@-others
+
 
 class Stub:
     pass
 
+
 class Spectrum(object):
+
     def __init__(self, channels=None, name=None, elements=None):
-        self.channels=channels
-        self.name=name
+        self.channels = channels
+        self.name = name
         if elements == None:
-            elements=OrderedDict()
-        self.elements=elements
-        self.ptelements=[]
-        self.parameters=None
-        self.extparams=Stub()
+            elements = OrderedDict()
+        self.elements = elements
+        self.ptelements = []
+        self.parameters = None
+        self.extparams = Stub()
+
 
 class SpectralData(object):
+
     def __init__(self, name, data=[], filename=None, scale=None):
-        self.name=name
-        self.data=data
-        self.filename=filename
+        self.name = name
+        self.data = data
+        self.filename = filename
 
         if scale is None:
             self.set_scale(scale_none)
         else:
             self.set_scale(scale)
 
-        self.xml=None
+        self.xml = None
 
     def load_xml(self):
-        if type(self.data) in [type(''), type(u'')]:
+        if type(self.data) in [type(''), type('')]:
             return self.load(StringIO.StringIO(self.data))
         else:
             return self.load(open(self.filename))
@@ -179,7 +190,7 @@ class SpectralData(object):
         return self.xml
 
     def set_scale(self, scale):
-        self.scale=scale
+        self.scale = scale
 
     def get_meta(self):
         try:
@@ -190,8 +201,8 @@ class SpectralData(object):
             comment = self.get_xml().xpath("//Comment/text()")[0]
         except IndexError:
             comment = ''
-        self.creator=creator
-        self.comment=comment
+        self.creator = creator
+        self.comment = comment
         return self
 
     def __call__(self):
@@ -202,85 +213,92 @@ class SpectralData(object):
         except IndexError:
             o_root = xml
         spectra = o_root.xpath("//ClassInstance[@Type='TRTSpectrum']")
-        nsp=[]
+        nsp = []
         for s in spectra:
-            sname=s.get('Name')
-            channels=eval("["+s.xpath("Channels/text()")[0]+"]")
-            els=OrderedDict()
+            sname = s.get('Name')
+            channels = eval("[" + s.xpath("Channels/text()")[0] + "]")
+            els = OrderedDict()
             for result in s.xpath("ClassInstance[@Type='TRTResult']/Result"):
-                rc=Stub()
+                rc = Stub()
                 for a in result.iter():
-                    setattr(rc, a.tag, a.text.replace(',','.'))
-                els[rc.Atom]=rc
-            sp=Spectrum(channels,sname,elements=els)
-            b=float(s.xpath("//CalibAbs/text()")[0].replace(',','.'))
-            k=float(s.xpath("//CalibLin/text()")[0].replace(',','.'))
-            sp.extparams.scale=Stub()
-            sp.extparams.scale.b=b
-            sp.extparams.scale.k=k
+                    setattr(rc, a.tag, a.text.replace(',', '.'))
+                els[rc.Atom] = rc
+            sp = Spectrum(channels, sname, elements=els)
+            b = float(s.xpath("//CalibAbs/text()")[0].replace(',', '.'))
+            k = float(s.xpath("//CalibLin/text()")[0].replace(',', '.'))
+            sp.extparams.scale = Stub()
+            sp.extparams.scale.b = b
+            sp.extparams.scale.k = k
             nsp.append(sp)
-        self.data=nsp
+        self.data = nsp
         return self
 
 #@+node:eugeneai.20110116171118.1348: ** class Project
+
+
+@implementer(IProject)
 class Project(object):
-    implements(IProject)
     """Project demotes a set of files with spectral data,
         the files are processed the same way.
     """
     #@+others
     #@+node:eugeneai.20110116171118.1349: *3* __init__
-    def __init__(self, spectral_data=OrderedDict(), scale=None): # scale here is not of use!! YYY
-        self.spectral_data=OrderedDict(spectral_data)
+
+    def __init__(self, spectral_data=OrderedDict(), scale=None):  # scale here is not of use!! YYY
+        self.spectral_data = OrderedDict(spectral_data)
 
     def set_scale(self, scale):
         """Set this scale to all the files
         """
-        for sd in self.spectral_data.items():
+        for sd in list(self.spectral_data.items()):
             sd.set_scale(scale)
 
     def add_spectral_data_source(self, filename, name=None):
-        if name==None:
-            name=os.path.split(filename)[-1] # Just filename and extension
-        sd=SpectralData(filename=filename,
-            name=name)
-        self.spectral_data[filename]=sd
+        if name == None:
+            name = os.path.split(filename)[-1]  # Just filename and extension
+        sd = SpectralData(filename=filename,
+                          name=name)
+        self.spectral_data[filename] = sd
         return sd
 
     def save(self, filename):
-        project=etree.Element("XRF_Project")
-        files=etree.SubElement(project, "files")
-        for name,sd in self.spectral_data.iteritems():
-            file=etree.SubElement(files, "file", filename=name, name=sd.name)
-            scale=etree.SubElement(file, "scale", zero=str(sd.scale._zero), scale=str(sd.scale._scale))
-        o=open(filename,'w')
+        project = etree.Element("XRF_Project")
+        files = etree.SubElement(project, "files")
+        for name, sd in self.spectral_data.items():
+            file = etree.SubElement(files, "file", filename=name, name=sd.name)
+            scale = etree.SubElement(file, "scale", zero=str(
+                sd.scale._zero), scale=str(sd.scale._scale))
+        o = open(filename, 'w')
         o.write(etree.tostring(project, pretty_print=True))
         o.close()
 
     def load(self, filename):
-        self.spectral_data=OrderedDict()
-        i=open(filename)
-        project=etree.parse(i)
-        files=project.xpath("/XRF_Project/files/file")
+        self.spectral_data = OrderedDict()
+        i = open(filename)
+        project = etree.parse(i)
+        files = project.xpath("/XRF_Project/files/file")
         for file in files:
-            scale=file.xpath("//scale")[0]
-            z=int(scale.get('zero'))
-            s=int(scale.get('scale'))
-            fname=file.get('filename')
-            name=file.get('name')
-            sc=Scale(zero=z, scale=s)
+            scale = file.xpath("//scale")[0]
+            z = int(scale.get('zero'))
+            s = int(scale.get('scale'))
+            fname = file.get('filename')
+            name = file.get('name')
+            sc = Scale(zero=z, scale=s)
             # Check the coincidence with scale_none
-            sp=self.add_spectral_data_source(name=name, filename=fname)
+            sp = self.add_spectral_data_source(name=name, filename=fname)
             sp.set_scale(sc)
 
         i.close()
 
     #@-others
 #@+node:eugeneai.20110116171118.1356: ** class SpectraOfProject
+
+
+@implementer(ISpectra)
 class SpectraOfProject(Spectra):
-    implements(ISpectra)
     #@+others
     #@+node:eugeneai.20110116171118.1357: *3* __init__
+
     def __init__(self, project):
         self.set_project(project)
 
@@ -292,8 +310,8 @@ class SpectraOfProject(Spectra):
         return project
 
     #@+node:eugeneai.20110116171118.1359: *3* get_spectra
-    def get_spectra(self, project = None):
-        self.project.spectra=[]
+    def get_spectra(self, project=None):
+        self.project.spectra = []
         def _c(x):
             return int(x)
 
@@ -310,33 +328,36 @@ class SpectraOfProject(Spectra):
         except ValueError:
             return []
         spectra = xml.xpath('//Channels/text()')
-        spectra = [map(_c, sp.split(',')) for sp in spectra]
+        spectra = [list(map(_c, sp.split(','))) for sp in spectra]
         names = xml.xpath('//Channels/../@Name')
-        spectra = [{"spectrum": sp, "label":nm} for sp, nm in zip(spectra, names)]
+        spectra = [{"spectrum": sp, "label": nm}
+                   for sp, nm in zip(spectra, names)]
         #self.spectra = spectra
-        self.project.spectra=spectra
+        self.project.spectra = spectra
         return spectra
 
     spectra = property(get_spectra)
 
     #@-others
 
+
 class AnalysisTask(object):
+
     def __init__(self, elset=[]):
-        self.elset=set(elset)
+        self.elset = set(elset)
 
 
 #@+node:eugeneai.20110116171118.1360: ** test0
-PLOT_CMD='''
+PLOT_CMD = '''
 source('%s')
 quit(save='no')
 '''
 
-PLOT_PREAMBLE='''source('global.R')
+PLOT_PREAMBLE = '''source('global.R')
 cols=colors()
 '''
 
-PLOT_POSTAMBLE="""
+PLOT_POSTAMBLE = """
 G = gauss(X, l5_9, 2000000)
 postscript(file='plot.eps')
 plot.spectra()
@@ -348,15 +369,15 @@ dev.off()
 def test0(filename, spectrum=None):
     ss = Spectra(filename)
     ss.r_plot(func='', spectrum=spectrum)
-    print 'Spectra length:', len(ss.spectra[0])
-    print 'Spectra count:', len(ss.spectra)
+    print('Spectra length:', len(ss.spectra[0]))
+    print('Spectra count:', len(ss.spectra))
 
 #@-others
-if __name__=='__main__':
+if __name__ == '__main__':
     import sys
-    print "ok"
-    if len(sys.argv)==1:
-        print 'Test run'
+    print("ok")
+    if len(sys.argv) == 1:
+        print('Test run')
         test0('test.rtx')
     else:
         test0(sys.argv[1], spectrum=0)

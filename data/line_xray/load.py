@@ -2,10 +2,10 @@
 # encoding: utf-8
 import pprint, csv, os, os.path
 import types
-from xray import *
+from .xray import *
 
-els=[u"Na",u"Mg",u"Al",u"Si",u"P",u"K",u"Ca",u"Ti",
-     u"Mn",u"Fe",u"S",u"Ba",u"Sr",u"Zr",u"Cl"]
+els=["Na","Mg","Al","Si","P","K","Ca","Ti",
+     "Mn","Fe","S","Ba","Sr","Zr","Cl"]
 defMdl={
     "Si":"c0+c1*Si+c2*Fe", 
     "Fe":"c0+c1*Fe+c2*Si",
@@ -113,7 +113,7 @@ def load_ex(file):
     first=first.lstrip()
     if first[0]==":":
         global curr_name, cprobes, probes
-        probes[unicode(curr_name, 'utf8')]=cprobes
+        probes[str(curr_name, 'utf8')]=cprobes
         cprobes=[]
         first=first.split(" ")
         curr_name=" ".join(first[1:])
@@ -143,37 +143,37 @@ def load_ex(file):
                 pass
     except IndexError:
         pass
-    return (unicode(name, 'utf8'), c)    
+    return (str(name, 'utf8'), c)    
 
     
 def print_ints(ints):
     for iname, idata in ints:
 
-        print "\t", iname.encode('utf8')
+        print("\t", iname.encode('utf8'))
         print_els(idata)
             
 def print_els(data):
     n=0
     for el in els:
         if n==0:
-            print "\t",
+            print("\t", end=' ')
         val=data.get(el, None)
         if val is not None:
-            print "%2s:%07.3f" % (el, val),
+            print("%2s:%07.3f" % (el, val), end=' ')
             n+=1
             if n==8:
-                print "\n",
+                print("\n", end=' ')
                 n=0
     if n!=0:
-        print
+        print()
 
 def print_parties(self, parties):
-    for (name, ints) in parties.iteritems():
-        print "Партия:%s" % name
+    for (name, ints) in parties.items():
+        print("Партия:%s" % name)
         print_ints(ints)
 
 def _as_utf8(s):
-    if type(s)==types.UnicodeType:
+    if type(s)==str:
         return s.encode('utf8')
     return s
 
@@ -182,12 +182,12 @@ def csv_export_party(party, csvw):
     header=["name"]+els
     csvw.writerow(header)
     if type(party)==dict:
-        party=party.items()
+        party=list(party.items())
     for probe, elems in party:
         row=[probe.replace(" ","_")]
         for el in els:
             row.append(elems[el])
-        row=map(_as_utf8, row)
+        row=list(map(_as_utf8, row))
         csvw.writerow(row)
 
 def csv_export(parties, prefix):
@@ -196,9 +196,9 @@ def csv_export(parties, prefix):
     :param:prefix is a file name prefix added to each group
     """
 
-    for group, probes in parties.iteritems():
+    for group, probes in parties.items():
         file_name=prefix+group.replace(" ","_")+".csv"
-        print file_name    
+        print(file_name)    
         csvw=csv.writer(open(file_name, 'w'), delimiter=' ', quoting=csv.QUOTE_NONNUMERIC)
         csv_export_party(probes, csvw)
         del csvw
@@ -220,7 +220,7 @@ def main():
     
     # experiment
 
-    calibr=eexp[u"SRS"]
+    calibr=eexp["SRS"]
     e=ExperimentData(calibr, ss)
     mdl=defMdlR
     c=Calibration(e, mdl)
@@ -228,18 +228,18 @@ def main():
     c.calculate()
     test_ss=c.concentrations(calibr)
 
-    print "Аттестованные содержания"
-    names=ss.keys()
+    print("Аттестованные содержания")
+    names=list(ss.keys())
     names.sort()
     for name in names:
         els=ss[name]
-        print name
+        print(name)
         print_els(els)
-    print "Калибровка (пересчитанная)"
+    print("Калибровка (пересчитанная)")
     print_ints(test_ss)
-    for (name, ints) in eexp.iteritems():
-        if name!=u"unknown":
-            print (u"Партия:%s" % name).encode('utf8')
+    for (name, ints) in eexp.items():
+        if name!="unknown":
+            print(("Партия:%s" % name).encode('utf8'))
             print_ints(c.concentrations(ints))
 
 if __name__=="__main__":

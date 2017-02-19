@@ -4,7 +4,7 @@ import scipy.special as fn
 #import pylab as p
 import math
 from collections import OrderedDict, namedtuple
-import lines
+from . import lines
 import pprint
 import scipy.interpolate as ip
 import scipy.signal as sig
@@ -163,9 +163,9 @@ class Parameters(object):
 
     def calc_scale(self, plot=False, force=False, pb=None):
         if self.scale.zero_e==None:
-            raise ValueError, "energy for Zero pike is not set."
+            raise ValueError("energy for Zero pike is not set.")
         if len(self.scale.lines)!=1:
-            raise ValueError, "supply at exactly one element to make scaling."
+            raise ValueError("supply at exactly one element to make scaling.")
         if self.scale.done and not force:
             return self.scale
 
@@ -239,7 +239,7 @@ class Parameters(object):
         points=[zero, tube]
         ws=[]
         S_fwhm=1.0
-        print "POINTS", points
+        print("POINTS", points)
         fwhm_guess=None
         for x0 in points:
             Xopt=self.peake_cache.get(x0, None)
@@ -272,8 +272,8 @@ class Parameters(object):
                         mask=mask, xtol=xtol
                         )
                     if pb: pb()
-                except FittingWarning, w:
-                    print "Fit Warning step", step
+                except FittingWarning as w:
+                    print("Fit Warning step", step)
                     fail_iter=True
                     continue
                 x0=Xopt.x0
@@ -284,7 +284,7 @@ class Parameters(object):
                 self.peake_cache[x0]=Xopt
                 ws.append(Xopt)
 
-        print ws
+        print(ws)
         ws.sort(key=lambda x: x.x0)
         self.scale.peakes=ws
         zero_fwhm, tube_fwhm = [w.fwhm for w in ws]
@@ -292,23 +292,25 @@ class Parameters(object):
 
         _y=np.array(lines)
         _x0=np.array([_.x0 for _ in ws])
-        def scale((k,b), x, y):
+        def scale(xxx_todo_changeme, x, y):
+            (k,b) = xxx_todo_changeme
             return (y-((x*k)+b))**2
         k_scale, b_scale = op.leastsq(scale, [1., 0.], args=(_x0,_y))[0]
         if pb: pb()
 
-        print "K, B:", k_scale, b_scale
+        print("K, B:", k_scale, b_scale)
         self.scale.A=[b_scale,k_scale,0]
         self.scale.done=True
 
 
         _yw=np.array([w.fwhm*k_scale for w in ws]) # FWHM are scaled to keV
-        def scalew((k,b), x, y):
+        def scalew(xxx_todo_changeme1, x, y):
+            (k,b) = xxx_todo_changeme1
             return (y-((np.sqrt(x)*k)+b))**2
 
         k_scale, b_scale = op.leastsq(scalew, [1., 0.], args=(lines,_yw))[0]
 
-        print "FWHM scale:", k_scale, b_scale
+        print("FWHM scale:", k_scale, b_scale)
         if pb: pb()
 
         self.scale.fwhm.A=[b_scale, k_scale, 0]
@@ -329,7 +331,7 @@ class Parameters(object):
         if pb: pb()
 
         if debug:
-            print "Els:", elements
+            print("Els:", elements)
 
         params={'A':True, 'x0':True, 'fwhm':True}
 
@@ -342,8 +344,8 @@ class Parameters(object):
             )
 
         if debug:
-            print Const
-            print Xopt
+            print(Const)
+            print(Xopt)
 
         X=Xopt
 
@@ -484,8 +486,8 @@ class Parameters(object):
                     raise_on_warn=True, iters=iters,
                     mask=mask, xtol=xtol
                     )
-            except FittingWarning, w:
-                print "Fit Warning step", step
+            except FittingWarning as w:
+                print("Fit Warning step", step)
                 fail_iter=True
                 continue
             x0=Xopt.x0
@@ -583,16 +585,16 @@ class Parameters(object):
             s_f.append("    a1_fwhm=%f" % self.scale.fwhm.A[1])
             s_f.append("    a0_fwhm=%f" % self.scale.fwhm.A[0])
             s_f.append("    a2_fwhm=%f" % self.scale.fwhm.A[2])
-        for k,v in map_x.iteritems():
+        for k,v in map_x.items():
             #s_f.append("    %s=scale_chan(%f, [a0_x, a1_x, a2_x])" % (k,v))
             s_f.append("    %s=%f" % (k,v))
-        for k,v in map_fwhm.iteritems():
+        for k,v in map_fwhm.items():
             s_f.append("    %s=scale_fwhm(%f, [a0_fwhm, a1_fwhm, a2_fwhm])" % (k,v))
         lbx=[]
         lby=[]
         lbx.append("0.")
         lby.append("0.")
-        bkg_vals = m_bkg.values()
+        bkg_vals = list(m_bkg.values())
         bkg_vals.sort(key=lambda x:x[-1])
         for k,v, _ in bkg_vals:
             lby.append(k)
@@ -600,8 +602,8 @@ class Parameters(object):
         lbx.append("%s" % ly*2)
         lby.append("0.")
         if debug:
-            print "Lx:",lbx
-            print "Ly:",lby
+            print("Lx:",lbx)
+            print("Ly:",lby)
         if m_bkg:
             s_f.append("    poly_x=np.array([%s])" % ','.join(lbx))
             s_f.append("    poly_y=np.array([%s])" % ','.join(lby))
@@ -626,7 +628,7 @@ def approx_func(Params, channels):
     return _1
 """ % (','.join(const), s_fs, '\n    '.join(exp))
         if debug:
-            print s_fun
+            print(s_fun)
 
         ast=compile(s_fun, '<string-gen>', 'exec')
         g={
@@ -637,7 +639,7 @@ def approx_func(Params, channels):
             'scale_fwhm':keV_to_fwhm,
             }
         l={}
-        exec ast in g,l
+        exec(ast, g,l)
         approx_func=l['approx_func']
         #mdl=approx_func(Xstart, xc)
 
@@ -654,11 +656,11 @@ def approx_func(Params, channels):
         """
         def _cb(x):
             if debug:
-                print "x_curr:",
+                print("x_curr:", end=' ')
                 pprint.pprint(x)
 
         if debug:
-            print Xstart
+            print(Xstart)
         Xopt, fval, iterations, fcalls, warnflag =op.fmin(fopt, Xstart, args=(xc,y), full_output=1, callback=_cb,
             xtol=xtol, ftol=ftol,
             maxiter=iters, maxfun=iters
@@ -666,9 +668,9 @@ def approx_func(Params, channels):
 
         mdl=approx_func(Xopt, xc)
         if debug:
-            print "RC-----",
+            print("RC-----", end=' ')
             for x, c in zip(Xopt, const):
-                print c,"=",x
+                print(c,"=",x)
 
         return mdl, Xopt, const
 
@@ -752,7 +754,7 @@ def approx_func(Params, channels):
 
     def trash(self):
 
-        print "FWHM interval:", zero_fwhm, tube_fwhm
+        print("FWHM interval:", zero_fwhm, tube_fwhm)
         a,b=zero_fwhm*0.5, tube_fwhm*1.1
         _wsmin=a
         _wsmax=b
@@ -780,7 +782,7 @@ def approx_func(Params, channels):
         ws=[]
         bad_ws=[]
         for iter_num in range(6):
-            print "Start ITERATION:", iter_num
+            print("Start ITERATION:", iter_num)
             peaks,cwt_field=sig.find_peaks_cwt1(y, fwhm_widths, min_snr=0.5,
                 max_distances=fwhm_widths)
 
@@ -788,7 +790,7 @@ def approx_func(Params, channels):
 
             for peak in peaks:
                 x0, fwhm=get_fwhm_cwt(cwt_field, peak, fwhm_widths)
-                print "x0, fwhm=", x0, fwhm
+                print("x0, fwhm=", x0, fwhm)
                 cwt_fwhms[peak]=fwhm
 
             #return
@@ -821,21 +823,21 @@ def approx_func(Params, channels):
                 try:
                     cwt_b=int(fwhm_guess-_wsmin)
                     cwt_guess=cwt_field[cwt_b][pp]
-                    print "Cut: [",pp,']'
+                    print("Cut: [",pp,']')
                     for _il, _l in enumerate(cwt_field):
-                        print _il+_wsmin,':',_l[pp-2:pp+2],
-                    print
+                        print(_il+_wsmin,':',_l[pp-2:pp+2], end=' ')
+                    print()
                     y_guess=y[pp]
-                    print "GUESS: y[pp]", y_guess, "CWT:", cwt_guess, "FWHM:", cwt_fwhms[pp]
-                    print "Ratio:", y_guess/(cwt_guess/cwt_fwhms[pp])
+                    print("GUESS: y[pp]", y_guess, "CWT:", cwt_guess, "FWHM:", cwt_fwhms[pp])
+                    print("Ratio:", y_guess/(cwt_guess/cwt_fwhms[pp]))
                     Xopt=self.r_line(x[pp], A=y[pp],
                         fwhm=cwt_fwhms[pp], width=cwt_fwhms[pp]*S_fwhm,
                         plot=False, raise_on_warn=True,
                         mask=[0,1,0,1,0],
                         # account_bkg=[0,0],
                         iters=6000)
-                except FittingWarning, w:
-                    print "FITWARN!!!!"
+                except FittingWarning as w:
+                    print("FITWARN!!!!")
                     bad_ws.append(pp)
                     continue
                 try:
@@ -846,8 +848,8 @@ def approx_func(Params, channels):
                         mask=[1,1,1,1,1],
                         # account_bkg=[0,0],
                         iters=6000)
-                except FittingWarning, w:
-                    print "FITWARN!!!!"
+                except FittingWarning as w:
+                    print("FITWARN!!!!")
                     bad_ws.append(pp)
                     continue
                 if Xopt.bkg<-5: # FIXME: WHY it is less than -5???
@@ -871,7 +873,7 @@ def approx_func(Params, channels):
 
             p.plot(x,y, color=(0,0,0))
 
-        print "Stop ITERATIONs at:", iter_num
+        print("Stop ITERATIONs at:", iter_num)
         B_fwhm1=4. # 7.
         B_fwhm2=4.
 
@@ -882,12 +884,12 @@ def approx_func(Params, channels):
         cwt_fwhms[1932]=20.
         cwt_fwhms[2245]=20.
 
-        for x0, fwhm in cwt_fwhms.iteritems():
+        for x0, fwhm in cwt_fwhms.items():
             if x0 in bad_ws:
                 continue
             xmin,xmax=self.cut(x0, fwhm*B_fwhm1/2., xl)
             omega[xmin:xmax]=0.005
-        for x0, fwhm in cwt_fwhms.iteritems():
+        for x0, fwhm in cwt_fwhms.items():
             if x0 in bad_ws:
                 continue
             xmin,xmax=self.cut(x0, fwhm*B_fwhm2/2., xl)
@@ -919,7 +921,7 @@ def approx_func(Params, channels):
         p.plot(x,self.active_channels, color=(1,0,0))
 
 
-        print "WS:"
+        print("WS:")
         pprint.pprint(ws)
 
         p.show()
@@ -928,7 +930,7 @@ def approx_func(Params, channels):
         ws.sort(key=lambda x:x.fwhm)
         fwhm_guess_min=ws[0].fwhm
         fwhm_guess_max=fwhm_guess_min*4.
-        print "LIMITS:", fwhm_guess_min, fwhm_guess_max
+        print("LIMITS:", fwhm_guess_min, fwhm_guess_max)
         ws=[l for l in ws if l.fwhm <= fwhm_guess_max] # filter out big fitted lines.
 
         ws.sort(key=lambda x: x.fwhm)
@@ -940,8 +942,8 @@ def approx_func(Params, channels):
         _x0=np.array([_.x0 for _ in ws])
         _x0-=_x0[0]
         _y[0]=0.
-        print "X FWHMs:", _x0
-        print "Y FWHMs:", _y
+        print("X FWHMs:", _x0)
+        print("Y FWHMs:", _y)
         def ffwhm(k, x):
             return _y-((np.sqrt(x)*k))
 
@@ -952,7 +954,7 @@ def approx_func(Params, channels):
         def x0_to_fwhm(x0):
             return np.sqrt(x0-_x0[0])*k_fwhm
 
-        print "F FWHMs:", x0_to_fwhm(_x0)
+        print("F FWHMs:", x0_to_fwhm(_x0))
 
         for l in ws:
             p.axvline(l.x0, color=(0,1,0))
@@ -962,7 +964,7 @@ def approx_func(Params, channels):
         y_bkg=np.array(self.active_channels)
         _ = np.array(y_bkg)
 
-        print "Bkg processing"
+        print("Bkg processing")
 
         max_count=20
         for count in range(max_count):
@@ -989,7 +991,7 @@ def approx_func(Params, channels):
 
         # spline again
 
-        print "Spline:"
+        print("Spline:")
         y=np.array(y_bkg)
         w=np.zeros(xl)+1.
         for _i in x:
@@ -1063,7 +1065,7 @@ def approx_func(Params, channels):
                     Xl=self.r_line(mx, A=None, fwhm=Xl.fwhm, width=Xopt.fwhm*c1_fwhm,
                         plot=False, account_bkg=[0,0], iters=2000, raise_on_warn=True,
                         channels=y)
-                except FittingWarning, w:
+                except FittingWarning as w:
                     if w==1:
                         break
 
@@ -1115,7 +1117,7 @@ def approx_func(Params, channels):
 
         p.plot(x,self.channels, color=(0,0.6,0.), linewidth=3.)
         pprint.pprint(f_lines)
-        print len(f_lines)
+        print(len(f_lines))
         if DEBUG:
             p.show()
 
@@ -1126,14 +1128,14 @@ def approx_func(Params, channels):
         p.plot(x,y)
         p.plot(x,x*0.)
         x00, _, fwhm_0, b0, k0= r_line(80, width=len(x)/50, plot=True)
-        print "FWHM0:", fwhm_0
+        print("FWHM0:", fwhm_0)
         #fwhm_0=100
         w=15*fwhm_0/2.
         #x0_fe, _, fwhm_fe, b_fe, k_fe = recog(1370, fwhm=fwhm_0, width=w) # Fe
         x0_fe, _, fwhm_fe, b_fe, k_fe = r_line(1350, fwhm=fwhm_0, width=w, plot=True) # Fe
         s_k=(e_fe-e_0)/(x0_fe-x00)
         s_b=e_fe - (s_k*x0_fe)
-        print "Scale:", s_k, s_b
+        print("Scale:", s_k, s_b)
         def to_chan(e):
             return (e-s_b)/s_k
         x0_mo=to_chan(e_mo)
@@ -1155,14 +1157,14 @@ def approx_func(Params, channels):
         #r_line_fix(X[0], fwhm=fwhm_zr, width=w, plot=True)
 
         #r_line(1821, fwhm=fwhm_0, width=w, plot=True)
-        print "fwhm:", fwhm_zr, k
+        print("fwhm:", fwhm_zr, k)
 
         gain=1/s_k
         return
 
         r_line_zr(x0_zr, fwhm=fwhm_zr, width=fwhm_zr*1.1, plot=True)
         Xtry = _, A_mo, _,a0,a1 = r_line_zr(x0_mo, fwhm=fwhm_mo, width=fwhm_zr*1.1, plot=True)
-        print "Releigh pike:", Xtry
+        print("Releigh pike:", Xtry)
         #p.show()
         #Coumpton Pike
         angle=90-2 #(degrees)
@@ -1203,7 +1205,7 @@ def approx_func(Params, channels):
                 x0_mo, fwhm_mo, xmin=xmin, xmax=xmax)
         xmin-=300
         xmax+=300
-        print "Coumpton group:", Xopt_cou
+        print("Coumpton group:", Xopt_cou)
         _cs=cou_sim(A_mo, x0_cou, A_cou, fwhm_co, bkg_cou, shift, c2, a3, b, c, x0_mo, fwhm_mo, x[xmin:xmax])
         p.plot(x[xmin:xmax], _cs) # Need a common amplitude
 
@@ -1232,7 +1234,7 @@ def approx_func(Params, channels):
 
     def split_args(self, X, mask):
         if len(X)!=len(mask):
-            raise ValueError, 'vector X and mask must be of the same length'
+            raise ValueError('vector X and mask must be of the same length')
         nx=[]
         nf=[]
         for x, m in zip(X, mask):
@@ -1266,7 +1268,7 @@ def approx_func(Params, channels):
 
         def of(*args):
             #x0,A, fwhm,b,k =X
-            _= apply(_gauss, args)
+            _= _gauss(*args)
             return _
 
         def fopt(X, *args):
@@ -1274,7 +1276,7 @@ def approx_func(Params, channels):
             xw,yw=list(rest)
             fargs=self.join_args(X, fix, mask)+[xw]
             #print fargs
-            _=apply(of, fargs)
+            _=of(*fargs)
             return sum((yw-_)**2)
 
         if width == None:
@@ -1304,7 +1306,7 @@ def approx_func(Params, channels):
             maxfun=iters,
             disp=False, full_output=1)
         if warnflag and raise_on_warn:
-            raise FittingWarning, warnflag
+            raise FittingWarning(warnflag)
         Xopt=Pike._make(self.join_args(Xopt, F, m)+[fval])
         while plot:
             if Xopt.A>A*2 or Xopt.x0<0 or Xopt.fwhm<0 or Xopt.fwhm>xl/20:
@@ -1315,7 +1317,7 @@ def approx_func(Params, channels):
                 nxw=np.arange(xmin1, xmax1, 0.25)
             except ValueError:
                 break
-            fy=apply(of, list(Xopt)[:-1]+[nxw])
+            fy=of(*list(Xopt)[:-1]+[nxw])
             p.fill_between(nxw,fy,(nxw-x0)*k+b, color=(0.7,0.3,0), alpha=0.5)
             #p.fill_between(nxw,fy,b, color=(0.7,0.3,0), alpha=0.5)
             break
@@ -1336,7 +1338,7 @@ def approx_func(Params, channels):
             return sum((yw-_)**2)
 
         if fwhm==None:
-            raise ValueError, "fwhm should be defined"
+            raise ValueError("fwhm should be defined")
         if width == None:
             width=fwhm
         hw=width/2.
@@ -1569,7 +1571,7 @@ def test1():
 
 def test2():
     l=Pike(x0=0, fwhm=1, A=1, bkg=0, slope=0)
-    print l
+    print(l)
 
 
 if __name__=='__main__':

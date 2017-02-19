@@ -14,7 +14,7 @@ CHANNEL_NAMES=[
 """
 
 # get names of the standards
-names=_sts.__dict__.keys()
+names=list(_sts.__dict__.keys())
 names.sort()
 n1=[]
 for n in names:

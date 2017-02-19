@@ -15,21 +15,21 @@ sprocessing=None
 if __name__=="__main__" and len(sys.argv)==2 and sys.argv[1]=='server':
     from rpyc.core import SlaveService
     from rpyc.utils.server import ThreadedServer, ForkingServer
-    print "Server", sys.argv
+    print("Server", sys.argv)
     SERVER = True
 else:
     SERVER = True
     test_case=False
     import rpyc
     import os
-    print "Client", sys.argv
+    print("Client", sys.argv)
     if not sys.argv[0].endswith('rpyc_classic.py'):
         SERVER = False
         from gi.repository import Gtk
         import sys, os
         server=rpyc.classic.connect(HOST, PORT)
         sprocessing = server.modules['icc.xray.views.processing']
-        print "Client:", server, sprocessing
+        print("Client:", server, sprocessing)
         test_case=True
 
 
@@ -42,7 +42,7 @@ class Parameters(object):
         #threading.Thread.__init__(self)
         global SERVER,sprocessing
         self.SERVER=SERVER
-        print "Client-dat", client
+        print("Client-dat", client)
         if client:
             self.model = client.model
             self.view = client.view
@@ -99,11 +99,11 @@ class Parameters(object):
         self._methods=names
 
     def methods(self, names):
-        print self.SERVER
+        print(self.SERVER)
         self.obj.server_methods(names)
 
     def start(self):
-        print "SERVER", self.SERVER
+        print("SERVER", self.SERVER)
         self.run()
 
     def run(self):
@@ -146,7 +146,7 @@ class Parameters(object):
     def show(self):
         par=self.model.parameters
         elements=self.model.ptelements
-        print "EL:", elements
+        print("EL:", elements)
         le=len(elements)
         if le:
             ldb=line_db_conn()
@@ -200,4 +200,4 @@ if SERVER:
     '''
 elif test_case:
     p=Parameters()
-    print "OK"
+    print("OK")

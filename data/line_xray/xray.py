@@ -11,7 +11,7 @@ from math import *
 import rpy2
 import rpy2.robjects as robjects
 
-class ExperimentError(StandardError):
+class ExperimentError(Exception):
 	pass
 class ExperimentDataError(ExperimentError):
 	pass
@@ -60,8 +60,8 @@ def compile_model_as_module(func_name, model):
     v=NameVisitor()
     
     compiler.walk(ast, v)
-    consts=v.constants.keys()
-    vars=v.other.keys()
+    consts=list(v.constants.keys())
+    vars=list(v.other.keys())
     func=Function(None, func_name,
         [tuple(consts)]+vars+["_Y_target"], [], 0, "User model %s" % model, 
         Stmt([Return(Sub((v.expr, Name("_Y_target"),)))]))
@@ -114,13 +114,13 @@ class ExperimentData:
         elif l==1:
             return      # No normalization
         sum={}
-        for el in ireper[0][1].iterkeys():
+        for el in ireper[0][1].keys():
             sum[el]=0.0
         for (iname, idata) in ireper:
-            for (el, val) in idata.iteritems():
+            for (el, val) in idata.items():
                 sum[el]+=val
         avg={}
-        for (key, val) in sum.iteritems():
+        for (key, val) in sum.items():
             avg[key]=val/l
         self.avgreper=avg
         self.intensities=self.normalize_ints(self.intensities)
@@ -131,7 +131,7 @@ class ExperimentData:
         avg=self.avgreper
         for (iname, idata) in intensities:
             nid={}
-            for (el, val) in idata.iteritems():
+            for (el, val) in idata.items():
                 norm=avg[el]
                 if norm>0:
                     nid[el]=val / norm
@@ -179,15 +179,15 @@ class Calibration:
                                     cols['conc'].append(c)
                             else:
                                     cols['conc'].append(None)
-                    for e,v in elems.iteritems():
+                    for e,v in elems.items():
                             l = cols.setdefault(e, [])
                             l.append(v)
 
             ncols={}
-            for c,v in cols.iteritems():
+            for c,v in cols.items():
                     ncols[c.encode('utf8')]=robjects.FloatVector(v)
             df = robjects.DataFrame(ncols)
-            return df, cols.keys()
+            return df, list(cols.keys())
     
     def calculate(self, init_values=None, raw_init_values=1, significance=None):
         """
@@ -202,7 +202,7 @@ class Calibration:
             self.prepare()
         raw_data=self.ed.select(ss=1) # Select all intensities for standard samples
         res={}
-        for (el, v) in self.models.iteritems():
+        for (el, v) in self.models.items():
             (_el, _equ, model)=v
 	    #print "V is", v
 	    #print "Raw:", raw_data
@@ -234,7 +234,7 @@ class Calibration:
             constructs concentrations for given |elements|
         """
         if elements is None:
-            elements=self.calibration.keys()
+            elements=list(self.calibration.keys())
         cal = self.calibration
         answer = {}
         a={}
@@ -299,7 +299,7 @@ class Calibration:
 	lh=len(answer[0][0])+1
 	llast=lh-1
 	newa=[]
-	for i in xrange(lh):
+	for i in range(lh):
 	    newa.append(numpy.zeros(lv,float))
 	for i, row in enumerate(answer):
 	    vx, y=row
@@ -310,7 +310,7 @@ class Calibration:
     
     def prepare_functions(self):
         models={}
-        for (el, equ) in self.elements.iteritems():
+        for (el, equ) in self.elements.items():
             models[el]=(el, equ, 'conc~'+equ)
         self.models=models
         
@@ -356,11 +356,11 @@ class Calibration:
                 xx_min.append(min(a))
         
         xindex=self.indices.index(index)
-        print xx_max, xx_min, xindex
+        print(xx_max, xx_min, xindex)
         yy=[xx_min[xindex], xx_max[xindex]]
         iindex=self.element_indices.index(index)
         calibr=self.calibrations[iindex]
-        print yy
+        print(yy)
         
         """
         xx=[
@@ -385,5 +385,5 @@ class Calibration:
         p.show()
 
 if __name__=='__main__':
-    import load
+    from . import load
     load.main()

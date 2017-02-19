@@ -5,49 +5,58 @@
 #@+others
 #@+node:eugeneai.20110116171118.1428: ** components declarations
 #!/usr/bin/python
-import os, os.path
-from zope.interface import implements
+import os
+import os.path
+from zope.interface import implementer
 from zope.component import createObject
 from icc.rake.models.interfaces import *
 try:
     from collections import OrderedDict
 except ImportError:
     # For python < 2.7.0
-    OrderedDict=dict
+    OrderedDict = dict
 
 #@+node:eugeneai.20110116171118.1429: ** class Model
+
+
+@implementer(IModel)
 class Model:
-    implements(IModel)
     pass
 
 #@+node:eugeneai.20110116171118.1430: ** class Record
+
+
 class Record(object):
     pass
 
 #@+node:eugeneai.20110116171118.1431: ** class Module
+
+
+@implementer(IModule)
 class Module:
-    implements(IModule)
     # IDEF0 taken as a Metamodel
-    inputs=OrderedDict()
-    outputs=OrderedDict()
-    controls=OrderedDict()
-    implementors=OrderedDict()
-    name="<Module>"
-    icon=None # Should not be here
-    modified=False
+    inputs = OrderedDict()
+    outputs = OrderedDict()
+    controls = OrderedDict()
+    implementors = OrderedDict()
+    name = "<Module>"
+    icon = None  # Should not be here
+    modified = False
 
 #@+node:eugeneai.20110116171118.1432: ** class Canvas
+
+
+@implementer(ICanvas)
 class Canvas:
-    implements(ICanvas)
 
     #@+others
     #@+node:eugeneai.20110116171118.1433: *3* __init__
     def __init__(self):
-        self.modules={}
+        self.modules = {}
         # connections of the modules
-        self.forwards={}
-        self.backwards={}
-        self.changed=True
+        self.forwards = {}
+        self.backwards = {}
+        self.changed = True
 
         # test case
         m1 = createObject('frame_load')
@@ -58,18 +67,16 @@ class Canvas:
         self.place(m2, 200, 30)
         self.place(m3, 500, 100)
         self.place(mp, 300, 300)
-        self.connect(m1,m2)
-        self.connect(m1,m3)
-        self.connect(m2,m3)
-        self.connect(m2,mp)
-
-
+        self.connect(m1, m2)
+        self.connect(m1, m3)
+        self.connect(m2, m3)
+        self.connect(m2, mp)
 
     #@+node:eugeneai.20110116171118.1434: *3* find_module
     def find_module(self, x, y):
-        for m, pos in self.modules.iteritems():
+        for m, pos in self.modules.items():
             (px, py) = pos
-            if abs(px-x)<=16 and abs(py-y)<=16:
+            if abs(px - x) <= 16 and abs(py - y) <= 16:
                 return m
         return None
 
@@ -77,22 +84,23 @@ class Canvas:
     def place(self, module, x, y):
         if module in self.modules:
             (px, py) = self.modules[module]
-            if px ==x and py == y:
+            if px == x and py == y:
                 pass
             else:
                 self.modules[module] = (x, y)
                 self.updated()
         else:
-                self.modules[module] = (x, y)
-                self.updated()
+            self.modules[module] = (x, y)
+            self.updated()
 
     #@+node:eugeneai.20110116171118.1436: *3* updated
     def updated(self):
-        self.changed=True
+        self.changed = True
 
     #@+node:eugeneai.20110116171118.1437: *3* remove
     def remove(self, module):
-        conn_ms=self.forwards.get(module, []) + self.backwards.get(module,[])
+        conn_ms = self.forwards.get(module, []) + \
+            self.backwards.get(module, [])
         for mto in conn_ms:
             self.disconnect(module, mto)
             self.disconnect(mto, module)
@@ -118,14 +126,14 @@ class Canvas:
 
     #@+node:eugeneai.20110116171118.1441: *3* _add_con
     def _add_con(self, mfrom, mto, conns):
-        connl=conns.setdefault(mfrom, [])
+        connl = conns.setdefault(mfrom, [])
         if not mto in connl:
             connl.append(mto)
             self.updated()
 
     #@+node:eugeneai.20110116171118.1442: *3* _rem_con
     def _rem_con(self, mfrom, mto, conns):
-        connl=conns.get(mfrom, [])
+        connl = conns.get(mfrom, [])
         while mto in connl:
             connl.remove(mto)
             self.updated()

@@ -23,9 +23,9 @@ r = etree.parse(i)
 
 sps = r.xpath("//Channels/text()")
 
-sps = [n.array(map(int,sp.split(','))) for sp in sps]
+sps = [n.array(list(map(int,sp.split(',')))) for sp in sps]
 
-print "Number of spectra found:", len(sps)
+print("Number of spectra found:", len(sps))
 
 for sp in sps:
     plot(x,sp)
@@ -34,6 +34,6 @@ title("Plot of the spectra from '%s'" % filename)
 
 show()
 
-print 'The prog has been stopped successfully!!!'
+print('The prog has been stopped successfully!!!')
 
 

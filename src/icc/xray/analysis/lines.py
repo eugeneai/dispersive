@@ -13,17 +13,17 @@ Line=namedtuple('Line', 'Z, element, name, keV, line, rel')
 Element=namedtuple('Element', 'Z, Name')
 
 def _float(x):
-    print x
+    print(x)
     try:
         x=float(x)
     except e:
-        print e
+        print(e)
     return x
 
 class Lines(object):
     def __init__(self, csv=None, dbname=None, v=1):
         if csv == None and dbname==None:
-            raise ValueError, 'one of csv or db should be supplied'
+            raise ValueError('one of csv or db should be supplied')
 
         if csv != None:
             if v==1:
@@ -32,7 +32,7 @@ class Lines(object):
                 dbname=self.convert_csv2(csv)
 
         if dbname == None:
-            raise RuntimeError, "conversion error"
+            raise RuntimeError("conversion error")
 
         self.dbname=dbname
 
@@ -47,14 +47,14 @@ class Lines(object):
                 return None
             try:
                 return float(x.replace(',','.').replace('*',''))
-            except ValueError, e:
-                print "Error:", e
+            except ValueError as e:
+                print("Error:", e)
                 return x
         reader=csv.reader(open(filename), delimiter=';')
         db_name=os.path.splitext(filename)[0]+'.sqlite3'
         conn=self.connect(dbname=db_name)
         conn.create_function("float", 1, _f)
-        reader.next() # skip first row of fiels names
+        next(reader) # skip first row of fiels names
         cur = conn.cursor()
         cur.execute('DROP TABLE IF EXISTS tmp ;')
         cur.execute('DROP TABLE IF EXISTS lines ;')
@@ -85,7 +85,7 @@ class Lines(object):
                 continue
             lset.add((Z, ln_))
             if debug:
-                print row
+                print(row)
             c2.execute("INSERT INTO lines (Z, keV, Name) VALUES (?, ?, ?);",
                 row)
             if Z in eset:
@@ -116,17 +116,17 @@ class Lines(object):
                 return None
             try:
                 return float(x.replace(',','.').replace('*',''))
-            except ValueError, e:
-                print "Error:", e
+            except ValueError as e:
+                print("Error:", e)
                 return x
         reader=csv.reader(open(filename), delimiter=';')
         db_name=os.path.splitext(filename)[0]+'.sqlite3'
         conn=self.connect(dbname=db_name)
         conn.create_function("float", 1, _f)
-        header = reader.next() # skip first row of fiels names
+        header = next(reader) # skip first row of fiels names
         header=[h.split(',')[0] for h in header]
         def repl(x):
-            for k,v in CONV.iteritems():
+            for k,v in CONV.items():
                 x=x.replace(k,v)
             return x
         header=[repl(h) for h in header]
@@ -160,7 +160,7 @@ class Lines(object):
         if dbname != None:
             return sql.connect(dbname)
 
-        if type(self.dbname) in [type(''), type(u'')]:
+        if type(self.dbname) in [type(''), type('')]:
             self.db = sql.connect(self.dbname)
 
         return self.db
@@ -222,7 +222,7 @@ class Lines(object):
         def _expand(x, ex):
             if x == None :
                 return ' 1 '
-            if type(x) in [types.TupleType, types.ListType, types.GeneratorType, type(set())]:
+            if type(x) in [tuple, list, types.GeneratorType, type(set())]:
                 if len(x)==0:
                     return ' 1 '
                 else:
@@ -254,14 +254,14 @@ class Lines(object):
         stmt+=" ;"
         cur = self.db.cursor()
         if DEBUG:
-            print "STMT:", stmt
+            print("STMT:", stmt)
         cur.execute(stmt)
         for row in cur:
             yield Line._make(row)
 
     def as_deltafun(self, **kwargs):
         ls = self.select(**kwargs)
-        print ls
+        print(ls)
         return ls
 
     def update_rel(self, filename):
@@ -269,11 +269,11 @@ class Lines(object):
         cur.execute("DELETE FROM lines;")
         self.db.commit();
         reader=csv.reader(open(filename), delimiter=';')
-        header = reader.next()
+        header = next(reader)
         for row in reader:
             (ev, el, line, rel, name) = row
             ev=ev.replace(' ','').replace(',','.')
-            ev=ev.decode('utf8').replace(u'\xa0',u'')
+            ev=ev.decode('utf8').replace('\xa0','')
             #print repr(ev)
             ev=float(ev)
             Z, symbol=el.split()
@@ -283,7 +283,7 @@ class Lines(object):
             cur.execute('INSERT INTO lines (Z, Name, keV, line, rel) VALUES (?,?,?,?,?)', nrow)
 
         self.db.commit();
-        print "Update succsessful."
+        print("Update succsessful.")
 
 
 
@@ -312,7 +312,7 @@ if 0 and __name__=='__main__':
     ls=list(lines.as_deltafun(order_by="keV", element=elements,
         where="keV<20.0"))
     pp.pprint(ls)
-    print len(ls)
+    print(len(ls))
     x=np.array([0, ls[-1].keV*1.03])
     y=np.array([1, 1.])
     pl.plot(x,y)

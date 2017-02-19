@@ -14,7 +14,7 @@ class MatrixBrowser(object):
         self.con_rects = self.add_connection_rects()
 
     def add_connection_rects(self):
-        max_cons = max([len(_) for _ in self.con.values()])
+        max_cons = max([len(_) for _ in list(self.con.values())])
         rects = []
         for con in range(max_cons):
             con_rect = patches.Rectangle((0, 0), 1.1, 1.1, linewidth=5,

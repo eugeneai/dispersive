@@ -13,7 +13,7 @@ class CRPike:
         self.start,self.stop=start,stop
         lc=len(channels)
         if self.start<0 or self.start>lc:
-            raise ValueError, "ranges start or stop are out of bounds of channels"
+            raise ValueError("ranges start or stop are out of bounds of channels")
         self.channels=channels
         self.fwhm=fwhm
         self.m=m
@@ -22,7 +22,7 @@ class CRPike:
             ceners = []
         else:
             if fwhm == None:
-                raise ValueError, "parameter fwhm is needed as some center points were given"
+                raise ValueError("parameter fwhm is needed as some center points were given")
         self.centers = centers
 
     def range(self):
@@ -103,7 +103,7 @@ def test1():
 
     p=CRPike(channels=standard, fwhm=30, centers=[3239,3080], start=2653, stop=None, s=1e8)
     p()
-    print p.asText()
+    print(p.asText())
     p.show(w=True)
 
 

@@ -1,6 +1,6 @@
 from gi.repository import Gtk, GObject, Gdk
 import sys
-import data
+from . import data
 
 ROWS=[
     ((1,),           (1, 1)),
@@ -71,13 +71,13 @@ class PTWidget(Gtk.VBox):
                 if color != None:
                     col =color.red_float,color.green_float,color.blue_float
                     ccol=[1.-_c for _c in col]
-                    compcolor=apply(Gdk.Color, ccol)
+                    compcolor=Gdk.Color(*ccol)
 
                     dcol = [_c*70/100 for _c in col]
-                    darkcolor=apply(Gdk.Color, dcol)
+                    darkcolor=Gdk.Color(*dcol)
 
                     bcol = [min(1., _c*100/70) for _c in col]
-                    brightcolor=apply(Gdk.Color, bcol)
+                    brightcolor=Gdk.Color(*bcol)
 
                     el.modify_bg(Gtk.StateType.NORMAL, color)
                     #el.modify_bg(Gtk.StateType.ACTIVE, darkcolor)
@@ -215,7 +215,7 @@ def import_data(filename, module_name):
         oxi=nrow[12]
         try:
             oxi=oxi.split(',')
-            oxi=map(lambda x: _c(x.strip()), oxi)
+            oxi=[_c(x.strip()) for x in oxi]
         except AttributeError:
             oxi=[oxi]
         if oxi==['']:
@@ -235,7 +235,7 @@ def import_data(filename, module_name):
 
 def test():
     def action(ptw, Z, N, b):
-        print "Toggled:", ptw, Z, N, b, b.get_active()
+        print("Toggled:", ptw, Z, N, b, b.get_active())
     testw = Gtk.Window(Gtk.WINDOW_TOPLEVEL)
     testw.connect("destroy", Gtk.main_quit)
     pt=PTToggleWidget()
@@ -244,7 +244,7 @@ def test():
     testw.show_all()
     pt.select(['Zn', 'Zr', 'Y'], active=True)
     Gtk.main()
-    print pt.selected(symbols=True)
+    print(pt.selected(symbols=True))
 
 if __name__=="__main__":
     #import_data("/home/eugeneai/Development/codes/dispersive/data/pt-data1.csv",

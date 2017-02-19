@@ -12,7 +12,7 @@ import sys
 
 
 import icc.rake.views.interfaces
-from zope.interface import implements, implementsOnly
+from zope.interface import implementer, implementsOnly
 import zope.component as ZC
 import zope.component.interfaces as ZCI
 from zope.component.factory import Factory
@@ -23,36 +23,47 @@ import icc.rake.models.interfaces as mdli
 import icc.rake.interfaces as ri
 import icc.rake.modules.interfaces as module_is
 from icc.rake.views import *
-import os, os.path
+import os
+import os.path
 
-import cairo, math
+import cairo
+import math
 #import rsvg
 
 import types
 
-M_2PI=math.pi*2.
+M_2PI = math.pi * 2.
+
 
 def sign(x):
-    if x>0: return 1
-    elif x<0: return -1
+    if x > 0:
+        return 1
+    elif x < 0:
+        return -1
     return 0
 
 #@+node:eugeneai.20110116171118.1455: ** class Ui
+
+
 class Ui(object):
     pass
 
+
 class RetVal(Ui):
+
     def __init__(self, value=None):
-        self.value=None
+        self.value = None
     pass
 
 #@+node:eugeneai.20110116171118.1456: ** InputDialog
+
+
 def InputDialog(message, value='', field='Name:', secondary=''):
     "Obtained and adopted from http://ardoris.wordpress.com/2008/07/05/pygtk-text-entry-dialog/"
     def responseToDialog(entry, dialog, response):
         dialog.response(response)
     def getText(value):
-        #base this on a message dialog
+        # base this on a message dialog
         dialog = Gtk.MessageDialog(
             None,
             Gtk.DialogType.MODAL | Gtk.DialogType.DESTROY_WITH_PARENT,
@@ -60,21 +71,22 @@ def InputDialog(message, value='', field='Name:', secondary=''):
             Gtk.ButtonsTypeOK,
             None)
         dialog.set_markup(message)
-        #create the text input field
+        # create the text input field
         entry = Gtk.Entry()
-        #allow the user to press enter to do ok
-        entry.connect("activate", responseToDialog, dialog, Gtk.ResponseType.OK)
-        #create a horizontal box to pack the entry and a label
+        # allow the user to press enter to do ok
+        entry.connect("activate", responseToDialog,
+                      dialog, Gtk.ResponseType.OK)
+        # create a horizontal box to pack the entry and a label
         entry.set_text(value)
         hbox = Gtk.HBox()
         hbox.pack_start(Gtk.Label(field), False, True, 5)
         hbox.pack_end(entry)
-        #some secondary text
+        # some secondary text
         dialog.format_secondary_markup(secondary)
-        #add it and show it
+        # add it and show it
         dialog.vbox.pack_end(hbox, True, True, 0)
         dialog.show_all()
-        #go go go
+        # go go go
         result = dialog.run()
         if result == Gtk.ResponseType.OK:
             value = entry.get_text()
@@ -83,13 +95,15 @@ def InputDialog(message, value='', field='Name:', secondary=''):
     return getText(value)
 
 #@+node:eugeneai.20110116171118.1457: ** ConfirmationDialog
+
+
 def ConfirmationDialog(message, secondary=''):
     dialog = Gtk.MessageDialog(
-            None,
-            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-            Gtk.MessageType.QUESTION,
-            Gtk.ButtonsType.YES_NO,
-            None)
+        None,
+        Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+        Gtk.MessageType.QUESTION,
+        Gtk.ButtonsType.YES_NO,
+        None)
     dialog.set_markup(message)
     dialog.format_secondary_markup(secondary)
     rc = dialog.run() == Gtk.ResponseType.YES
@@ -97,37 +111,42 @@ def ConfirmationDialog(message, secondary=''):
     return rc
 
 #@+node:eugeneai.20110116171118.1458: ** class View
+
+
 class View(GObject.GObject):
     __gsignals__ = {
         'get-widget': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_BOOLEAN,
                        (GObject.TYPE_STRING, GObject.TYPE_PYOBJECT,)),
         'destroy-view': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE,
-                       (GObject.TYPE_PYOBJECT,)),
+                         (GObject.TYPE_PYOBJECT,)),
         'model-changed': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT,)),
     }
     template = None
     widget_names = None
     resource = __name__
     main_widget_name = 'main_frame'
-    #implements(IView)
+    # implements(IView)
     ZC.adapts(mdli.IModel, icc.rake.views.interfaces.IView)
 
     #@+others
     #@+node:eugeneai.20110116171118.1459: *3* __init__
-    def __init__(self, model = None, parent = None):
+    def __init__(self, model=None, parent=None):
         GObject.GObject.__init__(self)
         if parent != None:
             if not icc.rake.views.interfaces.IView.providedBy(parent):
-                raise ValueError, "Parent does not implement icc.rake.views.interfaces.IView interface."
+                raise ValueError(
+                    "Parent does not implement icc.rake.views.interfaces.IView interface.")
         if model != None:
             if icc.rake.views.interfaces.IView.providedBy(model):
-                raise ValueError, "Model implements icc.rake.views.interfaces.IView interface. It seems You swapped the parameters."
-        self.ui=Ui()
-        self.model=None
+                raise ValueError(
+                    "Model implements icc.rake.views.interfaces.IView interface. It seems You swapped the parameters.")
+        self.ui = Ui()
+        self.model = None
         self.set_parent(parent)
-        self.model_state=Ui()
+        self.model_state = Ui()
         # model_state stores metadata about model.
-        self.set_model_unmodified() # Is the model modified and to be saved on closing.
+        # Is the model modified and to be saved on closing.
+        self.set_model_unmodified()
         if self.__class__.template != None:
             self.load_ui(self.__class__.template,
                          self.__class__.widget_names)
@@ -162,7 +181,7 @@ class View(GObject.GObject):
     #@+node:eugeneai.20110116171118.1463: *3* set_model
     def set_model(self, model):
         if self.model != model:
-            self.model=model
+            self.model = model
             if hasattr(self, "active_vew") and self.active_view:
                 self.invalidate_model(model)
             # some update needed???
@@ -180,32 +199,34 @@ class View(GObject.GObject):
         try:
             if self.parent_view:
                 pass
-                #disconnect
+                # disconnect
         except AttributeError:
             pass
 
         if icc.rake.views.interfaces.IView.providedBy(view):
-            self.parent_view=view
+            self.parent_view = view
             view.connect('destroy-view', self.on_parent_destroy)
 
     def is_model_modified(self):
         return self.model_state.modified
 
     def set_model_modified(self):
-        self.model_state.modified=True
+        self.model_state.modified = True
         return self.is_model_modified()
 
     def set_model_unmodified(self):
-        self.model_state.modified=False
+        self.model_state.modified = False
         return self.is_model_modified()
 
     #@+node:eugeneai.20110116171118.1465: *3* load_ui
-    def load_ui(self, template, widget_names = None):
+    def load_ui(self, template, widget_names=None):
         if template:
-            builder=self.ui._builder = Gtk.Builder()
-            builder.add_from_string(resource_string(self.resource, template))
+            builder = self.ui._builder = Gtk.Builder()
+            S=resource_string(self.resource, template)
+            S=S.decode("utf-8")
+            builder.add_from_string(S)
             builder.connect_signals(self)
-            w_n=[]
+            w_n = []
             w_n.extend(widget_names)
             if not self.main_widget_name in w_n and self.main_widget_name:
                 w_n.append(self.main_widget_name)
@@ -216,12 +237,12 @@ class View(GObject.GObject):
                         if name != self.main_widget_name:
                             # I.e. main frame could not be necessarily in the glade source.
                             # So we tried to find it there.
-                            raise ValueError("widget '%s' not found in  template '%s'" % (name, template))
+                            raise ValueError(
+                                "widget '%s' not found in  template '%s'" % (name, template))
                     else:
                         widget.set_name(name)
 
                     setattr(self.ui, name, widget)
-
 
     def on_get_widget(self, widget, widget_name, ret_val):
         """ Responds on subwidget signal emission like
@@ -229,11 +250,11 @@ class View(GObject.GObject):
         self.emit('get-widget', 'main_window', rv)
         print rv.value
         """
-        print "Locate:", widget, widget_name, self
+        print("Locate:", widget, widget_name, self)
         if widget_name in self.ui.__dict__:
             w = self.ui.get(widget_name)
             ret_val.value = w
-            return 1 # Stop event
+            return 1  # Stop event
         else:
             return 0
 
@@ -243,16 +264,16 @@ class View(GObject.GObject):
     def locate_widget(self, widget_name):
         ui = self.ui
         try:
-            return getattr(ui,widget_name)
+            return getattr(ui, widget_name)
         except AttributeError:
             pass
 
         if self.parent_view != None:
             return self.parent_view.locate_widget(widget_name)
 
-        #rv=RetVal()
+        # rv=RetVal()
         #self.emit('get-widget', widget_name, rv)
-        #return rv.value
+        # return rv.value
 
     def remove_from(self, box):
         widget = self.get_main_frame()
@@ -261,19 +282,19 @@ class View(GObject.GObject):
 
     def insert_into(self, box):
         #box.pack_start(self.get_main_frame(), True, True, 0)
-        frame=self.get_main_frame()
-        parent=frame.get_parent()
+        frame = self.get_main_frame()
+        parent = frame.get_parent()
         frame.reparent(box)
-        np=parent
+        np = parent
         while np:
-            parent=np
-            np=np.get_parent()
+            parent = np
+            np = np.get_parent()
         if parent:
             parent.destroy()
 
     def get_main_frame(self):
         main_widget_name = self.__class__.main_widget_name
-        if self.ui != None: # TODO: Strange bug one appeared.
+        if self.ui != None:  # TODO: Strange bug one appeared.
             if hasattr(self.ui, main_widget_name):
                 return getattr(self.ui, main_widget_name)
             else:
@@ -294,23 +315,23 @@ class View(GObject.GObject):
         if mb == None:
             return
 
-        menu_name="menu_"+label.lower()
-        mi_name=a_group.get_name()+"_menu"
+        menu_name = "menu_" + label.lower()
+        mi_name = a_group.get_name() + "_menu"
 
         mi = None
 
-        new_menu=True
+        new_menu = True
         for w in mb:
-            if w.get_name()==menu_name:
+            if w.get_name() == menu_name:
                 mi = w
-                new_menu=False
-                m=mi.get_submenu()
+                new_menu = False
+                m = mi.get_submenu()
         if mi == None:
             mi = Gtk.MenuItem(label=label)
             mi.set_name(menu_name)
 
-            #Create menu
-            m=Gtk.Menu()
+            # Create menu
+            m = Gtk.Menu()
             mi.set_submenu(m)
 
         for a in a_group.list_actions():
@@ -322,7 +343,7 @@ class View(GObject.GObject):
             children = mb.get_children()
             l = len(children)
             if before == None:
-                mb.insert(mi, l-1)
+                mb.insert(mi, l - 1)
             else:
                 for ch, num in enumerate(children):
                     if ch == before:
@@ -338,7 +359,7 @@ class View(GObject.GObject):
 
     def del_actions_from_menu(self, a_group):
         mb = self.locate_widget('menubar')
-        mi_name=a_group.get_name()+"_menu"
+        mi_name = a_group.get_name() + "_menu"
         try:
             mi = getattr(self.ui, mi_name)
             delattr(self.ui, mi_name)
@@ -374,7 +395,7 @@ class View(GObject.GObject):
                 tb.insert(ti, -1)
                 widgets.append(ti)
                 ti.show()
-            #else:
+            # else:
             #    print a, 'did not created', a.get_is_important()
 
         return widgets
@@ -391,7 +412,7 @@ class View(GObject.GObject):
         return []
 
     def get_filename(self, patterns, save=False, open_msg="Open file...", save_msg="Save file...",
-            filter_name='Project Files', filename=None):
+                     filter_name='Project Files', filename=None):
         if save:
             msg = save_msg
             # msg="Save the project..."
@@ -404,26 +425,26 @@ class View(GObject.GObject):
             icon = Gtk.STOCK_OPEN
 
         chooser = Gtk.FileChooserDialog(msg, self.locate_widget('main_window'),
-            ac,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                icon, Gtk.ResponseType.OK))
+                                        ac,
+                                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                         icon, Gtk.ResponseType.OK))
         chooser.set_default_response(Gtk.ResponseType.OK)
         chooser.set_current_folder('.')
 
         ffilter = Gtk.FileFilter()
         ffilter.set_name(filter_name)
-        #print "Patterns:", patterns
+        # print "Patterns:", patterns
         for pattern, name in patterns:
-            p="*"+pattern
+            p = "*" + pattern
             ffilter.add_pattern(p)
         chooser.add_filter(ffilter)
 
-        if len(patterns)>1:
+        if len(patterns) > 1:
             for pattern, name in patterns:
-                p="*"+pattern
+                p = "*" + pattern
                 ffilter = Gtk.FileFilter()
                 ffilter.add_pattern(p)
-                ffilter.set_name(name+" "+p)
+                ffilter.set_name(name + " " + p)
                 chooser.add_filter(ffilter)
 
         ffilter = Gtk.FileFilter()
@@ -446,28 +467,28 @@ class View(GObject.GObject):
     def normalize_file_ext(self, filename, patterns):
 
         # def_file_ext=self.FILE_PATTERNS[0][0]
-        def_file_ext=patterns[0][0]
+        def_file_ext = patterns[0][0]
 
-        (_,ext) = os.path.splitext(filename)
+        (_, ext) = os.path.splitext(filename)
         if not ext:
-            filename+=def_file_ext
+            filename += def_file_ext
         return filename
 
     def connect(self, sid, fun, *args):
-        to=fun.__self__
-        cid=GObject.GObject.connect(self, sid, fun, *args)
+        to = fun.__self__
+        cid = GObject.GObject.connect(self, sid, fun, *args)
         if not hasattr(to, '_sig_conn'):
-            to._sig_conn={}
+            to._sig_conn = {}
         if not hasattr(self, '_sig_conn'):
-            self._sig_conn={}
-        l=to._sig_conn.get(sid,[])
+            self._sig_conn = {}
+        l = to._sig_conn.get(sid, [])
         l.append((cid, self))
-        to._sig_conn[sid]=l
-        self._sig_conn[cid]=l
+        to._sig_conn[sid] = l
+        self._sig_conn[cid] = l
         return cid
 
     def disconnect(self, cid):
-        l=self._sig_conn[cid]
+        l = self._sig_conn[cid]
         l.remove((cid, self))
         del self._sig_conn[cid]
         rc = GObject.GObject.disconnect(self, cid)
@@ -476,15 +497,15 @@ class View(GObject.GObject):
     def destroy(self):
         self.emit('destroy-view', self)
         main_frame = self.get_main_frame()
-        if main_frame != None :
+        if main_frame != None:
             main_frame.destroy()
-        self.ui=None
+        self.ui = None
         # GObject.GObject.destroy(self)
         if not hasattr(self, '_sig_conn'):
             return
-        all_sids=[]
-        t1L=type(1L)
-        for k, v in self._sig_conn.iteritems():
+        all_sids = []
+        t1L = type(1)
+        for k, v in self._sig_conn.items():
             if not type(k) == t1L:
                 all_sids.extend(v)
         for sid, ob in all_sids:
@@ -493,50 +514,53 @@ class View(GObject.GObject):
 
 GObject.type_register(View)
 
-    #@-others
+#@-others
 #@+node:eugeneai.20110116171118.1466: ** class Application
+
+
+@implementer(icc.rake.views.interfaces.IApplication)
 class Application(View):
     __gsignals__ = {
         'startup-open': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_STRING,)),
         'project-open': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_BOOLEAN, (GObject.TYPE_STRING,)),
         'project-save': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_BOOLEAN, (GObject.TYPE_STRING,)),
     }
-    implements(icc.rake.views.interfaces.IApplication)
     template = "ui/main_win_gtk.glade"
     widget_names = ['main_window', 'statusbar', 'toolbar', 'menubar',
-             "main_vbox", 'ac_close', 'ac_save',
+                    "main_vbox", 'ac_close', 'ac_save',
                     "menu_file", "menu_edit", "menu_view", "menu_help"]
-    main_widget_name="main_window"
+    main_widget_name = "main_window"
 
     #@+others
     #@+node:eugeneai.20110116171118.1467: *3* __init__
-    def __init__(self, model = None, parent=None):
+    def __init__(self, model=None, parent=None):
 
         View.__init__(self, model=model, parent=parent)
-        self.ui.window=self.ui.main_window
+        self.ui.window = self.ui.main_window
         self.ui.window.show_all()
 
-        self.active_view=None
+        self.active_view = None
         self.remove_active_view()
 
-        self.filename=None
+        self.filename = None
 
-        _conf=get_global_configuration()
-        opt=_conf.add_option('project_file_ext', default='.prj:A project file', keys='app')
-        self.FILE_PATTERNS=[e.split(':') for e in opt.get().split('|')]
+        _conf = get_global_configuration()
+        opt = _conf.add_option(
+            'project_file_ext', default='.prj:A project file', keys='app')
+        self.FILE_PATTERNS = [e.split(':') for e in opt.get().split('|')]
 
         self.connect("startup-open", self.on_startup_open)
 
-                #put event to load project.
-                #self.open_project(lo_f)
+        # put event to load project.
+        # self.open_project(lo_f)
 
     def on_model_changed_(self, view, model):
         self.ui.ac_save.set_sensitive(True)
 
     #@+node:eugeneai.20110116171118.1468: *3* set_model
-    def set_model(self, model = None):
+    def set_model(self, model=None):
         # There should be event created to force model creation
-        #if model is None:
+        # if model is None:
         #    model = mdl.Project()
         return View.set_model(self, model)
 
@@ -545,7 +569,7 @@ class Application(View):
     def main_window_delete_event_cb(self, widget, data1=None, data2=None):
         Gtk.main_quit()
     #@+node:eugeneai.20110116171118.1470: *3* default_view
-    m_quit_activate_cb=main_window_delete_event_cb
+    m_quit_activate_cb = main_window_delete_event_cb
 
     def default_view(self):
         self.insert_project_view(self.ui)
@@ -554,9 +578,9 @@ class Application(View):
     def on_file_new(self, widget=None, data=None):
         # print "Created"
         # check wether data has been saved. YYY
-        self.filename=None
-        c=get_global_configuration()
-        factory_name=c.add_option('factory_name', default='main_model')
+        self.filename = None
+        c = get_global_configuration()
+        factory_name = c.add_option('factory_name', default='main_model')
         self.set_model(ZC.createObject(factory_name.get().strip()))
         self.insert_project_view(self.ui)
         self.ui.ac_save.set_sensitive(True)
@@ -564,21 +588,23 @@ class Application(View):
     #@+node:eugeneai.20110116171118.1472: *3* open_project
     def open_project(self, filename=None):
         if filename is None:
-            filename_ = self.get_filename(patterns=self.FILE_PATTERNS, open_msg="Open a project ...", save_msg="Save the project ...")
+            filename_ = self.get_filename(
+                patterns=self.FILE_PATTERNS, open_msg="Open a project ...", save_msg="Save the project ...")
         else:
-            filename_=self.normalize_file_ext(filename, self.FILE_PATTERNS)
+            filename_ = self.normalize_file_ext(filename, self.FILE_PATTERNS)
         if filename_:
             self.on_file_new()
-            success=self.emit("project-open", filename_)
+            success = self.emit("project-open", filename_)
             self.ui.ac_save.set_sensitive(not success)
-            #self.model.load_from(filename_)
-            #self.active_view.update()
-            if filename == None: # Loaded as result of user file dialog activity
-                print "Writing user file:", filename_
-                set_user_config_option('last_project_file_name', filename_, type='string', keys='startup')
-            self.filename=filename_
+            # self.model.load_from(filename_)
+            # self.active_view.update()
+            if filename == None:  # Loaded as result of user file dialog activity
+                print("Writing user file:", filename_)
+                set_user_config_option(
+                    'last_project_file_name', filename_, type='string', keys='startup')
+            self.filename = filename_
         else:
-            self.filename=None
+            self.filename = None
 
     #@+node:eugeneai.20110116171118.1473: *3* on_file_open
     def on_file_open(self, widget, data=None):
@@ -589,32 +615,32 @@ class Application(View):
 
     def on_file_close(self, widget, data=None):
         if self.active_view:
-            active_view=self.active_view
+            active_view = self.active_view
             if active_view.is_model_modified():
                 # ask user to save project
                 pass
         self.remove_active_view()
 
-
     def on_file_save(self, widget, data=None):
         if self.filename:
-            filename_=self.filename
-            filename_=self.normalize_file_ext(filename_, self.FILE_PATTERNS)
+            filename_ = self.filename
+            filename_ = self.normalize_file_ext(filename_, self.FILE_PATTERNS)
         else:
-            filename_=None
+            filename_ = None
         if not filename_:
-            filename_=self.get_filename(patterns=self.FILE_PATTERNS, save=True)
+            filename_ = self.get_filename(
+                patterns=self.FILE_PATTERNS, save=True)
 
         if not filename_:
-            return # user rejected to write data
+            return  # user rejected to write data
 
-        print "Saving the data of the project to file '%s'" % filename_
-        success=self.emit("project-save", filename_)
+        print("Saving the data of the project to file '%s'" % filename_)
+        success = self.emit("project-save", filename_)
         self.ui.ac_save.set_sensitive(not success)
         if success:
-            self.filename=filename_
-            set_user_config_option('last_project_file_name', filename_, type='string', keys='startup')
-
+            self.filename = filename_
+            set_user_config_option(
+                'last_project_file_name', filename_, type='string', keys='startup')
 
     #@+node:eugeneai.20110116171118.1475: *3* error_message
     def error_message(self, message):
@@ -634,10 +660,10 @@ class Application(View):
     def default_action(self):
         self.model.set_scale(mdl.Scale(zero=CALIBR_ZERO, scale=CALIBR_KEV))
         self.default_view()
-        #self.spectra.r_plot()
-        #print "AAA:", EPS_CMD
+        # self.spectra.r_plot()
+        # print "AAA:", EPS_CMD
         #sp=spp.Popen([EPS_CMD, 'plot.eps'])
-        #sp.communicate()
+        # sp.communicate()
 
     #@+node:eugeneai.20110116171118.1477: *3* remove_active_view
     def remove_active_view(self):
@@ -645,7 +671,7 @@ class Application(View):
             av = self.active_view
             av.remove_from(self.ui.main_vbox)
             av.destroy()
-            self.active_view=None
+            self.active_view = None
         for ac in [self.ui.ac_save, self.ui.ac_close]:
             ac.set_sensitive(False)
 
@@ -661,12 +687,13 @@ class Application(View):
         view.ui.main_frame.show_all()
 
     #@+node:eugeneai.20110116171118.1479: *3* insert_project_view
-    #def insert_plotting_area(self, ui):
+    # def insert_plotting_area(self, ui):
     #    view = IPlottingView(self.model)
     #    self.insert_active_view(view)
 
     def insert_project_view(self, ui):
-        view = ZC.getMultiAdapter((self.model, self), icc.rake.views.interfaces.IProjectView)
+        view = ZC.getMultiAdapter(
+            (self.model, self), icc.rake.views.interfaces.IProjectView)
         self.insert_active_view(view)
 
     #@+node:eugeneai.20110116171118.1480: *3* main

@@ -136,7 +136,7 @@ class NavigationToolbar(NavigationToolbar2GTK3):
         w = abs(x1 - x0)
         h = abs(y1 - y0)
 
-        rect = [int(val)for val in min(x0,x1), min(y0, y1), w, h]
+        rect = [int(val)for val in (min(x0,x1), min(y0, y1), w, h)]
         drawable.draw_rectangle(gc, False, *rect)
         try:
             rect_p = self._imageBack
