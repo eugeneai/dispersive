@@ -1,0 +1,7 @@
+numpy
+rpyc
+zope.component[zcml]
+cfgparse
+scipy
+lxml
+matplotlib
